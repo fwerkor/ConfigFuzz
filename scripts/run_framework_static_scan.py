@@ -9,6 +9,7 @@ from pathlib import Path
 from time import perf_counter
 from typing import Any, Sequence
 
+from configfuzz.dependencies import DependencyGraph
 from configfuzz.extractors import scan_source_paths_multi
 
 
@@ -86,6 +87,24 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     elapsed = perf_counter() - started
     results = [scanned[parameter].to_dict() for parameter in args.parameters]
     results = _normalize_sources(results, framework_root)
+    framework = {
+        "name": args.name,
+        "repository": _git_value(framework_root, "remote", "get-url", "origin"),
+        "commit": _git_value(framework_root, "rev-parse", "HEAD"),
+        "commit_date": _git_value(framework_root, "show", "-s", "--format=%cs", "HEAD"),
+        "source_subdir": args.source_subdir,
+    }
+    graph_scope = {
+        "framework": str(framework["name"]),
+        "source_subdir": str(framework["source_subdir"]),
+    }
+    if framework["commit"] is not None:
+        graph_scope["version"] = str(framework["commit"])
+    dependency_graph = DependencyGraph.from_constraint_sets(
+        scanned.values(),
+        scope=graph_scope,
+    ).to_dict()
+    dependency_graph = _normalize_sources(dependency_graph, framework_root)
 
     kinds = Counter(
         constraint["kind"]
@@ -95,13 +114,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     return {
         "schema_version": 1,
         "experiment": "framework_static_scan",
-        "framework": {
-            "name": args.name,
-            "repository": _git_value(framework_root, "remote", "get-url", "origin"),
-            "commit": _git_value(framework_root, "rev-parse", "HEAD"),
-            "commit_date": _git_value(framework_root, "show", "-s", "--format=%cs", "HEAD"),
-            "source_subdir": args.source_subdir,
-        },
+        "framework": framework,
         "scanner": {
             "mode": "broad" if args.broad else "strict",
             "jobs": args.jobs,
@@ -112,8 +125,14 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "parameters_with_candidates": sum(bool(item["constraints"]) for item in results),
             "candidates": sum(len(item["constraints"]) for item in results),
             "kinds": dict(sorted(kinds.items())),
+            "dependency_nodes": dependency_graph["summary"]["nodes"],
+            "dependency_edges": dependency_graph["summary"]["edges"],
+            "dependency_components": dependency_graph["summary"][
+                "connected_components"
+            ],
         },
         "results": results,
+        "dependency_graph": dependency_graph,
     }
 
 
@@ -129,6 +148,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(
         f"parameters={payload['summary']['parameters']} "
         f"candidates={payload['summary']['candidates']} "
+        f"dependency_edges={payload['summary']['dependency_edges']} "
         f"elapsed={payload['scanner']['elapsed_seconds']}s"
     )
     return 0

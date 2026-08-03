@@ -40,6 +40,10 @@ The initial repository provides:
 - declaration extractors for argparse, dataclass, `Literal`, field metadata,
   and schema-style YAML;
 - a parallel CLI for scanning Python/YAML framework trees for one or more parameters;
+- an explicit dependency hypergraph with deduplicated multi-parameter edges,
+  direction, scope, status, connectivity queries, and active-constraint evaluation;
+- a bounded joint-mutation planner for divisibility, alignment, equality,
+  simple bounds, and Boolean dependencies;
 - an isolated subprocess harness driven by JSON manifests;
 - runtime outcome classification into `VALID`, `INVALID`, `UNKNOWN`, and
   `POTENTIAL_BUG`;
@@ -91,6 +95,26 @@ python -m configfuzz scan \
 
 Strict mode is the default. Use `--broad` only for exploratory, recall-oriented
 scans whose unsupported expressions will be reviewed manually.
+
+Every scan now embeds a dependency graph. It can also be rebuilt independently:
+
+```bash
+python -m configfuzz graph artifacts/example_constraints.json \
+  --framework Megatron-LM \
+  --version 42460a7 \
+  --output artifacts/example_dependency_graph.json
+```
+
+Plan a joint mutation from a baseline configuration:
+
+```bash
+python -m configfuzz plan-mutation \
+  artifacts/example_dependency_graph.json \
+  examples/framework_static/baseline.json \
+  --parameter tensor_model_parallel_size \
+  --value 6 \
+  --output artifacts/example_mutation_plan.json
+```
 
 Run a versioned scan against an external framework checkout:
 
@@ -160,6 +184,7 @@ from intended framework semantics.
 
 ```text
 configfuzz/                 new constraint-inference prototype
+  dependencies.py          dependency hypergraph and joint-mutation planner
   extractors/               static candidate extractors
   outcomes.py               runtime outcome oracle
   probing.py                manifest, generator, and subprocess harness
@@ -173,6 +198,7 @@ examples/                   deterministic runtime and framework-static fixtures
 docs/RESEARCH_PLAN.md       research questions and evaluation plan
 docs/CONSTRAINT_DSL.md      supported constraint representation
 docs/STATIC_SCANNER.md      scanner semantics, normalization, and regression data
+docs/DEPENDENCY_GRAPH.md    hypergraph, direction, queries, and mutation planning
 docs/RUNTIME_INFERENCE.md   manifest and runtime pipeline reference
 docs/MANUAL_CONSTRAINT_CORPUS.md
                             corpus schema, semantics, and review workflow

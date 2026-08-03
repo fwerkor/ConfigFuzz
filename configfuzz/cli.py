@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Sequence
 
 from configfuzz.corpus import load_corpus
+from configfuzz.dependencies import DependencyGraph
 from configfuzz.extractors import scan_source_paths_multi
 from configfuzz.probing import (
     ProbeManifest,
@@ -58,6 +59,32 @@ def build_parser() -> argparse.ArgumentParser:
     )
     scan.set_defaults(handler=_run_scan)
 
+    graph = subparsers.add_parser(
+        "graph",
+        help="build a dependency hypergraph from a saved static scan",
+    )
+    graph.add_argument("scan", type=Path, help="JSON scan or framework artifact")
+    graph.add_argument("--framework", help="override framework scope")
+    graph.add_argument("--version", help="override framework version scope")
+    graph.add_argument("--output", type=Path, help="write the dependency graph")
+    graph.set_defaults(handler=_run_graph)
+
+    plan = subparsers.add_parser(
+        "plan-mutation",
+        help="plan a constraint-aware joint mutation from a dependency graph",
+    )
+    plan.add_argument("graph", type=Path, help="dependency graph JSON")
+    plan.add_argument("baseline", type=Path, help="baseline configuration JSON")
+    plan.add_argument("--parameter", required=True, help="parameter to mutate")
+    plan.add_argument(
+        "--value",
+        required=True,
+        type=_parse_json_value,
+        help="requested value encoded as JSON, for example 8, true, or \"bf16\"",
+    )
+    plan.add_argument("--output", type=Path, help="write the mutation plan")
+    plan.set_defaults(handler=_run_plan_mutation)
+
     probe = subparsers.add_parser(
         "probe",
         help="execute a runtime probing manifest and classify outcomes",
@@ -105,11 +132,41 @@ def _run_scan(args: argparse.Namespace) -> int:
         jobs=args.jobs,
     )
     results = [scanned[parameter].to_dict() for parameter in args.parameters]
+    graph = DependencyGraph.from_constraint_sets(scanned.values())
     payload = {
         "schema_version": 1,
         "results": results,
+        "dependency_graph": graph.to_dict(),
     }
     _write_json(payload, args.output)
+    return 0
+
+
+def _run_graph(args: argparse.Namespace) -> int:
+    payload = _read_json_object(args.scan)
+    scope = {
+        key: value
+        for key, value in {
+            "framework": args.framework,
+            "version": args.version,
+        }.items()
+        if value is not None
+    }
+    graph = DependencyGraph.from_scan_payload(payload, scope=scope)
+    _write_json(
+        {"schema_version": 1, "dependency_graph": graph.to_dict()},
+        args.output,
+    )
+    return 0
+
+
+def _run_plan_mutation(args: argparse.Namespace) -> int:
+    graph = DependencyGraph.from_dict(_read_json_object(args.graph))
+    baseline_payload = _read_json_object(args.baseline)
+    nested = baseline_payload.get("config")
+    baseline = nested if isinstance(nested, dict) else baseline_payload
+    plan = graph.plan_joint_mutation(args.parameter, args.value, baseline)
+    _write_json({"schema_version": 1, "plan": plan.to_dict()}, args.output)
     return 0
 
 
@@ -183,6 +240,22 @@ def _write_json(payload: object, path: Path | None) -> None:
         return
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
+
+
+def _read_json_object(path: Path) -> dict[str, object]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"expected a JSON object in {path}")
+    return payload
+
+
+def _parse_json_value(text: str) -> object:
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise argparse.ArgumentTypeError(
+            "mutation value must be valid JSON; quote string values"
+        ) from exc
 
 
 def main(argv: Sequence[str] | None = None) -> int:

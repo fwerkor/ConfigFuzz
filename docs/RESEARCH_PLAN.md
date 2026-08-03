@@ -142,7 +142,24 @@ A practical objective can minimize:
 - dependence on environment-specific constants;
 - disagreement with high-confidence static evidence.
 
-### 4.6 Constraint-aware mutation
+### 4.6 Dependency constraint hypergraph
+
+Normalize the recovered constraints into a hypergraph whose nodes are
+parameters, feature switches, and environment values. Each edge retains the
+complete formula, guard, evidence, confidence, scope, and validation status.
+Direction is inferred only for bounded patterns such as divisibility, bounds,
+and guarded requirements; ambiguous formulas remain symmetric.
+
+The graph supports:
+
+- deduplication of constraints indexed under multiple parameters;
+- related/affected-parameter queries;
+- connected-component discovery for bounded joint exploration;
+- active-edge selection under a concrete configuration;
+- status transitions from static candidate to dynamically supported,
+  confirmed, environment-specific, or contradicted.
+
+### 4.7 Constraint-aware mutation
 
 Use inferred constraints in four modes:
 
@@ -245,14 +262,18 @@ Completed in the initial prototype:
 - bounded interprocedural propagation for direct helper-function calls.
 - argparse, dataclass, `Literal`, field-metadata, and YAML schema extraction.
 - a versioned Megatron-LM framework-side scan at commit `42460a7`.
+- an explicit dependency hypergraph with qualified configuration paths,
+  directional impact queries, condition evaluation, and edge status.
+- a bounded joint-mutation planner that repairs simple divisibility,
+  alignment, equality, bound, and Boolean dependencies.
 
 Next tasks:
 
-1. Attach model, module, version, backend, and execution-stage scope to candidates.
-2. Add return-value/object-field propagation and shell/documentation adapters.
-3. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
-4. Evaluate strict-scanner precision and recall against the reviewed corpus.
-5. Independently validate corpus entries against framework source and runtime behavior.
-6. Add adaptive query selection and convergence criteria.
-7. Extend synthesis to jointly varied parameters and conditional formulas.
-8. Integrate generated specifications into the lm-sv mutation path behind a fallback flag.
+1. Attach model, backend, hardware, and execution-stage scope to graph edges.
+2. Feed runtime outcomes back into edge status and confidence.
+3. Encode active graph components in the Z3 synthesis layer for general joint repair.
+4. Add return-value/object-field propagation and shell/documentation adapters.
+5. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
+6. Evaluate scanner and graph precision/recall against the reviewed corpus.
+7. Add adaptive query selection and convergence criteria.
+8. Integrate valid, boundary, and one-edge-violation mutation modes into lm-sv.

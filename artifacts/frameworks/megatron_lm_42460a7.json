@@ -11,7 +11,7 @@
   "scanner": {
     "mode": "strict",
     "jobs": 4,
-    "elapsed_seconds": 21.378
+    "elapsed_seconds": 20.24
   },
   "summary": {
     "parameters": 6,
@@ -24,7 +24,10 @@
       "range": 3,
       "relation": 7,
       "type": 8
-    }
+    },
+    "dependency_nodes": 60,
+    "dependency_edges": 62,
+    "dependency_components": 2
   },
   "results": [
     {
@@ -1422,5 +1425,2532 @@
         "accepted_candidates": 8
       }
     }
-  ]
+  ],
+  "dependency_graph": {
+    "schema_version": 1,
+    "metadata": {
+      "scope": {
+        "framework": "Megatron-LM",
+        "source_subdir": "megatron",
+        "version": "42460a7af821366e7115a162cb4410106bea93f0"
+      }
+    },
+    "summary": {
+      "nodes": 60,
+      "edges": 62,
+      "connected_components": 2,
+      "node_kinds": {
+        "environment": 2,
+        "feature": 14,
+        "parameter": 44
+      },
+      "relations": {
+        "bound": 11,
+        "conflicts": 3,
+        "divisibility": 17,
+        "environment": 6,
+        "equality": 4,
+        "other": 2,
+        "range": 3,
+        "requires": 8,
+        "type": 8
+      },
+      "statuses": {
+        "environment_specific": 6,
+        "static_candidate": 56
+      }
+    },
+    "nodes": [
+      {
+        "name": "account_for_embedding_in_pipeline_split",
+        "kind": "feature"
+      },
+      {
+        "name": "account_for_loss_in_pipeline_split",
+        "kind": "feature"
+      },
+      {
+        "name": "args.world_size",
+        "kind": "environment"
+      },
+      {
+        "name": "attention_config_dict",
+        "kind": "parameter"
+      },
+      {
+        "name": "ckpt_format",
+        "kind": "parameter"
+      },
+      {
+        "name": "context_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "cpu_offloading",
+        "kind": "feature"
+      },
+      {
+        "name": "data_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "decrease_batch_size_if_needed",
+        "kind": "feature"
+      },
+      {
+        "name": "defer_embedding_wgrad_compute",
+        "kind": "feature"
+      },
+      {
+        "name": "distribute_saved_activations",
+        "kind": "feature"
+      },
+      {
+        "name": "emb_int",
+        "kind": "parameter"
+      },
+      {
+        "name": "experimental_attention_variant",
+        "kind": "parameter"
+      },
+      {
+        "name": "expert_gtp_remat_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "expert_model_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "expert_tensor_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "first_last_layers_bf16",
+        "kind": "feature"
+      },
+      {
+        "name": "fp8",
+        "kind": "feature"
+      },
+      {
+        "name": "global_batch_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "gtp_remat_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "gtp_weight_remat_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "hidden_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "inference_batch_times_seqlen_threshold",
+        "kind": "parameter"
+      },
+      {
+        "name": "inference_context",
+        "kind": "parameter"
+      },
+      {
+        "name": "kv_channels",
+        "kind": "parameter"
+      },
+      {
+        "name": "language_model.hidden_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "language_model.kv_channels",
+        "kind": "parameter"
+      },
+      {
+        "name": "language_model.num_attention_heads",
+        "kind": "parameter"
+      },
+      {
+        "name": "language_model.num_moe_experts",
+        "kind": "parameter"
+      },
+      {
+        "name": "layout",
+        "kind": "parameter"
+      },
+      {
+        "name": "linear_num_key_heads",
+        "kind": "parameter"
+      },
+      {
+        "name": "linear_num_value_heads",
+        "kind": "parameter"
+      },
+      {
+        "name": "micro_batch_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "model_parallel.tensor_model_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "n",
+        "kind": "parameter"
+      },
+      {
+        "name": "n_heads_in_group",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_attention_heads",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_distributed_optimizer_instances",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_layers",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_layers_at_end_in_bf16",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_layers_at_start_in_bf16",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_layers_in_first_pipeline_stage",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_layers_in_last_pipeline_stage",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_layers_per_virtual_pipeline_stage",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_query_groups",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_stages",
+        "kind": "parameter"
+      },
+      {
+        "name": "overlap_p2p_comm",
+        "kind": "feature"
+      },
+      {
+        "name": "perform_rl_step",
+        "kind": "feature"
+      },
+      {
+        "name": "pipeline_model_parallel_layout",
+        "kind": "parameter"
+      },
+      {
+        "name": "pipeline_model_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "recompute_granularity",
+        "kind": "parameter"
+      },
+      {
+        "name": "rl_use_sequence_packing",
+        "kind": "feature"
+      },
+      {
+        "name": "running_global_batch_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "sequence_parallel",
+        "kind": "feature"
+      },
+      {
+        "name": "tensor_model_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "tensor_parallel_num_weight_shards",
+        "kind": "parameter"
+      },
+      {
+        "name": "tp_comm_overlap",
+        "kind": "feature"
+      },
+      {
+        "name": "use_torch_fsdp2",
+        "kind": "feature"
+      },
+      {
+        "name": "virtual_pipeline_model_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "world_size",
+        "kind": "environment"
+      }
+    ],
+    "edges": [
+      {
+        "id": "dep-03c51bec877389ef",
+        "expression": "0 <= emb_int <= hidden_size",
+        "predicate": "0 <= emb_int <= hidden_size",
+        "relation": "bound",
+        "participants": [
+          "hidden_size",
+          "emb_int"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/elastification"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/elastification/flextron_elasticity_hooks.py",
+            "line": 62,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-090baf04b6fce498",
+        "expression": "experimental_attention_variant == 'gated_delta_net' => linear_num_value_heads % (tensor_model_parallel_size * context_parallel_size) == 0",
+        "predicate": "linear_num_value_heads % (tensor_model_parallel_size * context_parallel_size) == 0",
+        "relation": "divisibility",
+        "participants": [
+          "tensor_model_parallel_size",
+          "experimental_attention_variant",
+          "linear_num_value_heads",
+          "context_parallel_size"
+        ],
+        "drivers": [
+          "context_parallel_size",
+          "experimental_attention_variant",
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "linear_num_value_heads"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 1379,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "experimental_attention_variant == 'gated_delta_net'"
+      },
+      {
+        "id": "dep-0c6b6e6ab5dec019",
+        "expression": "fp8 and first_last_layers_bf16 => num_layers_at_end_in_bf16 <= num_layers // pipeline_model_parallel_size",
+        "predicate": "num_layers_at_end_in_bf16 <= num_layers // pipeline_model_parallel_size",
+        "relation": "bound",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "fp8",
+          "first_last_layers_bf16",
+          "num_layers_at_end_in_bf16",
+          "num_layers"
+        ],
+        "drivers": [
+          "first_last_layers_bf16",
+          "fp8",
+          "num_layers",
+          "pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "num_layers_at_end_in_bf16"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 1421,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "fp8 and first_last_layers_bf16"
+      },
+      {
+        "id": "dep-105fe9d3503ada2a",
+        "expression": "pipeline_model_parallel_layout is not None => num_stages % pipeline_model_parallel_size == 0",
+        "predicate": "num_stages % pipeline_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "pipeline_model_parallel_layout",
+          "num_stages"
+        ],
+        "drivers": [
+          "pipeline_model_parallel_layout",
+          "pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "num_stages"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 911,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "pipeline_model_parallel_layout is not None"
+      },
+      {
+        "id": "dep-141daba94907d7ee",
+        "expression": "ckpt_format == 'torch_dcp' => pipeline_model_parallel_size <= 1",
+        "predicate": "pipeline_model_parallel_size <= 1",
+        "relation": "bound",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "ckpt_format"
+        ],
+        "drivers": [
+          "ckpt_format"
+        ],
+        "dependents": [
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 1621,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "ckpt_format == 'torch_dcp'"
+      },
+      {
+        "id": "dep-149b36d823475290",
+        "expression": "kv_channels is None => hidden_size % num_attention_heads == 0",
+        "predicate": "hidden_size % num_attention_heads == 0",
+        "relation": "divisibility",
+        "participants": [
+          "hidden_size",
+          "kv_channels",
+          "num_attention_heads"
+        ],
+        "drivers": [
+          "kv_channels",
+          "num_attention_heads"
+        ],
+        "dependents": [
+          "hidden_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 1297,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "kv_channels is None"
+      },
+      {
+        "id": "dep-1a1e62ef3048b977",
+        "expression": "hidden_size == self.input_size",
+        "predicate": "hidden_size == self.input_size",
+        "relation": "equality",
+        "participants": [
+          "hidden_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "hidden_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/models/audio"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/models/audio/audio_projector.py",
+            "line": 50,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-1a8293d5b6bb2053",
+        "expression": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is not None) => num_layers % pipeline_model_parallel_size == 0",
+        "predicate": "num_layers % pipeline_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "pipeline_model_parallel_layout",
+          "num_layers_in_first_pipeline_stage",
+          "num_layers_in_last_pipeline_stage",
+          "account_for_embedding_in_pipeline_split",
+          "account_for_loss_in_pipeline_split",
+          "virtual_pipeline_model_parallel_size",
+          "num_layers"
+        ],
+        "drivers": [
+          "account_for_embedding_in_pipeline_split",
+          "account_for_loss_in_pipeline_split",
+          "num_layers_in_first_pipeline_stage",
+          "num_layers_in_last_pipeline_stage",
+          "pipeline_model_parallel_layout",
+          "pipeline_model_parallel_size",
+          "virtual_pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "num_layers"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 2115,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is not None)"
+      },
+      {
+        "id": "dep-264a76dcf6320803",
+        "expression": "virtual_pipeline_model_parallel_size is not None and overlap_p2p_comm => pipeline_model_parallel_size > 1",
+        "predicate": "pipeline_model_parallel_size > 1",
+        "relation": "requires",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "overlap_p2p_comm",
+          "virtual_pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "overlap_p2p_comm",
+          "virtual_pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 968,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "virtual_pipeline_model_parallel_size is not None and overlap_p2p_comm"
+      },
+      {
+        "id": "dep-28327176a4cd35a3",
+        "expression": "recompute_granularity is not None and distribute_saved_activations => not sequence_parallel",
+        "predicate": "not sequence_parallel",
+        "relation": "conflicts",
+        "participants": [
+          "sequence_parallel",
+          "distribute_saved_activations",
+          "recompute_granularity"
+        ],
+        "drivers": [
+          "distribute_saved_activations",
+          "recompute_granularity"
+        ],
+        "dependents": [
+          "sequence_parallel"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 1783,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "recompute_granularity is not None and distribute_saved_activations"
+      },
+      {
+        "id": "dep-2d732812b8519cbd",
+        "expression": "num_query_groups == num_attention_heads",
+        "predicate": "num_query_groups == num_attention_heads",
+        "relation": "equality",
+        "participants": [
+          "num_attention_heads",
+          "num_query_groups"
+        ],
+        "drivers": [
+          "num_attention_heads"
+        ],
+        "dependents": [
+          "num_query_groups"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/attention.py",
+            "line": 2093,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-2e2eb0aa100612c2",
+        "expression": "args.world_size % (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_weight_remat_size) == 0",
+        "predicate": "args.world_size % (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_weight_remat_size) == 0",
+        "relation": "environment",
+        "participants": [
+          "tensor_model_parallel_size",
+          "args.world_size",
+          "gtp_weight_remat_size",
+          "context_parallel_size",
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "context_parallel_size",
+          "gtp_weight_remat_size",
+          "pipeline_model_parallel_size",
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "args.world_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 430,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-2e7b5878addf9ea9",
+        "expression": "hidden_size is not None",
+        "predicate": "hidden_size is not None",
+        "relation": "type",
+        "participants": [
+          "hidden_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "hidden_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/models/mimo/model"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/models/mimo/model/base.py",
+            "line": 572,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-332aefadb17185b2",
+        "expression": "virtual_pipeline_model_parallel_size is not None and (not overlap_p2p_comm) => pipeline_model_parallel_size > 2",
+        "predicate": "pipeline_model_parallel_size > 2",
+        "relation": "requires",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "virtual_pipeline_model_parallel_size",
+          "overlap_p2p_comm"
+        ],
+        "drivers": [
+          "overlap_p2p_comm",
+          "virtual_pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 972,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "virtual_pipeline_model_parallel_size is not None and (not overlap_p2p_comm)"
+      },
+      {
+        "id": "dep-3d77928b2ce18f90",
+        "expression": "tensor_model_parallel_size: integer",
+        "predicate": "tensor_model_parallel_size: integer",
+        "relation": "type",
+        "participants": [
+          "tensor_model_parallel_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/model_parallel_config.py",
+            "line": 55,
+            "detail": "dataclass annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-3d8c9ab0864b3720",
+        "expression": "num_layers_per_virtual_pipeline_stage is not None => pipeline_model_parallel_size > 2",
+        "predicate": "pipeline_model_parallel_size > 2",
+        "relation": "bound",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "num_layers_per_virtual_pipeline_stage"
+        ],
+        "drivers": [
+          "num_layers_per_virtual_pipeline_stage"
+        ],
+        "dependents": [
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/yaml_arguments.py",
+            "line": 138,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "num_layers_per_virtual_pipeline_stage is not None"
+      },
+      {
+        "id": "dep-41db7e4868ff92c7",
+        "expression": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is None) => num_layers % pipeline_model_parallel_size == 0",
+        "predicate": "num_layers % pipeline_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "pipeline_model_parallel_layout",
+          "num_layers_in_first_pipeline_stage",
+          "num_layers_in_last_pipeline_stage",
+          "account_for_embedding_in_pipeline_split",
+          "account_for_loss_in_pipeline_split",
+          "virtual_pipeline_model_parallel_size",
+          "num_layers"
+        ],
+        "drivers": [
+          "account_for_embedding_in_pipeline_split",
+          "account_for_loss_in_pipeline_split",
+          "num_layers_in_first_pipeline_stage",
+          "num_layers_in_last_pipeline_stage",
+          "pipeline_model_parallel_layout",
+          "pipeline_model_parallel_size",
+          "virtual_pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "num_layers"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 2102,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is None)"
+      },
+      {
+        "id": "dep-45fdffb89c2851d4",
+        "expression": "inference_batch_times_seqlen_threshold > -1 => pipeline_model_parallel_size > 1",
+        "predicate": "pipeline_model_parallel_size > 1",
+        "relation": "bound",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "inference_batch_times_seqlen_threshold"
+        ],
+        "drivers": [
+          "inference_batch_times_seqlen_threshold"
+        ],
+        "dependents": [
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 1787,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "inference_batch_times_seqlen_threshold > -1"
+      },
+      {
+        "id": "dep-48c440ca3441c305",
+        "expression": "sequence_parallel: boolean",
+        "predicate": "sequence_parallel: boolean",
+        "relation": "type",
+        "participants": [
+          "sequence_parallel"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/model_parallel_config.py",
+            "line": 94,
+            "detail": "dataclass annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-58340bf1c7268e61",
+        "expression": "tp_comm_overlap => sequence_parallel == True",
+        "predicate": "sequence_parallel == True",
+        "relation": "requires",
+        "participants": [
+          "sequence_parallel",
+          "tp_comm_overlap"
+        ],
+        "drivers": [
+          "tp_comm_overlap"
+        ],
+        "dependents": [
+          "sequence_parallel"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 1407,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "tp_comm_overlap"
+      },
+      {
+        "id": "dep-58519c0a5d327465",
+        "expression": "pipeline_model_parallel_size > 0",
+        "predicate": "pipeline_model_parallel_size > 0",
+        "relation": "range",
+        "participants": [
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 2815,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-5d6ffb94c27c0bc3",
+        "expression": "tensor_parallel_num_weight_shards is not None => tensor_parallel_num_weight_shards % tensor_model_parallel_size == 0",
+        "predicate": "tensor_parallel_num_weight_shards % tensor_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "tensor_model_parallel_size",
+          "tensor_parallel_num_weight_shards"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "tensor_parallel_num_weight_shards"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/model_parallel_config.py",
+            "line": 36,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "tensor_parallel_num_weight_shards is not None"
+      },
+      {
+        "id": "dep-5df9cb4953366ad0",
+        "expression": "inference_context is not None => not sequence_parallel",
+        "predicate": "not sequence_parallel",
+        "relation": "conflicts",
+        "participants": [
+          "sequence_parallel",
+          "inference_context"
+        ],
+        "drivers": [
+          "inference_context"
+        ],
+        "dependents": [
+          "sequence_parallel"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/ssm/gated_delta_net"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/ssm/gated_delta_net/gdn.py",
+            "line": 91,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "inference_context is not None"
+      },
+      {
+        "id": "dep-650946ac8d61f0ca",
+        "expression": "perform_rl_step and rl_use_sequence_packing => micro_batch_size == 1",
+        "predicate": "micro_batch_size == 1",
+        "relation": "equality",
+        "participants": [
+          "micro_batch_size",
+          "perform_rl_step",
+          "rl_use_sequence_packing"
+        ],
+        "drivers": [
+          "perform_rl_step",
+          "rl_use_sequence_packing"
+        ],
+        "dependents": [
+          "micro_batch_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 546,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "perform_rl_step and rl_use_sequence_packing"
+      },
+      {
+        "id": "dep-69c46f3949e2ef67",
+        "expression": "num_attention_heads % tensor_model_parallel_size == 0",
+        "predicate": "num_attention_heads % tensor_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "tensor_model_parallel_size",
+          "num_attention_heads"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "num_attention_heads"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 1323,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-70f41a350f268abb",
+        "expression": "language_model.num_moe_experts is not None and model_parallel.tensor_model_parallel_size > 1 => sequence_parallel",
+        "predicate": "sequence_parallel",
+        "relation": "requires",
+        "participants": [
+          "sequence_parallel",
+          "language_model.num_moe_experts",
+          "model_parallel.tensor_model_parallel_size"
+        ],
+        "drivers": [
+          "language_model.num_moe_experts",
+          "model_parallel.tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "sequence_parallel"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/yaml_arguments.py",
+            "line": 337,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "language_model.num_moe_experts is not None and model_parallel.tensor_model_parallel_size > 1"
+      },
+      {
+        "id": "dep-73dd37cfa3f495c3",
+        "expression": "(tensor_model_parallel_size <= 1 or expert_model_parallel_size <= 1) and sequence_parallel => expert_model_parallel_size != 1 and tensor_model_parallel_size != 1",
+        "predicate": "expert_model_parallel_size != 1 and tensor_model_parallel_size != 1",
+        "relation": "requires",
+        "participants": [
+          "tensor_model_parallel_size",
+          "sequence_parallel",
+          "expert_model_parallel_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/inference/text_generation_controllers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/inference/text_generation_controllers/text_generation_controller.py",
+            "line": 3483,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "(tensor_model_parallel_size <= 1 or expert_model_parallel_size <= 1) and sequence_parallel"
+      },
+      {
+        "id": "dep-77fd7ce216b36ffd",
+        "expression": "sequence_parallel => tensor_model_parallel_size > 1",
+        "predicate": "tensor_model_parallel_size > 1",
+        "relation": "requires",
+        "participants": [
+          "tensor_model_parallel_size",
+          "sequence_parallel"
+        ],
+        "drivers": [
+          "sequence_parallel"
+        ],
+        "dependents": [
+          "tensor_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/model_parallel_config.py",
+            "line": 503,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "sequence_parallel"
+      },
+      {
+        "id": "dep-7a5281b3dee4dde0",
+        "expression": "use_torch_fsdp2 => pipeline_model_parallel_size == 1",
+        "predicate": "pipeline_model_parallel_size == 1",
+        "relation": "requires",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "use_torch_fsdp2"
+        ],
+        "drivers": [
+          "use_torch_fsdp2"
+        ],
+        "dependents": [
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 1000,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "use_torch_fsdp2"
+      },
+      {
+        "id": "dep-7cb33497e801ef6b",
+        "expression": "(tensor_model_parallel_size <= 1 or expert_model_parallel_size <= 1) and (expert_model_parallel_size == 1 or tensor_model_parallel_size == 1) => not sequence_parallel",
+        "predicate": "not sequence_parallel",
+        "relation": "conflicts",
+        "participants": [
+          "sequence_parallel",
+          "tensor_model_parallel_size",
+          "expert_model_parallel_size"
+        ],
+        "drivers": [
+          "expert_model_parallel_size",
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "sequence_parallel"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/inference/text_generation_controllers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/inference/text_generation_controllers/text_generation_controller.py",
+            "line": 3483,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "(tensor_model_parallel_size <= 1 or expert_model_parallel_size <= 1) and (expert_model_parallel_size == 1 or tensor_model_parallel_size == 1)"
+      },
+      {
+        "id": "dep-829e09dd1e1faf56",
+        "expression": "micro_batch_size is not None",
+        "predicate": "micro_batch_size is not None",
+        "relation": "type",
+        "participants": [
+          "micro_batch_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "micro_batch_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core",
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/num_microbatches_calculator.py",
+            "line": 325,
+            "detail": "assertion"
+          },
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 675,
+            "detail": "assertion"
+          },
+          {
+            "kind": "static",
+            "source": "megatron/training/yaml_arguments.py",
+            "line": 111,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-831c1552e8f521cf",
+        "expression": "n % micro_batch_size == 0",
+        "predicate": "n % micro_batch_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "micro_batch_size",
+          "n"
+        ],
+        "drivers": [
+          "micro_batch_size"
+        ],
+        "dependents": [
+          "n"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/utils.py",
+            "line": 2313,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-87ab66688f62ddd3",
+        "expression": "world_size // (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_remat_size) * context_parallel_size % num_distributed_optimizer_instances == 0",
+        "predicate": "world_size // (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_remat_size) * context_parallel_size % num_distributed_optimizer_instances == 0",
+        "relation": "environment",
+        "participants": [
+          "tensor_model_parallel_size",
+          "num_distributed_optimizer_instances",
+          "context_parallel_size",
+          "world_size",
+          "gtp_remat_size",
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "num_distributed_optimizer_instances"
+        ],
+        "dependents": [
+          "context_parallel_size",
+          "gtp_remat_size",
+          "pipeline_model_parallel_size",
+          "tensor_model_parallel_size",
+          "world_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/parallel_state.py",
+            "line": 922,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-8d31a090259e04c5",
+        "expression": "not decrease_batch_size_if_needed => global_batch_size % (micro_batch_size * data_parallel_size) == 0",
+        "predicate": "global_batch_size % (micro_batch_size * data_parallel_size) == 0",
+        "relation": "divisibility",
+        "participants": [
+          "micro_batch_size",
+          "decrease_batch_size_if_needed",
+          "global_batch_size",
+          "data_parallel_size"
+        ],
+        "drivers": [
+          "data_parallel_size",
+          "decrease_batch_size_if_needed",
+          "micro_batch_size"
+        ],
+        "dependents": [
+          "global_batch_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/num_microbatches_calculator.py",
+            "line": 381,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "not decrease_batch_size_if_needed"
+      },
+      {
+        "id": "dep-917048d375dfd2dc",
+        "expression": "world_size % (expert_tensor_parallel_size * expert_model_parallel_size * pipeline_model_parallel_size * expert_gtp_remat_size) == 0",
+        "predicate": "world_size % (expert_tensor_parallel_size * expert_model_parallel_size * pipeline_model_parallel_size * expert_gtp_remat_size) == 0",
+        "relation": "environment",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "world_size",
+          "expert_gtp_remat_size",
+          "expert_tensor_parallel_size",
+          "expert_model_parallel_size"
+        ],
+        "drivers": [
+          "expert_gtp_remat_size",
+          "expert_model_parallel_size",
+          "expert_tensor_parallel_size",
+          "pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "world_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 0.98,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/parallel_state.py",
+            "line": 881,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-9281b624e188e639",
+        "expression": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is not None) => num_layers // pipeline_model_parallel_size % virtual_pipeline_model_parallel_size == 0",
+        "predicate": "num_layers // pipeline_model_parallel_size % virtual_pipeline_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "pipeline_model_parallel_layout",
+          "num_layers_in_first_pipeline_stage",
+          "num_layers_in_last_pipeline_stage",
+          "account_for_embedding_in_pipeline_split",
+          "account_for_loss_in_pipeline_split",
+          "virtual_pipeline_model_parallel_size",
+          "num_layers"
+        ],
+        "drivers": [
+          "account_for_embedding_in_pipeline_split",
+          "account_for_loss_in_pipeline_split",
+          "num_layers_in_first_pipeline_stage",
+          "num_layers_in_last_pipeline_stage",
+          "pipeline_model_parallel_layout",
+          "virtual_pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "num_layers",
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 2125,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is not None)"
+      },
+      {
+        "id": "dep-94085b4bb5af8633",
+        "expression": "defer_embedding_wgrad_compute => pipeline_model_parallel_size != 1",
+        "predicate": "pipeline_model_parallel_size != 1",
+        "relation": "equality",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "defer_embedding_wgrad_compute"
+        ],
+        "drivers": [
+          "defer_embedding_wgrad_compute"
+        ],
+        "dependents": [
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/model_parallel_config.py",
+            "line": 545,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "defer_embedding_wgrad_compute"
+      },
+      {
+        "id": "dep-9fdee8d0a83297fa",
+        "expression": "'num_query_groups' not in attention_config_dict and n_heads_in_group is not None => num_attention_heads % n_heads_in_group == 0",
+        "predicate": "num_attention_heads % n_heads_in_group == 0",
+        "relation": "divisibility",
+        "participants": [
+          "num_attention_heads",
+          "attention_config_dict",
+          "n_heads_in_group"
+        ],
+        "drivers": [
+          "attention_config_dict",
+          "n_heads_in_group"
+        ],
+        "dependents": [
+          "num_attention_heads"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer/heterogeneous"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/heterogeneous/heterogeneous_config.py",
+            "line": 43,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "'num_query_groups' not in attention_config_dict and n_heads_in_group is not None"
+      },
+      {
+        "id": "dep-ad56457c1894b438",
+        "expression": "tensor_model_parallel_size > 0",
+        "predicate": "tensor_model_parallel_size > 0",
+        "relation": "range",
+        "participants": [
+          "tensor_model_parallel_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "tensor_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/vocab_utils.py",
+            "line": 55,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-b2a3436bb701d3c3",
+        "expression": "fp8 and first_last_layers_bf16 => num_layers_at_start_in_bf16 <= num_layers // pipeline_model_parallel_size",
+        "predicate": "num_layers_at_start_in_bf16 <= num_layers // pipeline_model_parallel_size",
+        "relation": "bound",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "fp8",
+          "first_last_layers_bf16",
+          "num_layers_at_start_in_bf16",
+          "num_layers"
+        ],
+        "drivers": [
+          "first_last_layers_bf16",
+          "fp8",
+          "num_layers",
+          "pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "num_layers_at_start_in_bf16"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 1412,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "fp8 and first_last_layers_bf16"
+      },
+      {
+        "id": "dep-b2ceb696865e12ee",
+        "expression": "hidden_size: integer",
+        "predicate": "hidden_size: integer",
+        "relation": "type",
+        "participants": [
+          "hidden_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 138,
+            "detail": "dataclass annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-b3a91c73c367b2ea",
+        "expression": "not sequence_parallel",
+        "predicate": "not sequence_parallel",
+        "relation": "other",
+        "participants": [
+          "sequence_parallel"
+        ],
+        "drivers": [],
+        "dependents": [
+          "sequence_parallel"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/torch_norm.py",
+            "line": 50,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-b522cdbb4833b794",
+        "expression": "micro_batch_size: integer",
+        "predicate": "micro_batch_size: integer",
+        "relation": "type",
+        "participants": [
+          "micro_batch_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training/config"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/config/training_config.py",
+            "line": 11,
+            "detail": "dataclass annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-bf6599f636ce766b",
+        "expression": "tensor_parallel_num_weight_shards is not None => tensor_parallel_num_weight_shards >= tensor_model_parallel_size",
+        "predicate": "tensor_parallel_num_weight_shards >= tensor_model_parallel_size",
+        "relation": "bound",
+        "participants": [
+          "tensor_model_parallel_size",
+          "tensor_parallel_num_weight_shards"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "tensor_parallel_num_weight_shards"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/model_parallel_config.py",
+            "line": 31,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "tensor_parallel_num_weight_shards is not None"
+      },
+      {
+        "id": "dep-c23a19aff2130801",
+        "expression": "virtual_pipeline_model_parallel_size is not None => pipeline_model_parallel_size > 1",
+        "predicate": "pipeline_model_parallel_size > 1",
+        "relation": "bound",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "virtual_pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "virtual_pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/parallel_state.py",
+            "line": 828,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "virtual_pipeline_model_parallel_size is not None"
+      },
+      {
+        "id": "dep-c268b3706169bfe5",
+        "expression": "language_model.kv_channels is None => hidden_size % language_model.num_attention_heads == 0",
+        "predicate": "hidden_size % language_model.num_attention_heads == 0",
+        "relation": "divisibility",
+        "participants": [
+          "hidden_size",
+          "language_model.kv_channels",
+          "language_model.num_attention_heads"
+        ],
+        "drivers": [
+          "language_model.kv_channels",
+          "language_model.num_attention_heads"
+        ],
+        "dependents": [
+          "hidden_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/yaml_arguments.py",
+            "line": 253,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "language_model.kv_channels is None"
+      },
+      {
+        "id": "dep-ca4c42358e166db4",
+        "expression": "experimental_attention_variant == 'gated_delta_net' => linear_num_key_heads % (tensor_model_parallel_size * context_parallel_size) == 0",
+        "predicate": "linear_num_key_heads % (tensor_model_parallel_size * context_parallel_size) == 0",
+        "relation": "divisibility",
+        "participants": [
+          "tensor_model_parallel_size",
+          "experimental_attention_variant",
+          "linear_num_key_heads",
+          "context_parallel_size"
+        ],
+        "drivers": [
+          "context_parallel_size",
+          "experimental_attention_variant",
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "linear_num_key_heads"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 1375,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "experimental_attention_variant == 'gated_delta_net'"
+      },
+      {
+        "id": "dep-cb319a7900c735ab",
+        "expression": "num_query_groups % tensor_model_parallel_size == 0 or tensor_model_parallel_size % num_query_groups == 0",
+        "predicate": "num_query_groups % tensor_model_parallel_size == 0 or tensor_model_parallel_size % num_query_groups == 0",
+        "relation": "other",
+        "participants": [
+          "tensor_model_parallel_size",
+          "num_query_groups"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 1338,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-cddb54456c2e43b5",
+        "expression": "num_attention_heads: integer",
+        "predicate": "num_attention_heads: integer",
+        "relation": "type",
+        "participants": [
+          "num_attention_heads"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 141,
+            "detail": "dataclass annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-ce06060ba7936c80",
+        "expression": "distribute_saved_activations => tensor_model_parallel_size > 1",
+        "predicate": "tensor_model_parallel_size > 1",
+        "relation": "bound",
+        "participants": [
+          "tensor_model_parallel_size",
+          "distribute_saved_activations"
+        ],
+        "drivers": [
+          "distribute_saved_activations"
+        ],
+        "dependents": [
+          "tensor_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 1376,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "distribute_saved_activations"
+      },
+      {
+        "id": "dep-da4bc0e4641534b6",
+        "expression": "micro_batch_size > 0",
+        "predicate": "micro_batch_size > 0",
+        "relation": "range",
+        "participants": [
+          "micro_batch_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "micro_batch_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training",
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training/datasets"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 676,
+            "detail": "assertion"
+          },
+          {
+            "kind": "static",
+            "source": "megatron/training/datasets/data_samplers.py",
+            "line": 152,
+            "detail": "assertion"
+          },
+          {
+            "kind": "static",
+            "source": "megatron/training/datasets/data_samplers.py",
+            "line": 351,
+            "detail": "assertion"
+          },
+          {
+            "kind": "static",
+            "source": "megatron/training/yaml_arguments.py",
+            "line": 112,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-dca53159185db651",
+        "expression": "cpu_offloading => pipeline_model_parallel_size <= 1",
+        "predicate": "pipeline_model_parallel_size <= 1",
+        "relation": "bound",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "cpu_offloading"
+        ],
+        "drivers": [
+          "cpu_offloading"
+        ],
+        "dependents": [
+          "pipeline_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_config.py",
+            "line": 1740,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "cpu_offloading"
+      },
+      {
+        "id": "dep-e0ee658d3bd13b97",
+        "expression": "decrease_batch_size_if_needed => running_global_batch_size % (micro_batch_size * data_parallel_size) == 0",
+        "predicate": "running_global_batch_size % (micro_batch_size * data_parallel_size) == 0",
+        "relation": "divisibility",
+        "participants": [
+          "micro_batch_size",
+          "decrease_batch_size_if_needed",
+          "running_global_batch_size",
+          "data_parallel_size"
+        ],
+        "drivers": [
+          "data_parallel_size",
+          "decrease_batch_size_if_needed",
+          "micro_batch_size"
+        ],
+        "dependents": [
+          "running_global_batch_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/num_microbatches_calculator.py",
+            "line": 372,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "decrease_batch_size_if_needed"
+      },
+      {
+        "id": "dep-e12060ffa4060d1f",
+        "expression": "self.tp_size > 1 => sequence_parallel",
+        "predicate": "sequence_parallel",
+        "relation": "requires",
+        "participants": [
+          "sequence_parallel"
+        ],
+        "drivers": [],
+        "dependents": [
+          "sequence_parallel"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/tensor_parallel"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/tensor_parallel/inference_layers.py",
+            "line": 169,
+            "detail": "assertion"
+          },
+          {
+            "kind": "static",
+            "source": "megatron/core/tensor_parallel/inference_layers.py",
+            "line": 296,
+            "detail": "assertion"
+          },
+          {
+            "kind": "static",
+            "source": "megatron/core/tensor_parallel/inference_layers.py",
+            "line": 391,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "self.tp_size > 1"
+      },
+      {
+        "id": "dep-e2848b6814dc4797",
+        "expression": "language_model.kv_channels is None => language_model.hidden_size % num_attention_heads == 0",
+        "predicate": "language_model.hidden_size % num_attention_heads == 0",
+        "relation": "divisibility",
+        "participants": [
+          "num_attention_heads",
+          "language_model.hidden_size",
+          "language_model.kv_channels"
+        ],
+        "drivers": [
+          "language_model.kv_channels",
+          "num_attention_heads"
+        ],
+        "dependents": [
+          "language_model.hidden_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/yaml_arguments.py",
+            "line": 253,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "language_model.kv_channels is None"
+      },
+      {
+        "id": "dep-e4981dfedd5d812d",
+        "expression": "world_size % (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_remat_size) == 0",
+        "predicate": "world_size % (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_remat_size) == 0",
+        "relation": "environment",
+        "participants": [
+          "tensor_model_parallel_size",
+          "world_size",
+          "gtp_remat_size",
+          "context_parallel_size",
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "context_parallel_size",
+          "gtp_remat_size",
+          "pipeline_model_parallel_size",
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "world_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 0.98,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/parallel_state.py",
+            "line": 822,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-e4b5527fb826e973",
+        "expression": "world_size // (expert_tensor_parallel_size * expert_model_parallel_size * pipeline_model_parallel_size * expert_gtp_remat_size) % num_distributed_optimizer_instances == 0",
+        "predicate": "world_size // (expert_tensor_parallel_size * expert_model_parallel_size * pipeline_model_parallel_size * expert_gtp_remat_size) % num_distributed_optimizer_instances == 0",
+        "relation": "environment",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "num_distributed_optimizer_instances",
+          "world_size",
+          "expert_gtp_remat_size",
+          "expert_tensor_parallel_size",
+          "expert_model_parallel_size"
+        ],
+        "drivers": [
+          "num_distributed_optimizer_instances"
+        ],
+        "dependents": [
+          "expert_gtp_remat_size",
+          "expert_model_parallel_size",
+          "expert_tensor_parallel_size",
+          "pipeline_model_parallel_size",
+          "world_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/parallel_state.py",
+            "line": 1447,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-e9e70edc51d724b7",
+        "expression": "args.world_size % tensor_model_parallel_size == 0",
+        "predicate": "args.world_size % tensor_model_parallel_size == 0",
+        "relation": "environment",
+        "participants": [
+          "tensor_model_parallel_size",
+          "args.world_size"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "args.world_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/yaml_arguments.py",
+            "line": 60,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-ecfe8233ac95657f",
+        "expression": "ckpt_format == 'torch_dcp' => tensor_model_parallel_size <= 1",
+        "predicate": "tensor_model_parallel_size <= 1",
+        "relation": "bound",
+        "participants": [
+          "tensor_model_parallel_size",
+          "ckpt_format"
+        ],
+        "drivers": [
+          "ckpt_format"
+        ],
+        "dependents": [
+          "tensor_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/training"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/training/arguments.py",
+            "line": 1619,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "ckpt_format == 'torch_dcp'"
+      },
+      {
+        "id": "dep-f3ab69bed5074b14",
+        "expression": "pipeline_model_parallel_size: integer",
+        "predicate": "pipeline_model_parallel_size: integer",
+        "relation": "type",
+        "participants": [
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/model_parallel_config.py",
+            "line": 83,
+            "detail": "dataclass annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-f873310d580d7a6e",
+        "expression": "len(layout) % pipeline_model_parallel_size == 0",
+        "predicate": "len(layout) % pipeline_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "layout"
+        ],
+        "drivers": [
+          "pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "layout"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/pipeline_parallel_layer_layout.py",
+            "line": 40,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-fac6fd6a177d141b",
+        "expression": "num_layers_in_first_pipeline_stage is None and num_layers_in_last_pipeline_stage is None => num_layers % pipeline_model_parallel_size == 0",
+        "predicate": "num_layers % pipeline_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "pipeline_model_parallel_size",
+          "num_layers_in_first_pipeline_stage",
+          "num_layers_in_last_pipeline_stage",
+          "num_layers"
+        ],
+        "drivers": [
+          "num_layers_in_first_pipeline_stage",
+          "num_layers_in_last_pipeline_stage",
+          "pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "num_layers"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "framework": "Megatron-LM",
+          "source_subdir": "megatron",
+          "version": "42460a7af821366e7115a162cb4410106bea93f0"
+        },
+        "components": [
+          "/tmp/ConfigFuzz-Megatron-LM/megatron/core/transformer"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "megatron/core/transformer/transformer_block.py",
+            "line": 150,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "num_layers_in_first_pipeline_stage is None and num_layers_in_last_pipeline_stage is None"
+      }
+    ]
+  }
 }

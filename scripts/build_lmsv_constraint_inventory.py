@@ -6,6 +6,7 @@ from pathlib import Path
 
 import yaml
 
+from configfuzz.dependencies import DependencyGraph
 from configfuzz.extractors import scan_python_paths_multi
 
 
@@ -67,6 +68,13 @@ def main() -> int:
         for parameter in parameters
         if scanned[parameter].constraints
     ]
+    dependency_graph = DependencyGraph.from_constraint_sets(
+        scanned.values(),
+        scope={
+            "framework": "lm-sv-regression",
+            "version": "e73ba3d35",
+        },
+    ).to_dict()
 
     payload = {
         "schema_version": 1,
@@ -94,7 +102,13 @@ def main() -> int:
             len(result["constraints"])
             for result in results
         ),
+        "dependency_nodes": dependency_graph["summary"]["nodes"],
+        "dependency_edges": dependency_graph["summary"]["edges"],
+        "dependency_components": dependency_graph["summary"][
+            "connected_components"
+        ],
         "results": results,
+        "dependency_graph": dependency_graph,
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

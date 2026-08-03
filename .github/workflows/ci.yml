@@ -32,6 +32,30 @@ jobs:
             --parameter hidden_size \
             --parameter tensor_model_parallel_size \
             --output /tmp/configfuzz-framework-scan.json
+          python -m configfuzz graph /tmp/configfuzz-smoke.json \
+            --framework ConfigFuzz-fixture \
+            --version ci \
+            --output /tmp/configfuzz-graph.json
+          python -m configfuzz plan-mutation \
+            /tmp/configfuzz-graph.json \
+            examples/framework_static/baseline.json \
+            --parameter tensor_model_parallel_size \
+            --value 6 \
+            --output /tmp/configfuzz-mutation-plan.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          plan = json.loads(
+              Path("/tmp/configfuzz-mutation-plan.json").read_text()
+          )["plan"]
+          assert plan["proposed_changes"] == {
+              "tensor_model_parallel_size": 6,
+              "hidden_size": 4104,
+          }
+          assert not plan["violated_edges"]
+          assert not plan["unresolved_edges"]
+          PY
       - name: Runtime inference smoke test
         run: >-
           python -m configfuzz infer

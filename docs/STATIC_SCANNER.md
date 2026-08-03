@@ -16,6 +16,10 @@ python -m configfuzz scan \
 
 `--jobs 0` selects up to four source-file workers automatically. Pass an explicit positive number to control parallelism.
 
+The JSON result contains both the parameter-indexed candidate lists and a
+deduplicated `dependency_graph`. See `docs/DEPENDENCY_GRAPH.md` for graph
+semantics and mutation planning.
+
 Broad mode retains unsupported expressions for recall-oriented exploration:
 
 ```bash
@@ -95,6 +99,9 @@ moe_router_topk == 1 => moe_router_pre_softmax
 
 On the included lm-sv regression fixture, the optimized strict scanner processes 65 parameter names over 90 Python files and currently emits 61 parameter-indexed candidates for 17 parameters. These correspond to 40 unique normalized expressions because a cross-parameter rule is indexed under every participating parameter.
 
+The corresponding dependency graph contains 35 nodes, 40 unique hyperedges,
+and four connected components.
+
 Compared with the original name-matching scanner:
 
 | Indicator | Original | Optimized strict mode |
@@ -136,6 +143,9 @@ divisibility, feature dependencies, and constraints reached through helper
 functions. On the repository machine it takes about 20--22 seconds with four
 workers. The versioned result is stored in
 `artifacts/frameworks/megatron_lm_42460a7.json`.
+
+After removing copies indexed under multiple parameters, this artifact contains
+60 dependency nodes, 62 unique hyperedges, and two connected components.
 
 Reproduce it with:
 

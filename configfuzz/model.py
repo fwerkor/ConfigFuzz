@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field, replace
 from enum import Enum
-from typing import Any, Iterable
+from typing import Any, Iterable, Mapping
 
 
 class ConstraintKind(str, Enum):
@@ -34,6 +34,15 @@ class Evidence:
         data = asdict(self)
         data["kind"] = self.kind.value
         return {key: value for key, value in data.items() if value is not None}
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> "Evidence":
+        return cls(
+            kind=EvidenceKind(str(data["kind"])),
+            source=str(data["source"]),
+            line=int(data["line"]) if data.get("line") is not None else None,
+            detail=str(data["detail"]) if data.get("detail") is not None else None,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,6 +81,19 @@ class Constraint:
             "evidence": [item.to_dict() for item in self.evidence],
         }
 
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> "Constraint":
+        return cls(
+            expression=str(data["expression"]),
+            kind=ConstraintKind(str(data["kind"])),
+            parameters=tuple(str(item) for item in data.get("parameters", ())),
+            confidence=float(data.get("confidence", 1.0)),
+            evidence=tuple(
+                Evidence.from_dict(item)
+                for item in data.get("evidence", ())
+            ),
+        )
+
 
 @dataclass(slots=True)
 class ConstraintSet:
@@ -100,3 +122,18 @@ class ConstraintSet:
             "constraints": [item.to_dict() for item in self.constraints],
             "metadata": self.metadata,
         }
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> "ConstraintSet":
+        metadata = data.get("metadata", {})
+        if not isinstance(metadata, Mapping):
+            raise ValueError("constraint-set metadata must be an object")
+        result = cls(
+            parameter=str(data["parameter"]),
+            metadata=dict(metadata),
+        )
+        result.extend(
+            Constraint.from_dict(item)
+            for item in data.get("constraints", ())
+        )
+        return result

@@ -1,0 +1,6 @@
+{
+  "hidden_size": 4096,
+  "tensor_model_parallel_size": 4,
+  "dtype": "bf16",
+  "sequence_parallel": false
+}
