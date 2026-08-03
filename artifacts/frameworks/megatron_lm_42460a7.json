@@ -1,0 +1,1426 @@
+{
+  "schema_version": 1,
+  "experiment": "framework_static_scan",
+  "framework": {
+    "name": "Megatron-LM",
+    "repository": "https://github.com/NVIDIA/Megatron-LM.git",
+    "commit": "42460a7af821366e7115a162cb4410106bea93f0",
+    "commit_date": "2026-08-03",
+    "source_subdir": "megatron"
+  },
+  "scanner": {
+    "mode": "strict",
+    "jobs": 4,
+    "elapsed_seconds": 21.378
+  },
+  "summary": {
+    "parameters": 6,
+    "parameters_with_candidates": 6,
+    "candidates": 67,
+    "kinds": {
+      "conditional": 38,
+      "environment": 9,
+      "other": 2,
+      "range": 3,
+      "relation": 7,
+      "type": 8
+    }
+  },
+  "results": [
+    {
+      "parameter": "tensor_model_parallel_size",
+      "constraints": [
+        {
+          "expression": "(tensor_model_parallel_size <= 1 or expert_model_parallel_size <= 1) and sequence_parallel => expert_model_parallel_size != 1 and tensor_model_parallel_size != 1",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "sequence_parallel",
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/inference/text_generation_controllers/text_generation_controller.py",
+              "line": 3483,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_parallel_num_weight_shards is not None => tensor_parallel_num_weight_shards >= tensor_model_parallel_size",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "tensor_parallel_num_weight_shards"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/model_parallel_config.py",
+              "line": 31,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_parallel_num_weight_shards is not None => tensor_parallel_num_weight_shards % tensor_model_parallel_size == 0",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "tensor_parallel_num_weight_shards"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/model_parallel_config.py",
+              "line": 36,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "sequence_parallel => tensor_model_parallel_size > 1",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "sequence_parallel"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/model_parallel_config.py",
+              "line": 503,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "world_size % (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_remat_size) == 0",
+          "kind": "environment",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "world_size",
+            "gtp_remat_size",
+            "context_parallel_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/parallel_state.py",
+              "line": 822,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "world_size // (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_remat_size) * context_parallel_size % num_distributed_optimizer_instances == 0",
+          "kind": "environment",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "num_distributed_optimizer_instances",
+            "context_parallel_size",
+            "world_size",
+            "gtp_remat_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/parallel_state.py",
+              "line": 922,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads % tensor_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "num_attention_heads"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 1323,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_query_groups % tensor_model_parallel_size == 0 or tensor_model_parallel_size % num_query_groups == 0",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "num_query_groups"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 1338,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "experimental_attention_variant == 'gated_delta_net' => linear_num_key_heads % (tensor_model_parallel_size * context_parallel_size) == 0",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "experimental_attention_variant",
+            "linear_num_key_heads",
+            "context_parallel_size"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 1375,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "experimental_attention_variant == 'gated_delta_net' => linear_num_value_heads % (tensor_model_parallel_size * context_parallel_size) == 0",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "experimental_attention_variant",
+            "linear_num_value_heads",
+            "context_parallel_size"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 1379,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "args.world_size % (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_weight_remat_size) == 0",
+          "kind": "environment",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "args",
+            "gtp_weight_remat_size",
+            "context_parallel_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 430,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "distribute_saved_activations => tensor_model_parallel_size > 1",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "distribute_saved_activations"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 1376,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "ckpt_format == 'torch_dcp' => tensor_model_parallel_size <= 1",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "ckpt_format"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 1619,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size > 0",
+          "kind": "range",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/vocab_utils.py",
+              "line": 55,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "args.world_size % tensor_model_parallel_size == 0",
+          "kind": "environment",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "args"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/yaml_arguments.py",
+              "line": 60,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size: integer",
+          "kind": "type",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/model_parallel_config.py",
+              "line": 55,
+              "detail": "dataclass annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 30,
+          "parse_errors": [],
+          "raw_candidates": 19,
+          "filtered_candidates": 4,
+          "accepted_candidates": 15
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 599,
+          "yaml_files": 1,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 16
+      }
+    },
+    {
+      "parameter": "pipeline_model_parallel_size",
+      "constraints": [
+        {
+          "expression": "defer_embedding_wgrad_compute => pipeline_model_parallel_size != 1",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "defer_embedding_wgrad_compute"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/model_parallel_config.py",
+              "line": 545,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "world_size % (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_remat_size) == 0",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "world_size",
+            "gtp_remat_size",
+            "context_parallel_size",
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/parallel_state.py",
+              "line": 822,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "virtual_pipeline_model_parallel_size is not None => pipeline_model_parallel_size > 1",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "virtual_pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/parallel_state.py",
+              "line": 828,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "world_size % (expert_tensor_parallel_size * expert_model_parallel_size * pipeline_model_parallel_size * expert_gtp_remat_size) == 0",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "world_size",
+            "expert_gtp_remat_size",
+            "expert_tensor_parallel_size",
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/parallel_state.py",
+              "line": 881,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "world_size // (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_remat_size) * context_parallel_size % num_distributed_optimizer_instances == 0",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "num_distributed_optimizer_instances",
+            "context_parallel_size",
+            "world_size",
+            "gtp_remat_size",
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/parallel_state.py",
+              "line": 922,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "world_size // (expert_tensor_parallel_size * expert_model_parallel_size * pipeline_model_parallel_size * expert_gtp_remat_size) % num_distributed_optimizer_instances == 0",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "num_distributed_optimizer_instances",
+            "world_size",
+            "expert_gtp_remat_size",
+            "expert_tensor_parallel_size",
+            "expert_model_parallel_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/parallel_state.py",
+              "line": 1447,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "len(layout) % pipeline_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "layout"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/pipeline_parallel_layer_layout.py",
+              "line": 40,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers_in_first_pipeline_stage is None and num_layers_in_last_pipeline_stage is None => num_layers % pipeline_model_parallel_size == 0",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "num_layers_in_first_pipeline_stage",
+            "num_layers_in_last_pipeline_stage",
+            "num_layers"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_block.py",
+              "line": 150,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "fp8 and first_last_layers_bf16 => num_layers_at_start_in_bf16 <= num_layers // pipeline_model_parallel_size",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "fp8",
+            "first_last_layers_bf16",
+            "num_layers_at_start_in_bf16",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 1412,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "fp8 and first_last_layers_bf16 => num_layers_at_end_in_bf16 <= num_layers // pipeline_model_parallel_size",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "fp8",
+            "first_last_layers_bf16",
+            "num_layers_at_end_in_bf16",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 1421,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "cpu_offloading => pipeline_model_parallel_size <= 1",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "cpu_offloading"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 1740,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is None) => num_layers % pipeline_model_parallel_size == 0",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "pipeline_model_parallel_layout",
+            "num_layers_in_first_pipeline_stage",
+            "num_layers_in_last_pipeline_stage",
+            "account_for_embedding_in_pipeline_split",
+            "account_for_loss_in_pipeline_split",
+            "virtual_pipeline_model_parallel_size",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 2102,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is not None) => num_layers % pipeline_model_parallel_size == 0",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "pipeline_model_parallel_layout",
+            "num_layers_in_first_pipeline_stage",
+            "num_layers_in_last_pipeline_stage",
+            "account_for_embedding_in_pipeline_split",
+            "account_for_loss_in_pipeline_split",
+            "virtual_pipeline_model_parallel_size",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 2115,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is not None) => num_layers // pipeline_model_parallel_size % virtual_pipeline_model_parallel_size == 0",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "pipeline_model_parallel_layout",
+            "num_layers_in_first_pipeline_stage",
+            "num_layers_in_last_pipeline_stage",
+            "account_for_embedding_in_pipeline_split",
+            "account_for_loss_in_pipeline_split",
+            "virtual_pipeline_model_parallel_size",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 2125,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size > 0",
+          "kind": "range",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 2815,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "args.world_size % (tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size * gtp_weight_remat_size) == 0",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "args",
+            "gtp_weight_remat_size",
+            "context_parallel_size",
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 430,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_layout is not None => num_stages % pipeline_model_parallel_size == 0",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "pipeline_model_parallel_layout",
+            "num_stages"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 911,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "virtual_pipeline_model_parallel_size is not None and overlap_p2p_comm => pipeline_model_parallel_size > 1",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "overlap_p2p_comm",
+            "virtual_pipeline_model_parallel_size"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 968,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "virtual_pipeline_model_parallel_size is not None and (not overlap_p2p_comm) => pipeline_model_parallel_size > 2",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "virtual_pipeline_model_parallel_size",
+            "overlap_p2p_comm"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 972,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "use_torch_fsdp2 => pipeline_model_parallel_size == 1",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "use_torch_fsdp2"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 1000,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "ckpt_format == 'torch_dcp' => pipeline_model_parallel_size <= 1",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "ckpt_format"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 1621,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "inference_batch_times_seqlen_threshold > -1 => pipeline_model_parallel_size > 1",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "inference_batch_times_seqlen_threshold"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 1787,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers_per_virtual_pipeline_stage is not None => pipeline_model_parallel_size > 2",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "num_layers_per_virtual_pipeline_stage"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/yaml_arguments.py",
+              "line": 138,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size: integer",
+          "kind": "type",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/model_parallel_config.py",
+              "line": 83,
+              "detail": "dataclass annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 35,
+          "parse_errors": [],
+          "raw_candidates": 29,
+          "filtered_candidates": 6,
+          "accepted_candidates": 23
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 599,
+          "yaml_files": 1,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 24
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "constraints": [
+        {
+          "expression": "hidden_size == self.input_size",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/models/audio/audio_projector.py",
+              "line": 50,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size is not None",
+          "kind": "type",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/models/mimo/model/base.py",
+              "line": 572,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "0 <= emb_int <= hidden_size",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "emb_int"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/elastification/flextron_elasticity_hooks.py",
+              "line": 62,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "kv_channels is None => hidden_size % num_attention_heads == 0",
+          "kind": "conditional",
+          "parameters": [
+            "hidden_size",
+            "kv_channels",
+            "num_attention_heads"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 1297,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "language_model.kv_channels is None => hidden_size % language_model.num_attention_heads == 0",
+          "kind": "conditional",
+          "parameters": [
+            "hidden_size",
+            "language_model"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/yaml_arguments.py",
+              "line": 253,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size: integer",
+          "kind": "type",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 138,
+              "detail": "dataclass annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 78,
+          "parse_errors": [],
+          "raw_candidates": 8,
+          "filtered_candidates": 3,
+          "accepted_candidates": 5
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 599,
+          "yaml_files": 1,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 6
+      }
+    },
+    {
+      "parameter": "num_attention_heads",
+      "constraints": [
+        {
+          "expression": "num_query_groups == num_attention_heads",
+          "kind": "relation",
+          "parameters": [
+            "num_attention_heads",
+            "num_query_groups"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/attention.py",
+              "line": 2093,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "'num_query_groups' not in attention_config_dict and n_heads_in_group is not None => num_attention_heads % n_heads_in_group == 0",
+          "kind": "conditional",
+          "parameters": [
+            "num_attention_heads",
+            "attention_config_dict",
+            "n_heads_in_group"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/heterogeneous/heterogeneous_config.py",
+              "line": 43,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads % tensor_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "num_attention_heads",
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 1323,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "kv_channels is None => hidden_size % num_attention_heads == 0",
+          "kind": "conditional",
+          "parameters": [
+            "num_attention_heads",
+            "kv_channels",
+            "hidden_size"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 1297,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "language_model.kv_channels is None => language_model.hidden_size % num_attention_heads == 0",
+          "kind": "conditional",
+          "parameters": [
+            "num_attention_heads",
+            "language_model"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/yaml_arguments.py",
+              "line": 253,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads: integer",
+          "kind": "type",
+          "parameters": [
+            "num_attention_heads"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 141,
+              "detail": "dataclass annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 22,
+          "parse_errors": [],
+          "raw_candidates": 6,
+          "filtered_candidates": 1,
+          "accepted_candidates": 5
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 599,
+          "yaml_files": 1,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 6
+      }
+    },
+    {
+      "parameter": "micro_batch_size",
+      "constraints": [
+        {
+          "expression": "micro_batch_size is not None",
+          "kind": "type",
+          "parameters": [
+            "micro_batch_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/num_microbatches_calculator.py",
+              "line": 325,
+              "detail": "assertion"
+            },
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 675,
+              "detail": "assertion"
+            },
+            {
+              "kind": "static",
+              "source": "megatron/training/yaml_arguments.py",
+              "line": 111,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "decrease_batch_size_if_needed => running_global_batch_size % (micro_batch_size * data_parallel_size) == 0",
+          "kind": "conditional",
+          "parameters": [
+            "micro_batch_size",
+            "decrease_batch_size_if_needed",
+            "running_global_batch_size",
+            "data_parallel_size"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/num_microbatches_calculator.py",
+              "line": 372,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "not decrease_batch_size_if_needed => global_batch_size % (micro_batch_size * data_parallel_size) == 0",
+          "kind": "conditional",
+          "parameters": [
+            "micro_batch_size",
+            "decrease_batch_size_if_needed",
+            "global_batch_size",
+            "data_parallel_size"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/num_microbatches_calculator.py",
+              "line": 381,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "n % micro_batch_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "micro_batch_size",
+            "n"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/utils.py",
+              "line": 2313,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "perform_rl_step and rl_use_sequence_packing => micro_batch_size == 1",
+          "kind": "conditional",
+          "parameters": [
+            "micro_batch_size",
+            "perform_rl_step",
+            "rl_use_sequence_packing"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 546,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "micro_batch_size > 0",
+          "kind": "range",
+          "parameters": [
+            "micro_batch_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 676,
+              "detail": "assertion"
+            },
+            {
+              "kind": "static",
+              "source": "megatron/training/datasets/data_samplers.py",
+              "line": 152,
+              "detail": "assertion"
+            },
+            {
+              "kind": "static",
+              "source": "megatron/training/datasets/data_samplers.py",
+              "line": 351,
+              "detail": "assertion"
+            },
+            {
+              "kind": "static",
+              "source": "megatron/training/yaml_arguments.py",
+              "line": 112,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "micro_batch_size: integer",
+          "kind": "type",
+          "parameters": [
+            "micro_batch_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/config/training_config.py",
+              "line": 11,
+              "detail": "dataclass annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 24,
+          "parse_errors": [],
+          "raw_candidates": 13,
+          "filtered_candidates": 2,
+          "accepted_candidates": 6
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 599,
+          "yaml_files": 1,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 7
+      }
+    },
+    {
+      "parameter": "sequence_parallel",
+      "constraints": [
+        {
+          "expression": "(tensor_model_parallel_size <= 1 or expert_model_parallel_size <= 1) and (expert_model_parallel_size == 1 or tensor_model_parallel_size == 1) => not sequence_parallel",
+          "kind": "conditional",
+          "parameters": [
+            "sequence_parallel",
+            "tensor_model_parallel_size",
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/inference/text_generation_controllers/text_generation_controller.py",
+              "line": 3483,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "inference_context is not None => not sequence_parallel",
+          "kind": "conditional",
+          "parameters": [
+            "sequence_parallel",
+            "inference_context"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/ssm/gated_delta_net/gdn.py",
+              "line": 91,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "self.tp_size > 1 => sequence_parallel",
+          "kind": "conditional",
+          "parameters": [
+            "sequence_parallel"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/tensor_parallel/inference_layers.py",
+              "line": 169,
+              "detail": "assertion"
+            },
+            {
+              "kind": "static",
+              "source": "megatron/core/tensor_parallel/inference_layers.py",
+              "line": 296,
+              "detail": "assertion"
+            },
+            {
+              "kind": "static",
+              "source": "megatron/core/tensor_parallel/inference_layers.py",
+              "line": 391,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "not sequence_parallel",
+          "kind": "other",
+          "parameters": [
+            "sequence_parallel"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/torch_norm.py",
+              "line": 50,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "recompute_granularity is not None and distribute_saved_activations => not sequence_parallel",
+          "kind": "conditional",
+          "parameters": [
+            "sequence_parallel",
+            "distribute_saved_activations",
+            "recompute_granularity"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/transformer/transformer_config.py",
+              "line": 1783,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "tp_comm_overlap => sequence_parallel == True",
+          "kind": "conditional",
+          "parameters": [
+            "sequence_parallel",
+            "tp_comm_overlap"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/arguments.py",
+              "line": 1407,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "language_model.num_moe_experts is not None and model_parallel.tensor_model_parallel_size > 1 => sequence_parallel",
+          "kind": "conditional",
+          "parameters": [
+            "sequence_parallel",
+            "language_model",
+            "model_parallel"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/training/yaml_arguments.py",
+              "line": 337,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "sequence_parallel: boolean",
+          "kind": "type",
+          "parameters": [
+            "sequence_parallel"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "megatron/core/model_parallel_config.py",
+              "line": 94,
+              "detail": "dataclass annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 59,
+          "parse_errors": [],
+          "raw_candidates": 17,
+          "filtered_candidates": 8,
+          "accepted_candidates": 7
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 599,
+          "yaml_files": 1,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 8
+      }
+    }
+  ]
+}

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Sequence
 
 from configfuzz.corpus import load_corpus
-from configfuzz.extractors import scan_python_paths_multi
+from configfuzz.extractors import scan_source_paths_multi
 from configfuzz.probing import (
     ProbeManifest,
     load_samples,
@@ -23,12 +23,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    scan = subparsers.add_parser("scan", help="scan Python source for parameter constraints")
+    scan = subparsers.add_parser(
+        "scan",
+        help="scan Python code and configuration declarations for constraints",
+    )
     scan.add_argument(
         "paths",
         nargs="+",
         type=Path,
-        help="Python files or directories to scan",
+        help="Python, YAML, or source directories to scan",
     )
     scan.add_argument(
         "--parameter",
@@ -95,7 +98,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _run_scan(args: argparse.Namespace) -> int:
-    scanned = scan_python_paths_multi(
+    scanned = scan_source_paths_multi(
         args.paths,
         args.parameters,
         strict=not args.broad,

@@ -205,7 +205,8 @@ Compare against:
 
 The current AST implementation now provides strict/broad modes, lexical scope
 and exception-flow handling, local symbolic expansion, conditional
-normalization, repair-control filtering, and bounded file-level parallelism.
+normalization, repair-control filtering, bounded cross-file function summaries,
+argparse/dataclass/YAML declaration extraction, and file-level parallelism.
 Its formal input is framework source. The lm-sv source tree remains a regression
 fixture and manual-baseline source, not the method's inference oracle.
 
@@ -241,11 +242,14 @@ Completed in the initial prototype:
 - a normalized corpus of reviewed Task1 validator rules and Task6 mutation-pool rules.
 - a strict static scanner that removes known name-matching false positives,
   normalizes guarded relations, and scans multiple parameters in parallel.
+- bounded interprocedural propagation for direct helper-function calls.
+- argparse, dataclass, `Literal`, field-metadata, and YAML schema extraction.
+- a versioned Megatron-LM framework-side scan at commit `42460a7`.
 
 Next tasks:
 
-1. Add interprocedural symbolic propagation across module boundaries.
-2. Extract argparse, dataclass, schema, YAML, shell, and documentation constraints.
+1. Attach model, module, version, backend, and execution-stage scope to candidates.
+2. Add return-value/object-field propagation and shell/documentation adapters.
 3. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
 4. Evaluate strict-scanner precision and recall against the reviewed corpus.
 5. Independently validate corpus entries against framework source and runtime behavior.

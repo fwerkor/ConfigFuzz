@@ -36,8 +36,10 @@ The initial repository provides:
 - a normalized manual-rule corpus that separates framework requirements, lm-sv policies, environment limits, and workarounds;
 - a machine-readable constraint and evidence model;
 - a strict-by-default Python AST extractor with scoped symbolic propagation,
-  conditional normalization, and false-positive filtering;
-- a parallel CLI for scanning a framework source tree for one or more parameters;
+  conditional normalization, helper-function summaries, and false-positive filtering;
+- declaration extractors for argparse, dataclass, `Literal`, field metadata,
+  and schema-style YAML;
+- a parallel CLI for scanning Python/YAML framework trees for one or more parameters;
 - an isolated subprocess harness driven by JSON manifests;
 - runtime outcome classification into `VALID`, `INVALID`, `UNKNOWN`, and
   `POTENTIAL_BUG`;
@@ -89,6 +91,24 @@ python -m configfuzz scan \
 
 Strict mode is the default. Use `--broad` only for exploratory, recall-oriented
 scans whose unsupported expressions will be reviewed manually.
+
+Run a versioned scan against an external framework checkout:
+
+```bash
+python scripts/run_framework_static_scan.py /path/to/Megatron-LM \
+  --source-subdir megatron \
+  --name Megatron-LM \
+  --parameter tensor_model_parallel_size \
+  --parameter pipeline_model_parallel_size \
+  --parameter hidden_size \
+  --parameter num_attention_heads \
+  --jobs 4 \
+  --output artifacts/frameworks/megatron_lm_scan.json
+```
+
+The repository includes a result generated from Megatron-LM commit
+`42460a7af821366e7115a162cb4410106bea93f0` at
+`artifacts/frameworks/megatron_lm_42460a7.json`.
 
 Build the first baseline inventory:
 
@@ -146,10 +166,10 @@ configfuzz/                 new constraint-inference prototype
   synthesis.py              Z3-backed constraint synthesis
 scripts/                    experiment and inventory utilities
 tests/configfuzz/           focused prototype tests
-artifacts/                  generated research inventories
+artifacts/                  generated research inventories and framework scans
 corpus/lmsv/                normalized lm-sv manual constraints
 experiments/                lm-sv runtime adapter and manifests
-examples/                   deterministic end-to-end demonstration
+examples/                   deterministic runtime and framework-static fixtures
 docs/RESEARCH_PLAN.md       research questions and evaluation plan
 docs/CONSTRAINT_DSL.md      supported constraint representation
 docs/STATIC_SCANNER.md      scanner semantics, normalization, and regression data

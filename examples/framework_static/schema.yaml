@@ -1,0 +1,4 @@
+type: object
+properties:
+  sequence_parallel:
+    type: boolean

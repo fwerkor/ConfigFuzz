@@ -12,9 +12,9 @@
   "parameters_considered": 65,
   "parameters_with_candidates": 17,
   "python_files_indexed": 90,
-  "raw_candidates": 47,
-  "filtered_candidates": 4,
-  "candidates_emitted": 42,
+  "raw_candidates": 80,
+  "filtered_candidates": 3,
+  "candidates_emitted": 61,
   "results": [
     {
       "parameter": "context_parallel_size",
@@ -33,6 +33,86 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 217,
+              "detail": "interprocedural summary instantiated at line 84"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 217,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "micro_batch_size > 0 => global_batch_size % (micro_batch_size * (8 // (tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size))) == 0",
+          "kind": "conditional",
+          "parameters": [
+            "context_parallel_size",
+            "micro_batch_size",
+            "global_batch_size",
+            "expert_model_parallel_size",
+            "tensor_model_parallel_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.84,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "interprocedural summary instantiated at line 87"
+            }
+          ]
+        },
+        {
+          "expression": "context_parallel_size == 1",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.9,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 166,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size < 2 => context_parallel_size <= 1",
+          "kind": "conditional",
+          "parameters": [
+            "context_parallel_size",
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.87,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 390,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size <= world_size",
+          "kind": "environment",
+          "parameters": [
+            "context_parallel_size",
+            "world_size",
+            "expert_model_parallel_size",
+            "tensor_model_parallel_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.9,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 400,
               "detail": "repairing guard"
             }
           ]
@@ -79,9 +159,9 @@
         "mode": "strict",
         "scanned_files": 12,
         "parse_errors": [],
-        "raw_candidates": 3,
-        "filtered_candidates": 0,
-        "accepted_candidates": 3
+        "raw_candidates": 9,
+        "filtered_candidates": 1,
+        "accepted_candidates": 7
       }
     },
     {
@@ -117,6 +197,47 @@
     {
       "parameter": "expert_model_parallel_size",
       "constraints": [
+        {
+          "expression": "micro_batch_size > 0 => global_batch_size % (micro_batch_size * (8 // (tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size))) == 0",
+          "kind": "conditional",
+          "parameters": [
+            "expert_model_parallel_size",
+            "micro_batch_size",
+            "global_batch_size",
+            "context_parallel_size",
+            "tensor_model_parallel_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.84,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "interprocedural summary instantiated at line 87"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size <= world_size",
+          "kind": "environment",
+          "parameters": [
+            "expert_model_parallel_size",
+            "world_size",
+            "context_parallel_size",
+            "tensor_model_parallel_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.9,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 400,
+              "detail": "repairing guard"
+            }
+          ]
+        },
         {
           "expression": "num_experts > 0 => expert_model_parallel_size <= 0 or num_experts % expert_model_parallel_size == 0",
           "kind": "conditional",
@@ -157,9 +278,9 @@
         "mode": "strict",
         "scanned_files": 14,
         "parse_errors": [],
-        "raw_candidates": 3,
+        "raw_candidates": 5,
         "filtered_candidates": 1,
-        "accepted_candidates": 2
+        "accepted_candidates": 4
       }
     },
     {
@@ -178,6 +299,12 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 190,
+              "detail": "interprocedural summary instantiated at line 82"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 190,
               "detail": "repairing guard"
             }
           ]
@@ -191,6 +318,12 @@
           ],
           "confidence": 0.9,
           "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 228,
+              "detail": "interprocedural summary instantiated at line 85"
+            },
             {
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
@@ -223,7 +356,7 @@
         "mode": "strict",
         "scanned_files": 32,
         "parse_errors": [],
-        "raw_candidates": 3,
+        "raw_candidates": 5,
         "filtered_candidates": 0,
         "accepted_candidates": 3
       }
@@ -231,6 +364,27 @@
     {
       "parameter": "global_batch_size",
       "constraints": [
+        {
+          "expression": "micro_batch_size > 0 => global_batch_size % (micro_batch_size * (8 // (tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size))) == 0",
+          "kind": "conditional",
+          "parameters": [
+            "global_batch_size",
+            "micro_batch_size",
+            "context_parallel_size",
+            "expert_model_parallel_size",
+            "tensor_model_parallel_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.84,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "interprocedural summary instantiated at line 87"
+            }
+          ]
+        },
         {
           "expression": "global_batch_size <= max_global_bs",
           "kind": "relation",
@@ -272,9 +426,9 @@
         "mode": "strict",
         "scanned_files": 7,
         "parse_errors": [],
-        "raw_candidates": 2,
+        "raw_candidates": 3,
         "filtered_candidates": 0,
-        "accepted_candidates": 2
+        "accepted_candidates": 3
       }
     },
     {
@@ -311,6 +465,12 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 190,
+              "detail": "interprocedural summary instantiated at line 82"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 190,
               "detail": "repairing guard"
             }
           ]
@@ -328,6 +488,12 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 200,
+              "detail": "interprocedural summary instantiated at line 83"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 200,
               "detail": "repairing guard"
             }
           ]
@@ -338,7 +504,7 @@
         "mode": "strict",
         "scanned_files": 39,
         "parse_errors": [],
-        "raw_candidates": 3,
+        "raw_candidates": 5,
         "filtered_candidates": 0,
         "accepted_candidates": 3
       }
@@ -347,11 +513,11 @@
       "parameter": "max_position_embeddings",
       "constraints": [
         {
-          "expression": "(seq_length if seq_length > 0 else max_position_embeddings) > limit => not max_position_embeddings or max_position_embeddings <= limit",
+          "expression": "(seq_length if seq_length > 0 else max_position_embeddings) > flash_attention_seq_limit => not max_position_embeddings or max_position_embeddings <= flash_attention_seq_limit",
           "kind": "conditional",
           "parameters": [
             "max_position_embeddings",
-            "limit",
+            "flash_attention_seq_limit",
             "seq_length"
           ],
           "confidence": 0.87,
@@ -360,6 +526,24 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 749,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "seq_cap_enabled and max_seq_length_cap > 0 => not max_position_embeddings or max_position_embeddings <= max_seq_length_cap",
+          "kind": "conditional",
+          "parameters": [
+            "max_position_embeddings",
+            "seq_cap_enabled",
+            "max_seq_length_cap"
+          ],
+          "confidence": 0.87,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 898,
               "detail": "repairing guard"
             }
           ]
@@ -388,13 +572,34 @@
         "scanned_files": 15,
         "parse_errors": [],
         "raw_candidates": 3,
-        "filtered_candidates": 1,
-        "accepted_candidates": 2
+        "filtered_candidates": 0,
+        "accepted_candidates": 3
       }
     },
     {
       "parameter": "micro_batch_size",
       "constraints": [
+        {
+          "expression": "micro_batch_size > 0 => global_batch_size % (micro_batch_size * (8 // (tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size))) == 0",
+          "kind": "conditional",
+          "parameters": [
+            "micro_batch_size",
+            "global_batch_size",
+            "context_parallel_size",
+            "expert_model_parallel_size",
+            "tensor_model_parallel_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.84,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "interprocedural summary instantiated at line 87"
+            }
+          ]
+        },
         {
           "expression": "micro_batch_size > 0",
           "kind": "range",
@@ -403,6 +608,12 @@
           ],
           "confidence": 0.9,
           "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 312,
+              "detail": "interprocedural summary instantiated at line 87"
+            },
             {
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
@@ -435,9 +646,9 @@
         "mode": "strict",
         "scanned_files": 7,
         "parse_errors": [],
-        "raw_candidates": 2,
+        "raw_candidates": 4,
         "filtered_candidates": 0,
-        "accepted_candidates": 2
+        "accepted_candidates": 3
       }
     },
     {
@@ -521,6 +732,12 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 217,
+              "detail": "interprocedural summary instantiated at line 84"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 217,
               "detail": "repairing guard"
             }
           ]
@@ -531,7 +748,7 @@
         "mode": "strict",
         "scanned_files": 36,
         "parse_errors": [],
-        "raw_candidates": 1,
+        "raw_candidates": 2,
         "filtered_candidates": 0,
         "accepted_candidates": 1
       }
@@ -629,23 +846,6 @@
           ]
         },
         {
-          "expression": "num_layers % pipeline_model_parallel_size == 0",
-          "kind": "relation",
-          "parameters": [
-            "num_layers",
-            "pipeline_model_parallel_size"
-          ],
-          "confidence": 0.9,
-          "evidence": [
-            {
-              "kind": "static",
-              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
-              "line": 254,
-              "detail": "repairing guard"
-            }
-          ]
-        },
-        {
           "expression": "num_layers_per_virtual_pipeline_stage > 1 => num_layers % (pipeline_model_parallel_size * num_layers_per_virtual_pipeline_stage) == 0",
           "kind": "conditional",
           "parameters": [
@@ -659,6 +859,35 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 264,
+              "detail": "interprocedural summary instantiated at line 86"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 264,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers % pipeline_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "num_layers",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.9,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 254,
+              "detail": "interprocedural summary instantiated at line 86"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 254,
               "detail": "repairing guard"
             }
           ]
@@ -669,7 +898,7 @@
         "mode": "strict",
         "scanned_files": 37,
         "parse_errors": [],
-        "raw_candidates": 4,
+        "raw_candidates": 6,
         "filtered_candidates": 0,
         "accepted_candidates": 3
       }
@@ -691,23 +920,12 @@
               "source": "lmsv_rec/utils/runtime/mf_converter.py",
               "line": 463,
               "detail": "rejecting guard"
-            }
-          ]
-        },
-        {
-          "expression": "num_layers % pipeline_model_parallel_size == 0",
-          "kind": "relation",
-          "parameters": [
-            "pipeline_model_parallel_size",
-            "num_layers"
-          ],
-          "confidence": 0.9,
-          "evidence": [
+            },
             {
               "kind": "static",
-              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
-              "line": 254,
-              "detail": "repairing guard"
+              "source": "lmsv_rec/utils/runtime/mf_converter.py",
+              "line": 470,
+              "detail": "rejecting guard"
             }
           ]
         },
@@ -725,6 +943,76 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 264,
+              "detail": "interprocedural summary instantiated at line 86"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 264,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers % pipeline_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "num_layers"
+          ],
+          "confidence": 0.9,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 254,
+              "detail": "interprocedural summary instantiated at line 86"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 254,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "micro_batch_size > 0 => global_batch_size % (micro_batch_size * (8 // (tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size))) == 0",
+          "kind": "conditional",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "micro_batch_size",
+            "global_batch_size",
+            "context_parallel_size",
+            "expert_model_parallel_size",
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.84,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "interprocedural summary instantiated at line 87"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size <= world_size",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "world_size",
+            "context_parallel_size",
+            "expert_model_parallel_size",
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.9,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 400,
               "detail": "repairing guard"
             }
           ]
@@ -735,20 +1023,20 @@
         "mode": "strict",
         "scanned_files": 30,
         "parse_errors": [],
-        "raw_candidates": 3,
+        "raw_candidates": 8,
         "filtered_candidates": 0,
-        "accepted_candidates": 3
+        "accepted_candidates": 5
       }
     },
     {
       "parameter": "seq_length",
       "constraints": [
         {
-          "expression": "(seq_length if seq_length > 0 else max_position_embeddings) > limit => not seq_length or seq_length <= limit",
+          "expression": "(seq_length if seq_length > 0 else max_position_embeddings) > flash_attention_seq_limit => not seq_length or seq_length <= flash_attention_seq_limit",
           "kind": "conditional",
           "parameters": [
             "seq_length",
-            "limit",
+            "flash_attention_seq_limit",
             "max_position_embeddings"
           ],
           "confidence": 0.87,
@@ -757,6 +1045,24 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 741,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "seq_cap_enabled and max_seq_length_cap > 0 => not seq_length or seq_length <= max_seq_length_cap",
+          "kind": "conditional",
+          "parameters": [
+            "seq_length",
+            "seq_cap_enabled",
+            "max_seq_length_cap"
+          ],
+          "confidence": 0.87,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 890,
               "detail": "repairing guard"
             }
           ]
@@ -785,13 +1091,30 @@
         "scanned_files": 22,
         "parse_errors": [],
         "raw_candidates": 3,
-        "filtered_candidates": 1,
-        "accepted_candidates": 2
+        "filtered_candidates": 0,
+        "accepted_candidates": 3
       }
     },
     {
       "parameter": "sequence_parallel",
       "constraints": [
+        {
+          "expression": "tensor_model_parallel_size < 2 => not sequence_parallel",
+          "kind": "conditional",
+          "parameters": [
+            "sequence_parallel",
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.87,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 409,
+              "detail": "repairing guard"
+            }
+          ]
+        },
         {
           "expression": "num_experts > 0 and tensor_model_parallel_size > 1 => sequence_parallel",
           "kind": "conditional",
@@ -816,9 +1139,9 @@
         "mode": "strict",
         "scanned_files": 13,
         "parse_errors": [],
-        "raw_candidates": 2,
+        "raw_candidates": 3,
         "filtered_candidates": 1,
-        "accepted_candidates": 1
+        "accepted_candidates": 2
       }
     },
     {
@@ -833,6 +1156,12 @@
           ],
           "confidence": 0.9,
           "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 200,
+              "detail": "interprocedural summary instantiated at line 83"
+            },
             {
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
@@ -855,6 +1184,12 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 217,
+              "detail": "interprocedural summary instantiated at line 84"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 217,
               "detail": "repairing guard"
             }
           ]
@@ -872,7 +1207,34 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 228,
+              "detail": "interprocedural summary instantiated at line 85"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 228,
               "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "micro_batch_size > 0 => global_batch_size % (micro_batch_size * (8 // (tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size))) == 0",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "micro_batch_size",
+            "global_batch_size",
+            "context_parallel_size",
+            "expert_model_parallel_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.84,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "interprocedural summary instantiated at line 87"
             }
           ]
         },
@@ -890,6 +1252,60 @@
               "kind": "static",
               "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
               "line": 243,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "context_parallel_size > 1 => tensor_model_parallel_size >= 2",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "context_parallel_size"
+          ],
+          "confidence": 0.87,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 390,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size <= world_size",
+          "kind": "environment",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "world_size",
+            "context_parallel_size",
+            "expert_model_parallel_size",
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.9,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 400,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "sequence_parallel => tensor_model_parallel_size >= 2",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "sequence_parallel"
+          ],
+          "confidence": 0.87,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 409,
               "detail": "repairing guard"
             }
           ]
@@ -928,6 +1344,40 @@
               "detail": "repairing guard"
             }
           ]
+        },
+        {
+          "expression": "q_lora_rank > 0 => q_lora_rank % tensor_model_parallel_size == 0",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "q_lora_rank"
+          ],
+          "confidence": 0.87,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 810,
+              "detail": "repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "kv_lora_rank > 0 => kv_lora_rank % tensor_model_parallel_size == 0",
+          "kind": "conditional",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "kv_lora_rank"
+          ],
+          "confidence": 0.87,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 819,
+              "detail": "repairing guard"
+            }
+          ]
         }
       ],
       "metadata": {
@@ -935,9 +1385,9 @@
         "mode": "strict",
         "scanned_files": 31,
         "parse_errors": [],
-        "raw_candidates": 6,
+        "raw_candidates": 15,
         "filtered_candidates": 0,
-        "accepted_candidates": 6
+        "accepted_candidates": 12
       }
     },
     {

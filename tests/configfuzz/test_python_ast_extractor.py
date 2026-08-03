@@ -267,3 +267,156 @@ def validate(hidden_size):
     for parameter in parameters:
         assert expressions(serial[parameter]) == expressions(parallel[parameter])
         assert serial[parameter].metadata["scanned_files"] == parallel[parameter].metadata["scanned_files"]
+
+
+def test_instantiates_same_file_helper_constraint(tmp_path: Path) -> None:
+    source = tmp_path / "validator.py"
+    source.write_text(
+        """
+def require_divisible(value, divisor):
+    if value % divisor != 0:
+        raise ValueError("not divisible")
+
+def validate(config):
+    require_divisible(
+        config.hidden_size,
+        config.tensor_model_parallel_size,
+    )
+""",
+        encoding="utf-8",
+    )
+
+    results = scan_python_paths_multi(
+        [source],
+        ["hidden_size", "tensor_model_parallel_size"],
+        jobs=1,
+    )
+
+    expected = "hidden_size % tensor_model_parallel_size == 0"
+    assert expected in expressions(results["hidden_size"])
+    assert expected in expressions(results["tensor_model_parallel_size"])
+    evidence = next(
+        item.evidence[0]
+        for item in results["hidden_size"].constraints
+        if item.expression == expected
+    )
+    assert evidence.detail == "interprocedural summary instantiated at line 7"
+
+
+def test_instantiates_cross_file_helper_constraint(tmp_path: Path) -> None:
+    helper = tmp_path / "checks.py"
+    helper.write_text(
+        """
+def require_positive(value, message="invalid"):
+    if value <= 0:
+        raise ValueError(message)
+""",
+        encoding="utf-8",
+    )
+    caller = tmp_path / "arguments.py"
+    caller.write_text(
+        """
+from checks import require_positive
+
+def validate(args):
+    require_positive(args.micro_batch_size)
+""",
+        encoding="utf-8",
+    )
+
+    result = scan_python_paths_multi(
+        [tmp_path],
+        ["micro_batch_size"],
+        jobs=1,
+    )["micro_batch_size"]
+
+    assert "micro_batch_size > 0" in expressions(result)
+
+
+def test_instantiates_conditional_helper_summary(tmp_path: Path) -> None:
+    source = tmp_path / "validator.py"
+    source.write_text(
+        """
+def validate_topk(topk, experts):
+    if experts > 0:
+        if topk > experts:
+            raise ValueError("topk exceeds experts")
+
+def validate(config):
+    validate_topk(config.moe_router_topk, config.num_experts)
+""",
+        encoding="utf-8",
+    )
+
+    result = scan_python_paths_multi(
+        [source],
+        ["moe_router_topk"],
+        jobs=1,
+    )["moe_router_topk"]
+
+    assert (
+        "num_experts > 0 => moe_router_topk <= num_experts"
+        in expressions(result)
+    )
+
+
+def test_strict_mode_rejects_target_used_as_object(tmp_path: Path) -> None:
+    source = tmp_path / "runtime.py"
+    source.write_text(
+        """
+def validate(hidden_size):
+    if hidden_size.input_size != 4096:
+        raise ValueError("runtime object mismatch")
+""",
+        encoding="utf-8",
+    )
+
+    result = scan_python_paths_multi(
+        [source],
+        ["hidden_size"],
+        jobs=1,
+    )["hidden_size"]
+
+    assert expressions(result) == set()
+
+
+def test_strict_mode_rejects_runtime_membership_container(tmp_path: Path) -> None:
+    source = tmp_path / "runtime.py"
+    source.write_text(
+        """
+def validate(hidden_size, buffers):
+    assert hidden_size not in buffers["active"]
+""",
+        encoding="utf-8",
+    )
+
+    result = scan_python_paths_multi(
+        [source],
+        ["hidden_size"],
+        jobs=1,
+    )["hidden_size"]
+
+    assert expressions(result) == set()
+
+
+def test_canonicalizes_related_self_config_fields(tmp_path: Path) -> None:
+    source = tmp_path / "config.py"
+    source.write_text(
+        """
+class TransformerConfig:
+    def validate(self):
+        if self.num_attention_heads % self.tensor_model_parallel_size != 0:
+            raise ValueError("invalid parallel split")
+""",
+        encoding="utf-8",
+    )
+
+    result = scan_python_paths_multi(
+        [source],
+        ["tensor_model_parallel_size", "num_attention_heads"],
+        jobs=1,
+    )
+
+    expected = "num_attention_heads % tensor_model_parallel_size == 0"
+    assert expected in expressions(result["tensor_model_parallel_size"])
+    assert expected in expressions(result["num_attention_heads"])

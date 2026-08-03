@@ -109,6 +109,14 @@ _ENVIRONMENT_CALLS = {
     "world_size",
 }
 
+_STANDARD_PARAMETER_ALIASES = {
+    "cp": "context_parallel_size",
+    "ep": "expert_model_parallel_size",
+    "pp": "pipeline_model_parallel_size",
+    "sp": "sequence_parallel",
+    "tp": "tensor_model_parallel_size",
+}
+
 _DISALLOWED_ATTRIBUTES = {
     "block",
     "decoder",
@@ -129,6 +137,18 @@ class ExtractedExpression:
     line: int
     confidence: float
     detail: str
+    source: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class _FunctionSummary:
+    name: str
+    parameters: tuple[str, ...]
+    predicate: str
+    condition: str | None
+    source: str
+    line: int
+    confidence: float
 
 
 @dataclass(frozen=True, slots=True)
@@ -169,9 +189,25 @@ class _SubstituteBindings(ast.NodeTransformer):
 
 
 class _CanonicalizeConfigAccess(ast.NodeTransformer):
-    def __init__(self, parameter: str):
+    def __init__(
+        self,
+        parameter: str,
+        known_parameters: Iterable[str] = (),
+        *,
+        canonicalize_self_fields: bool = False,
+    ):
         self.parameter = parameter
         self.parameter_leaf = parameter.rsplit(".", 1)[-1]
+        self.known_parameters = {
+            item.rsplit(".", 1)[-1] for item in known_parameters
+        }
+        self.canonicalize_self_fields = canonicalize_self_fields
+
+    def visit_Name(self, node: ast.Name) -> ast.AST:
+        canonical = _STANDARD_PARAMETER_ALIASES.get(node.id)
+        if canonical is not None and canonical in self.known_parameters:
+            return ast.copy_location(ast.Name(id=canonical, ctx=node.ctx), node)
+        return node
 
     def visit_Attribute(self, node: ast.Attribute) -> ast.AST:
         node = self.generic_visit(node)
@@ -180,10 +216,19 @@ class _CanonicalizeConfigAccess(ast.NodeTransformer):
         if (
             isinstance(node.value, ast.Name)
             and node.value.id == "self"
-            and node.attr.endswith(("_cap", "_limit", "_size"))
+            and self.canonicalize_self_fields
+            and not node.attr.startswith("_")
         ):
             return ast.copy_location(ast.Name(id=node.attr, ctx=ast.Load()), node)
-        if node.attr == self.parameter_leaf or _looks_like_config_container(node.value):
+        if (
+            node.attr == self.parameter_leaf
+            or _looks_like_config_container(node.value)
+            or (
+                isinstance(node.value, ast.Name)
+                and node.value.id == "self"
+                and node.attr in self.known_parameters
+            )
+        ):
             return ast.copy_location(ast.Name(id=node.attr, ctx=ast.Load()), node)
         return node
 
@@ -265,11 +310,21 @@ class PythonConstraintExtractor(ast.NodeVisitor):
     conditional constraints. Results remain candidates rather than ground truth.
     """
 
-    def __init__(self, parameter: str, source: str, *, strict: bool = True):
+    def __init__(
+        self,
+        parameter: str,
+        source: str,
+        *,
+        strict: bool = True,
+        function_summaries: dict[str, tuple[_FunctionSummary, ...]] | None = None,
+        known_parameters: Iterable[str] = (),
+    ):
         self.parameter = parameter
         self.parameter_leaf = parameter.rsplit(".", 1)[-1]
         self.source = source
         self.strict = strict
+        self._function_summaries = function_summaries or {}
+        self._known_parameters = tuple(known_parameters)
         self._global_bindings: dict[str, ast.expr] = {}
         self._config_keys: set[str] = {self.parameter_leaf}
         self._scope = _Scope(bindings={})
@@ -394,7 +449,7 @@ class PythonConstraintExtractor(ast.NodeVisitor):
                     evidence=(
                         Evidence(
                             kind=EvidenceKind.STATIC,
-                            source=self.source,
+                            source=extracted.source or self.source,
                             line=extracted.line,
                             detail=extracted.detail,
                         ),
@@ -461,13 +516,20 @@ class PythonConstraintExtractor(ast.NodeVisitor):
     def visit_NamedExpr(self, node: ast.NamedExpr) -> None:
         self._update_binding(node.target, self._prepare(node.value))
 
+    def visit_Expr(self, node: ast.Expr) -> None:
+        if isinstance(node.value, ast.Call):
+            self._apply_function_summaries(node.value, node.lineno)
+
     def _update_binding(self, target: ast.AST, value: ast.expr | None) -> None:
         names = _assigned_names(target)
         for name in names:
             self._scope.bindings.pop(name, None)
         if value is None or not _safe_symbolic_expression(value):
             return
-        if not _uses_only_symbolic_names(value, self._config_keys):
+        if not _uses_only_symbolic_names(
+            value,
+            {*self._config_keys, *self._known_parameters},
+        ):
             return
         for name in names:
             self._scope.bindings[name] = copy.deepcopy(value)
@@ -617,13 +679,88 @@ class PythonConstraintExtractor(ast.NodeVisitor):
             self._config_keys,
         )
 
+    def _apply_function_summaries(self, call: ast.Call, line: int) -> None:
+        name = _call_name(call.func)
+        if name is None:
+            return
+        summaries = self._function_summaries.get(name)
+        if not summaries:
+            return
+        for summary in summaries:
+            bindings: dict[str, ast.expr] = {}
+            for formal, actual in zip(summary.parameters, call.args):
+                bindings[formal] = self._prepare_summary_argument(actual)
+            for keyword in call.keywords:
+                if keyword.arg in summary.parameters:
+                    bindings[keyword.arg] = self._prepare_summary_argument(keyword.value)
+            predicate = ast.parse(summary.predicate, mode="eval").body
+            condition = None
+            if summary.condition is not None:
+                condition = ast.parse(summary.condition, mode="eval").body
+            used_formals = {
+                child.id
+                for expression in (predicate, condition)
+                if expression is not None
+                for child in ast.walk(expression)
+                if isinstance(child, ast.Name) and child.id in summary.parameters
+            }
+            if any(formal not in bindings for formal in used_formals):
+                continue
+            predicate = _SubstituteBindings(bindings).visit(predicate)
+            if condition is not None:
+                condition = _SubstituteBindings(bindings).visit(condition)
+            predicate = self._prepare(predicate)
+            condition = self._prepare(condition) if condition is not None else None
+            if not (
+                _contains_name(predicate, self.parameter_leaf)
+                or (
+                    condition is not None
+                    and _contains_name(condition, self.parameter_leaf)
+                )
+            ):
+                continue
+            conditions = [*self._path_conditions]
+            if condition is not None:
+                conditions.append(condition)
+            self._record(
+                predicate=predicate,
+                condition=_combine_and(conditions),
+                line=summary.line,
+                confidence=summary.confidence,
+                detail=f"interprocedural summary instantiated at line {line}",
+                source=summary.source,
+            )
+
+    def _prepare_summary_argument(self, node: ast.expr) -> ast.expr:
+        prepared = self._prepare(node)
+        prepared = _SubstituteBindings(self._global_bindings).visit(prepared)
+        prepared = _CanonicalizeConfigAccess(
+            self.parameter_leaf,
+            self._known_parameters,
+            canonicalize_self_fields=self._in_configuration_class(),
+        ).visit(prepared)
+        ast.fix_missing_locations(prepared)
+        assert isinstance(prepared, ast.expr)
+        return prepared
+
     def _prepare(self, node: ast.expr) -> ast.expr:
         expanded = _SubstituteBindings(self._scope.bindings).visit(copy.deepcopy(node))
-        canonical = _CanonicalizeConfigAccess(self.parameter_leaf).visit(expanded)
+        canonical = _CanonicalizeConfigAccess(
+            self.parameter_leaf,
+            self._known_parameters,
+            canonicalize_self_fields=self._in_configuration_class(),
+        ).visit(expanded)
         canonical = _SimplifyConstraintExpression().visit(canonical)
         ast.fix_missing_locations(canonical)
         assert isinstance(canonical, ast.expr)
         return canonical
+
+    def _in_configuration_class(self) -> bool:
+        for name in self._class_stack:
+            lowered = name.lower()
+            if lowered.endswith(("args", "arguments", "config", "validator")):
+                return True
+        return False
 
     def _record(
         self,
@@ -633,6 +770,7 @@ class PythonConstraintExtractor(ast.NodeVisitor):
         line: int,
         confidence: float,
         detail: str,
+        source: str | None = None,
     ) -> None:
         self._expressions.append(
             ExtractedExpression(
@@ -641,6 +779,7 @@ class PythonConstraintExtractor(ast.NodeVisitor):
                 line=line,
                 confidence=max(0.0, confidence - (0.03 if condition is not None else 0.0)),
                 detail=detail,
+                source=source,
             )
         )
 
@@ -649,12 +788,18 @@ def extract_python_file(path: Path, parameter: str, *, strict: bool = True) -> C
     source_text = path.read_text(encoding="utf-8", errors="replace")
     tree = ast.parse(source_text, filename=str(path))
     exact_bindings = _collect_exact_config_bindings(tree)
+    function_summaries = _collect_function_summaries_from_tree(
+        tree,
+        source=_display_path(path),
+        strict=strict,
+    )
     return extract_python_tree(
         tree,
         source=_display_path(path),
         parameter=parameter,
         strict=strict,
         exact_bindings=exact_bindings,
+        function_summaries=function_summaries,
     )
 
 
@@ -665,11 +810,15 @@ def extract_python_tree(
     parameter: str,
     strict: bool = True,
     exact_bindings: dict[str, ast.expr] | None = None,
+    function_summaries: dict[str, tuple[_FunctionSummary, ...]] | None = None,
+    known_parameters: Iterable[str] = (),
 ) -> ConstraintSet:
     return PythonConstraintExtractor(
         parameter=parameter,
         source=source,
         strict=strict,
+        function_summaries=function_summaries,
+        known_parameters=known_parameters,
     ).extract(tree, exact_bindings=exact_bindings)
 
 
@@ -690,6 +839,9 @@ def scan_python_paths_multi(
     jobs: int = 1,
 ) -> dict[str, ConstraintSet]:
     ordered_parameters = list(dict.fromkeys(str(parameter) for parameter in parameters))
+    known_parameters = tuple(
+        parameter.rsplit(".", 1)[-1] for parameter in ordered_parameters
+    )
     results = {
         parameter: ConstraintSet(
             parameter=parameter,
@@ -707,19 +859,19 @@ def scan_python_paths_multi(
 
     files = list(_iter_python_files(paths))
     worker_count = _resolve_worker_count(jobs, len(files))
-    global_bindings = _collect_global_config_bindings(
-        files,
-        allowed_keys={parameter.rsplit(".", 1)[-1] for parameter in ordered_parameters},
-    )
-    serialized_bindings = tuple(
-        sorted(
-            (name, value.id)
-            for name, value in global_bindings.items()
-            if isinstance(value, ast.Name)
-        )
+    serialized_summaries = tuple(
+        summary
+        for summaries in _collect_global_function_summaries(files, strict=strict).values()
+        for summary in summaries
     )
     work_items = [
-        (str(path), tuple(ordered_parameters), strict, serialized_bindings)
+        (
+            str(path),
+            tuple(ordered_parameters),
+            strict,
+            serialized_summaries,
+            known_parameters,
+        )
         for path in files
     ]
     if worker_count == 1:
@@ -741,10 +893,11 @@ def _scan_python_file(
         str,
         tuple[str, ...],
         bool,
-        tuple[tuple[str, str], ...],
+        tuple[_FunctionSummary, ...],
+        tuple[str, ...],
     ],
 ) -> _FileScanResult:
-    raw_path, parameters, strict, serialized_bindings = work_item
+    raw_path, parameters, strict, serialized_summaries, known_parameters = work_item
     path = Path(raw_path)
     try:
         source_text = path.read_text(encoding="utf-8", errors="replace")
@@ -755,12 +908,14 @@ def _scan_python_file(
             results={},
         )
 
-    exact_bindings = {
-        name: ast.Name(id=key, ctx=ast.Load())
-        for name, key in serialized_bindings
-        if name in source_text
+    exact_bindings = _collect_exact_config_bindings(tree)
+    function_summaries: dict[str, list[_FunctionSummary]] = {}
+    for summary in serialized_summaries:
+        if summary.name in source_text:
+            function_summaries.setdefault(summary.name, []).append(summary)
+    frozen_summaries = {
+        name: tuple(items) for name, items in function_summaries.items()
     }
-    exact_bindings.update(_collect_exact_config_bindings(tree))
     source_name = _display_path(path)
     extracted: dict[str, ConstraintSet] = {}
     for parameter in parameters:
@@ -773,6 +928,8 @@ def _scan_python_file(
             parameter=parameter,
             strict=strict,
             exact_bindings=exact_bindings,
+            function_summaries=frozen_summaries,
+            known_parameters=known_parameters,
         )
     return _FileScanResult(error=None, results=extracted)
 
@@ -886,34 +1043,324 @@ def _collect_exact_config_bindings(tree: ast.AST) -> dict[str, ast.expr]:
     }
 
 
-def _collect_global_config_bindings(
+def _collect_global_function_summaries(
     files: Iterable[Path],
     *,
-    allowed_keys: set[str],
-) -> dict[str, ast.expr]:
-    discovered: dict[str, str] = {}
-    ambiguous: set[str] = set()
+    strict: bool,
+) -> dict[str, tuple[_FunctionSummary, ...]]:
+    collected: dict[str, list[_FunctionSummary]] = {}
+    origins: dict[str, set[str]] = {}
     for path in files:
         try:
-            source_text = path.read_text(encoding="utf-8", errors="replace")
-            tree = ast.parse(source_text, filename=str(path))
+            tree = ast.parse(
+                path.read_text(encoding="utf-8", errors="replace"),
+                filename=str(path),
+            )
         except (OSError, SyntaxError):
             continue
-        for alias, value in _collect_exact_config_bindings(tree).items():
-            if not isinstance(value, ast.Name):
+        source = _display_path(path)
+        for name, summaries in _collect_function_summaries_from_tree(
+            tree,
+            source=source,
+            strict=strict,
+        ).items():
+            collected.setdefault(name, []).extend(summaries)
+            origins.setdefault(name, set()).add(source)
+
+    result: dict[str, tuple[_FunctionSummary, ...]] = {}
+    for name, summaries in collected.items():
+        if len(origins.get(name, ())) != 1:
+            continue
+        unique = {
+            (
+                item.parameters,
+                item.predicate,
+                item.condition,
+                item.source,
+                item.line,
+            ): item
+            for item in summaries
+        }
+        result[name] = tuple(unique[key] for key in sorted(unique, key=repr))
+    return result
+
+
+class _FunctionSummaryCollector(ast.NodeVisitor):
+    def __init__(
+        self,
+        parameters: tuple[str, ...],
+        *,
+        source: str,
+        strict: bool,
+    ):
+        self.parameters = parameters
+        self.parameter_set = set(parameters)
+        self.source = source
+        self.strict = strict
+        self.scope = _Scope(
+            bindings={
+                parameter: ast.Name(id=parameter, ctx=ast.Load())
+                for parameter in parameters
+            }
+        )
+        self.path_conditions: list[ast.expr] = []
+        self.records: list[ExtractedExpression] = []
+
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        for statement in node.body:
+            self.visit(statement)
+
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        for statement in node.body:
+            self.visit(statement)
+
+    def visit_Assign(self, node: ast.Assign) -> None:
+        value = self._prepare(node.value)
+        for target in node.targets:
+            self._update_binding(target, value)
+
+    def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
+        value = self._prepare(node.value) if node.value is not None else None
+        self._update_binding(node.target, value)
+
+    def visit_AugAssign(self, node: ast.AugAssign) -> None:
+        for name in _assigned_names(node.target):
+            self.scope.bindings.pop(name, None)
+
+    def visit_Assert(self, node: ast.Assert) -> None:
+        test = self._prepare(node.test)
+        for predicate in _split_top_level_and(test):
+            self._record(
+                predicate,
+                _combine_and(self.path_conditions),
+                node.lineno,
+                1.0,
+                "assertion",
+            )
+
+    def visit_If(self, node: ast.If) -> None:
+        test = self._prepare(node.test)
+        action = _direct_guard_action(node.body)
+        opposite_action = _direct_guard_action(node.orelse)
+        if action is not None and opposite_action is None:
+            confidence = 0.98 if action.kind == "reject" else 0.90
+            detail = "rejecting guard" if action.kind == "reject" else "repairing guard"
+            for parameter in self.parameters:
+                if not _contains_name(test, parameter):
+                    continue
+                for predicate, local_condition in _valid_constraints_from_rejecting_guard(
+                    test,
+                    parameter,
+                ):
+                    conditions = [*self.path_conditions]
+                    if local_condition is not None:
+                        conditions.append(local_condition)
+                    self._record(
+                        predicate,
+                        _combine_and(conditions),
+                        node.lineno,
+                        confidence,
+                        detail,
+                    )
+
+        before = self.scope.clone()
+        previous_path = self.path_conditions
+
+        self.scope = before.clone()
+        self.path_conditions = [*previous_path, test]
+        for statement in node.body:
+            self.visit(statement)
+        body_scope = self.scope
+
+        self.scope = before.clone()
+        self.path_conditions = [*previous_path, _negate(test)]
+        for statement in node.orelse:
+            self.visit(statement)
+        else_scope = self.scope
+
+        self.scope = _merge_branch_scopes(
+            before,
+            body_scope,
+            else_scope,
+            has_else=bool(node.orelse),
+        )
+        self.path_conditions = previous_path
+
+    def visit_Try(self, node: ast.Try) -> None:
+        before = self.scope.clone()
+        previous_path = self.path_conditions
+        branch_scopes: list[_Scope] = []
+
+        self.scope = before.clone()
+        for statement in node.body:
+            self.visit(statement)
+        for statement in node.orelse:
+            self.visit(statement)
+        branch_scopes.append(self.scope)
+
+        for handler in node.handlers:
+            self.scope = before.clone()
+            for statement in handler.body:
+                self.visit(statement)
+            branch_scopes.append(self.scope)
+
+        self.scope = _merge_equal_scopes(branch_scopes)
+        self.path_conditions = previous_path
+        for statement in node.finalbody:
+            self.visit(statement)
+
+    def _prepare(self, node: ast.expr) -> ast.expr:
+        prepared = _SubstituteBindings(self.scope.bindings).visit(copy.deepcopy(node))
+        prepared = _SimplifyConstraintExpression().visit(prepared)
+        ast.fix_missing_locations(prepared)
+        assert isinstance(prepared, ast.expr)
+        return prepared
+
+    def _update_binding(self, target: ast.AST, value: ast.expr | None) -> None:
+        names = _assigned_names(target)
+        for name in names:
+            self.scope.bindings.pop(name, None)
+        if value is None or not _safe_symbolic_expression(value):
+            return
+        referenced = {
+            child.id
+            for child in ast.walk(value)
+            if isinstance(child, ast.Name) and child.id not in _IGNORED_NAMES
+        }
+        if not referenced.issubset(self.parameter_set):
+            return
+        for name in names:
+            self.scope.bindings[name] = copy.deepcopy(value)
+
+    def _record(
+        self,
+        predicate: ast.expr,
+        condition: ast.expr | None,
+        line: int,
+        confidence: float,
+        detail: str,
+    ) -> None:
+        predicate = _SimplifyConstraintExpression().visit(_simplify_boolean(predicate))
+        condition = (
+            _SimplifyConstraintExpression().visit(_simplify_boolean(condition))
+            if condition is not None
+            else None
+        )
+        combined_nodes = [predicate]
+        if condition is not None:
+            combined_nodes.append(condition)
+        names = {
+            child.id
+            for expression in combined_nodes
+            for child in ast.walk(expression)
+            if isinstance(child, ast.Name) and child.id not in _IGNORED_NAMES
+        }
+        if not names or not names.issubset(self.parameter_set):
+            return
+        self.records.append(
+            ExtractedExpression(
+                predicate=copy.deepcopy(predicate),
+                condition=copy.deepcopy(condition),
+                line=line,
+                confidence=confidence,
+                detail=detail,
+                source=self.source,
+            )
+        )
+
+
+def _collect_function_summaries_from_tree(
+    tree: ast.AST,
+    *,
+    source: str,
+    strict: bool,
+) -> dict[str, tuple[_FunctionSummary, ...]]:
+    summaries: dict[str, list[_FunctionSummary]] = {}
+    definitions: dict[str, int] = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        definitions[node.name] = definitions.get(node.name, 0) + 1
+        parameters = tuple(
+            argument.arg
+            for argument in (
+                *node.args.posonlyargs,
+                *node.args.args,
+                *node.args.kwonlyargs,
+            )
+            if argument.arg not in {"self", "cls"}
+        )
+        if not parameters or not _function_contains_constraint_guard(node):
+            continue
+        collector = _FunctionSummaryCollector(
+            parameters,
+            source=source,
+            strict=strict,
+        )
+        collector.visit(copy.deepcopy(node))
+        seen: set[tuple[str, str | None]] = set()
+        for record in collector.records:
+            predicate_text = ast.unparse(record.predicate)
+            condition_text = ast.unparse(record.condition) if record.condition is not None else None
+            if (predicate_text, condition_text) in seen:
                 continue
-            if value.id not in allowed_keys or alias == value.id:
+            if not _summary_expression_is_local(
+                predicate_text,
+                condition_text,
+                parameters,
+            ):
                 continue
-            previous = discovered.get(alias)
-            if previous is not None and previous != value.id:
-                ambiguous.add(alias)
-                continue
-            discovered[alias] = value.id
+            seen.add((predicate_text, condition_text))
+            summaries.setdefault(node.name, []).append(
+                _FunctionSummary(
+                    name=node.name,
+                    parameters=parameters,
+                    predicate=predicate_text,
+                    condition=condition_text,
+                    source=source,
+                    line=record.line,
+                    confidence=max(0.0, record.confidence - 0.03),
+                )
+            )
+
     return {
-        alias: ast.Name(id=key, ctx=ast.Load())
-        for alias, key in discovered.items()
-        if alias not in ambiguous
+        name: tuple(items)
+        for name, items in summaries.items()
+        if definitions.get(name) == 1
     }
+
+
+def _function_contains_constraint_guard(
+    node: ast.FunctionDef | ast.AsyncFunctionDef,
+) -> bool:
+    for child in ast.walk(node):
+        if isinstance(child, ast.Assert):
+            return True
+        if isinstance(child, ast.If) and _direct_guard_action(child.body) is not None:
+            return True
+    return False
+
+
+def _summary_expression_is_local(
+    predicate: str,
+    condition: str | None,
+    parameters: tuple[str, ...],
+) -> bool:
+    expressions = [ast.parse(predicate, mode="eval").body]
+    if condition is not None:
+        expressions.append(ast.parse(condition, mode="eval").body)
+    allowed = set(parameters)
+    for expression in expressions:
+        if any(isinstance(child, ast.Attribute) for child in ast.walk(expression)):
+            return False
+        names = {
+            child.id
+            for child in ast.walk(expression)
+            if isinstance(child, ast.Name) and child.id not in _IGNORED_NAMES
+        }
+        if not names.issubset(allowed):
+            return False
+    return True
 
 
 def _direct_config_key(node: ast.expr) -> str | None:
@@ -940,7 +1387,16 @@ def _direct_config_key(node: ast.expr) -> str | None:
 
 
 def _assigned_names(node: ast.AST) -> set[str]:
-    return {child.id for child in ast.walk(node) if isinstance(child, ast.Name)}
+    if isinstance(node, ast.Name):
+        return {node.id}
+    if isinstance(node, (ast.Tuple, ast.List)):
+        names: set[str] = set()
+        for item in node.elts:
+            names.update(_assigned_names(item))
+        return names
+    if isinstance(node, ast.Starred):
+        return _assigned_names(node.value)
+    return set()
 
 
 def _constant_string(node: ast.AST) -> str | None:
@@ -1184,7 +1640,24 @@ def _uses_only_symbolic_names(node: ast.expr, config_keys: set[str]) -> bool:
         and child.id not in _IGNORED_NAMES
         and not child.id.startswith("_")
     }
-    return names <= allowed
+    return all(name in allowed or _looks_configuration_symbol(name) for name in names)
+
+
+def _looks_configuration_symbol(name: str) -> bool:
+    return name.endswith(
+        (
+            "_cap",
+            "_count",
+            "_groups",
+            "_heads",
+            "_iters",
+            "_layers",
+            "_length",
+            "_limit",
+            "_rank",
+            "_size",
+        )
+    )
 
 
 def _is_dynamic_repair_value(node: ast.expr, config_keys: set[str]) -> bool:
@@ -1223,9 +1696,18 @@ def _is_supported_constraint(
 ) -> bool:
     if _is_tautology(node):
         return False
-    if strict and _contains_disallowed_access(node):
-        return False
+    if strict:
+        if _contains_disallowed_access(node):
+            return False
+        if _target_used_as_container(node, target):
+            return False
     if isinstance(node, ast.Compare):
+        for operator, comparator in zip(node.ops, node.comparators):
+            if isinstance(operator, (ast.In, ast.NotIn)) and not isinstance(
+                comparator,
+                (ast.List, ast.Tuple, ast.Set),
+            ):
+                return False
         return True
     if isinstance(node, ast.BoolOp):
         return all(_is_supported_condition(value, target, strict=strict) for value in node.values)
@@ -1265,6 +1747,21 @@ def _contains_disallowed_access(node: ast.AST) -> bool:
             if isinstance(child.func, ast.Attribute) and child.func.attr not in _ENVIRONMENT_CALLS:
                 return True
     return False
+
+
+def _target_used_as_container(node: ast.AST, target: str) -> bool:
+    for child in ast.walk(node):
+        if isinstance(child, ast.Attribute) and _expression_root_name(child.value) == target:
+            return True
+        if isinstance(child, ast.Subscript) and _expression_root_name(child.value) == target:
+            return True
+    return False
+
+
+def _expression_root_name(node: ast.AST) -> str | None:
+    while isinstance(node, (ast.Attribute, ast.Subscript)):
+        node = node.value
+    return node.id if isinstance(node, ast.Name) else None
 
 
 def _is_tautology(node: ast.expr) -> bool:
