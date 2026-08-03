@@ -6,6 +6,13 @@ from pathlib import Path
 from typing import Sequence
 
 from configfuzz.extractors import scan_python_paths
+from configfuzz.probing import (
+    ProbeManifest,
+    load_samples,
+    run_manifest,
+    samples_payload,
+)
+from configfuzz.synthesis import synthesize_constraints
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -35,6 +42,35 @@ def build_parser() -> argparse.ArgumentParser:
         help="write JSON to this path instead of stdout",
     )
     scan.set_defaults(handler=_run_scan)
+
+    probe = subparsers.add_parser(
+        "probe",
+        help="execute a runtime probing manifest and classify outcomes",
+    )
+    probe.add_argument("manifest", type=Path, help="JSON probe manifest")
+    probe.add_argument("--output", type=Path, help="write samples to this JSON file")
+    probe.set_defaults(handler=_run_probe)
+
+    synthesize = subparsers.add_parser(
+        "synthesize",
+        help="synthesize a constraint set from labeled probe samples",
+    )
+    synthesize.add_argument("samples", type=Path, help="JSON file produced by probe")
+    synthesize.add_argument(
+        "--parameter",
+        help="parameter to synthesize; defaults to the manifest parameter",
+    )
+    synthesize.add_argument("--output", type=Path, help="write the inferred specification")
+    synthesize.set_defaults(handler=_run_synthesize)
+
+    infer = subparsers.add_parser(
+        "infer",
+        help="run probing and synthesize a constraint set in one command",
+    )
+    infer.add_argument("manifest", type=Path, help="JSON probe manifest")
+    infer.add_argument("--samples-output", type=Path, help="retain labeled runtime samples")
+    infer.add_argument("--output", type=Path, help="write the inferred specification")
+    infer.set_defaults(handler=_run_infer)
     return parser
 
 
@@ -47,13 +83,59 @@ def _run_scan(args: argparse.Namespace) -> int:
         "schema_version": 1,
         "results": results,
     }
-    text = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
-    if args.output is None:
-        print(text, end="")
-    else:
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(text, encoding="utf-8")
+    _write_json(payload, args.output)
     return 0
+
+
+def _run_probe(args: argparse.Namespace) -> int:
+    manifest = ProbeManifest.from_path(args.manifest)
+    samples = run_manifest(manifest)
+    _write_json(samples_payload(manifest, samples), args.output)
+    return 0
+
+
+def _run_synthesize(args: argparse.Namespace) -> int:
+    payload, samples = load_samples(args.samples)
+    manifest = payload.get("manifest", {})
+    parameter = args.parameter or manifest.get("parameter")
+    if not parameter:
+        raise ValueError("parameter is required when the sample file has no manifest parameter")
+    context = manifest.get("context", {}) if isinstance(manifest, dict) else {}
+    result = synthesize_constraints(str(parameter), samples, context=context)
+    output = {
+        "schema_version": 1,
+        "result": result.to_dict(),
+    }
+    _write_json(output, args.output)
+    return 0
+
+
+def _run_infer(args: argparse.Namespace) -> int:
+    manifest = ProbeManifest.from_path(args.manifest)
+    samples = run_manifest(manifest)
+    sample_payload = samples_payload(manifest, samples)
+    if args.samples_output is not None:
+        _write_json(sample_payload, args.samples_output)
+    result = synthesize_constraints(
+        manifest.parameter,
+        samples,
+        context=dict(manifest.context),
+    )
+    output = {
+        "schema_version": 1,
+        "result": result.to_dict(),
+    }
+    _write_json(output, args.output)
+    return 0
+
+
+def _write_json(payload: object, path: Path | None) -> None:
+    text = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+    if path is None:
+        print(text, end="")
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
 
 
 def main(argv: Sequence[str] | None = None) -> int:

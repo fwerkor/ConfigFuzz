@@ -1,0 +1,23 @@
+{
+  "parallel": {
+    "tensor_model_parallel_size": 4,
+    "pipeline_model_parallel_size": 1,
+    "expert_model_parallel_size": 1,
+    "context_parallel_size": 1,
+    "num_layers_per_virtual_pipeline_stage": false
+  },
+  "model": {
+    "hidden_size": 16,
+    "num_attention_heads": 8,
+    "ffn_hidden_size": 64,
+    "num_layers": 4,
+    "seq_length": 128,
+    "max_position_embeddings": 128,
+    "vocab_size": 32000
+  },
+  "training": {
+    "global_batch_size": 8,
+    "micro_batch_size": 1
+  },
+  "moe": {}
+}

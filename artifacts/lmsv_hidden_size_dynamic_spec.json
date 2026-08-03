@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "result": {
+    "parameter": "hidden_size",
+    "constraints": [
+      {
+        "expression": "hidden_size % tensor_model_parallel_size == 0",
+        "kind": "relation",
+        "parameters": [
+          "hidden_size"
+        ],
+        "confidence": 0.99,
+        "evidence": [
+          {
+            "kind": "dynamic",
+            "source": "runtime-probe-samples",
+            "detail": "consistent with 5 valid samples; rejects 7/7 invalid samples"
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "method": "z3_minimum_consistent_conjunction",
+      "valid_samples": 5,
+      "invalid_samples": 7,
+      "ignored_samples": 0,
+      "status": "ok",
+      "candidate_count": 8,
+      "uncovered_invalid_samples": []
+    }
+  }
+}

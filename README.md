@@ -36,11 +36,21 @@ The initial repository provides:
 - a machine-readable constraint and evidence model;
 - a Python AST extractor for explicit guards, assertions, and lm-sv-style `_apply_fix` checks;
 - a CLI for scanning a file or source tree for one or more parameters;
+- an isolated subprocess harness driven by JSON manifests;
+- runtime outcome classification into `VALID`, `INVALID`, `UNKNOWN`, and
+  `POTENTIAL_BUG`;
+- boundary-oriented probe generation with model/environment context;
+- a Z3-backed synthesizer for ranges, enums, divisibility, and contextual
+  relations;
 - a script for building an initial static inventory from the baseline;
+- a lightweight adapter that exposes the real lm-sv validator as a runtime
+  oracle;
 - unit tests and a minimal GitHub Actions workflow;
 - a research plan and a proposed constraint DSL.
 
-Dynamic probing, oracle classification, counterexample-guided synthesis, and mutation integration are intentionally left as the next research stages.
+The current prototype performs one batch of static or dynamic inference. A
+full counterexample-guided loop, multi-parameter synthesis, resource modeling,
+and mutation integration remain research stages.
 
 ## Quick start
 
@@ -76,17 +86,55 @@ Build the first baseline inventory:
 python scripts/build_lmsv_constraint_inventory.py
 ```
 
+Run the complete runtime pipeline on a deterministic demonstration target:
+
+```bash
+python -m configfuzz infer examples/toy_parallel_size.json \
+  --samples-output artifacts/toy_samples.json \
+  --output artifacts/toy_spec.json
+```
+
+The inferred result is:
+
+```text
+hidden_size % parallel_size == 0
+```
+
+Run the same pipeline against the actual lm-sv configuration validator:
+
+```bash
+python -m configfuzz infer experiments/manifests/lmsv_hidden_size.json \
+  --samples-output artifacts/lmsv_hidden_size_samples.json \
+  --output artifacts/lmsv_hidden_size_dynamic_spec.json
+```
+
+For the included baseline and probe set, ConfigFuzz recovers:
+
+```text
+hidden_size % tensor_model_parallel_size == 0
+```
+
+The validator accepts `hidden_size = 0` unchanged, so the dynamic result does
+not invent a positivity constraint that is absent from the observed oracle.
+This distinction is useful when separating recovered implementation behavior
+from intended framework semantics.
+
 ## Repository layout
 
 ```text
 configfuzz/                 new constraint-inference prototype
   extractors/               static candidate extractors
+  outcomes.py               runtime outcome oracle
+  probing.py                manifest, generator, and subprocess harness
+  synthesis.py              Z3-backed constraint synthesis
 scripts/                    experiment and inventory utilities
 tests/configfuzz/           focused prototype tests
 artifacts/                  generated research inventories
-experiments/                experiment manifests and notes
+experiments/                lm-sv runtime adapter and manifests
+examples/                   deterministic end-to-end demonstration
 docs/RESEARCH_PLAN.md       research questions and evaluation plan
 docs/CONSTRAINT_DSL.md      supported constraint representation
+docs/RUNTIME_INFERENCE.md   manifest and runtime pipeline reference
 docs/LMSV_BASELINE.md       original lm-sv README
 lmsv_rec/, mm-new/, ...     baseline implementation
 ```

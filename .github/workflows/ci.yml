@@ -13,7 +13,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install
-        run: python -m pip install -e '.[dev]'
+        run: python -m pip install -e '.[dev,research]'
       - name: Test
         run: pytest tests/configfuzz
       - name: CLI smoke test
@@ -22,3 +22,9 @@ jobs:
           --parameter hidden_size
           lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
           --output /tmp/configfuzz-smoke.json
+      - name: Runtime inference smoke test
+        run: >-
+          python -m configfuzz infer
+          examples/toy_parallel_size.json
+          --samples-output /tmp/configfuzz-runtime-samples.json
+          --output /tmp/configfuzz-runtime-spec.json

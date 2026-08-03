@@ -1,0 +1,17 @@
+{
+  "parameter": "parallel_size",
+  "parameter_type": "integer",
+  "baseline": 1,
+  "values": [0, 1, 2, 3, 4, 5, 8, 16],
+  "command": ["python", "examples/toy_target.py", "--parallel-size", "{value}"],
+  "cwd": "..",
+  "timeout_seconds": 5,
+  "context": {
+    "hidden_size": 32
+  },
+  "classification": {
+    "invalid_patterns": ["CONFIG_INVALID:"],
+    "bug_patterns": ["BUG_ORACLE:"],
+    "milestone_patterns": ["MILESTONE: configuration accepted"]
+  }
+}

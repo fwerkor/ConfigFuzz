@@ -1,0 +1,26 @@
+{
+  "parameter": "hidden_size",
+  "parameter_type": "integer",
+  "baseline": 16,
+  "values": [-1, 0, 1, 2, 3, 4, 5, 8, 12, 15, 16, 17],
+  "context": {
+    "tensor_model_parallel_size": 4
+  },
+  "command": [
+    "python",
+    "experiments/lmsv_validator_probe.py",
+    "--config",
+    "experiments/lmsv_validator_baseline.json",
+    "--parameter",
+    "model.hidden_size",
+    "--value",
+    "{value}"
+  ],
+  "cwd": "../..",
+  "timeout_seconds": 10,
+  "classification": {
+    "invalid_patterns": ["CONFIG_INVALID:"],
+    "bug_patterns": ["BUG_ORACLE:"],
+    "milestone_patterns": ["MILESTONE: lm-sv validator accepted"]
+  }
+}

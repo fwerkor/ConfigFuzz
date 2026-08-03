@@ -218,10 +218,21 @@ Compare against:
 
 ## 8. Immediate tasks
 
-1. Run the initial static inventory script and inspect false positives.
+Completed in the initial prototype:
+
+- static inventory over the lm-sv baseline;
+- four-way runtime outcome classification;
+- isolated, timeout-bounded subprocess probing;
+- integer, float, Boolean, string, and enum candidate generation;
+- first Z3 templates for bounds, enums, divisibility, and contextual relations;
+- a real lm-sv validator adapter and hidden-size recovery experiment.
+
+Next tasks:
+
+1. Inspect and label static-inventory false positives.
 2. Refactor alias tracking to be function- and scope-sensitive.
 3. Extract constraint candidates from `_apply_fix` arguments and comments, not only guard conditions.
 4. Build a manually reviewed gold set of 50-100 constraints from Task1 and Task6.
-5. Define one lightweight execution milestone, such as configuration parsing plus model initialization.
-6. Implement result classification before implementing active learning.
-7. Add the first Z3 templates: interval, enum, equality, divisibility, and two-parameter order.
+5. Add adaptive query selection and convergence criteria.
+6. Extend synthesis to jointly varied parameters and conditional formulas.
+7. Integrate generated specifications into the lm-sv mutation path behind a fallback flag.
