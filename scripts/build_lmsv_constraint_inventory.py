@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from configfuzz.extractors import scan_python_paths
+from configfuzz.extractors import scan_python_paths_multi
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,18 +61,12 @@ def main() -> int:
         for path in root.rglob("*.py")
         if "__pycache__" not in path.parts
     )
-    source_index = {
-        path: path.read_text(encoding="utf-8", errors="replace")
-        for path in python_files
-    }
-    results = []
-    for parameter in parameters:
-        candidate_files = [
-            path for path, source in source_index.items() if parameter in source
-        ]
-        result = scan_python_paths(candidate_files, parameter=parameter)
-        if result.constraints:
-            results.append(result.to_dict())
+    scanned = scan_python_paths_multi(python_files, parameters, jobs=0)
+    results = [
+        scanned[parameter].to_dict()
+        for parameter in parameters
+        if scanned[parameter].constraints
+    ]
 
     payload = {
         "schema_version": 1,
@@ -81,9 +75,25 @@ def main() -> int:
             "commit": "e73ba3d35",
             "branch": "dev_0.1.0",
         },
+        "scanner": {
+            "mode": "strict",
+            "jobs": "auto-up-to-4",
+        },
         "parameters_considered": len(parameters),
         "parameters_with_candidates": len(results),
         "python_files_indexed": len(python_files),
+        "raw_candidates": sum(
+            int(result["metadata"].get("raw_candidates", 0))
+            for result in results
+        ),
+        "filtered_candidates": sum(
+            int(result["metadata"].get("filtered_candidates", 0))
+            for result in results
+        ),
+        "candidates_emitted": sum(
+            len(result["constraints"])
+            for result in results
+        ),
         "results": results,
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)

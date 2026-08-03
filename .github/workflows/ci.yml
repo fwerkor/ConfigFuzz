@@ -20,6 +20,8 @@ jobs:
         run: >-
           python -m configfuzz scan
           --parameter hidden_size
+          --parameter tensor_model_parallel_size
+          --jobs 2
           lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
           --output /tmp/configfuzz-smoke.json
       - name: Runtime inference smoke test

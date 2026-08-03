@@ -203,6 +203,12 @@ Compare against:
 - validator, argparse, dataclass, schema, YAML, and shell adapters;
 - candidate ranking and provenance.
 
+The current AST implementation now provides strict/broad modes, lexical scope
+and exception-flow handling, local symbolic expansion, conditional
+normalization, repair-control filtering, and bounded file-level parallelism.
+Its formal input is framework source. The lm-sv source tree remains a regression
+fixture and manual-baseline source, not the method's inference oracle.
+
 ### Stage C: execution harness
 
 - reproducible baseline configuration;
@@ -233,13 +239,16 @@ Completed in the initial prototype:
 - first Z3 templates for bounds, enums, divisibility, and contextual relations;
 - a real lm-sv validator adapter and hidden-size recovery experiment.
 - a normalized corpus of reviewed Task1 validator rules and Task6 mutation-pool rules.
+- a strict static scanner that removes known name-matching false positives,
+  normalizes guarded relations, and scans multiple parameters in parallel.
 
 Next tasks:
 
-1. Inspect and label static-inventory false positives.
-2. Refactor alias tracking to be function- and scope-sensitive.
-3. Extract constraint candidates from `_apply_fix` arguments and comments, not only guard conditions.
-4. Independently validate corpus entries against framework source and runtime behavior.
-5. Add adaptive query selection and convergence criteria.
-6. Extend synthesis to jointly varied parameters and conditional formulas.
-7. Integrate generated specifications into the lm-sv mutation path behind a fallback flag.
+1. Add interprocedural symbolic propagation across module boundaries.
+2. Extract argparse, dataclass, schema, YAML, shell, and documentation constraints.
+3. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
+4. Evaluate strict-scanner precision and recall against the reviewed corpus.
+5. Independently validate corpus entries against framework source and runtime behavior.
+6. Add adaptive query selection and convergence criteria.
+7. Extend synthesis to jointly varied parameters and conditional formulas.
+8. Integrate generated specifications into the lm-sv mutation path behind a fallback flag.

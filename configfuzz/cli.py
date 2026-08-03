@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Sequence
 
 from configfuzz.corpus import load_corpus
-from configfuzz.extractors import scan_python_paths
+from configfuzz.extractors import scan_python_paths_multi
 from configfuzz.probing import (
     ProbeManifest,
     load_samples,
@@ -41,6 +41,17 @@ def build_parser() -> argparse.ArgumentParser:
         "--output",
         type=Path,
         help="write JSON to this path instead of stdout",
+    )
+    scan.add_argument(
+        "--broad",
+        action="store_true",
+        help="retain unsupported expressions for exploratory recall-oriented scans",
+    )
+    scan.add_argument(
+        "--jobs",
+        type=int,
+        default=0,
+        help="parallel source-file workers; 0 selects up to four automatically",
     )
     scan.set_defaults(handler=_run_scan)
 
@@ -84,10 +95,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _run_scan(args: argparse.Namespace) -> int:
-    results = [
-        scan_python_paths(args.paths, parameter=parameter).to_dict()
-        for parameter in args.parameters
-    ]
+    scanned = scan_python_paths_multi(
+        args.paths,
+        args.parameters,
+        strict=not args.broad,
+        jobs=args.jobs,
+    )
+    results = [scanned[parameter].to_dict() for parameter in args.parameters]
     payload = {
         "schema_version": 1,
         "results": results,

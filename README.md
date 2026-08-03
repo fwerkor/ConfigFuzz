@@ -35,8 +35,9 @@ The initial repository provides:
 - the lm-sv implementation as a baseline and source of manually encoded constraints;
 - a normalized manual-rule corpus that separates framework requirements, lm-sv policies, environment limits, and workarounds;
 - a machine-readable constraint and evidence model;
-- a Python AST extractor for explicit guards, assertions, and lm-sv-style `_apply_fix` checks;
-- a CLI for scanning a file or source tree for one or more parameters;
+- a strict-by-default Python AST extractor with scoped symbolic propagation,
+  conditional normalization, and false-positive filtering;
+- a parallel CLI for scanning a framework source tree for one or more parameters;
 - an isolated subprocess harness driven by JSON manifests;
 - runtime outcome classification into `VALID`, `INVALID`, `UNKNOWN`, and
   `POTENTIAL_BUG`;
@@ -62,13 +63,17 @@ pip install -e '.[dev]'
 pytest tests/configfuzz
 ```
 
-Scan the baseline validator for constraints on `hidden_size`:
+Scan framework source for constraints on `hidden_size`:
 
 ```bash
 python -m configfuzz scan \
   --parameter hidden_size \
-  lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+  --jobs 0 \
+  /path/to/framework
 ```
+
+The lm-sv validator can still be used as a regression fixture, but it is not
+the formal source input for ConfigFuzz evaluation.
 
 Scan several parameters and save JSON:
 
@@ -77,9 +82,13 @@ python -m configfuzz scan \
   --parameter tensor_model_parallel_size \
   --parameter num_attention_heads \
   --parameter moe_router_topk \
+  --jobs 0 \
   --output artifacts/example_constraints.json \
-  lmsv_rec
+  /path/to/framework
 ```
+
+Strict mode is the default. Use `--broad` only for exploratory, recall-oriented
+scans whose unsupported expressions will be reviewed manually.
 
 Build the first baseline inventory:
 
@@ -143,6 +152,7 @@ experiments/                lm-sv runtime adapter and manifests
 examples/                   deterministic end-to-end demonstration
 docs/RESEARCH_PLAN.md       research questions and evaluation plan
 docs/CONSTRAINT_DSL.md      supported constraint representation
+docs/STATIC_SCANNER.md      scanner semantics, normalization, and regression data
 docs/RUNTIME_INFERENCE.md   manifest and runtime pipeline reference
 docs/MANUAL_CONSTRAINT_CORPUS.md
                             corpus schema, semantics, and review workflow
