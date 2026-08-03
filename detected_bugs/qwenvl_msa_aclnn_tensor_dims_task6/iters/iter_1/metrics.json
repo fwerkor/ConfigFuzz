@@ -1,0 +1,27 @@
+{
+  "pta": {
+    "loss": null,
+    "memory": 19360.0,
+    "time": 84991.0
+  },
+  "msa": {
+    "loss": null,
+    "memory": 0.0,
+    "time": 120631.0,
+    "error_info": "RuntimeError: aclnnInplaceCopyGetWorkspaceSize call failed, please check!"
+  },
+  "analysis": {
+    "loss_match": true,
+    "accuracy_ok": true,
+    "memory_ok": true,
+    "perf_ok": false,
+    "loss_diff": 0.0,
+    "memory_diff": 19360.0,
+    "time_diff": 35640.0,
+    "issues": [
+      "RuntimeError: aclnnInplaceCopyGetWorkspaceSize call failed, please check!",
+      "性能异常: MSA耗时(120631.0ms) > PTA耗时(84991.0ms)"
+    ]
+  },
+  "timestamp": "2026-04-29T03:07:13.614454"
+}

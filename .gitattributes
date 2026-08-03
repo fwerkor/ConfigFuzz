@@ -1,0 +1,2 @@
+mm-new/task6_conda_envs_export/mindspeed.tar.gz filter=lfs diff=lfs merge=lfs -text
+mm-new/task6_conda_envs_export/msadapter.tar.gz filter=lfs diff=lfs merge=lfs -text

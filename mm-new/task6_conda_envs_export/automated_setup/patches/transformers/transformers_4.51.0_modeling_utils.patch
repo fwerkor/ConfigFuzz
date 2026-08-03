@@ -1,0 +1,13 @@
+--- /tmp/transformers_orig_extracted/transformers/modeling_utils.py	2025-04-05 20:02:36.000000000 +0800
++++ /tmp/extract_msadapter/lib/python3.10/site-packages/transformers/modeling_utils.py	2026-04-14 01:04:02.449144400 +0800
+@@ -4830,8 +4830,8 @@
+                     model_to_load,
+                     state_dict,
+                     shard_file,
+-                    expected_keys,
+-                    reverse_key_renaming_mapping,
++                    expected_keys=expected_keys,
++                    reverse_renaming_mapping=reverse_key_renaming_mapping,
+                     device_map=device_map,
+                     disk_offload_folder=disk_offload_folder,
+                     disk_offload_index=disk_offload_index,

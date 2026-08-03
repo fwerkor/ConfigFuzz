@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  configfuzz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: python -m pip install -e '.[dev]'
+      - name: Test
+        run: pytest tests/configfuzz
+      - name: CLI smoke test
+        run: >-
+          python -m configfuzz scan
+          --parameter hidden_size
+          lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+          --output /tmp/configfuzz-smoke.json

@@ -1,0 +1,13 @@
+from enum import Enum
+
+TENSOR_MODEL_PARALLEL_SIZE = 1
+PIPELINE_MODEL_PARALLEL_SIZE = 1
+CONTEXT_PARALLEL_SIZE = 1
+
+DISABLE_RANDOM = False
+DEFAULT_BATCH_SIZE = 3
+DEFAULT_MAX_SEQUENCE_LENGTH = 16
+
+class SupportedModules(Enum):
+    TEXT_DECODER = "text_decoder"
+    IMAGE_ENCODER = "image_encoder"

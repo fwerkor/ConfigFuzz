@@ -1,0 +1,14 @@
+{
+  "task_type": 6,
+  "iteration": 1,
+  "model": "qwenvl",
+  "overall_status": "PASS",
+  "reason": "MSA verification failed: RuntimeError: aclnnInplaceCopyGetWorkspaceSize call failed, please check!",
+  "components": {
+    "MUTATE": "PASS",
+    "PTA_VERIFY": "PASS",
+    "MSA_VERIFY": "FAIL",
+    "ANALYSIS": "FAIL"
+  },
+  "updated_at": "2026-04-29 03:07:13"
+}

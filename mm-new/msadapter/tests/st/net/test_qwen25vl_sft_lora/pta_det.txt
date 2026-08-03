@@ -1,0 +1,29 @@
+
+Number of parameters in transformer block in billions:  1.99
+Number of parameters in embedding layers in billions: 1.25
+Total number of parameters in billions: 3.24
+Number of parameters in most loaded shard in billions: 1.1204
+Number of parameters in other shards in billions: 0.4976
+Theoretical memory footprints: weight and optimizer=12822.33 MB
+ [2025-09-08 12:29:59] iteration        2/      10 | consumed samples:           16 | elapsed time per iteration (ms): 7638.8 | learning rate: 1.000000E-05 | global batch size:     8 | loss: 12.3640136718750000 | loss scale: 1.0 | grad norm: 1.7478742631475410 | num zeros: 0.0 | number of skipped iterations:   0 | number of nan iterations:   0 |
+[Rank 1] (after 2 iterations) memory (MB) | allocated: 2141.69189453125 | max allocated: 2416.1572265625 | reserved: 2450.0 | max reserved: 2450.0
+[Rank 4] (after 2 iterations) memory (MB) | allocated: 2054.451171875 | max allocated: 2520.3505859375 | reserved: 2648.0 | max reserved: 2648.0
+[Rank 5] (after 2 iterations) memory (MB) | allocated: 2054.451171875 | max allocated: 2520.3505859375 | reserved: 2648.0 | max reserved: 2648.0
+[Rank 0] (after 2 iterations) memory (MB) | allocated: 2141.69189453125 | max allocated: 2416.1572265625 | reserved: 2450.0 | max reserved: 2450.0
+ [2025-09-08 12:30:00] iteration        3/      10 | consumed samples:           24 | elapsed time per iteration (ms): 385.0 | learning rate: 9.698463E-06 | global batch size:     8 | loss: 12.3663158416748047 | loss scale: 1.0 | grad norm: 1.6796947390378165 | num zeros: 0.0 | number of skipped iterations:   0 | number of nan iterations:   0 |
+ [2025-09-08 12:30:00] iteration        4/      10 | consumed samples:           32 | elapsed time per iteration (ms): 488.1 | learning rate: 8.830222E-06 | global batch size:     8 | loss: 12.3696994781494141 | loss scale: 1.0 | grad norm: 1.4065623042562672 | num zeros: 0.0 | number of skipped iterations:   0 | number of nan iterations:   0 |
+ [2025-09-08 12:30:01] iteration        5/      10 | consumed samples:           40 | elapsed time per iteration (ms): 394.8 | learning rate: 7.500000E-06 | global batch size:     8 | loss: 12.3381328582763672 | loss scale: 1.0 | grad norm: 1.5481254070652599 | num zeros: 0.0 | number of skipped iterations:   0 | number of nan iterations:   0 |
+ [2025-09-08 12:30:01] iteration        6/      10 | consumed samples:           48 | elapsed time per iteration (ms): 309.2 | learning rate: 5.868241E-06 | global batch size:     8 | loss: 12.3269348144531250 | loss scale: 1.0 | grad norm: 1.6808715904974583 | num zeros: 0.0 | number of skipped iterations:   0 | number of nan iterations:   0 |
+ [2025-09-08 12:30:01] iteration        7/      10 | consumed samples:           56 | elapsed time per iteration (ms): 338.8 | learning rate: 4.131759E-06 | global batch size:     8 | loss: 12.4297389984130859 | loss scale: 1.0 | grad norm: 1.9407047716045231 | num zeros: 0.0 | number of skipped iterations:   0 | number of nan iterations:   0 |
+ [2025-09-08 12:30:02] iteration        8/      10 | consumed samples:           64 | elapsed time per iteration (ms): 324.7 | learning rate: 2.500000E-06 | global batch size:     8 | loss: 12.3469810485839844 | loss scale: 1.0 | grad norm: 1.5561206288931684 | num zeros: 0.0 | number of skipped iterations:   0 | number of nan iterations:   0 |
+ [2025-09-08 12:30:02] iteration        9/      10 | consumed samples:           72 | elapsed time per iteration (ms): 320.7 | learning rate: 1.169778E-06 | global batch size:     8 | loss: 12.3597288131713867 | loss scale: 1.0 | grad norm: 1.6711648163524466 | num zeros: 0.0 | number of skipped iterations:   0 | number of nan iterations:   0 |
+ [2025-09-08 12:30:02] iteration       10/      10 | consumed samples:           80 | elapsed time per iteration (ms): 413.1 | learning rate: 3.015369E-07 | global batch size:     8 | loss: 12.3446788787841797 | loss scale: 1.0 | grad norm: 1.3465820454143700 | num zeros: 0.0 | number of skipped iterations:   0 | number of nan iterations:   0 |
+[after training is done] datetime: 2025-09-08 12:30:02 
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

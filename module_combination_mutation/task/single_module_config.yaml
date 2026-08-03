@@ -1,0 +1,31 @@
+# 单模块变异 + 跑测（save / load）全流程配置
+# 流程：变异阶段 1 round、10 iterations，选出 iteration 数最大的配置（因非每次变异都成功）；
+#      save 阶段仅对该配置跑测并保存权重；load 阶段对该配置加载对应权重。
+
+global:
+  results_root: ./module_combination_mutation/task/results/_single_module
+  conda_env_pta: mindspeed-mm
+  MindSpeed_Core_MS_PATH: /shared/mm-new
+  dry_run: false
+  rounds: 1
+  capture_child_output: true
+
+mutate:
+  # 变异阶段：1 round，10 iterations（非每次迭代都成功，故后续选最大 iteration 的配置）
+  rounds: 1
+  iterations: 10
+  extra_args: ""
+  output_dir: ""
+
+test_save:
+  iterations: 2
+  save_ckpt: true
+  results_dir: ""
+  ckpt_dir: ""
+  extra_args: ""
+
+test_load:
+  iterations: 2
+  results_dir: ""
+  load_ckpt_dir: ""
+  extra_args: ""

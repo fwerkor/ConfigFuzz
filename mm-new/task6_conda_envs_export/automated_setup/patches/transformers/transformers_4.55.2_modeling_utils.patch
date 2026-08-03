@@ -1,0 +1,13 @@
+--- a/transformers/modeling_utils.py	2026-04-21 03:55:04.252901794 +0800
++++ b/transformers/modeling_utils.py	2026-04-21 03:55:04.280901933 +0800
+@@ -976,8 +976,8 @@
+             model_to_load,
+             state_dict,
+             shard_file,
+-            expected_keys,
+-            reverse_key_renaming_mapping,
++            expected_keys=expected_keys,
++            reverse_renaming_mapping=reverse_key_renaming_mapping,
+             device_map=device_map,
+             disk_offload_folder=disk_offload_folder,
+             disk_offload_index=disk_offload_index,

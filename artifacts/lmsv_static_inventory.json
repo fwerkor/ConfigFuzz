@@ -1,0 +1,4216 @@
+{
+  "schema_version": 1,
+  "baseline": {
+    "repository": "fwerkor/lm-sv",
+    "commit": "e73ba3d35",
+    "branch": "dev_0.1.0"
+  },
+  "parameters_considered": 65,
+  "parameters_with_candidates": 22,
+  "python_files_indexed": 90,
+  "results": [
+    {
+      "parameter": "attention_dropout",
+      "constraints": [
+        {
+          "expression": "attention_dropout",
+          "kind": "other",
+          "parameters": [
+            "attention_dropout"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/load_and_forward_submodule-auto.py",
+              "line": 808,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/load_and_forward_submodule.py",
+              "line": 645,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 28,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "batch_size",
+      "constraints": [
+        {
+          "expression": "dists[0] in batch_size",
+          "kind": "relation",
+          "parameters": [
+            "batch_size",
+            "dists"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/run_mindformer.py",
+              "line": 409,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "batch_size is not None",
+          "kind": "other",
+          "parameters": [
+            "batch_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "batch_size.shape == (batch_size, seq_len)",
+          "kind": "relation",
+          "parameters": [
+            "batch_size",
+            "seq_len"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 33,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "context_parallel_size",
+      "constraints": [
+        {
+          "expression": "context_parallel_size == context_parallel_size",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 158,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 326,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 342,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "context_parallel_size == 1",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 166,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 794,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/pretrain_gpt.py",
+              "line": 402,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size % context_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size",
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 200,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads % context_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size",
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 217,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "ffn_hidden_size % context_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size",
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 228,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (use_swiglu and ffn_hidden_size % context_parallel_size != 0)",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size",
+            "use_swiglu",
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 243,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers % context_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 254,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (vpp > 1 and num_layers % (context_parallel_size * vpp) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size",
+            "vpp",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 264,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "context_parallel_size <= max_global_bs",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size",
+            "max_global_bs"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 324,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 336,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 351,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (context_parallel_size > 0 and context_parallel_size % (context_parallel_size * context_parallel_size) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (context_parallel_size > 1 and context_parallel_size < 2)",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 390,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "context_parallel_size <= world_size",
+          "kind": "environment",
+          "parameters": [
+            "context_parallel_size",
+            "world_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 400,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (context_parallel_size < 2 and context_parallel_size)",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 409,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and context_parallel_size > 0 and (num_experts % context_parallel_size != 0))",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size",
+            "num_experts"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 483,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (moe_intermediate_size > 0 and moe_intermediate_size % context_parallel_size != 0)",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size",
+            "moe_intermediate_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 489,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and context_parallel_size > 1 and (not sequence_parallel))",
+          "kind": "relation",
+          "parameters": [
+            "context_parallel_size",
+            "num_experts",
+            "sequence_parallel"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 538,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "context_parallel_size > 1",
+          "kind": "range",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 553,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 599,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not context_parallel_size",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 553,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "context_parallel_size is not None",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 599,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "context_parallel_size is None",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 600,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "context_parallel_size != 1",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 611,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (context_parallel_size * target_pp * context_parallel_size * context_parallel_size > 0 and world_size % (context_parallel_size * target_pp * context_parallel_size * context_parallel_size) == 0)",
+          "kind": "environment",
+          "parameters": [
+            "context_parallel_size",
+            "world_size",
+            "target_pp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 613,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "context_parallel_size < context_parallel_size",
+          "kind": "range",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 639,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (context_parallel_size > 1 and context_parallel_size != context_parallel_size)",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 776,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (context_parallel_size > 0 and world_size % context_parallel_size == 0)",
+          "kind": "environment",
+          "parameters": [
+            "context_parallel_size",
+            "world_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 778,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (q_lora_rank > 0 and q_lora_rank % context_parallel_size != 0)",
+          "kind": "environment",
+          "parameters": [
+            "context_parallel_size",
+            "q_lora_rank"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 810,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (kv_lora_rank > 0 and kv_lora_rank % context_parallel_size != 0)",
+          "kind": "environment",
+          "parameters": [
+            "context_parallel_size",
+            "kv_lora_rank"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 819,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (self._to_bool(context_parallel_size.get('sequence_parallel', False)) and self._to_bool(context_parallel_size.get('distribute_saved_activations', False)))",
+          "kind": "other",
+          "parameters": [
+            "context_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 945,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 12,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "disable_bias_linear",
+      "constraints": [
+        {
+          "expression": "disable_bias_linear is not False",
+          "kind": "other",
+          "parameters": [
+            "disable_bias_linear"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 528,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 9,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "expert_model_parallel_size",
+      "constraints": [
+        {
+          "expression": "raw_cp == expert_model_parallel_size",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "raw_cp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 158,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "expert_model_parallel_size == 1",
+          "kind": "other",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 166,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 794,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size % expert_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 200,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads % expert_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 217,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "ffn_hidden_size % expert_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 228,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (use_swiglu and ffn_hidden_size % expert_model_parallel_size != 0)",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "use_swiglu",
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 243,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers % expert_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 254,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (vpp > 1 and num_layers % (expert_model_parallel_size * vpp) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "vpp",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 264,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "expert_model_parallel_size <= max_global_bs",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "max_global_bs"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 324,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 336,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 351,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "expert_model_parallel_size == expert_model_parallel_size",
+          "kind": "other",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 326,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 342,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (expert_model_parallel_size > 0 and expert_model_parallel_size % (expert_model_parallel_size * expert_model_parallel_size) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (expert_model_parallel_size > 1 and expert_model_parallel_size < 2)",
+          "kind": "other",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 390,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "expert_model_parallel_size <= world_size",
+          "kind": "environment",
+          "parameters": [
+            "expert_model_parallel_size",
+            "world_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 400,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (expert_model_parallel_size < 2 and expert_model_parallel_size)",
+          "kind": "other",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 409,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and expert_model_parallel_size > 0 and (num_experts % expert_model_parallel_size != 0))",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "num_experts"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 483,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (moe_intermediate_size > 0 and moe_intermediate_size % expert_model_parallel_size != 0)",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "moe_intermediate_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 489,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and expert_model_parallel_size > 1 and (not sequence_parallel))",
+          "kind": "relation",
+          "parameters": [
+            "expert_model_parallel_size",
+            "num_experts",
+            "sequence_parallel"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 538,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "expert_model_parallel_size > 1",
+          "kind": "range",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 553,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 599,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not expert_model_parallel_size",
+          "kind": "other",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 553,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "expert_model_parallel_size is not None",
+          "kind": "other",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 599,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "expert_model_parallel_size is None",
+          "kind": "other",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 600,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "expert_model_parallel_size != 1",
+          "kind": "other",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 611,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (expert_model_parallel_size * target_pp * expert_model_parallel_size * expert_model_parallel_size > 0 and world_size % (expert_model_parallel_size * target_pp * expert_model_parallel_size * expert_model_parallel_size) == 0)",
+          "kind": "environment",
+          "parameters": [
+            "expert_model_parallel_size",
+            "world_size",
+            "target_pp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 613,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "expert_model_parallel_size < expert_model_parallel_size",
+          "kind": "range",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 639,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (expert_model_parallel_size > 1 and expert_model_parallel_size != expert_model_parallel_size)",
+          "kind": "other",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 776,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (expert_model_parallel_size > 0 and world_size % expert_model_parallel_size == 0)",
+          "kind": "environment",
+          "parameters": [
+            "expert_model_parallel_size",
+            "world_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 778,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (q_lora_rank > 0 and q_lora_rank % expert_model_parallel_size != 0)",
+          "kind": "environment",
+          "parameters": [
+            "expert_model_parallel_size",
+            "q_lora_rank"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 810,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (kv_lora_rank > 0 and kv_lora_rank % expert_model_parallel_size != 0)",
+          "kind": "environment",
+          "parameters": [
+            "expert_model_parallel_size",
+            "kv_lora_rank"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 819,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (self._to_bool(expert_model_parallel_size.get('sequence_parallel', False)) and self._to_bool(expert_model_parallel_size.get('distribute_saved_activations', False)))",
+          "kind": "other",
+          "parameters": [
+            "expert_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 945,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 14,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "ffn_hidden_size",
+      "constraints": [
+        {
+          "expression": "ffn_hidden_size.decoder is not None",
+          "kind": "other",
+          "parameters": [
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/submutation.py",
+              "line": 1143,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/withnum_mutation_system.py",
+              "line": 1450,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "ffn_hidden_size in ffn_hidden_size.mutated_nodes",
+          "kind": "enum",
+          "parameters": [
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/submutation.py",
+              "line": 1332,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/withnum_mutation_system.py",
+              "line": 1640,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "ffn_hidden_size <= max_ffn_hidden_size",
+          "kind": "relation",
+          "parameters": [
+            "ffn_hidden_size",
+            "max_ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 190,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "ffn_hidden_size % tp == 0",
+          "kind": "relation",
+          "parameters": [
+            "ffn_hidden_size",
+            "tp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 228,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (use_swiglu and ffn_hidden_size % required_divisor != 0)",
+          "kind": "relation",
+          "parameters": [
+            "ffn_hidden_size",
+            "use_swiglu",
+            "required_divisor"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 243,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 32,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "global_batch_size",
+      "constraints": [
+        {
+          "expression": "global_batch_size == divisor",
+          "kind": "relation",
+          "parameters": [
+            "global_batch_size",
+            "divisor"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 342,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "global_batch_size <= max_global_bs",
+          "kind": "relation",
+          "parameters": [
+            "global_batch_size",
+            "max_global_bs"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 351,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (micro_batch_size > 0 and global_batch_size % (micro_batch_size * dp) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "global_batch_size",
+            "micro_batch_size",
+            "dp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 7,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "constraints": [
+        {
+          "expression": "hidden_size.block is None",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 846,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mf_mutate_and_forward/sub_graph.py",
+              "line": 612,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "'decoderlayer' not in hidden_size.str_op.lower()",
+          "kind": "enum",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 901,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "'mutated_decoder' not in hidden_size.str_op.lower()",
+          "kind": "enum",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 901,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (hidden_size.id not in hidden_size and hasattr(hidden_size, 'total_config') and (hidden_size.total_config.get('position_embedding_type') == 'mrope') and (not hidden_size.config.multi_latent_attention) and hasattr(hidden_size, 'rotary_pos_emb'))",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "hasattr"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 949,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size == 1",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 1274,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 1277,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/load_and_forward_submodule-auto.py",
+              "line": 808,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/load_and_forward_submodule.py",
+              "line": 645,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 496,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 566,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_mutate.py",
+              "line": 282,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 493,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 561,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size.decoder is not None",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/submutation.py",
+              "line": 1143,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/withnum_mutation_system.py",
+              "line": 1450,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size in hidden_size.mutated_nodes",
+          "kind": "enum",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/submutation.py",
+              "line": 1332,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/withnum_mutation_system.py",
+              "line": 1640,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (hidden_size % hidden_size != 0 and kv_channels is None)",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "kv_channels"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mf_converter.py",
+              "line": 423,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "callable(hidden_size.block)",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "callable"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mf_mutate_and_forward/sub_graph.py",
+              "line": 613,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "ffn_hidden_size <= hidden_size",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 190,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size % tp == 0",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "tp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 200,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not hidden_size",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 466,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 472,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 465,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 471,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "os.path.isdir(hidden_size)",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 468,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 467,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (not os.path.isabs(hidden_size) and os.path.sep not in hidden_size)",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 474,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 473,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "os.path.isfile(hidden_size)",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 477,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 476,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size.endswith('.json')",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 477,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 476,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (not hidden_size and (not hidden_size))",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 483,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 482,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size is not None",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size.shape == (hidden_size, hidden_size)",
+          "kind": "other",
+          "parameters": [
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not getattr(hidden_size, 'type', None)",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "getattr"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_mutate.py",
+              "line": 277,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 39,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "max_position_embeddings",
+      "constraints": [
+        {
+          "expression": "max_position_embeddings <= limit",
+          "kind": "relation",
+          "parameters": [
+            "max_position_embeddings",
+            "limit"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 739,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (max_position_embeddings and max_position_embeddings > limit)",
+          "kind": "relation",
+          "parameters": [
+            "max_position_embeddings",
+            "limit"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 749,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (max_position_embeddings and max_position_embeddings > cap)",
+          "kind": "relation",
+          "parameters": [
+            "max_position_embeddings",
+            "cap"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 898,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "seq_length <= max_position_embeddings",
+          "kind": "relation",
+          "parameters": [
+            "max_position_embeddings",
+            "seq_length"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 907,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "max_position_embeddings.pp_size == len(max_position_embeddings.config.pipeline_num_layers)",
+          "kind": "other",
+          "parameters": [
+            "max_position_embeddings"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 122,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "max_position_embeddings is not None",
+          "kind": "other",
+          "parameters": [
+            "max_position_embeddings"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "max_position_embeddings.shape == (max_position_embeddings, max_position_embeddings)",
+          "kind": "other",
+          "parameters": [
+            "max_position_embeddings"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 15,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "micro_batch_size",
+      "constraints": [
+        {
+          "expression": "micro_batch_size > 0",
+          "kind": "range",
+          "parameters": [
+            "micro_batch_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 312,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "micro_batch_size <= max_global_bs",
+          "kind": "relation",
+          "parameters": [
+            "micro_batch_size",
+            "max_global_bs"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 324,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 336,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "new_micro_batch_size == micro_batch_size",
+          "kind": "relation",
+          "parameters": [
+            "micro_batch_size",
+            "new_micro_batch_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 326,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "micro_batch_size == micro_batch_size",
+          "kind": "other",
+          "parameters": [
+            "micro_batch_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 342,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (micro_batch_size > 0 and micro_batch_size % (micro_batch_size * dp) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "micro_batch_size",
+            "dp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 7,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "moe_router_topk",
+      "constraints": [
+        {
+          "expression": "moe_router_topk != 0",
+          "kind": "other",
+          "parameters": [
+            "moe_router_topk"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 496,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and moe_router_topk > num_experts)",
+          "kind": "relation",
+          "parameters": [
+            "moe_router_topk",
+            "num_experts"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 500,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (moe_router_topk == 1 and (not moe_router_pre_softmax))",
+          "kind": "relation",
+          "parameters": [
+            "moe_router_topk",
+            "moe_router_pre_softmax"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 511,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 14,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "num_attention_heads",
+      "constraints": [
+        {
+          "expression": "not (hidden_size % num_attention_heads != 0 and kv_channels is None)",
+          "kind": "relation",
+          "parameters": [
+            "num_attention_heads",
+            "kv_channels",
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mf_converter.py",
+              "line": 423,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads.block is None",
+          "kind": "other",
+          "parameters": [
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mf_mutate_and_forward/sub_graph.py",
+              "line": 612,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "callable(num_attention_heads.block)",
+          "kind": "relation",
+          "parameters": [
+            "num_attention_heads",
+            "callable"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mf_mutate_and_forward/sub_graph.py",
+              "line": 613,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads % divisor == 0",
+          "kind": "relation",
+          "parameters": [
+            "num_attention_heads",
+            "divisor"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 217,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not num_attention_heads",
+          "kind": "other",
+          "parameters": [
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 466,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 472,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 465,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 471,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "os.path.isdir(num_attention_heads)",
+          "kind": "other",
+          "parameters": [
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 468,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 467,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (not os.path.isabs(num_attention_heads) and os.path.sep not in num_attention_heads)",
+          "kind": "other",
+          "parameters": [
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 474,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 473,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "os.path.isfile(num_attention_heads)",
+          "kind": "other",
+          "parameters": [
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 477,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 476,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads.endswith('.json')",
+          "kind": "other",
+          "parameters": [
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 477,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 476,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (not num_attention_heads and (not num_attention_heads))",
+          "kind": "other",
+          "parameters": [
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 483,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 482,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads",
+          "kind": "other",
+          "parameters": [
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 496,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/mm_test.py",
+              "line": 566,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_mutate.py",
+              "line": 282,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 493,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_test.py",
+              "line": 561,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not getattr(num_attention_heads, 'type', None)",
+          "kind": "relation",
+          "parameters": [
+            "num_attention_heads",
+            "getattr"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/single_module_mutate.py",
+              "line": 277,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 36,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "num_experts",
+      "constraints": [
+        {
+          "expression": "not (num_experts > 0 and ep > 0 and (num_experts % ep != 0))",
+          "kind": "relation",
+          "parameters": [
+            "num_experts",
+            "ep"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 483,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and num_experts > num_experts)",
+          "kind": "other",
+          "parameters": [
+            "num_experts"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 500,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts == 1 and (not moe_router_pre_softmax))",
+          "kind": "relation",
+          "parameters": [
+            "num_experts",
+            "moe_router_pre_softmax"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 511,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and tp > 1 and (not sequence_parallel))",
+          "kind": "relation",
+          "parameters": [
+            "num_experts",
+            "tp",
+            "sequence_parallel"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 538,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 15,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "num_layers",
+      "constraints": [
+        {
+          "expression": "num_layers >= pp",
+          "kind": "relation",
+          "parameters": [
+            "num_layers",
+            "pp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mf_converter.py",
+              "line": 463,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers >= 1",
+          "kind": "range",
+          "parameters": [
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mf_converter.py",
+              "line": 470,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers % pp == 0",
+          "kind": "relation",
+          "parameters": [
+            "num_layers",
+            "pp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 254,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (vpp > 1 and num_layers % (pp * vpp) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "num_layers",
+            "vpp",
+            "pp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 264,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "vpp_cur < num_layers",
+          "kind": "relation",
+          "parameters": [
+            "num_layers",
+            "vpp_cur"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 639,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers is not None",
+          "kind": "other",
+          "parameters": [
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers.shape == (num_layers, num_layers)",
+          "kind": "other",
+          "parameters": [
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 37,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "parallel_output",
+      "constraints": [
+        {
+          "expression": "parallel_output.pp_size == len(parallel_output.config.pipeline_num_layers)",
+          "kind": "other",
+          "parameters": [
+            "parallel_output"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 122,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "parallel_output is not None",
+          "kind": "other",
+          "parameters": [
+            "parallel_output"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "parallel_output.shape == (parallel_output, parallel_output)",
+          "kind": "other",
+          "parameters": [
+            "parallel_output"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 4,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "pipeline_model_parallel_size",
+      "constraints": [
+        {
+          "expression": "raw_cp == pipeline_model_parallel_size",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "raw_cp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 158,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size == 1",
+          "kind": "other",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 166,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 794,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size % pipeline_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 200,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads % pipeline_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 217,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "ffn_hidden_size % pipeline_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 228,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (use_swiglu and ffn_hidden_size % pipeline_model_parallel_size != 0)",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "use_swiglu",
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 243,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers % pipeline_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 254,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (vpp > 1 and num_layers % (pipeline_model_parallel_size * vpp) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "vpp",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 264,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size <= max_global_bs",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "max_global_bs"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 324,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 336,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 351,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size == pipeline_model_parallel_size",
+          "kind": "other",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 326,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 342,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (pipeline_model_parallel_size > 0 and pipeline_model_parallel_size % (pipeline_model_parallel_size * pipeline_model_parallel_size) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (pipeline_model_parallel_size > 1 and pipeline_model_parallel_size < 2)",
+          "kind": "other",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 390,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size <= world_size",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "world_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 400,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (pipeline_model_parallel_size < 2 and pipeline_model_parallel_size)",
+          "kind": "other",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 409,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and pipeline_model_parallel_size > 0 and (num_experts % pipeline_model_parallel_size != 0))",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "num_experts"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 483,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (moe_intermediate_size > 0 and moe_intermediate_size % pipeline_model_parallel_size != 0)",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "moe_intermediate_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 489,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and pipeline_model_parallel_size > 1 and (not sequence_parallel))",
+          "kind": "relation",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "num_experts",
+            "sequence_parallel"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 538,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size > 1",
+          "kind": "range",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 553,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 599,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not pipeline_model_parallel_size",
+          "kind": "other",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 553,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size is not None",
+          "kind": "other",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 599,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size is None",
+          "kind": "other",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 600,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size != 1",
+          "kind": "other",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 611,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (pipeline_model_parallel_size * target_pp * pipeline_model_parallel_size * pipeline_model_parallel_size > 0 and world_size % (pipeline_model_parallel_size * target_pp * pipeline_model_parallel_size * pipeline_model_parallel_size) == 0)",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "world_size",
+            "target_pp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 613,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "pipeline_model_parallel_size < pipeline_model_parallel_size",
+          "kind": "range",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 639,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (pipeline_model_parallel_size > 1 and pipeline_model_parallel_size != pipeline_model_parallel_size)",
+          "kind": "other",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 776,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (pipeline_model_parallel_size > 0 and world_size % pipeline_model_parallel_size == 0)",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "world_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 778,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (q_lora_rank > 0 and q_lora_rank % pipeline_model_parallel_size != 0)",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "q_lora_rank"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 810,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (kv_lora_rank > 0 and kv_lora_rank % pipeline_model_parallel_size != 0)",
+          "kind": "environment",
+          "parameters": [
+            "pipeline_model_parallel_size",
+            "kv_lora_rank"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 819,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (self._to_bool(pipeline_model_parallel_size.get('sequence_parallel', False)) and self._to_bool(pipeline_model_parallel_size.get('distribute_saved_activations', False)))",
+          "kind": "other",
+          "parameters": [
+            "pipeline_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 945,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 30,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "recompute_granularity",
+      "constraints": [
+        {
+          "expression": "not (self._to_bool(recompute_granularity.get('distribute_saved_activations', False)) and recompute_granularity != 'full')",
+          "kind": "other",
+          "parameters": [
+            "recompute_granularity"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 953,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 6,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "seq_len",
+      "constraints": [
+        {
+          "expression": "seq_len <= limit",
+          "kind": "relation",
+          "parameters": [
+            "seq_len",
+            "limit"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 739,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (seq_len and seq_len > limit)",
+          "kind": "relation",
+          "parameters": [
+            "seq_len",
+            "limit"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 741,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "seq_len is not None",
+          "kind": "other",
+          "parameters": [
+            "seq_len"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "seq_len.shape == (batch_size, seq_len)",
+          "kind": "relation",
+          "parameters": [
+            "seq_len",
+            "batch_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 28,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "seq_length",
+      "constraints": [
+        {
+          "expression": "seq_length <= limit",
+          "kind": "relation",
+          "parameters": [
+            "seq_length",
+            "limit"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 739,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (seq_length and seq_length > limit)",
+          "kind": "relation",
+          "parameters": [
+            "seq_length",
+            "limit"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 741,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (seq_length and seq_length > cap)",
+          "kind": "relation",
+          "parameters": [
+            "seq_length",
+            "cap"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 890,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "seq_length <= max_position_embeddings",
+          "kind": "relation",
+          "parameters": [
+            "seq_length",
+            "max_position_embeddings"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 907,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 22,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "sequence_parallel",
+      "constraints": [
+        {
+          "expression": "not (tp < 2 and sequence_parallel)",
+          "kind": "relation",
+          "parameters": [
+            "sequence_parallel",
+            "tp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 409,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and tp > 1 and (not sequence_parallel))",
+          "kind": "relation",
+          "parameters": [
+            "sequence_parallel",
+            "num_experts",
+            "tp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 538,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (self._to_bool(sequence_parallel) and self._to_bool(training_cfg.get('distribute_saved_activations', False)))",
+          "kind": "relation",
+          "parameters": [
+            "sequence_parallel",
+            "training_cfg"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 945,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 13,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "tensor_model_parallel_size",
+      "constraints": [
+        {
+          "expression": "raw_cp == tensor_model_parallel_size",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "raw_cp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 158,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size == 1",
+          "kind": "other",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 166,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 794,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size % tensor_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 200,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_attention_heads % tensor_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "num_attention_heads"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 217,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "ffn_hidden_size % tensor_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 228,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (use_swiglu and ffn_hidden_size % tensor_model_parallel_size != 0)",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "use_swiglu",
+            "ffn_hidden_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 243,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "num_layers % tensor_model_parallel_size == 0",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 254,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (vpp > 1 and num_layers % (tensor_model_parallel_size * vpp) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "vpp",
+            "num_layers"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 264,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size <= max_global_bs",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "max_global_bs"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 324,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 336,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 351,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size == tensor_model_parallel_size",
+          "kind": "other",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 326,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 342,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (tensor_model_parallel_size > 0 and tensor_model_parallel_size % (tensor_model_parallel_size * tensor_model_parallel_size) != 0)",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 362,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (tensor_model_parallel_size > 1 and tensor_model_parallel_size < 2)",
+          "kind": "other",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 390,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size <= world_size",
+          "kind": "environment",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "world_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 400,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (tensor_model_parallel_size < 2 and tensor_model_parallel_size)",
+          "kind": "other",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 409,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and tensor_model_parallel_size > 0 and (num_experts % tensor_model_parallel_size != 0))",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "num_experts"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 483,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (moe_intermediate_size > 0 and moe_intermediate_size % tensor_model_parallel_size != 0)",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "moe_intermediate_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 489,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (num_experts > 0 and tensor_model_parallel_size > 1 and (not sequence_parallel))",
+          "kind": "relation",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "num_experts",
+            "sequence_parallel"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 538,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size > 1",
+          "kind": "range",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 553,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 599,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not tensor_model_parallel_size",
+          "kind": "other",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 553,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size is not None",
+          "kind": "other",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 599,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size is None",
+          "kind": "other",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 600,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size != 1",
+          "kind": "other",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 611,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (tensor_model_parallel_size * target_pp * tensor_model_parallel_size * tensor_model_parallel_size > 0 and world_size % (tensor_model_parallel_size * target_pp * tensor_model_parallel_size * tensor_model_parallel_size) == 0)",
+          "kind": "environment",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "world_size",
+            "target_pp"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 613,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "tensor_model_parallel_size < tensor_model_parallel_size",
+          "kind": "range",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 639,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (tensor_model_parallel_size > 1 and tensor_model_parallel_size != tensor_model_parallel_size)",
+          "kind": "other",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 776,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (tensor_model_parallel_size > 0 and world_size % tensor_model_parallel_size == 0)",
+          "kind": "environment",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "world_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 778,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (q_lora_rank > 0 and q_lora_rank % tensor_model_parallel_size != 0)",
+          "kind": "environment",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "q_lora_rank"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 810,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (kv_lora_rank > 0 and kv_lora_rank % tensor_model_parallel_size != 0)",
+          "kind": "environment",
+          "parameters": [
+            "tensor_model_parallel_size",
+            "kv_lora_rank"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 819,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (self._to_bool(tensor_model_parallel_size.get('sequence_parallel', False)) and self._to_bool(tensor_model_parallel_size.get('distribute_saved_activations', False)))",
+          "kind": "other",
+          "parameters": [
+            "tensor_model_parallel_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 945,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 31,
+        "parse_errors": []
+      }
+    },
+    {
+      "parameter": "vocab_size",
+      "constraints": [
+        {
+          "expression": "vocab_size.block is None",
+          "kind": "other",
+          "parameters": [
+            "vocab_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 846,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mf_mutate_and_forward/sub_graph.py",
+              "line": 612,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "'decoderlayer' not in vocab_size.str_op.lower()",
+          "kind": "enum",
+          "parameters": [
+            "vocab_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 901,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "'mutated_decoder' not in vocab_size.str_op.lower()",
+          "kind": "enum",
+          "parameters": [
+            "vocab_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 901,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (vocab_size.id not in vocab_size and hasattr(vocab_size, 'total_config') and (vocab_size.total_config.get('position_embedding_type') == 'mrope') and (not vocab_size.config.multi_latent_attention) and hasattr(vocab_size, 'rotary_pos_emb'))",
+          "kind": "relation",
+          "parameters": [
+            "vocab_size",
+            "hasattr"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 949,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "vocab_size == 1",
+          "kind": "other",
+          "parameters": [
+            "vocab_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 1274,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "vocab_size",
+          "kind": "other",
+          "parameters": [
+            "vocab_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/core/graph.py",
+              "line": 1277,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "callable(vocab_size.block)",
+          "kind": "relation",
+          "parameters": [
+            "vocab_size",
+            "callable"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mf_mutate_and_forward/sub_graph.py",
+              "line": 613,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (padded_vocab_size > 0 and padded_vocab_size < vocab_size)",
+          "kind": "relation",
+          "parameters": [
+            "vocab_size",
+            "padded_vocab_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 923,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "not (make_vocab_size_divisible_by > 1 and vocab_size % make_vocab_size_divisible_by != 0)",
+          "kind": "relation",
+          "parameters": [
+            "vocab_size",
+            "make_vocab_size_divisible_by"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+              "line": 931,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "vocab_size.pp_size == len(vocab_size.config.pipeline_num_layers)",
+          "kind": "other",
+          "parameters": [
+            "vocab_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 122,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "vocab_size is not None",
+          "kind": "other",
+          "parameters": [
+            "vocab_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        },
+        {
+          "expression": "vocab_size.shape == (vocab_size, vocab_size)",
+          "kind": "other",
+          "parameters": [
+            "vocab_size"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 212,
+              "detail": "rejecting or repairing guard"
+            },
+            {
+              "kind": "static",
+              "source": "module_combination_mutation/modules/text_decoder.py",
+              "line": 353,
+              "detail": "rejecting or repairing guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "python_ast",
+        "scanned_files": 31,
+        "parse_errors": []
+      }
+    }
+  ]
+}

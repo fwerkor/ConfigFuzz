@@ -1,0 +1,46 @@
+global:
+  # 结果根目录（相对路径以仓库根目录为基准）
+  results_root: ./module_combination_mutation/task/results/_module_combine
+  # PTA conda 环境名（指南要求用全局变量/统一入口，这里也可覆盖）
+  conda_env_pta: mindspeed-mm
+  # MindSpeed Core 主工程路径，用于设置 PYTHONPATH（等价于原来的 pta_env.sh）
+  MindSpeed_Core_MS_PATH: /shared/mm-new
+  # 是否 dry-run（也可在命令行用 --dry-run 覆盖）
+  dry_run: false
+  # 整体流程重复轮数（每轮执行 mutate + PTA save + PTA load，结果落在 run_xxx/round_i/ 下）
+  rounds: 2
+  # 是否捕获子脚本输出而不直接打印到当前控制台；True=静默（仅出错时打印摘要）
+  capture_child_output: true
+
+mutate:
+  # 指南要求 round=1：这里用 rounds=1 来保证只生成一个 round_0.json
+  rounds: 1
+  # 额外透传给 mutate.py（示例：--all-modules ./modules.json）
+  extra_args: ""
+  # 变异输出目录（为空则自动生成 results_root/mutate_<timestamp>）
+  output_dir: ""
+
+pta_save:
+  # mm_test.py 的 --iterations
+  iterations: 2
+  # 是否保存权重（对应 mm_test.py --save-ckpt）
+  save_ckpt: true
+  # 跑测输出目录（为空则自动生成 results_root/test_<timestamp>/save）
+  results_dir: ""
+  # 权重输出目录（为空则用 results_dir/ckpts）
+  ckpt_dir: ""
+  # 额外透传给 mm_test.py（示例：--no-mm-test-optimizer）
+  extra_args: ""
+
+pta_load:
+  iterations: 2
+  # 跑测输出目录（为空则自动生成 results_root/test_<timestamp>/load）
+  results_dir: ""
+  # 指定加载单个权重文件（*.pt）；为空则使用 pta_save 阶段最新产物
+  ckpt: ""
+  extra_args: ""
+
+msa_load:
+  # 指南说明：暂时省略 msa 环境与实现
+  enabled: false
+

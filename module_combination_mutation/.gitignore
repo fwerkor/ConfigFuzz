@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Output and results
+results/
+fusion_result.json
+
+# Ascend NPU kernel compile cache (CANN 增量编译缓存，首次前向时生成)
+kernel_meta/
+cache_ascend/
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/

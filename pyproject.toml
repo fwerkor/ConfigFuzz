@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "configfuzz"
+version = "0.1.0"
+description = "Automatic configuration-constraint inference for mutation-based testing"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  {name = "Cao Yuhang", email = "caoyuhang@fwerkor.com"},
+]
+dependencies = []
+
+[project.optional-dependencies]
+research = [
+  "PyYAML>=6.0",
+  "z3-solver>=4.13",
+]
+dev = [
+  "pytest>=8.0",
+]
+
+[project.scripts]
+configfuzz = "configfuzz.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["configfuzz*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/configfuzz"]
+addopts = "-q"
