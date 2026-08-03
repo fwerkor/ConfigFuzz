@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fwerkor/ConfigFuzz/schemas/manual_constraint.schema.json",
+  "title": "ConfigFuzz manual constraint corpus",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "name",
+    "baseline",
+    "rules"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "baseline": {
+      "type": "object"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "required": [
+        "id",
+        "expression",
+        "kind",
+        "parameters",
+        "enforcement",
+        "strength",
+        "status",
+        "scope",
+        "sources",
+        "rationale"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[^\\s]+$"
+        },
+        "expression": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "type",
+            "range",
+            "enum",
+            "relation",
+            "conditional",
+            "environment",
+            "resource",
+            "other"
+          ]
+        },
+        "parameters": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "enforcement": {
+          "enum": [
+            "reject",
+            "repair",
+            "warn",
+            "sample",
+            "default"
+          ]
+        },
+        "strength": {
+          "enum": [
+            "framework_requirement",
+            "lmsv_policy",
+            "environment_limit",
+            "resource_limit",
+            "workaround",
+            "empirical",
+            "unknown"
+          ]
+        },
+        "status": {
+          "enum": [
+            "candidate",
+            "reviewed",
+            "validated",
+            "contradicted",
+            "deprecated"
+          ]
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repair": {
+          "type": "object"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "backends": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "frameworks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hardware": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stage": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "file",
+        "source_type"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lines": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "integer",
+              "minimum": 1
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "source_type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

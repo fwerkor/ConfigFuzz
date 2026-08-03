@@ -13,7 +13,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install
-        run: python -m pip install -e '.[dev,research]'
+        run: python -m pip install -e '.[dev]'
       - name: Test
         run: pytest tests/configfuzz
       - name: CLI smoke test
@@ -28,3 +28,7 @@ jobs:
           examples/toy_parallel_size.json
           --samples-output /tmp/configfuzz-runtime-samples.json
           --output /tmp/configfuzz-runtime-spec.json
+      - name: Manual constraint corpus check
+        run: |
+          python scripts/build_lmsv_manual_corpus.py --check
+          python -m configfuzz validate-corpus corpus/lmsv/manual_constraints.yaml --output /tmp/configfuzz-corpus-summary.json

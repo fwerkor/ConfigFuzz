@@ -1,0 +1,1441 @@
+schema_version: 1
+name: lmsv-task1-validator-rules
+baseline:
+  repository: fwerkor/lm-sv
+  commit: e73ba3d35
+  source: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+  role: reviewed normalization of existing lm-sv validator rules
+rules:
+- id: lmsv.task1.alibi-context-parallel
+  expression: model.position_embedding_type == "alibi" => parallel.context_parallel_size == 1
+  kind: conditional
+  parameters:
+  - model.position_embedding_type
+  - parallel.context_parallel_size
+  enforcement: repair
+  strength: workaround
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: model.position_embedding_type == "alibi"
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 143
+    - 174
+    symbol: EnhancedMegatronConfigValidator._check_alibi_constraints
+  rationale: lm-sv disables context parallel for ALiBi because the current PTA/MindSpeed path does not support that combination
+    reliably.
+  repair:
+    target: parallel.context_parallel_size
+    strategy: set
+    value: 1
+- id: lmsv.task1.alibi-flash-attention
+  expression: model.position_embedding_type == "alibi" => model.use_flash_attention == false
+  kind: conditional
+  parameters:
+  - model.position_embedding_type
+  - model.use_flash_attention
+  enforcement: repair
+  strength: workaround
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: model.position_embedding_type == "alibi"
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 143
+    - 185
+    symbol: EnhancedMegatronConfigValidator._check_alibi_constraints
+  rationale: lm-sv turns off explicit flash attention for ALiBi in the current implementation stack.
+  repair:
+    target: model.use_flash_attention
+    strategy: set
+    value: false
+- id: lmsv.task1.attention-heads-tp-cp-divisibility
+  expression: model.num_attention_heads % (parallel.tensor_model_parallel_size * parallel.context_parallel_size) == 0
+  kind: relation
+  parameters:
+  - model.num_attention_heads
+  - parallel.tensor_model_parallel_size
+  - parallel.context_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 209
+    - 224
+    symbol: EnhancedMegatronConfigValidator._check_attention_heads
+  rationale: Attention heads must be partitionable across tensor and Ulysses context-parallel groups.
+  repair:
+    target: model.num_attention_heads
+    strategy: nearest_divisible
+    divisor: parallel.tensor_model_parallel_size * parallel.context_parallel_size
+- id: lmsv.task1.context-parallel-size-positive
+  expression: parallel.context_parallel_size >= 1
+  kind: range
+  parameters:
+  - parallel.context_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  rationale: Parallel group sizes must be positive integers.
+  repair:
+    target: parallel.context_parallel_size
+    strategy: set
+    value: 1
+- id: lmsv.task1.cosine-decay-iters
+  expression: training.lr_decay_style == "cosine" => training.lr_decay_iters > 0
+  kind: conditional
+  parameters:
+  - training.lr_decay_style
+  - training.lr_decay_iters
+  - training.train_iters
+  enforcement: repair
+  strength: lmsv_policy
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: training.lr_decay_style == "cosine"
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 677
+    - 722
+    symbol: EnhancedMegatronConfigValidator._check_lr_schedule
+  rationale: lm-sv fills a missing cosine decay horizon from train_iters to keep generated schedules runnable.
+  repair:
+    target: training.lr_decay_iters
+    strategy: copy
+    source: training.train_iters
+- id: lmsv.task1.cp-requires-tp
+  expression: parallel.context_parallel_size > 1 => parallel.tensor_model_parallel_size >= 2
+  kind: conditional
+  parameters:
+  - parallel.context_parallel_size
+  - parallel.tensor_model_parallel_size
+  enforcement: repair
+  strength: workaround
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.context_parallel_size > 1
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  rationale: The current lm-sv Ulysses configuration disables CP when TP is one.
+  repair:
+    target: parallel.context_parallel_size
+    strategy: set
+    value: 1
+- id: lmsv.task1.expert-model-parallel-size-positive
+  expression: parallel.expert_model_parallel_size >= 1
+  kind: range
+  parameters:
+  - parallel.expert_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  rationale: Parallel group sizes must be positive integers.
+  repair:
+    target: parallel.expert_model_parallel_size
+    strategy: set
+    value: 1
+- id: lmsv.task1.experts-ep-divisibility
+  expression: moe.num_experts > 0 => moe.num_experts % parallel.expert_model_parallel_size == 0
+  kind: conditional
+  parameters:
+  - moe.num_experts
+  - parallel.expert_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.num_experts > 0
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 474
+    - 489
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  rationale: Experts must distribute evenly across expert-parallel ranks.
+  repair:
+    target: moe.num_experts
+    strategy: nearest_divisible
+    divisor: parallel.expert_model_parallel_size
+- id: lmsv.task1.ffn-hidden-size-cap
+  expression: model.ffn_hidden_size <= 6 * model.hidden_size
+  kind: relation
+  parameters:
+  - model.ffn_hidden_size
+  - model.hidden_size
+  enforcement: repair
+  strength: lmsv_policy
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 187
+    - 196
+    symbol: EnhancedMegatronConfigValidator._check_ffn_hidden_size_limit
+  rationale: The validator caps the FFN expansion ratio at six to keep generated configurations within the tested lm-sv space.
+  repair:
+    target: model.ffn_hidden_size
+    strategy: cap
+    expression: 6 * model.hidden_size
+- id: lmsv.task1.ffn-hidden-size-tp-divisibility
+  expression: model.ffn_hidden_size % parallel.tensor_model_parallel_size == 0
+  kind: relation
+  parameters:
+  - model.ffn_hidden_size
+  - parallel.tensor_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 226
+    - 237
+    symbol: EnhancedMegatronConfigValidator._check_ffn_hidden_size
+  rationale: The FFN intermediate dimension must divide evenly across tensor-parallel ranks.
+  repair:
+    target: model.ffn_hidden_size
+    strategy: nearest_divisible
+    divisor: parallel.tensor_model_parallel_size
+- id: lmsv.task1.flash-position-limit
+  expression: model.use_flash_attention == true => model.max_position_embeddings <= env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+  kind: conditional
+  parameters:
+  - model.use_flash_attention
+  - model.max_position_embeddings
+  - env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+  enforcement: repair
+  strength: environment_limit
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    hardware:
+    - Ascend NPU
+    stage: configuration-validation
+    condition: model.use_flash_attention == true
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 723
+    - 759
+    symbol: EnhancedMegatronConfigValidator._check_flash_attention_constraints
+  rationale: lm-sv keeps maximum positions within the tested Ascend flash-attention sequence limit.
+  repair:
+    target: model.max_position_embeddings
+    strategy: cap
+    expression: env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+- id: lmsv.task1.flash-sequence-limit
+  expression: model.use_flash_attention == true => model.seq_length <= env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+  kind: conditional
+  parameters:
+  - model.use_flash_attention
+  - model.seq_length
+  - env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+  enforcement: repair
+  strength: environment_limit
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    hardware:
+    - Ascend NPU
+    stage: configuration-validation
+    condition: model.use_flash_attention == true
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 723
+    - 759
+    symbol: EnhancedMegatronConfigValidator._check_flash_attention_constraints
+  rationale: The configured Ascend flash-attention path is bounded by an environment-specific tested sequence length.
+  repair:
+    target: model.seq_length
+    strategy: cap
+    expression: env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+- id: lmsv.task1.global-batch-cap
+  expression: training.global_batch_size <= env.LMSV_MAX_GLOBAL_BATCH_SIZE_EXCLUSIVE
+  kind: environment
+  parameters:
+  - training.global_batch_size
+  - env.LMSV_MAX_GLOBAL_BATCH_SIZE_EXCLUSIVE
+  enforcement: repair
+  strength: lmsv_policy
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 273
+    - 373
+    symbol: EnhancedMegatronConfigValidator._check_global_batch_size
+  rationale: lm-sv caps generated global batches using an environment-configurable testing policy rather than a universal
+    framework limit.
+  repair:
+    target: training.global_batch_size
+    strategy: cap
+    expression: env.LMSV_MAX_GLOBAL_BATCH_SIZE_EXCLUSIVE
+- id: lmsv.task1.global-batch-divisibility
+  expression: training.global_batch_size % (parallel.data_parallel_size * training.micro_batch_size) == 0
+  kind: relation
+  parameters:
+  - training.global_batch_size
+  - parallel.data_parallel_size
+  - training.micro_batch_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 273
+    - 373
+    symbol: EnhancedMegatronConfigValidator._check_global_batch_size
+  rationale: The global batch must be decomposable into data-parallel micro batches.
+  repair:
+    target: training.global_batch_size
+    strategy: nearest_lower_divisible
+    divisor: parallel.data_parallel_size * training.micro_batch_size
+- id: lmsv.task1.group-limited-num-groups
+  expression: moe.topk_group >= 1 => moe.moe_router_num_groups >= 1
+  kind: conditional
+  parameters:
+  - moe.topk_group
+  - moe.moe_router_num_groups
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.topk_group >= 1
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 562
+    - 582
+    symbol: EnhancedMegatronConfigValidator._ensure_group_limited_router_groups
+  rationale: Enabling grouped routing requires an explicit positive group count.
+  repair:
+    target: moe.moe_router_num_groups
+    strategy: set
+    expression: parallel.expert_model_parallel_size
+- id: lmsv.task1.group-limited-router
+  expression: moe.moe_router_load_balancing_type == "group_limited_greedy" => parallel.expert_model_parallel_size > 1 and
+    1 <= moe.topk_group < parallel.expert_model_parallel_size
+  kind: conditional
+  parameters:
+  - moe.moe_router_load_balancing_type
+  - parallel.expert_model_parallel_size
+  - moe.topk_group
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.moe_router_load_balancing_type == "group_limited_greedy"
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 551
+    - 560
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  rationale: Group-limited routing requires multiple expert groups and a selected-group count below EP.
+  repair:
+    target: moe.moe_router_load_balancing_type
+    strategy: set
+    value: aux_loss
+- id: lmsv.task1.hidden-size-tp-divisibility
+  expression: model.hidden_size % parallel.tensor_model_parallel_size == 0
+  kind: relation
+  parameters:
+  - model.hidden_size
+  - parallel.tensor_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 198
+    - 207
+    symbol: EnhancedMegatronConfigValidator._check_hidden_size
+  rationale: Tensor parallel sharding requires the hidden dimension to divide evenly across TP ranks.
+  repair:
+    target: model.hidden_size
+    strategy: nearest_divisible
+    divisor: parallel.tensor_model_parallel_size
+- id: lmsv.task1.layers-pp-divisibility
+  expression: model.num_layers % parallel.pipeline_model_parallel_size == 0
+  kind: relation
+  parameters:
+  - model.num_layers
+  - parallel.pipeline_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 252
+    - 263
+    symbol: EnhancedMegatronConfigValidator._check_num_layers
+  rationale: Pipeline stages require an integral allocation of transformer layers.
+  repair:
+    target: model.num_layers
+    strategy: nearest_divisible
+    divisor: parallel.pipeline_model_parallel_size
+- id: lmsv.task1.layers-vpp-divisibility
+  expression: parallel.num_layers_per_virtual_pipeline_stage > 1 => model.num_layers % (parallel.pipeline_model_parallel_size
+    * parallel.num_layers_per_virtual_pipeline_stage) == 0
+  kind: conditional
+  parameters:
+  - parallel.num_layers_per_virtual_pipeline_stage
+  - model.num_layers
+  - parallel.pipeline_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.num_layers_per_virtual_pipeline_stage > 1
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 252
+    - 271
+    symbol: EnhancedMegatronConfigValidator._check_num_layers
+  rationale: Virtual pipeline chunks require each physical stage to contain an integral number of chunks.
+  repair:
+    target: model.num_layers
+    strategy: nearest_divisible
+    divisor: parallel.pipeline_model_parallel_size * parallel.num_layers_per_virtual_pipeline_stage
+- id: lmsv.task1.micro-batch-positive
+  expression: training.micro_batch_size >= 1
+  kind: range
+  parameters:
+  - training.micro_batch_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 273
+    - 373
+    symbol: EnhancedMegatronConfigValidator._check_global_batch_size
+  rationale: A micro batch must contain at least one sample.
+  repair:
+    target: training.micro_batch_size
+    strategy: set
+    value: 1
+- id: lmsv.task1.mla-cp-tp-alignment
+  expression: mla.multi_head_latent_attention == true and parallel.tensor_model_parallel_size > 1 => parallel.context_parallel_size
+    == parallel.tensor_model_parallel_size
+  kind: conditional
+  parameters:
+  - mla.multi_head_latent_attention
+  - parallel.tensor_model_parallel_size
+  - parallel.context_parallel_size
+  enforcement: repair
+  strength: workaround
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: mla.multi_head_latent_attention == true and parallel.tensor_model_parallel_size > 1
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 761
+    - 833
+    symbol: EnhancedMegatronConfigValidator._check_mla_parameters
+  rationale: lm-sv aligns CP and TP for the current DeepSeek MLA path, otherwise it falls back to TP=CP=1.
+  repair:
+    target: parallel.context_parallel_size
+    strategy: align_or_fallback
+    source: parallel.tensor_model_parallel_size
+    fallback: 1
+- id: lmsv.task1.mla-kv-lora-tp-divisibility
+  expression: mla.kv_lora_rank > 0 => mla.kv_lora_rank % parallel.tensor_model_parallel_size == 0
+  kind: conditional
+  parameters:
+  - mla.kv_lora_rank
+  - parallel.tensor_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: mla.kv_lora_rank > 0
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 814
+    - 824
+    symbol: EnhancedMegatronConfigValidator._check_mla_parameters
+  rationale: KV-LoRA rank must divide across tensor-parallel ranks.
+  repair:
+    target: mla.kv_lora_rank
+    strategy: nearest_divisible
+    divisor: parallel.tensor_model_parallel_size
+- id: lmsv.task1.mla-q-lora-tp-divisibility
+  expression: mla.q_lora_rank > 0 => mla.q_lora_rank % parallel.tensor_model_parallel_size == 0
+  kind: conditional
+  parameters:
+  - mla.q_lora_rank
+  - parallel.tensor_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: mla.q_lora_rank > 0
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 803
+    - 813
+    symbol: EnhancedMegatronConfigValidator._check_mla_parameters
+  rationale: Q-LoRA rank must divide across tensor-parallel ranks.
+  repair:
+    target: mla.q_lora_rank
+    strategy: nearest_divisible
+    divisor: parallel.tensor_model_parallel_size
+- id: lmsv.task1.moe-add-bias-linear
+  expression: moe.num_experts > 0 => model.add_bias_linear == false
+  kind: conditional
+  parameters:
+  - moe.num_experts
+  - model.add_bias_linear
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.num_experts > 0
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 522
+    - 540
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  rationale: The supported MoE implementation disables linear-layer bias.
+  repair:
+    target: model.add_bias_linear
+    strategy: set
+    value: false
+- id: lmsv.task1.moe-disable-bias-linear
+  expression: moe.num_experts > 0 => model.disable_bias_linear == true
+  kind: conditional
+  parameters:
+  - moe.num_experts
+  - model.disable_bias_linear
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.num_experts > 0
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 522
+    - 540
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  rationale: The inverse bias flag is normalized to the same supported MoE setting.
+  repair:
+    target: model.disable_bias_linear
+    strategy: set
+    value: true
+- id: lmsv.task1.moe-intermediate-tp-divisibility
+  expression: moe.moe_intermediate_size > 0 => moe.moe_intermediate_size % parallel.tensor_model_parallel_size == 0
+  kind: conditional
+  parameters:
+  - moe.moe_intermediate_size
+  - parallel.tensor_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.moe_intermediate_size > 0
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 489
+    - 495
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  rationale: MoE intermediate projections must divide across tensor-parallel ranks.
+  repair:
+    target: moe.moe_intermediate_size
+    strategy: nearest_divisible
+    divisor: parallel.tensor_model_parallel_size
+- id: lmsv.task1.moe-topk-one-pre-softmax
+  expression: moe.moe_router_topk == 1 => moe.moe_router_pre_softmax == true
+  kind: conditional
+  parameters:
+  - moe.moe_router_topk
+  - moe.moe_router_pre_softmax
+  enforcement: repair
+  strength: workaround
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.moe_router_topk == 1
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 510
+    - 522
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  rationale: lm-sv enables pre-softmax routing for top-k one to match the current supported router path.
+  repair:
+    target: moe.moe_router_pre_softmax
+    strategy: set
+    value: true
+- id: lmsv.task1.moe-topk-range
+  expression: moe.num_experts > 0 => 1 <= moe.moe_router_topk <= moe.num_experts
+  kind: conditional
+  parameters:
+  - moe.num_experts
+  - moe.moe_router_topk
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.num_experts > 0
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 495
+    - 510
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  rationale: The router must select at least one and no more than the available number of experts.
+  repair:
+    target: moe.moe_router_topk
+    strategy: clamp
+    lower: 1
+    upper: moe.num_experts
+- id: lmsv.task1.moe-tp-sequence-parallel
+  expression: moe.num_experts > 0 and parallel.tensor_model_parallel_size > 1 => parallel.sequence_parallel == true
+  kind: conditional
+  parameters:
+  - moe.num_experts
+  - parallel.tensor_model_parallel_size
+  - parallel.sequence_parallel
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.num_experts > 0 and parallel.tensor_model_parallel_size > 1
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 540
+    - 551
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  rationale: Megatron MoE training with TP greater than one requires sequence parallelism.
+  repair:
+    target: parallel.sequence_parallel
+    strategy: set
+    value: true
+- id: lmsv.task1.padded-vocab-size
+  expression: model.padded_vocab_size >= model.vocab_size
+  kind: relation
+  parameters:
+  - model.padded_vocab_size
+  - model.vocab_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 915
+    - 938
+    symbol: EnhancedMegatronConfigValidator._check_vocab_size
+  rationale: Padding cannot reduce the original vocabulary.
+  repair:
+    target: model.padded_vocab_size
+    strategy: raise_to
+    source: model.vocab_size
+- id: lmsv.task1.parallel-product-world-size
+  expression: parallel.tensor_model_parallel_size * parallel.pipeline_model_parallel_size * parallel.expert_model_parallel_size
+    * parallel.context_parallel_size <= env.world_size
+  kind: environment
+  parameters:
+  - parallel.tensor_model_parallel_size
+  - parallel.pipeline_model_parallel_size
+  - parallel.expert_model_parallel_size
+  - parallel.context_parallel_size
+  - env.world_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  rationale: The product of independent parallel dimensions cannot exceed the available distributed world size.
+  repair:
+    target: parallel.context_parallel_size
+    strategy: set
+    value: 1
+- id: lmsv.task1.pipeline-model-parallel-size-positive
+  expression: parallel.pipeline_model_parallel_size >= 1
+  kind: range
+  parameters:
+  - parallel.pipeline_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  rationale: Parallel group sizes must be positive integers.
+  repair:
+    target: parallel.pipeline_model_parallel_size
+    strategy: set
+    value: 1
+- id: lmsv.task1.position-cap
+  expression: model.max_position_embeddings <= env.LMSV_MOE_MAX_SEQ_LENGTH
+  kind: environment
+  parameters:
+  - model.max_position_embeddings
+  - env.LMSV_MOE_MAX_SEQ_LENGTH
+  enforcement: repair
+  strength: lmsv_policy
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 882
+    - 913
+    symbol: EnhancedMegatronConfigValidator._check_sequence_length
+  rationale: lm-sv applies the same mutation budget cap to maximum position embeddings.
+  repair:
+    target: model.max_position_embeddings
+    strategy: cap
+    expression: env.LMSV_MOE_MAX_SEQ_LENGTH
+- id: lmsv.task1.saved-activations-full-recompute
+  expression: training.distribute_saved_activations == true => training.recompute_granularity == "full"
+  kind: conditional
+  parameters:
+  - training.distribute_saved_activations
+  - training.recompute_granularity
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: training.distribute_saved_activations == true
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 940
+    - 961
+    symbol: EnhancedMegatronConfigValidator._check_recompute_constraints
+  rationale: Megatron supports distributed saved activations only for full recomputation.
+  repair:
+    target: training.distribute_saved_activations
+    strategy: set
+    value: false
+- id: lmsv.task1.sequence-cap
+  expression: model.seq_length <= env.LMSV_MOE_MAX_SEQ_LENGTH
+  kind: environment
+  parameters:
+  - model.seq_length
+  - env.LMSV_MOE_MAX_SEQ_LENGTH
+  enforcement: repair
+  strength: lmsv_policy
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 882
+    - 913
+    symbol: EnhancedMegatronConfigValidator._check_sequence_length
+  rationale: lm-sv applies an environment-configurable sequence cap to bound mutation cost; it is not a universal model limit.
+  repair:
+    target: model.seq_length
+    strategy: cap
+    expression: env.LMSV_MOE_MAX_SEQ_LENGTH
+- id: lmsv.task1.sequence-parallel-requires-tp
+  expression: parallel.sequence_parallel == true => parallel.tensor_model_parallel_size >= 2
+  kind: conditional
+  parameters:
+  - parallel.sequence_parallel
+  - parallel.tensor_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.sequence_parallel == true
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  rationale: Sequence parallelism is meaningful only when tensor parallelism spans more than one rank.
+  repair:
+    target: parallel.sequence_parallel
+    strategy: set
+    value: false
+- id: lmsv.task1.sequence-parallel-saved-activations
+  expression: parallel.sequence_parallel == true => training.distribute_saved_activations == false
+  kind: conditional
+  parameters:
+  - parallel.sequence_parallel
+  - training.distribute_saved_activations
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.sequence_parallel == true
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 940
+    - 961
+    symbol: EnhancedMegatronConfigValidator._check_recompute_constraints
+  rationale: Megatron does not support distributed saved activations together with sequence parallelism.
+  repair:
+    target: training.distribute_saved_activations
+    strategy: set
+    value: false
+- id: lmsv.task1.sequence-within-position
+  expression: model.seq_length <= model.max_position_embeddings
+  kind: relation
+  parameters:
+  - model.seq_length
+  - model.max_position_embeddings
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 882
+    - 913
+    symbol: EnhancedMegatronConfigValidator._check_sequence_length
+  rationale: The requested sequence length must fit inside the configured positional range.
+  repair:
+    target: model.max_position_embeddings
+    strategy: raise_to
+    source: model.seq_length
+- id: lmsv.task1.swiglu-ffn-divisibility
+  expression: (model.swiglu == true or model.hidden_act == "swiglu") => model.ffn_hidden_size % (2 * parallel.tensor_model_parallel_size)
+    == 0
+  kind: conditional
+  parameters:
+  - model.swiglu
+  - model.hidden_act
+  - model.ffn_hidden_size
+  - parallel.tensor_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: model.swiglu == true or model.hidden_act == "swiglu"
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 226
+    - 250
+    symbol: EnhancedMegatronConfigValidator._check_ffn_hidden_size
+  rationale: SwiGLU splits the local FFN projection in two, so the sharded dimension must remain even.
+  repair:
+    target: model.ffn_hidden_size
+    strategy: nearest_divisible
+    divisor: 2 * parallel.tensor_model_parallel_size
+- id: lmsv.task1.tensor-model-parallel-size-positive
+  expression: parallel.tensor_model_parallel_size >= 1
+  kind: range
+  parameters:
+  - parallel.tensor_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  rationale: Parallel group sizes must be positive integers.
+  repair:
+    target: parallel.tensor_model_parallel_size
+    strategy: set
+    value: 1
+- id: lmsv.task1.train-iters-after-warmup
+  expression: training.train_iters > training.lr_warmup_iters
+  kind: relation
+  parameters:
+  - training.train_iters
+  - training.lr_warmup_iters
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 677
+    - 722
+    symbol: EnhancedMegatronConfigValidator._check_lr_schedule
+  rationale: At least one non-warmup training iteration must remain.
+  repair:
+    target: training.train_iters
+    strategy: set
+    expression: training.lr_warmup_iters + 1
+- id: lmsv.task1.vocab-divisibility
+  expression: model.vocab_size % model.make_vocab_size_divisible_by == 0
+  kind: relation
+  parameters:
+  - model.vocab_size
+  - model.make_vocab_size_divisible_by
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 915
+    - 938
+    symbol: EnhancedMegatronConfigValidator._check_vocab_size
+  rationale: Vocabulary padding/alignment requires divisibility by the configured alignment factor.
+  repair:
+    target: model.vocab_size
+    strategy: nearest_divisible
+    divisor: model.make_vocab_size_divisible_by
+- id: lmsv.task1.vpp-divides-layers-per-stage
+  expression: parallel.num_layers_per_virtual_pipeline_stage > 1 => (model.num_layers / parallel.pipeline_model_parallel_size)
+    % parallel.num_layers_per_virtual_pipeline_stage == 0
+  kind: conditional
+  parameters:
+  - parallel.num_layers_per_virtual_pipeline_stage
+  - model.num_layers
+  - parallel.pipeline_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.num_layers_per_virtual_pipeline_stage > 1
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 584
+    - 676
+    symbol: EnhancedMegatronConfigValidator._check_pipeline_interleaving
+  rationale: Each physical stage must divide into an integral number of virtual chunks.
+  repair:
+    target: parallel.num_layers_per_virtual_pipeline_stage
+    strategy: largest_valid_factor_or_disable
+- id: lmsv.task1.vpp-less-than-layers-per-stage
+  expression: parallel.num_layers_per_virtual_pipeline_stage > 1 => parallel.num_layers_per_virtual_pipeline_stage < model.num_layers
+    / parallel.pipeline_model_parallel_size
+  kind: conditional
+  parameters:
+  - parallel.num_layers_per_virtual_pipeline_stage
+  - model.num_layers
+  - parallel.pipeline_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.num_layers_per_virtual_pipeline_stage > 1
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 584
+    - 676
+    symbol: EnhancedMegatronConfigValidator._check_pipeline_interleaving
+  rationale: A virtual chunk must be smaller than the number of layers assigned to a physical stage.
+  repair:
+    target: parallel.num_layers_per_virtual_pipeline_stage
+    strategy: disable
+    value: false
+- id: lmsv.task1.vpp-requires-pp
+  expression: parallel.num_layers_per_virtual_pipeline_stage > 1 => parallel.pipeline_model_parallel_size > 1
+  kind: conditional
+  parameters:
+  - parallel.num_layers_per_virtual_pipeline_stage
+  - parallel.pipeline_model_parallel_size
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.num_layers_per_virtual_pipeline_stage > 1
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 584
+    - 676
+    symbol: EnhancedMegatronConfigValidator._check_pipeline_interleaving
+  rationale: Interleaved pipeline scheduling requires more than one physical pipeline stage.
+  repair:
+    target: parallel.pipeline_model_parallel_size
+    strategy: set_or_disable
+    preferred: 2
+    fallback: false
+- id: lmsv.task1.warmup-before-decay
+  expression: training.lr_warmup_iters < min(training.train_iters, training.lr_decay_iters)
+  kind: relation
+  parameters:
+  - training.lr_warmup_iters
+  - training.train_iters
+  - training.lr_decay_iters
+  enforcement: repair
+  strength: framework_requirement
+  status: reviewed
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  sources:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 677
+    - 722
+    symbol: EnhancedMegatronConfigValidator._check_lr_schedule
+  rationale: Warmup must end before training and decay schedules finish.
+  repair:
+    target: training.lr_warmup_iters
+    strategy: fraction
+    expression: 0.1 * min(training.train_iters, training.lr_decay_iters)

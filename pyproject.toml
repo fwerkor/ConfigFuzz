@@ -12,13 +12,11 @@ authors = [
   {name = "Cao Yuhang", email = "caoyuhang@fwerkor.com"},
 ]
 dependencies = [
+  "PyYAML>=6.0",
   "z3-solver>=4.13",
 ]
 
 [project.optional-dependencies]
-research = [
-  "PyYAML>=6.0",
-]
 dev = [
   "pytest>=8.0",
 ]

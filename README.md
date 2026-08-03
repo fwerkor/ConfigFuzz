@@ -33,6 +33,7 @@ The intended output is not limited to a numeric interval. A parameter may have t
 The initial repository provides:
 
 - the lm-sv implementation as a baseline and source of manually encoded constraints;
+- a normalized manual-rule corpus that separates framework requirements, lm-sv policies, environment limits, and workarounds;
 - a machine-readable constraint and evidence model;
 - a Python AST extractor for explicit guards, assertions, and lm-sv-style `_apply_fix` checks;
 - a CLI for scanning a file or source tree for one or more parameters;
@@ -57,7 +58,7 @@ and mutation integration remain research stages.
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e '.[dev,research]'
+pip install -e '.[dev]'
 pytest tests/configfuzz
 ```
 
@@ -84,6 +85,13 @@ Build the first baseline inventory:
 
 ```bash
 python scripts/build_lmsv_constraint_inventory.py
+```
+
+Validate the normalized manual-rule corpus:
+
+```bash
+python scripts/build_lmsv_manual_corpus.py --check
+python -m configfuzz validate-corpus corpus/lmsv/manual_constraints.yaml
 ```
 
 Run the complete runtime pipeline on a deterministic demonstration target:
@@ -130,11 +138,14 @@ configfuzz/                 new constraint-inference prototype
 scripts/                    experiment and inventory utilities
 tests/configfuzz/           focused prototype tests
 artifacts/                  generated research inventories
+corpus/lmsv/                normalized lm-sv manual constraints
 experiments/                lm-sv runtime adapter and manifests
 examples/                   deterministic end-to-end demonstration
 docs/RESEARCH_PLAN.md       research questions and evaluation plan
 docs/CONSTRAINT_DSL.md      supported constraint representation
 docs/RUNTIME_INFERENCE.md   manifest and runtime pipeline reference
+docs/MANUAL_CONSTRAINT_CORPUS.md
+                            corpus schema, semantics, and review workflow
 docs/LMSV_BASELINE.md       original lm-sv README
 lmsv_rec/, mm-new/, ...     baseline implementation
 ```

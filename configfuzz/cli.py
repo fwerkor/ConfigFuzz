@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Sequence
 
+from configfuzz.corpus import load_corpus
 from configfuzz.extractors import scan_python_paths
 from configfuzz.probing import (
     ProbeManifest,
@@ -71,6 +72,14 @@ def build_parser() -> argparse.ArgumentParser:
     infer.add_argument("--samples-output", type=Path, help="retain labeled runtime samples")
     infer.add_argument("--output", type=Path, help="write the inferred specification")
     infer.set_defaults(handler=_run_infer)
+
+    validate_corpus = subparsers.add_parser(
+        "validate-corpus",
+        help="validate a normalized manual-constraint corpus",
+    )
+    validate_corpus.add_argument("corpus", type=Path, help="YAML corpus to validate")
+    validate_corpus.add_argument("--output", type=Path, help="write a JSON summary")
+    validate_corpus.set_defaults(handler=_run_validate_corpus)
     return parser
 
 
@@ -126,6 +135,27 @@ def _run_infer(args: argparse.Namespace) -> int:
         "result": result.to_dict(),
     }
     _write_json(output, args.output)
+    return 0
+
+
+def _run_validate_corpus(args: argparse.Namespace) -> int:
+    corpus = load_corpus(args.corpus)
+    strength_counts: dict[str, int] = {}
+    enforcement_counts: dict[str, int] = {}
+    status_counts: dict[str, int] = {}
+    for rule in corpus.rules:
+        strength_counts[rule.strength.value] = strength_counts.get(rule.strength.value, 0) + 1
+        enforcement_counts[rule.enforcement.value] = enforcement_counts.get(rule.enforcement.value, 0) + 1
+        status_counts[rule.status.value] = status_counts.get(rule.status.value, 0) + 1
+    payload = {
+        "schema_version": corpus.schema_version,
+        "name": corpus.name,
+        "rules": len(corpus.rules),
+        "strengths": dict(sorted(strength_counts.items())),
+        "enforcements": dict(sorted(enforcement_counts.items())),
+        "statuses": dict(sorted(status_counts.items())),
+    }
+    _write_json(payload, args.output)
     return 0
 
 

@@ -30,7 +30,10 @@ ConfigFuzz uses a bounded, evidence-backed representation rather than unrestrict
 }
 ```
 
-The current Python model implements the common fields. Scope and dynamic observations will be added when the execution harness is introduced.
+Inferred constraints use the compact model in `configfuzz/model.py`. Reviewed
+manual rules use the richer corpus model in `configfuzz/corpus.py`, which also
+records scope, enforcement behavior, semantic strength, status, source
+locations, and repair metadata.
 
 ## Core grammar
 

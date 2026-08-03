@@ -170,6 +170,12 @@ The corpus should distinguish:
 - empirical resource limits;
 - workaround rules for known implementation defects.
 
+The normalized corpus lives at `corpus/lmsv/manual_constraints.yaml`. It uses a
+single schema for validator repairs and mutation-pool sampling rules while
+retaining enforcement behavior, semantic strength, scope, source location, and
+repair strategy. The corpus is evaluation data and a manual baseline; it must
+not be supplied to the framework-side inference component during testing.
+
 ## 6. Experimental baselines
 
 Compare against:
@@ -226,13 +232,14 @@ Completed in the initial prototype:
 - integer, float, Boolean, string, and enum candidate generation;
 - first Z3 templates for bounds, enums, divisibility, and contextual relations;
 - a real lm-sv validator adapter and hidden-size recovery experiment.
+- a normalized corpus of reviewed Task1 validator rules and Task6 mutation-pool rules.
 
 Next tasks:
 
 1. Inspect and label static-inventory false positives.
 2. Refactor alias tracking to be function- and scope-sensitive.
 3. Extract constraint candidates from `_apply_fix` arguments and comments, not only guard conditions.
-4. Build a manually reviewed gold set of 50-100 constraints from Task1 and Task6.
+4. Independently validate corpus entries against framework source and runtime behavior.
 5. Add adaptive query selection and convergence criteria.
 6. Extend synthesis to jointly varied parameters and conditional formulas.
 7. Integrate generated specifications into the lm-sv mutation path behind a fallback flag.
