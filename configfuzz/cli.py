@@ -8,6 +8,8 @@ from typing import Sequence
 from configfuzz.corpus import load_corpus
 from configfuzz.dependencies import DependencyGraph
 from configfuzz.extractors import scan_source_paths_multi
+from configfuzz.feedback import apply_probe_feedback
+from configfuzz.graph_solver import solve_graph_mutation
 from configfuzz.probing import (
     ProbeManifest,
     load_samples,
@@ -84,6 +86,37 @@ def build_parser() -> argparse.ArgumentParser:
     )
     plan.add_argument("--output", type=Path, help="write the mutation plan")
     plan.set_defaults(handler=_run_plan_mutation)
+
+    solve = subparsers.add_parser(
+        "solve-mutation",
+        help="solve a joint mutation with Z3 over supported dependency edges",
+    )
+    solve.add_argument("graph", type=Path, help="dependency graph JSON")
+    solve.add_argument("baseline", type=Path, help="baseline configuration JSON")
+    solve.add_argument("--parameter", required=True, help="parameter to mutate")
+    solve.add_argument(
+        "--value",
+        required=True,
+        type=_parse_json_value,
+        help="requested value encoded as JSON",
+    )
+    solve.add_argument(
+        "--static-hard",
+        action="store_true",
+        help="treat unvalidated static candidates as hard instead of weighted soft constraints",
+    )
+    solve.add_argument("--output", type=Path, help="write the solver plan")
+    solve.set_defaults(handler=_run_solve_mutation)
+
+    feedback = subparsers.add_parser(
+        "apply-feedback",
+        help="update dependency-edge status and confidence from runtime samples",
+    )
+    feedback.add_argument("graph", type=Path, help="dependency graph JSON")
+    feedback.add_argument("samples", type=Path, help="probe sample JSON")
+    feedback.add_argument("baseline", type=Path, help="baseline configuration JSON")
+    feedback.add_argument("--output", type=Path, help="write the updated graph")
+    feedback.set_defaults(handler=_run_apply_feedback)
 
     probe = subparsers.add_parser(
         "probe",
@@ -167,6 +200,40 @@ def _run_plan_mutation(args: argparse.Namespace) -> int:
     baseline = nested if isinstance(nested, dict) else baseline_payload
     plan = graph.plan_joint_mutation(args.parameter, args.value, baseline)
     _write_json({"schema_version": 1, "plan": plan.to_dict()}, args.output)
+    return 0
+
+
+def _run_solve_mutation(args: argparse.Namespace) -> int:
+    graph = DependencyGraph.from_dict(_read_json_object(args.graph))
+    baseline_payload = _read_json_object(args.baseline)
+    nested = baseline_payload.get("config")
+    baseline = nested if isinstance(nested, dict) else baseline_payload
+    plan = solve_graph_mutation(
+        graph,
+        baseline,
+        args.parameter,
+        args.value,
+        static_as_hard=args.static_hard,
+    )
+    _write_json({"schema_version": 1, "plan": plan.to_dict()}, args.output)
+    return 0
+
+
+def _run_apply_feedback(args: argparse.Namespace) -> int:
+    graph = DependencyGraph.from_dict(_read_json_object(args.graph))
+    _, samples = load_samples(args.samples)
+    baseline_payload = _read_json_object(args.baseline)
+    nested = baseline_payload.get("config")
+    baseline = nested if isinstance(nested, dict) else baseline_payload
+    report = apply_probe_feedback(graph, baseline, samples)
+    _write_json(
+        {
+            "schema_version": 1,
+            "feedback": report.to_dict(),
+            "dependency_graph": graph.to_dict(),
+        },
+        args.output,
+    )
     return 0
 
 

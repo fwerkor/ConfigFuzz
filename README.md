@@ -44,6 +44,10 @@ The initial repository provides:
   direction, scope, status, connectivity queries, and active-constraint evaluation;
 - a bounded joint-mutation planner for divisibility, alignment, equality,
   simple bounds, and Boolean dependencies;
+- a Z3 joint solver that treats dynamically supported edges as hard constraints
+  and unvalidated static candidates as weighted soft constraints;
+- runtime feedback that confirms, supports, or contradicts graph edges without
+  learning `UNKNOWN` or `POTENTIAL_BUG` outcomes as invalid-domain evidence;
 - an isolated subprocess harness driven by JSON manifests;
 - runtime outcome classification into `VALID`, `INVALID`, `UNKNOWN`, and
   `POTENTIAL_BUG`;
@@ -116,6 +120,27 @@ python -m configfuzz plan-mutation \
   --output artifacts/example_mutation_plan.json
 ```
 
+Solve the same mutation over the supported graph expressions with Z3:
+
+```bash
+python -m configfuzz solve-mutation \
+  artifacts/example_dependency_graph.json \
+  examples/framework_static/baseline.json \
+  --parameter tensor_model_parallel_size \
+  --value 6 \
+  --output artifacts/example_solver_plan.json
+```
+
+Apply labeled runtime samples to the graph before solving:
+
+```bash
+python -m configfuzz apply-feedback \
+  artifacts/example_dependency_graph.json \
+  examples/framework_static/feedback_samples.json \
+  examples/framework_static/feedback_baseline.json \
+  --output artifacts/example_feedback_graph.json
+```
+
 Run a versioned scan against an external framework checkout:
 
 ```bash
@@ -185,6 +210,8 @@ from intended framework semantics.
 ```text
 configfuzz/                 new constraint-inference prototype
   dependencies.py          dependency hypergraph and joint-mutation planner
+  feedback.py              runtime evidence attribution and edge-state updates
+  graph_solver.py          status-aware Z3 joint configuration solver
   extractors/               static candidate extractors
   outcomes.py               runtime outcome oracle
   probing.py                manifest, generator, and subprocess harness

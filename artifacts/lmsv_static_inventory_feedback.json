@@ -1,0 +1,1664 @@
+{
+  "schema_version": 1,
+  "feedback": {
+    "batch_id": "31e92d9c02ab043208d0",
+    "duplicate_batch": false,
+    "samples": 12,
+    "evaluated_samples": 12,
+    "ignored_samples": 0,
+    "supported_edges": [],
+    "confirmed_edges": [
+      "dep-c47258679d480492"
+    ],
+    "contradicted_edges": [
+      "dep-a094487809a246bf"
+    ],
+    "ambiguous_invalid_samples": 5,
+    "status_changes": [
+      {
+        "edge_id": "dep-a094487809a246bf",
+        "from": "static_candidate",
+        "to": "contradicted"
+      },
+      {
+        "edge_id": "dep-c47258679d480492",
+        "from": "static_candidate",
+        "to": "confirmed"
+      }
+    ]
+  },
+  "dependency_graph": {
+    "schema_version": 1,
+    "metadata": {
+      "scope": {
+        "framework": "lm-sv-regression",
+        "version": "e73ba3d35"
+      },
+      "runtime_feedback": {
+        "edges": {
+          "dep-a094487809a246bf": {
+            "base_confidence": 0.9,
+            "evaluated": 12,
+            "valid_support": 2,
+            "valid_contradiction": 3,
+            "isolated_invalid_support": 0,
+            "ambiguous_invalid": 5,
+            "bug_preserving": 0
+          },
+          "dep-c47258679d480492": {
+            "base_confidence": 0.9,
+            "evaluated": 12,
+            "valid_support": 5,
+            "valid_contradiction": 0,
+            "isolated_invalid_support": 2,
+            "ambiguous_invalid": 5,
+            "bug_preserving": 0
+          }
+        },
+        "applied_batches": [
+          "31e92d9c02ab043208d0"
+        ],
+        "runs": 1,
+        "samples": 12,
+        "outcomes": {
+          "invalid": 7,
+          "valid": 5
+        }
+      }
+    },
+    "summary": {
+      "nodes": 35,
+      "edges": 40,
+      "connected_components": 4,
+      "node_kinds": {
+        "environment": 1,
+        "feature": 8,
+        "parameter": 26
+      },
+      "relations": {
+        "bound": 8,
+        "conflicts": 1,
+        "divisibility": 12,
+        "environment": 1,
+        "equality": 3,
+        "product_limit": 1,
+        "range": 1,
+        "requires": 12,
+        "type": 1
+      },
+      "statuses": {
+        "confirmed": 1,
+        "contradicted": 1,
+        "environment_specific": 1,
+        "static_candidate": 37
+      }
+    },
+    "nodes": [
+      {
+        "name": "context_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "disable_bias_linear",
+        "kind": "feature"
+      },
+      {
+        "name": "dp",
+        "kind": "parameter"
+      },
+      {
+        "name": "expert_model_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "ffn_hidden_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "flash_attention_seq_limit",
+        "kind": "parameter"
+      },
+      {
+        "name": "global_batch_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "hidden_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "kv_channels",
+        "kind": "parameter"
+      },
+      {
+        "name": "kv_lora_rank",
+        "kind": "parameter"
+      },
+      {
+        "name": "make_vocab_size_divisible_by",
+        "kind": "parameter"
+      },
+      {
+        "name": "max_global_bs",
+        "kind": "parameter"
+      },
+      {
+        "name": "max_position_embeddings",
+        "kind": "feature"
+      },
+      {
+        "name": "max_seq_length_cap",
+        "kind": "parameter"
+      },
+      {
+        "name": "micro_batch_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "moe_intermediate_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "moe_router_load_balancing_type",
+        "kind": "parameter"
+      },
+      {
+        "name": "moe_router_pre_softmax",
+        "kind": "feature"
+      },
+      {
+        "name": "moe_router_topk",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_attention_heads",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_experts",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_heads",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_layers",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_layers_per_virtual_pipeline_stage",
+        "kind": "parameter"
+      },
+      {
+        "name": "padded_vocab_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "pipeline_model_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "q_lora_rank",
+        "kind": "parameter"
+      },
+      {
+        "name": "seq_cap_enabled",
+        "kind": "feature"
+      },
+      {
+        "name": "seq_length",
+        "kind": "feature"
+      },
+      {
+        "name": "sequence_parallel",
+        "kind": "feature"
+      },
+      {
+        "name": "tensor_model_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "use_legacy_models",
+        "kind": "feature"
+      },
+      {
+        "name": "use_swiglu",
+        "kind": "feature"
+      },
+      {
+        "name": "vocab_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "world_size",
+        "kind": "environment"
+      }
+    ],
+    "edges": [
+      {
+        "id": "dep-02301589954a7d29",
+        "expression": "num_layers >= pipeline_model_parallel_size",
+        "predicate": "num_layers >= pipeline_model_parallel_size",
+        "relation": "bound",
+        "participants": [
+          "num_layers",
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "num_layers"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mf_converter.py",
+            "line": 463,
+            "detail": "rejecting guard"
+          },
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mf_converter.py",
+            "line": 470,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-055b70e97ddde87d",
+        "expression": "tensor_model_parallel_size < 2 => context_parallel_size <= 1",
+        "predicate": "context_parallel_size <= 1",
+        "relation": "bound",
+        "participants": [
+          "context_parallel_size",
+          "tensor_model_parallel_size"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "context_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 390,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "tensor_model_parallel_size < 2"
+      },
+      {
+        "id": "dep-0a65bfb3181440ef",
+        "expression": "sequence_parallel => tensor_model_parallel_size >= 2",
+        "predicate": "tensor_model_parallel_size >= 2",
+        "relation": "requires",
+        "participants": [
+          "tensor_model_parallel_size",
+          "sequence_parallel"
+        ],
+        "drivers": [
+          "sequence_parallel"
+        ],
+        "dependents": [
+          "tensor_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 409,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "sequence_parallel"
+      },
+      {
+        "id": "dep-0c1217a430b9038f",
+        "expression": "tensor_model_parallel_size > 1 and int(context_parallel_size or 1) != tensor_model_parallel_size and (tensor_model_parallel_size * int(pipeline_model_parallel_size or 1) * int(expert_model_parallel_size or 1) * tensor_model_parallel_size <= 0 or 8 % (tensor_model_parallel_size * int(pipeline_model_parallel_size or 1) * int(expert_model_parallel_size or 1) * tensor_model_parallel_size) != 0) => int(context_parallel_size or 1) == 1",
+        "predicate": "int(context_parallel_size or 1) == 1",
+        "relation": "equality",
+        "participants": [
+          "context_parallel_size",
+          "tensor_model_parallel_size",
+          "expert_model_parallel_size",
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "expert_model_parallel_size",
+          "pipeline_model_parallel_size",
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "context_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 794,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "tensor_model_parallel_size > 1 and int(context_parallel_size or 1) != tensor_model_parallel_size and (tensor_model_parallel_size * int(pipeline_model_parallel_size or 1) * int(expert_model_parallel_size or 1) * tensor_model_parallel_size <= 0 or 8 % (tensor_model_parallel_size * int(pipeline_model_parallel_size or 1) * int(expert_model_parallel_size or 1) * tensor_model_parallel_size) != 0)"
+      },
+      {
+        "id": "dep-0f66ce31f144e0cb",
+        "expression": "moe_router_load_balancing_type == 'group_limited_greedy' => expert_model_parallel_size > 1",
+        "predicate": "expert_model_parallel_size > 1",
+        "relation": "bound",
+        "participants": [
+          "expert_model_parallel_size",
+          "moe_router_load_balancing_type"
+        ],
+        "drivers": [
+          "moe_router_load_balancing_type"
+        ],
+        "dependents": [
+          "expert_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 553,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "moe_router_load_balancing_type == 'group_limited_greedy'"
+      },
+      {
+        "id": "dep-228df8fbe95c0737",
+        "expression": "disable_bias_linear is not False",
+        "predicate": "disable_bias_linear is not False",
+        "relation": "type",
+        "participants": [
+          "disable_bias_linear"
+        ],
+        "drivers": [],
+        "dependents": [
+          "disable_bias_linear"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 528,
+            "detail": "repairing guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-2342072bbba68835",
+        "expression": "num_layers_per_virtual_pipeline_stage > 1 => num_layers % (pipeline_model_parallel_size * num_layers_per_virtual_pipeline_stage) == 0",
+        "predicate": "num_layers % (pipeline_model_parallel_size * num_layers_per_virtual_pipeline_stage) == 0",
+        "relation": "divisibility",
+        "participants": [
+          "num_layers",
+          "num_layers_per_virtual_pipeline_stage",
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "num_layers_per_virtual_pipeline_stage",
+          "pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "num_layers"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 264,
+            "detail": "interprocedural summary instantiated at line 86"
+          },
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 264,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "num_layers_per_virtual_pipeline_stage > 1"
+      },
+      {
+        "id": "dep-2d4d55c388b28a2f",
+        "expression": "use_swiglu => ffn_hidden_size % (2 * tensor_model_parallel_size) == 0",
+        "predicate": "ffn_hidden_size % (2 * tensor_model_parallel_size) == 0",
+        "relation": "requires",
+        "participants": [
+          "ffn_hidden_size",
+          "use_swiglu",
+          "tensor_model_parallel_size"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size",
+          "use_swiglu"
+        ],
+        "dependents": [
+          "ffn_hidden_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 243,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "use_swiglu"
+      },
+      {
+        "id": "dep-43217ccfc0e19c21",
+        "expression": "tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size <= world_size",
+        "predicate": "tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size <= world_size",
+        "relation": "environment",
+        "participants": [
+          "context_parallel_size",
+          "world_size",
+          "expert_model_parallel_size",
+          "tensor_model_parallel_size",
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "world_size"
+        ],
+        "dependents": [
+          "context_parallel_size",
+          "expert_model_parallel_size",
+          "pipeline_model_parallel_size",
+          "tensor_model_parallel_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 400,
+            "detail": "repairing guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-43f1c5e94b6d7880",
+        "expression": "global_batch_size <= max_global_bs",
+        "predicate": "global_batch_size <= max_global_bs",
+        "relation": "bound",
+        "participants": [
+          "global_batch_size",
+          "max_global_bs"
+        ],
+        "drivers": [
+          "max_global_bs"
+        ],
+        "dependents": [
+          "global_batch_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 351,
+            "detail": "repairing guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-499e9b52aecaa59a",
+        "expression": "(seq_length if seq_length > 0 else max_position_embeddings) > flash_attention_seq_limit => not seq_length or seq_length <= flash_attention_seq_limit",
+        "predicate": "not seq_length or seq_length <= flash_attention_seq_limit",
+        "relation": "requires",
+        "participants": [
+          "seq_length",
+          "flash_attention_seq_limit",
+          "max_position_embeddings"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 741,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "(seq_length if seq_length > 0 else max_position_embeddings) > flash_attention_seq_limit"
+      },
+      {
+        "id": "dep-52ebbaf441692008",
+        "expression": "ffn_hidden_size % tensor_model_parallel_size == 0",
+        "predicate": "ffn_hidden_size % tensor_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "ffn_hidden_size",
+          "tensor_model_parallel_size"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "ffn_hidden_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 228,
+            "detail": "interprocedural summary instantiated at line 85"
+          },
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 228,
+            "detail": "repairing guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-563a8ba8de6357ba",
+        "expression": "seq_cap_enabled and max_seq_length_cap > 0 => not seq_length or seq_length <= max_seq_length_cap",
+        "predicate": "not seq_length or seq_length <= max_seq_length_cap",
+        "relation": "requires",
+        "participants": [
+          "seq_length",
+          "seq_cap_enabled",
+          "max_seq_length_cap"
+        ],
+        "drivers": [
+          "max_seq_length_cap",
+          "seq_cap_enabled"
+        ],
+        "dependents": [
+          "seq_length"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 890,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "seq_cap_enabled and max_seq_length_cap > 0"
+      },
+      {
+        "id": "dep-5bdc50748af23308",
+        "expression": "num_experts > 0 and tensor_model_parallel_size > 1 => sequence_parallel",
+        "predicate": "sequence_parallel",
+        "relation": "requires",
+        "participants": [
+          "sequence_parallel",
+          "num_experts",
+          "tensor_model_parallel_size"
+        ],
+        "drivers": [
+          "num_experts",
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "sequence_parallel"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 538,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "num_experts > 0 and tensor_model_parallel_size > 1"
+      },
+      {
+        "id": "dep-608fc6a5dbba203a",
+        "expression": "seq_cap_enabled and max_seq_length_cap > 0 => not max_position_embeddings or max_position_embeddings <= max_seq_length_cap",
+        "predicate": "not max_position_embeddings or max_position_embeddings <= max_seq_length_cap",
+        "relation": "requires",
+        "participants": [
+          "max_position_embeddings",
+          "seq_cap_enabled",
+          "max_seq_length_cap"
+        ],
+        "drivers": [
+          "max_seq_length_cap",
+          "seq_cap_enabled"
+        ],
+        "dependents": [
+          "max_position_embeddings"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 898,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "seq_cap_enabled and max_seq_length_cap > 0"
+      },
+      {
+        "id": "dep-60bb53a8083655ff",
+        "expression": "tensor_model_parallel_size < 2 => not sequence_parallel",
+        "predicate": "not sequence_parallel",
+        "relation": "conflicts",
+        "participants": [
+          "sequence_parallel",
+          "tensor_model_parallel_size"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "sequence_parallel"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 409,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "tensor_model_parallel_size < 2"
+      },
+      {
+        "id": "dep-622cdafc9b394478",
+        "expression": "micro_batch_size > 0 => global_batch_size % (micro_batch_size * dp) == 0",
+        "predicate": "global_batch_size % (micro_batch_size * dp) == 0",
+        "relation": "divisibility",
+        "participants": [
+          "global_batch_size",
+          "micro_batch_size",
+          "dp"
+        ],
+        "drivers": [
+          "dp",
+          "micro_batch_size"
+        ],
+        "dependents": [
+          "global_batch_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 362,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "micro_batch_size > 0"
+      },
+      {
+        "id": "dep-6a8fe1cd253bdbab",
+        "expression": "moe_router_topk != 0",
+        "predicate": "moe_router_topk != 0",
+        "relation": "equality",
+        "participants": [
+          "moe_router_topk"
+        ],
+        "drivers": [],
+        "dependents": [
+          "moe_router_topk"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 496,
+            "detail": "repairing guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-6ce84a6fe2af9f7b",
+        "expression": "moe_intermediate_size > 0 => moe_intermediate_size % tensor_model_parallel_size == 0",
+        "predicate": "moe_intermediate_size % tensor_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "tensor_model_parallel_size",
+          "moe_intermediate_size"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "moe_intermediate_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 489,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "moe_intermediate_size > 0"
+      },
+      {
+        "id": "dep-7006eb330f573624",
+        "expression": "context_parallel_size > 1 => tensor_model_parallel_size >= 2",
+        "predicate": "tensor_model_parallel_size >= 2",
+        "relation": "bound",
+        "participants": [
+          "tensor_model_parallel_size",
+          "context_parallel_size"
+        ],
+        "drivers": [
+          "context_parallel_size"
+        ],
+        "dependents": [
+          "tensor_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 390,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "context_parallel_size > 1"
+      },
+      {
+        "id": "dep-71db11885bd0a904",
+        "expression": "moe_router_topk == 1 => moe_router_pre_softmax",
+        "predicate": "moe_router_pre_softmax",
+        "relation": "requires",
+        "participants": [
+          "moe_router_topk",
+          "moe_router_pre_softmax"
+        ],
+        "drivers": [
+          "moe_router_topk"
+        ],
+        "dependents": [
+          "moe_router_pre_softmax"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 511,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "moe_router_topk == 1"
+      },
+      {
+        "id": "dep-72125ee0e6b044b9",
+        "expression": "(seq_length if seq_length > 0 else max_position_embeddings) > flash_attention_seq_limit => not max_position_embeddings or max_position_embeddings <= flash_attention_seq_limit",
+        "predicate": "not max_position_embeddings or max_position_embeddings <= flash_attention_seq_limit",
+        "relation": "requires",
+        "participants": [
+          "max_position_embeddings",
+          "flash_attention_seq_limit",
+          "seq_length"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 749,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "(seq_length if seq_length > 0 else max_position_embeddings) > flash_attention_seq_limit"
+      },
+      {
+        "id": "dep-8961e3fea68969da",
+        "expression": "seq_length <= max_position_embeddings",
+        "predicate": "seq_length <= max_position_embeddings",
+        "relation": "bound",
+        "participants": [
+          "max_position_embeddings",
+          "seq_length"
+        ],
+        "drivers": [
+          "max_position_embeddings"
+        ],
+        "dependents": [
+          "seq_length"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 907,
+            "detail": "repairing guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-94343bad2622cdf6",
+        "expression": "num_experts > 0 => moe_router_topk <= num_experts",
+        "predicate": "moe_router_topk <= num_experts",
+        "relation": "bound",
+        "participants": [
+          "moe_router_topk",
+          "num_experts"
+        ],
+        "drivers": [
+          "num_experts"
+        ],
+        "dependents": [
+          "moe_router_topk"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 500,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "num_experts > 0"
+      },
+      {
+        "id": "dep-950ece497a0a1c96",
+        "expression": "num_experts > 0 => expert_model_parallel_size <= 0 or num_experts % expert_model_parallel_size == 0",
+        "predicate": "expert_model_parallel_size <= 0 or num_experts % expert_model_parallel_size == 0",
+        "relation": "requires",
+        "participants": [
+          "expert_model_parallel_size",
+          "num_experts"
+        ],
+        "drivers": [
+          "num_experts"
+        ],
+        "dependents": [
+          "expert_model_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 483,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "num_experts > 0"
+      },
+      {
+        "id": "dep-9befd983f5436a1e",
+        "expression": "num_attention_heads % (tensor_model_parallel_size * context_parallel_size) == 0",
+        "predicate": "num_attention_heads % (tensor_model_parallel_size * context_parallel_size) == 0",
+        "relation": "divisibility",
+        "participants": [
+          "context_parallel_size",
+          "num_attention_heads",
+          "tensor_model_parallel_size"
+        ],
+        "drivers": [
+          "context_parallel_size",
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "num_attention_heads"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 217,
+            "detail": "interprocedural summary instantiated at line 84"
+          },
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 217,
+            "detail": "repairing guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-9e9e5080af90cdb8",
+        "expression": "make_vocab_size_divisible_by > 1 => vocab_size % make_vocab_size_divisible_by == 0",
+        "predicate": "vocab_size % make_vocab_size_divisible_by == 0",
+        "relation": "divisibility",
+        "participants": [
+          "vocab_size",
+          "make_vocab_size_divisible_by"
+        ],
+        "drivers": [
+          "make_vocab_size_divisible_by"
+        ],
+        "dependents": [
+          "vocab_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 931,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "make_vocab_size_divisible_by > 1"
+      },
+      {
+        "id": "dep-a094487809a246bf",
+        "expression": "ffn_hidden_size <= hidden_size * 6",
+        "predicate": "ffn_hidden_size <= hidden_size * 6",
+        "relation": "product_limit",
+        "participants": [
+          "ffn_hidden_size",
+          "hidden_size"
+        ],
+        "drivers": [
+          "hidden_size"
+        ],
+        "dependents": [
+          "ffn_hidden_size"
+        ],
+        "status": "contradicted",
+        "confidence": 0.05,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 190,
+            "detail": "interprocedural summary instantiated at line 82"
+          },
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 190,
+            "detail": "repairing guard"
+          },
+          {
+            "kind": "dynamic",
+            "source": "runtime-feedback",
+            "detail": "valid_support=2; isolated_invalid_support=0; valid_contradiction=3; ambiguous_invalid=5; bug_preserving=0"
+          }
+        ]
+      },
+      {
+        "id": "dep-a3e71e518b4181bf",
+        "expression": "expert_model_parallel_size > 0 => num_experts <= 0 or num_experts % expert_model_parallel_size == 0",
+        "predicate": "num_experts <= 0 or num_experts % expert_model_parallel_size == 0",
+        "relation": "requires",
+        "participants": [
+          "num_experts",
+          "expert_model_parallel_size"
+        ],
+        "drivers": [
+          "expert_model_parallel_size"
+        ],
+        "dependents": [
+          "num_experts"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 483,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "expert_model_parallel_size > 0"
+      },
+      {
+        "id": "dep-a73ebd7230504935",
+        "expression": "use_legacy_models => context_parallel_size == 1",
+        "predicate": "context_parallel_size == 1",
+        "relation": "requires",
+        "participants": [
+          "context_parallel_size",
+          "use_legacy_models"
+        ],
+        "drivers": [
+          "use_legacy_models"
+        ],
+        "dependents": [
+          "context_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/pretrain_gpt.py",
+            "line": 402,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "use_legacy_models"
+      },
+      {
+        "id": "dep-ad6441c6cdda071f",
+        "expression": "kv_lora_rank > 0 => kv_lora_rank % tensor_model_parallel_size == 0",
+        "predicate": "kv_lora_rank % tensor_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "tensor_model_parallel_size",
+          "kv_lora_rank"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "kv_lora_rank"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 819,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "kv_lora_rank > 0"
+      },
+      {
+        "id": "dep-bf4cf674c4f20636",
+        "expression": "num_layers % pipeline_model_parallel_size == 0",
+        "predicate": "num_layers % pipeline_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "num_layers",
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "pipeline_model_parallel_size"
+        ],
+        "dependents": [
+          "num_layers"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 254,
+            "detail": "interprocedural summary instantiated at line 86"
+          },
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 254,
+            "detail": "repairing guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-c47258679d480492",
+        "expression": "hidden_size % tensor_model_parallel_size == 0",
+        "predicate": "hidden_size % tensor_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "hidden_size",
+          "tensor_model_parallel_size"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "hidden_size"
+        ],
+        "status": "confirmed",
+        "confidence": 0.99,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 200,
+            "detail": "interprocedural summary instantiated at line 83"
+          },
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 200,
+            "detail": "repairing guard"
+          },
+          {
+            "kind": "dynamic",
+            "source": "runtime-feedback",
+            "detail": "valid_support=5; isolated_invalid_support=2; valid_contradiction=0; ambiguous_invalid=5; bug_preserving=0"
+          }
+        ]
+      },
+      {
+        "id": "dep-da4bc0e4641534b6",
+        "expression": "micro_batch_size > 0",
+        "predicate": "micro_batch_size > 0",
+        "relation": "range",
+        "participants": [
+          "micro_batch_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "micro_batch_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 312,
+            "detail": "interprocedural summary instantiated at line 87"
+          },
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 312,
+            "detail": "repairing guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-db7a4a2068f37e97",
+        "expression": "kv_channels is None => hidden_size % num_heads == 0",
+        "predicate": "hidden_size % num_heads == 0",
+        "relation": "divisibility",
+        "participants": [
+          "hidden_size",
+          "kv_channels",
+          "num_heads"
+        ],
+        "drivers": [
+          "kv_channels",
+          "num_heads"
+        ],
+        "dependents": [
+          "hidden_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mf_converter.py",
+            "line": 423,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "kv_channels is None"
+      },
+      {
+        "id": "dep-e5fe5b4bcca1f1d4",
+        "expression": "q_lora_rank > 0 => q_lora_rank % tensor_model_parallel_size == 0",
+        "predicate": "q_lora_rank % tensor_model_parallel_size == 0",
+        "relation": "divisibility",
+        "participants": [
+          "tensor_model_parallel_size",
+          "q_lora_rank"
+        ],
+        "drivers": [
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "q_lora_rank"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 810,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "q_lora_rank > 0"
+      },
+      {
+        "id": "dep-ebb50d0b2b7a38c7",
+        "expression": "context_parallel_size == 1",
+        "predicate": "context_parallel_size == 1",
+        "relation": "equality",
+        "participants": [
+          "context_parallel_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "context_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 166,
+            "detail": "repairing guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-ecb9995393fecf11",
+        "expression": "micro_batch_size > 0 => global_batch_size % (micro_batch_size * (8 // (tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size))) == 0",
+        "predicate": "global_batch_size % (micro_batch_size * (8 // (tensor_model_parallel_size * pipeline_model_parallel_size * expert_model_parallel_size * context_parallel_size))) == 0",
+        "relation": "divisibility",
+        "participants": [
+          "context_parallel_size",
+          "micro_batch_size",
+          "global_batch_size",
+          "expert_model_parallel_size",
+          "tensor_model_parallel_size",
+          "pipeline_model_parallel_size"
+        ],
+        "drivers": [
+          "context_parallel_size",
+          "expert_model_parallel_size",
+          "micro_batch_size",
+          "pipeline_model_parallel_size",
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "global_batch_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.84,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 362,
+            "detail": "interprocedural summary instantiated at line 87"
+          }
+        ],
+        "guard": "micro_batch_size > 0"
+      },
+      {
+        "id": "dep-f0013dc3e582e087",
+        "expression": "padded_vocab_size > 0 => padded_vocab_size >= vocab_size",
+        "predicate": "padded_vocab_size >= vocab_size",
+        "relation": "bound",
+        "participants": [
+          "vocab_size",
+          "padded_vocab_size"
+        ],
+        "drivers": [
+          "vocab_size"
+        ],
+        "dependents": [
+          "padded_vocab_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 923,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "padded_vocab_size > 0"
+      },
+      {
+        "id": "dep-facf501660827bbd",
+        "expression": "tensor_model_parallel_size > 1 and num_experts > 0 => sequence_parallel",
+        "predicate": "sequence_parallel",
+        "relation": "requires",
+        "participants": [
+          "num_experts",
+          "tensor_model_parallel_size",
+          "sequence_parallel"
+        ],
+        "drivers": [
+          "num_experts",
+          "tensor_model_parallel_size"
+        ],
+        "dependents": [
+          "sequence_parallel"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.87,
+        "scope": {
+          "framework": "lm-sv-regression",
+          "version": "e73ba3d35"
+        },
+        "components": [
+          "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py",
+            "line": 538,
+            "detail": "repairing guard"
+          }
+        ],
+        "guard": "tensor_model_parallel_size > 1 and num_experts > 0"
+      }
+    ]
+  }
+}

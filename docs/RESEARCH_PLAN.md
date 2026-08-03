@@ -266,14 +266,20 @@ Completed in the initial prototype:
   directional impact queries, condition evaluation, and edge status.
 - a bounded joint-mutation planner that repairs simple divisibility,
   alignment, equality, bound, and Boolean dependencies.
+- a status-aware Z3 joint solver over impacted graph edges, with confirmed and
+  dynamically supported edges enforced as hard constraints and static candidates
+  treated as weighted soft constraints.
+- runtime feedback attribution that confirms isolated invalid-edge violations,
+  contradicts edges excluded by valid samples, preserves potential-bug inputs,
+  and deduplicates repeated feedback batches.
 
 Next tasks:
 
 1. Attach model, backend, hardware, and execution-stage scope to graph edges.
-2. Feed runtime outcomes back into edge status and confidence.
-3. Encode active graph components in the Z3 synthesis layer for general joint repair.
-4. Add return-value/object-field propagation and shell/documentation adapters.
-5. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
-6. Evaluate scanner and graph precision/recall against the reviewed corpus.
-7. Add adaptive query selection and convergence criteria.
-8. Integrate valid, boundary, and one-edge-violation mutation modes into lm-sv.
+2. Add return-value/object-field propagation and shell/documentation adapters.
+3. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
+4. Evaluate scanner and graph precision/recall against the reviewed corpus.
+5. Add adaptive query selection and convergence criteria.
+6. Add valid-boundary and deliberate one-edge-violation solver objectives.
+7. Model memory, device topology, and backend capability as scoped resource edges.
+8. Integrate solver-generated plans into the lm-sv mutation and execution path.

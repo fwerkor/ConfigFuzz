@@ -180,6 +180,92 @@ A plan also reports:
 
 The planner does not silently mutate environment nodes such as `world_size`. An incompatible environment relation remains violated or unresolved so that the execution harness can reject, reschedule, or probe it explicitly.
 
+## Z3 joint solving
+
+`solve-mutation` compiles the supported portion of the impacted graph component
+into Z3. The requested parameter value is fixed, environment nodes remain fixed,
+and only parameters reachable through inferred dependency direction may change.
+The optimizer first minimizes violated static-candidate weight, then minimizes
+the number of changed parameters and their numeric distance from the baseline.
+
+```bash
+python -m configfuzz solve-mutation graph.json baseline.json \
+  --parameter tensor_model_parallel_size \
+  --value 6 \
+  --output solver-plan.json
+```
+
+Constraint status determines enforcement:
+
+- `confirmed`, `dynamically_supported`, and `environment_specific` edges are hard;
+- `static_candidate` edges are weighted soft constraints by default;
+- `contradicted` edges are excluded;
+- `--static-hard` converts static candidates to hard constraints for controlled
+  experiments.
+
+The solver currently compiles integer/real/Boolean/string types, arithmetic,
+comparisons, divisibility, literal enums, conjunction/disjunction, implications,
+conditional expressions, and bounded `min`/`max`/`abs` calls. Unsupported edges
+are reported in `unsupported_edges`; unrelated graph edges are reported in
+`out_of_scope_edges`. Neither class is silently approximated.
+
+The included fixture changes TP from 4 to 6 and obtains:
+
+```json
+{
+  "tensor_model_parallel_size": 6,
+  "hidden_size": 4104
+}
+```
+
+All six impacted static formulas are satisfied, including TP divisibility and
+the declared multiple-of-eight alignment.
+
+## Runtime feedback
+
+`apply-feedback` evaluates labeled probe samples against the edges involving the
+mutated parameter and updates status, confidence, dynamic evidence, and cumulative
+per-edge counters:
+
+```bash
+python -m configfuzz apply-feedback \
+  graph.json samples.json baseline.json \
+  --output feedback-graph.json
+```
+
+The attribution rules are deliberately asymmetric:
+
+- a `VALID` sample that violates an active edge contradicts that edge;
+- a `VALID` sample satisfying an edge provides positive support;
+- an `INVALID` sample supports an edge only when exactly one evaluable active
+  edge is violated;
+- multiple violated edges make the invalid sample ambiguous;
+- `UNKNOWN` is ignored;
+- `POTENTIAL_BUG` is recorded only as bug-preserving evidence and never becomes
+  invalid-domain evidence.
+
+An edge becomes `confirmed` after at least three valid supports and one isolated
+invalid support. Any valid counterexample immediately marks it `contradicted`.
+Exact feedback batches are fingerprinted, so importing the same baseline and
+sample set twice does not inflate confidence.
+
+On the real lm-sv hidden-size probe, runtime feedback confirms:
+
+```text
+hidden_size % tensor_model_parallel_size == 0
+```
+
+using five valid samples and two isolated invalid samples. It contradicts the
+unconditional candidate:
+
+```text
+ffn_hidden_size <= hidden_size * 6
+```
+
+because three values accepted by the validator violate that formula. This is
+evidence that the latter is a repair policy or a conditionally scoped relation,
+not a global hard validity requirement.
+
 ## Current framework graphs
 
 The lm-sv regression inventory currently produces:
@@ -204,12 +290,12 @@ These graph counts are structural regression indicators. They do not establish t
 
 The first planner is deliberately bounded. It does not yet:
 
-- solve arbitrary nonlinear or disjunctive constraints;
-- optimize among multiple valid repair choices;
+- solve arbitrary nonlinear, quantified, or higher-order constraints;
 - reason about resource models;
 - infer causal direction for ambiguous formulas;
-- update status automatically from runtime samples;
 - generate deliberate single-edge violations;
 - write mutations back into lm-sv's execution path.
 
-The next integration stage should encode active graph edges in the solver-backed synthesis layer, use runtime outcomes to update edge status, and expose valid/boundary/one-violation mutation modes to lm-sv.
+The next integration stage should add adaptive counterexample selection, valid
+boundary generation, deliberate one-edge violations, and direct lm-sv mutation
+execution from solver plans.

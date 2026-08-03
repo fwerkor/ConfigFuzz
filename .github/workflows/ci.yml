@@ -42,6 +42,29 @@ jobs:
             --parameter tensor_model_parallel_size \
             --value 6 \
             --output /tmp/configfuzz-mutation-plan.json
+          python -m configfuzz solve-mutation \
+            /tmp/configfuzz-graph.json \
+            examples/framework_static/baseline.json \
+            --parameter tensor_model_parallel_size \
+            --value 6 \
+            --output /tmp/configfuzz-solver-plan.json
+          python -m configfuzz apply-feedback \
+            /tmp/configfuzz-graph.json \
+            examples/framework_static/feedback_samples.json \
+            examples/framework_static/feedback_baseline.json \
+            --output /tmp/configfuzz-feedback-graph.json
+          python -m configfuzz solve-mutation \
+            /tmp/configfuzz-feedback-graph.json \
+            examples/framework_static/feedback_baseline.json \
+            --parameter hidden_size \
+            --value 152 \
+            --output /tmp/configfuzz-feedback-unsat.json
+          python -m configfuzz solve-mutation \
+            /tmp/configfuzz-feedback-graph.json \
+            examples/framework_static/feedback_baseline.json \
+            --parameter hidden_size \
+            --value 168 \
+            --output /tmp/configfuzz-feedback-sat.json
           python - <<'PY'
           import json
           from pathlib import Path
@@ -55,6 +78,32 @@ jobs:
           }
           assert not plan["violated_edges"]
           assert not plan["unresolved_edges"]
+
+          solver = json.loads(
+              Path("/tmp/configfuzz-solver-plan.json").read_text()
+          )["plan"]
+          assert solver["status"] == "sat"
+          assert solver["proposed_changes"] == {
+              "tensor_model_parallel_size": 6,
+              "hidden_size": 4104,
+          }
+          assert not solver["unsupported_edges"]
+          assert not solver["violated_soft_edges"]
+
+          feedback = json.loads(
+              Path("/tmp/configfuzz-feedback-graph.json").read_text()
+          )["feedback"]
+          assert not feedback["duplicate_batch"]
+          assert len(feedback["confirmed_edges"]) == 1
+
+          unsat = json.loads(
+              Path("/tmp/configfuzz-feedback-unsat.json").read_text()
+          )["plan"]
+          sat = json.loads(
+              Path("/tmp/configfuzz-feedback-sat.json").read_text()
+          )["plan"]
+          assert unsat["status"] == "unsat"
+          assert sat["status"] == "sat"
           PY
       - name: Runtime inference smoke test
         run: >-

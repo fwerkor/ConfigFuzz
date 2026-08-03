@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "manifest": {
+    "parameter": "hidden_size"
+  },
+  "samples": [
+    {
+      "parameter": "hidden_size",
+      "value": 144,
+      "observation": {
+        "argv": ["fixture"],
+        "returncode": 0,
+        "stdout": "",
+        "stderr": "",
+        "duration_seconds": 0.01,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "valid",
+        "reason": "fixture valid",
+        "reached_milestone": true
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 168,
+      "observation": {
+        "argv": ["fixture"],
+        "returncode": 0,
+        "stdout": "",
+        "stderr": "",
+        "duration_seconds": 0.01,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "valid",
+        "reason": "fixture valid",
+        "reached_milestone": true
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 192,
+      "observation": {
+        "argv": ["fixture"],
+        "returncode": 0,
+        "stdout": "",
+        "stderr": "",
+        "duration_seconds": 0.01,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "valid",
+        "reason": "fixture valid",
+        "reached_milestone": true
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 152,
+      "observation": {
+        "argv": ["fixture"],
+        "returncode": 2,
+        "stdout": "",
+        "stderr": "invalid configuration",
+        "duration_seconds": 0.01,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "invalid",
+        "reason": "fixture invalid",
+        "reached_milestone": false
+      }
+    }
+  ]
+}

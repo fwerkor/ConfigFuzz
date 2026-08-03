@@ -7,3 +7,22 @@ This directory stores reproducible research inventories and experiment outputs t
 ```bash
 python scripts/build_lmsv_constraint_inventory.py
 ```
+
+The hidden-size runtime feedback experiment produces:
+
+- `lmsv_hidden_size_samples.json`: labeled validator executions;
+- `lmsv_static_inventory_feedback.json`: the dependency graph after feedback;
+- `lmsv_hidden_size_solver_validation.json`: solver results for one accepted and
+  one rejected hidden-size value.
+
+Reproduce them with:
+
+```bash
+python -m configfuzz probe experiments/manifests/lmsv_hidden_size.json \
+  --output artifacts/lmsv_hidden_size_samples.json
+python -m configfuzz apply-feedback \
+  artifacts/lmsv_static_inventory.json \
+  artifacts/lmsv_hidden_size_samples.json \
+  experiments/lmsv_validator_baseline.json \
+  --output artifacts/lmsv_static_inventory_feedback.json
+```

@@ -1,0 +1,380 @@
+{
+  "schema_version": 1,
+  "manifest": {
+    "parameter": "hidden_size",
+    "baseline": 16,
+    "parameter_type": "integer",
+    "command": [
+      "python",
+      "experiments/lmsv_validator_probe.py",
+      "--config",
+      "experiments/lmsv_validator_baseline.json",
+      "--parameter",
+      "model.hidden_size",
+      "--value",
+      "{value}"
+    ],
+    "values": [
+      -1,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      8,
+      12,
+      15,
+      16,
+      17
+    ],
+    "seed_values": [],
+    "enum_values": [],
+    "timeout_seconds": 10.0,
+    "cwd": "/workspace/ConfigFuzz",
+    "env": {},
+    "context": {
+      "tensor_model_parallel_size": 4
+    },
+    "classification": {
+      "invalid_patterns": [
+        "CONFIG_INVALID:"
+      ],
+      "infrastructure_patterns": [],
+      "bug_patterns": [
+        "BUG_ORACLE:"
+      ],
+      "milestone_patterns": [
+        "MILESTONE: lm-sv validator accepted"
+      ],
+      "unexpected_failure_after_milestone_is_bug": true
+    },
+    "max_candidates": 32
+  },
+  "samples": [
+    {
+      "parameter": "hidden_size",
+      "value": -1,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "-1"
+        ],
+        "returncode": 2,
+        "stdout": "CONFIG_INVALID: model.hidden_size was repaired from -1 to 0\n",
+        "stderr": "",
+        "duration_seconds": 0.07974920999549795,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "invalid",
+        "reason": "matched an explicit configuration-rejection pattern",
+        "matched_pattern": "CONFIG_INVALID:",
+        "reached_milestone": false
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 0,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "0"
+        ],
+        "returncode": 0,
+        "stdout": "MILESTONE: lm-sv validator accepted target parameter unchanged\n{\"parameter\": \"model.hidden_size\", \"value\": 0, \"fixes_elsewhere\": 2, \"warnings\": []}\n",
+        "stderr": "",
+        "duration_seconds": 0.07973746598872822,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "valid",
+        "reason": "process completed and reached the configured milestone",
+        "matched_pattern": "MILESTONE: lm-sv validator accepted",
+        "reached_milestone": true
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 1,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "1"
+        ],
+        "returncode": 2,
+        "stdout": "CONFIG_INVALID: model.hidden_size was repaired from 1 to 4\n",
+        "stderr": "",
+        "duration_seconds": 0.07386679100454785,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "invalid",
+        "reason": "matched an explicit configuration-rejection pattern",
+        "matched_pattern": "CONFIG_INVALID:",
+        "reached_milestone": false
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 2,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "2"
+        ],
+        "returncode": 2,
+        "stdout": "CONFIG_INVALID: model.hidden_size was repaired from 2 to 4\n",
+        "stderr": "",
+        "duration_seconds": 0.08248740900307894,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "invalid",
+        "reason": "matched an explicit configuration-rejection pattern",
+        "matched_pattern": "CONFIG_INVALID:",
+        "reached_milestone": false
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 3,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "3"
+        ],
+        "returncode": 2,
+        "stdout": "CONFIG_INVALID: model.hidden_size was repaired from 3 to 4\n",
+        "stderr": "",
+        "duration_seconds": 0.08080527700076345,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "invalid",
+        "reason": "matched an explicit configuration-rejection pattern",
+        "matched_pattern": "CONFIG_INVALID:",
+        "reached_milestone": false
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 4,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "4"
+        ],
+        "returncode": 0,
+        "stdout": "MILESTONE: lm-sv validator accepted target parameter unchanged\n{\"parameter\": \"model.hidden_size\", \"value\": 4, \"fixes_elsewhere\": 2, \"warnings\": []}\n",
+        "stderr": "",
+        "duration_seconds": 0.08110716800729278,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "valid",
+        "reason": "process completed and reached the configured milestone",
+        "matched_pattern": "MILESTONE: lm-sv validator accepted",
+        "reached_milestone": true
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 5,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "5"
+        ],
+        "returncode": 2,
+        "stdout": "CONFIG_INVALID: model.hidden_size was repaired from 5 to 8\n",
+        "stderr": "",
+        "duration_seconds": 0.0804469569993671,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "invalid",
+        "reason": "matched an explicit configuration-rejection pattern",
+        "matched_pattern": "CONFIG_INVALID:",
+        "reached_milestone": false
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 8,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "8"
+        ],
+        "returncode": 0,
+        "stdout": "MILESTONE: lm-sv validator accepted target parameter unchanged\n{\"parameter\": \"model.hidden_size\", \"value\": 8, \"fixes_elsewhere\": 2, \"warnings\": []}\n",
+        "stderr": "",
+        "duration_seconds": 0.07283730400376953,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "valid",
+        "reason": "process completed and reached the configured milestone",
+        "matched_pattern": "MILESTONE: lm-sv validator accepted",
+        "reached_milestone": true
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 12,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "12"
+        ],
+        "returncode": 0,
+        "stdout": "MILESTONE: lm-sv validator accepted target parameter unchanged\n{\"parameter\": \"model.hidden_size\", \"value\": 12, \"fixes_elsewhere\": 1, \"warnings\": []}\n",
+        "stderr": "",
+        "duration_seconds": 0.07931229600217193,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "valid",
+        "reason": "process completed and reached the configured milestone",
+        "matched_pattern": "MILESTONE: lm-sv validator accepted",
+        "reached_milestone": true
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 15,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "15"
+        ],
+        "returncode": 2,
+        "stdout": "CONFIG_INVALID: model.hidden_size was repaired from 15 to 16\n",
+        "stderr": "",
+        "duration_seconds": 0.07918168700416572,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "invalid",
+        "reason": "matched an explicit configuration-rejection pattern",
+        "matched_pattern": "CONFIG_INVALID:",
+        "reached_milestone": false
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 16,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "16"
+        ],
+        "returncode": 0,
+        "stdout": "MILESTONE: lm-sv validator accepted target parameter unchanged\n{\"parameter\": \"model.hidden_size\", \"value\": 16, \"fixes_elsewhere\": 1, \"warnings\": []}\n",
+        "stderr": "",
+        "duration_seconds": 0.08272328400926199,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "valid",
+        "reason": "process completed and reached the configured milestone",
+        "matched_pattern": "MILESTONE: lm-sv validator accepted",
+        "reached_milestone": true
+      }
+    },
+    {
+      "parameter": "hidden_size",
+      "value": 17,
+      "observation": {
+        "argv": [
+          "python",
+          "experiments/lmsv_validator_probe.py",
+          "--config",
+          "experiments/lmsv_validator_baseline.json",
+          "--parameter",
+          "model.hidden_size",
+          "--value",
+          "17"
+        ],
+        "returncode": 2,
+        "stdout": "CONFIG_INVALID: model.hidden_size was repaired from 17 to 20\n",
+        "stderr": "",
+        "duration_seconds": 0.10210656600247603,
+        "timed_out": false
+      },
+      "outcome": {
+        "label": "invalid",
+        "reason": "matched an explicit configuration-rejection pattern",
+        "matched_pattern": "CONFIG_INVALID:",
+        "reached_milestone": false
+      }
+    }
+  ]
+}

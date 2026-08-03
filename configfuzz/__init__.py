@@ -10,6 +10,13 @@ from .dependencies import (
     DependencyStatus,
     MutationPlan,
 )
+from .feedback import FeedbackReport, apply_probe_feedback
+from .graph_solver import (
+    SolveStatus,
+    SolverMutationPlan,
+    normalize_context,
+    solve_graph_mutation,
+)
 from .model import Constraint, ConstraintKind, ConstraintSet, Evidence, EvidenceKind
 
 __all__ = [
@@ -25,8 +32,14 @@ __all__ = [
     "DependencyStatus",
     "Evidence",
     "EvidenceKind",
+    "FeedbackReport",
     "ManualConstraintRule",
     "MutationPlan",
+    "SolveStatus",
+    "SolverMutationPlan",
+    "apply_probe_feedback",
+    "normalize_context",
+    "solve_graph_mutation",
 ]
 
 __version__ = "0.1.0"
