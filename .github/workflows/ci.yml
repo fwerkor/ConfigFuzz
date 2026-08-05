@@ -24,7 +24,8 @@ jobs:
             lmsv_rec/utils/runtime/core/withnum_mutation_system.py \
             lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/main.py \
             lmsv_rec/utils/task/task1.py \
-            experiments/lmsv_task1_probe.py
+            experiments/lmsv_task1_probe.py \
+            scripts/run_lmsv_active_validation.py
       - name: CLI smoke test
         run: |
           python -m configfuzz scan \

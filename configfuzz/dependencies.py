@@ -292,6 +292,12 @@ class DependencyGraph:
         nested = payload.get("dependency_graph")
         if isinstance(nested, Mapping):
             graph_payload = nested
+        else:
+            active_validation = payload.get("active_validation")
+            if isinstance(active_validation, Mapping):
+                nested = active_validation.get("dependency_graph")
+                if isinstance(nested, Mapping):
+                    graph_payload = nested
         nodes = {
             node.name: node
             for item in graph_payload.get("nodes", ())

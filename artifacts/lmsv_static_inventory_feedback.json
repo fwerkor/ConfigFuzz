@@ -1,29 +1,37 @@
 {
   "schema_version": 1,
+  "experiment": "lmsv_existing_probe_feedback",
+  "inputs": {
+    "static_graph": "artifacts/lmsv_static_inventory.json",
+    "samples": "artifacts/lmsv_hidden_size_samples.json",
+    "baseline": "experiments/lmsv_validator_baseline.json"
+  },
   "feedback": {
-    "batch_id": "31e92d9c02ab043208d0",
+    "batch_id": "6f320edda9a9f5ca9393",
     "duplicate_batch": false,
     "samples": 12,
     "evaluated_samples": 12,
     "ignored_samples": 0,
-    "supported_edges": [],
-    "confirmed_edges": [
+    "supported_edges": [
       "dep-c47258679d480492"
     ],
-    "contradicted_edges": [
+    "confirmed_edges": [],
+    "scope_disputed_edges": [
       "dep-a094487809a246bf"
     ],
+    "contradicted_edges": [],
     "ambiguous_invalid_samples": 5,
+    "paired_interventions": 0,
     "status_changes": [
       {
         "edge_id": "dep-a094487809a246bf",
         "from": "static_candidate",
-        "to": "contradicted"
+        "to": "scope_disputed"
       },
       {
         "edge_id": "dep-c47258679d480492",
         "from": "static_candidate",
-        "to": "confirmed"
+        "to": "dynamically_supported"
       }
     ]
   },
@@ -39,24 +47,30 @@
           "dep-a094487809a246bf": {
             "base_confidence": 0.9,
             "evaluated": 12,
-            "valid_support": 2,
-            "valid_contradiction": 3,
-            "isolated_invalid_support": 0,
+            "consistent_valid": 2,
+            "valid_counterexample": 3,
+            "isolated_violation": 0,
+            "paired_intervention": 0,
+            "provenance_matched_rejection": 0,
             "ambiguous_invalid": 5,
+            "unexplained_preserving": 0,
             "bug_preserving": 0
           },
           "dep-c47258679d480492": {
             "base_confidence": 0.9,
             "evaluated": 12,
-            "valid_support": 5,
-            "valid_contradiction": 0,
-            "isolated_invalid_support": 2,
+            "consistent_valid": 5,
+            "valid_counterexample": 0,
+            "isolated_violation": 2,
+            "paired_intervention": 0,
+            "provenance_matched_rejection": 0,
             "ambiguous_invalid": 5,
+            "unexplained_preserving": 0,
             "bug_preserving": 0
           }
         },
         "applied_batches": [
-          "31e92d9c02ab043208d0"
+          "6f320edda9a9f5ca9393"
         ],
         "runs": 1,
         "samples": 12,
@@ -87,9 +101,9 @@
         "type": 1
       },
       "statuses": {
-        "confirmed": 1,
-        "contradicted": 1,
+        "dynamically_supported": 1,
         "environment_specific": 1,
+        "scope_disputed": 1,
         "static_candidate": 37
       }
     },
@@ -1197,8 +1211,8 @@
         "dependents": [
           "ffn_hidden_size"
         ],
-        "status": "contradicted",
-        "confidence": 0.05,
+        "status": "scope_disputed",
+        "confidence": 0.12,
         "scope": {
           "framework": "lm-sv-regression",
           "version": "e73ba3d35"
@@ -1222,7 +1236,7 @@
           {
             "kind": "dynamic",
             "source": "runtime-feedback",
-            "detail": "valid_support=2; isolated_invalid_support=0; valid_contradiction=3; ambiguous_invalid=5; bug_preserving=0"
+            "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=3; ambiguous_invalid=5; unexplained_preserving=0; bug_preserving=0"
           }
         ]
       },
@@ -1382,7 +1396,7 @@
         "dependents": [
           "hidden_size"
         ],
-        "status": "confirmed",
+        "status": "dynamically_supported",
         "confidence": 0.99,
         "scope": {
           "framework": "lm-sv-regression",
@@ -1407,7 +1421,7 @@
           {
             "kind": "dynamic",
             "source": "runtime-feedback",
-            "detail": "valid_support=5; isolated_invalid_support=2; valid_contradiction=0; ambiguous_invalid=5; bug_preserving=0"
+            "detail": "consistent_valid=5; isolated_violation=2; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=5; unexplained_preserving=0; bug_preserving=0"
           }
         ]
       },

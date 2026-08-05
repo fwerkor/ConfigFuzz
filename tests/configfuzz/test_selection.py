@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from configfuzz.dependencies import DependencyGraph, DependencyStatus
 from configfuzz.model import Constraint, ConstraintKind, ConstraintSet
 from configfuzz.selection import select_interventions
@@ -134,3 +136,32 @@ def test_explicitly_excluded_edges_are_not_retried() -> None:
         item.edge_id for item in second.candidates
     }
     assert second.skipped_excluded == 1
+
+
+def test_selection_timeout_must_be_positive() -> None:
+    graph = make_graph(constraint("x % 2 == 0", ("x",)))
+
+    with pytest.raises(ValueError, match="timeout"):
+        select_interventions(graph, {"x": 2}, solver_timeout_ms=0)
+
+
+def test_selection_prunes_edges_whose_upper_bound_cannot_enter_top_k() -> None:
+    graph = make_graph(
+        constraint(
+            "feature_enabled => x % y == 0",
+            ("feature_enabled", "x", "y"),
+            kind=ConstraintKind.CONDITIONAL,
+            confidence=0.5,
+        ),
+        constraint("z > 0", ("z",), kind=ConstraintKind.RANGE, confidence=0.9),
+    )
+
+    queue = select_interventions(
+        graph,
+        {"feature_enabled": False, "x": 4, "y": 2, "z": 1},
+        limit=1,
+    )
+
+    assert queue.candidates[0].expression == "feature_enabled => x % y == 0"
+    assert queue.skipped_uncompetitive == 1
+    assert queue.to_dict()["summary"]["solver_timeout_ms"] == 1000

@@ -280,6 +280,13 @@ def test_connected_components_and_round_trip() -> None:
     restored = DependencyGraph.from_dict(graph.to_dict())
     assert restored.to_dict() == graph.to_dict()
 
+    active_artifact = {
+        "schema_version": 1,
+        "active_validation": {"dependency_graph": graph.to_dict()},
+    }
+    restored_active = DependencyGraph.from_dict(active_artifact)
+    assert restored_active.to_dict() == graph.to_dict()
+
 
 def test_graph_and_plan_cli_round_trip(tmp_path) -> None:
     expression = "num_attention_heads % tensor_model_parallel_size == 0"

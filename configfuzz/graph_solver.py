@@ -369,7 +369,10 @@ def design_edge_intervention(
     edge_id: str,
     *,
     include_repair: bool = True,
+    timeout_ms: int = 5000,
 ) -> InterventionPlan:
+    if timeout_ms <= 0:
+        raise ValueError("intervention solver timeout must be positive")
     if edge_id not in graph.edges:
         raise KeyError(f"unknown dependency edge: {edge_id}")
     edge = graph.edges[edge_id]
@@ -418,6 +421,7 @@ def design_edge_intervention(
         mutable,
         target_satisfied=True,
         role="satisfying",
+        timeout_ms=timeout_ms,
     )
     violating = _solve_intervention_case(
         graph,
@@ -426,6 +430,7 @@ def design_edge_intervention(
         mutable,
         target_satisfied=False,
         role="violating",
+        timeout_ms=timeout_ms,
     )
     repaired: InterventionCase | None = None
     if include_repair and violating.status is SolveStatus.SAT:
@@ -438,6 +443,7 @@ def design_edge_intervention(
             mutable,
             target_satisfied=True,
             role="repaired",
+            timeout_ms=timeout_ms,
         )
     return InterventionPlan(
         intervention_id=intervention_id,
@@ -460,6 +466,7 @@ def _solve_intervention_case(
     *,
     target_satisfied: bool,
     role: str,
+    timeout_ms: int,
 ) -> InterventionCase:
     edge = graph.edges[edge_id]
     primary = next(iter(sorted(mutable)), edge.participants[0])
@@ -477,6 +484,7 @@ def _solve_intervention_case(
 
     optimizer = z3.Optimize()
     optimizer.set(priority="lex")
+    optimizer.set(timeout=timeout_ms)
     for name, variable in variables.items():
         if name in mutable:
             continue

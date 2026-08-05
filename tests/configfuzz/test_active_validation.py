@@ -3,6 +3,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pytest
+
 from configfuzz.active_validation import run_active_validation
 from configfuzz.dependencies import DependencyGraph, DependencyStatus
 from configfuzz.intervention_runner import InterventionExecutionManifest
@@ -69,7 +71,10 @@ def test_active_validation_confirms_multiple_edges(tmp_path: Path) -> None:
     assert all(
         edge.status is DependencyStatus.CONFIRMED for edge in graph.edges.values()
     )
-    assert result.to_dict()["summary"]["edge_statuses"] == {"confirmed": 2}
+    summary = result.to_dict()["summary"]
+    assert summary["edge_statuses"] == {"confirmed": 2}
+    assert summary["round_budget"] == 2
+    assert summary["solver_timeout_ms"] == 1000
 
 
 def test_active_validation_stops_when_no_executable_edge(tmp_path: Path) -> None:
@@ -104,3 +109,14 @@ def test_attempted_unconfirmed_edge_is_not_retried(tmp_path: Path) -> None:
     assert len(result.rounds) == 1
     assert result.stop_reason == "no_executable_candidates"
     assert next(iter(graph.edges.values())).status is DependencyStatus.DYNAMICALLY_SUPPORTED
+
+
+def test_active_validation_timeout_must_be_positive(tmp_path: Path) -> None:
+    graph = make_graph(parity_constraint("x"))
+
+    with pytest.raises(ValueError, match="timeout"):
+        run_active_validation(
+            graph,
+            manifest_for(tmp_path),
+            solver_timeout_ms=0,
+        )

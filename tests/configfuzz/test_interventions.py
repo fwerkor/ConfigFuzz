@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from configfuzz.dependencies import DependencyGraph, DependencyStatus
 from configfuzz.graph_solver import SolveStatus, design_edge_intervention
 from configfuzz.model import Constraint, ConstraintKind, ConstraintSet, Evidence, EvidenceKind
@@ -146,3 +148,11 @@ def test_unconfirmed_transitive_neighbors_do_not_expand_mutable_region() -> None
     assert plan.mutable_parameters == ("x", "y")
     assert plan.satisfying.status is SolveStatus.SAT
     assert plan.violating.status is SolveStatus.SAT
+
+
+def test_intervention_timeout_must_be_positive() -> None:
+    graph = make_graph(constraint("x % 2 == 0", ("x",)))
+    edge = next(iter(graph.edges.values()))
+
+    with pytest.raises(ValueError, match="timeout"):
+        design_edge_intervention(graph, {"x": 2}, edge.id, timeout_ms=0)

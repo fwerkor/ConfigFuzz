@@ -11,7 +11,11 @@ python scripts/build_lmsv_constraint_inventory.py
 The hidden-size runtime feedback experiment produces:
 
 - `lmsv_hidden_size_samples.json`: labeled validator executions;
-- `lmsv_static_inventory_feedback.json`: the dependency graph after feedback;
+- `lmsv_static_inventory_feedback.json`: the dependency graph after the
+  existing one-parameter samples are reapplied under the current attribution
+  rules;
+- `lmsv_active_validation.json`: 11 selected paired interventions and the final
+  graph after active validation;
 - `lmsv_hidden_size_solver_validation.json`: solver results for one accepted and
   one rejected hidden-size value.
 
@@ -20,9 +24,12 @@ Reproduce them with:
 ```bash
 python -m configfuzz probe experiments/manifests/lmsv_hidden_size.json \
   --output artifacts/lmsv_hidden_size_samples.json
-python -m configfuzz apply-feedback \
-  artifacts/lmsv_static_inventory.json \
-  artifacts/lmsv_hidden_size_samples.json \
-  experiments/lmsv_validator_baseline.json \
-  --output artifacts/lmsv_static_inventory_feedback.json
+python scripts/run_lmsv_active_validation.py
 ```
+
+The checked-in active run uses a 25-round budget and a one-second Z3 timeout per
+intervention case. It stops after 11 rounds because no additional edge has both
+solver-feasible polarities under the dense baseline. The final graph contains
+8 confirmed edges, 3 scope-disputed edges, 1 dynamically supported edge, 1
+environment-specific edge, and 27 unvalidated static candidates. These are
+baseline-specific validator results rather than a framework gold set.

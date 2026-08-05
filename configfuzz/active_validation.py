@@ -37,6 +37,8 @@ class ActiveValidationResult:
     rounds: tuple[ActiveValidationRound, ...]
     attempted_edges: tuple[str, ...]
     graph: DependencyGraph
+    round_budget: int
+    solver_timeout_ms: int
 
     def to_dict(self) -> dict[str, Any]:
         status_counts = Counter(edge.status.value for edge in self.graph.edges.values())
@@ -44,6 +46,8 @@ class ActiveValidationResult:
             "summary": {
                 "stop_reason": self.stop_reason,
                 "rounds_executed": len(self.rounds),
+                "round_budget": self.round_budget,
+                "solver_timeout_ms": self.solver_timeout_ms,
                 "attempted_edges": list(self.attempted_edges),
                 "edge_statuses": dict(sorted(status_counts.items())),
             },
@@ -57,9 +61,12 @@ def run_active_validation(
     manifest: InterventionExecutionManifest,
     *,
     max_rounds: int = 10,
+    solver_timeout_ms: int = 1000,
 ) -> ActiveValidationResult:
     if max_rounds <= 0:
         raise ValueError("active-validation round budget must be positive")
+    if solver_timeout_ms <= 0:
+        raise ValueError("intervention solver timeout must be positive")
     baseline = _load_baseline(manifest)
     attempted: set[str] = set()
     rounds: list[ActiveValidationRound] = []
@@ -71,6 +78,7 @@ def run_active_validation(
             baseline,
             limit=1,
             excluded_edge_ids=attempted,
+            solver_timeout_ms=solver_timeout_ms,
         )
         if not queue.candidates:
             stop_reason = "no_executable_candidates"
@@ -98,6 +106,8 @@ def run_active_validation(
         rounds=tuple(rounds),
         attempted_edges=tuple(round_.candidate.edge_id for round_ in rounds),
         graph=graph,
+        round_budget=max_rounds,
+        solver_timeout_ms=solver_timeout_ms,
     )
 
 

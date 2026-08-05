@@ -80,6 +80,8 @@ class InterventionQueue:
     skipped_status: int
     skipped_excluded: int
     skipped_infeasible: int
+    skipped_uncompetitive: int
+    solver_timeout_ms: int
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -89,6 +91,8 @@ class InterventionQueue:
                 "skipped_status": self.skipped_status,
                 "skipped_excluded": self.skipped_excluded,
                 "skipped_infeasible": self.skipped_infeasible,
+                "skipped_uncompetitive": self.skipped_uncompetitive,
+                "solver_timeout_ms": self.solver_timeout_ms,
             },
             "candidates": [candidate.to_dict() for candidate in self.candidates],
         }
@@ -100,29 +104,55 @@ def select_interventions(
     *,
     limit: int = 10,
     excluded_edge_ids: Collection[str] = (),
+    solver_timeout_ms: int = 1000,
 ) -> InterventionQueue:
     if limit <= 0:
         raise ValueError("intervention selection limit must be positive")
+    if solver_timeout_ms <= 0:
+        raise ValueError("intervention solver timeout must be positive")
     candidates: list[InterventionCandidate] = []
     excluded = set(excluded_edge_ids)
     skipped_status = 0
     skipped_excluded = 0
     skipped_infeasible = 0
-    for edge in sorted(graph.edges.values(), key=lambda item: item.id):
+    eligible: list[tuple[float, DependencyEdge, dict[str, float]]] = []
+    for edge in graph.edges.values():
         if edge.id in excluded:
             skipped_excluded += 1
             continue
         if edge.status not in _ELIGIBLE_STATUSES:
             skipped_status += 1
             continue
-        plan = design_edge_intervention(graph, baseline, edge.id)
+        static_components = _static_score_components(graph, edge)
+        eligible.append((sum(static_components.values()), edge, static_components))
+
+    eligible.sort(key=lambda item: (-item[0], item[1].id))
+    skipped_uncompetitive = 0
+    for index, (upper_bound, edge, static_components) in enumerate(eligible):
+        if len(candidates) >= limit:
+            threshold = sorted(
+                candidates,
+                key=lambda item: (-item.score, item.edge_id),
+            )[limit - 1].score
+            if upper_bound < threshold:
+                skipped_uncompetitive = len(eligible) - index
+                break
+        plan = design_edge_intervention(
+            graph,
+            baseline,
+            edge.id,
+            timeout_ms=solver_timeout_ms,
+        )
         if (
             plan.satisfying.status is not SolveStatus.SAT
             or plan.violating.status is not SolveStatus.SAT
         ):
             skipped_infeasible += 1
             continue
-        components = _score_components(graph, edge, plan)
+        components = {
+            **static_components,
+            **_plan_score_components(graph, plan),
+        }
         score = round(sum(components.values()), 6)
         candidates.append(
             InterventionCandidate(
@@ -143,13 +173,14 @@ def select_interventions(
         skipped_status=skipped_status,
         skipped_excluded=skipped_excluded,
         skipped_infeasible=skipped_infeasible,
+        skipped_uncompetitive=skipped_uncompetitive,
+        solver_timeout_ms=solver_timeout_ms,
     )
 
 
-def _score_components(
+def _static_score_components(
     graph: DependencyGraph,
     edge: DependencyEdge,
-    plan: InterventionPlan,
 ) -> dict[str, float]:
     uncertainty = max(0.0, 1.0 - abs(edge.confidence - 0.5) * 2.0)
     interaction = min(max(len(edge.participants) - 1, 0), 4) / 4.0
@@ -158,6 +189,21 @@ def _score_components(
         for participant in edge.participants
         for neighbor in graph.related_parameters(participant)
     }), 8) / 8.0
+    return {
+        "status": 3.0 * _STATUS_PRIORITY[edge.status],
+        "relation": 1.2 * _RELATION_PRIORITY[edge.relation],
+        "uncertainty": uncertainty,
+        "interaction": 0.8 * interaction,
+        "guard": 0.5 if edge.guard is not None else 0.0,
+        "centrality": 0.4 * centrality,
+        "provenance": 0.2 if edge.evidence else 0.0,
+    }
+
+
+def _plan_score_components(
+    graph: DependencyGraph,
+    plan: InterventionPlan,
+) -> dict[str, float]:
     changed = {
         name
         for case in (plan.satisfying, plan.violating)
@@ -171,13 +217,6 @@ def _score_components(
     }
     unsupported_ratio = len(unsupported) / max(1, len(graph.edges))
     return {
-        "status": 3.0 * _STATUS_PRIORITY[edge.status],
-        "relation": 1.2 * _RELATION_PRIORITY[edge.relation],
-        "uncertainty": uncertainty,
-        "interaction": 0.8 * interaction,
-        "guard": 0.5 if edge.guard is not None else 0.0,
-        "centrality": 0.4 * centrality,
-        "provenance": 0.2 if edge.evidence else 0.0,
         "pair_cost": -0.8 * pair_cost,
         "unsupported": -0.5 * unsupported_ratio,
     }

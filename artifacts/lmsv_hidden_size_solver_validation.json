@@ -1,37 +1,10 @@
 {
   "schema_version": 1,
-  "experiment": "lmsv_hidden_size_feedback_and_solver",
+  "experiment": "lmsv_hidden_size_feedback_active_validation_and_solver",
   "inputs": {
-    "static_graph": "artifacts/lmsv_static_inventory.json",
+    "active_graph": "artifacts/lmsv_active_validation.json",
     "samples": "artifacts/lmsv_hidden_size_samples.json",
     "baseline": "experiments/lmsv_validator_baseline.json"
-  },
-  "feedback": {
-    "batch_id": "31e92d9c02ab043208d0",
-    "duplicate_batch": false,
-    "samples": 12,
-    "evaluated_samples": 12,
-    "ignored_samples": 0,
-    "supported_edges": [],
-    "confirmed_edges": [
-      "dep-c47258679d480492"
-    ],
-    "contradicted_edges": [
-      "dep-a094487809a246bf"
-    ],
-    "ambiguous_invalid_samples": 5,
-    "status_changes": [
-      {
-        "edge_id": "dep-a094487809a246bf",
-        "from": "static_candidate",
-        "to": "contradicted"
-      },
-      {
-        "edge_id": "dep-c47258679d480492",
-        "from": "static_candidate",
-        "to": "confirmed"
-      }
-    ]
   },
   "cases": [
     {
@@ -42,7 +15,8 @@
         "target_parameter": "hidden_size",
         "requested_value": 4,
         "proposed_changes": {
-          "hidden_size": 4
+          "hidden_size": 4,
+          "ffn_hidden_size": 24
         },
         "mutable_parameters": [
           "ffn_hidden_size",
@@ -50,22 +24,22 @@
         ],
         "compiled_edges": [
           "dep-52ebbaf441692008",
+          "dep-a094487809a246bf",
           "dep-c47258679d480492"
         ],
         "hard_edges": [
+          "dep-52ebbaf441692008",
           "dep-c47258679d480492"
         ],
         "soft_edges": [
-          "dep-52ebbaf441692008"
+          "dep-a094487809a246bf"
         ],
         "violated_soft_edges": [],
         "unsupported_edges": [
           "dep-2d4d55c388b28a2f",
           "dep-db7a4a2068f37e97"
         ],
-        "excluded_edges": [
-          "dep-a094487809a246bf"
-        ],
+        "excluded_edges": [],
         "out_of_scope_edges": [
           "dep-02301589954a7d29",
           "dep-055b70e97ddde87d",
@@ -128,22 +102,22 @@
         ],
         "compiled_edges": [
           "dep-52ebbaf441692008",
+          "dep-a094487809a246bf",
           "dep-c47258679d480492"
         ],
         "hard_edges": [
+          "dep-52ebbaf441692008",
           "dep-c47258679d480492"
         ],
         "soft_edges": [
-          "dep-52ebbaf441692008"
+          "dep-a094487809a246bf"
         ],
         "violated_soft_edges": [],
         "unsupported_edges": [
           "dep-2d4d55c388b28a2f",
           "dep-db7a4a2068f37e97"
         ],
-        "excluded_edges": [
-          "dep-a094487809a246bf"
-        ],
+        "excluded_edges": [],
         "out_of_scope_edges": [
           "dep-02301589954a7d29",
           "dep-055b70e97ddde87d",

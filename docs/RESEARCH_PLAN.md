@@ -287,9 +287,14 @@ Completed in the initial prototype:
 - an adaptive intervention selector that filters infeasible edge polarities and
   ranks executable candidates with an explainable status, relation,
   uncertainty, interaction, centrality, provenance, and cost score.
+- exact branch-and-bound pruning for intervention ranking plus configurable Z3
+  case timeouts, preventing one difficult candidate from stalling a campaign.
 - a bounded multi-round active-validation loop that reranks the updated graph,
   executes the next unattempted candidate, applies feedback, and stops on budget
   exhaustion or absence of executable candidates.
+- a reproducible dense-baseline lm-sv run that reapplies legacy samples under
+  the current semantics, attempts 11 executable edges, and retains both
+  confirmed and scope-disputed outcomes in the final graph.
 - an lm-sv Task1 bridge that injects deterministic solver assignments after
   mutation-artifact normalization, prevents random parallel resampling, rejects
   validator-repaired target values, and launches an isolated one-iteration

@@ -127,6 +127,12 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="omit the repaired counterpart",
     )
+    intervention.add_argument(
+        "--solver-timeout-ms",
+        type=int,
+        default=5000,
+        help="Z3 timeout for each intervention case",
+    )
     intervention.add_argument("--output", type=Path, help="write the intervention plan")
     intervention.set_defaults(handler=_run_design_intervention)
 
@@ -141,6 +147,12 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=10,
         help="maximum number of ranked intervention plans",
+    )
+    selection.add_argument(
+        "--solver-timeout-ms",
+        type=int,
+        default=1000,
+        help="Z3 timeout for each candidate case",
     )
     selection.add_argument("--output", type=Path, help="write the ranked queue")
     selection.set_defaults(handler=_run_select_interventions)
@@ -160,6 +172,12 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=10,
         help="maximum active-validation rounds",
+    )
+    active.add_argument(
+        "--solver-timeout-ms",
+        type=int,
+        default=1000,
+        help="Z3 timeout for each candidate case",
     )
     active.add_argument("--output", type=Path, help="write rounds and updated graph")
     active.set_defaults(handler=_run_active_validation)
@@ -308,6 +326,7 @@ def _run_design_intervention(args: argparse.Namespace) -> int:
         baseline,
         args.edge,
         include_repair=not args.no_repair,
+        timeout_ms=args.solver_timeout_ms,
     )
     _write_json({"schema_version": 1, "intervention": plan.to_dict()}, args.output)
     return 0
@@ -318,7 +337,12 @@ def _run_select_interventions(args: argparse.Namespace) -> int:
     baseline_payload = _read_json_object(args.baseline)
     nested = baseline_payload.get("config")
     baseline = nested if isinstance(nested, dict) else baseline_payload
-    queue = select_interventions(graph, baseline, limit=args.limit)
+    queue = select_interventions(
+        graph,
+        baseline,
+        limit=args.limit,
+        solver_timeout_ms=args.solver_timeout_ms,
+    )
     _write_json({"schema_version": 1, "selection": queue.to_dict()}, args.output)
     return 0
 
@@ -326,7 +350,12 @@ def _run_select_interventions(args: argparse.Namespace) -> int:
 def _run_active_validation(args: argparse.Namespace) -> int:
     graph = DependencyGraph.from_dict(_read_json_object(args.graph))
     manifest = InterventionExecutionManifest.from_path(args.manifest)
-    result = run_active_validation(graph, manifest, max_rounds=args.rounds)
+    result = run_active_validation(
+        graph,
+        manifest,
+        max_rounds=args.rounds,
+        solver_timeout_ms=args.solver_timeout_ms,
+    )
     _write_json(
         {"schema_version": 1, "active_validation": result.to_dict()},
         args.output,

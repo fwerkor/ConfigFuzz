@@ -218,9 +218,10 @@ Run the adaptive loop for several rounds:
 
 ```bash
 python -m configfuzz active-validate \
-  artifacts/lmsv_static_inventory.json \
+  artifacts/lmsv_static_inventory_feedback.json \
   experiments/manifests/lmsv_hidden_size_intervention.json \
-  --rounds 10 \
+  --rounds 25 \
+  --solver-timeout-ms 1000 \
   --output artifacts/lmsv_active_validation.json
 ```
 
@@ -229,6 +230,24 @@ edge, applies feedback, and carries the revised statuses into the next round.
 The loop stops when its round budget is exhausted or no executable candidate
 remains. Its output includes every selected intervention, runtime observation,
 feedback report, attempted-edge list, stop reason, and final dependency graph.
+Candidate solving is time-bounded, and selection uses each edge's score before
+pair-specific penalties as an upper bound. Once the remaining upper bounds
+cannot beat the current top-$k$, their expensive intervention plans are pruned
+without changing the exact ranking.
+
+The checked-in lm-sv run is reproduced by:
+
+```bash
+python scripts/run_lmsv_active_validation.py
+```
+
+It first reapplies the existing one-parameter samples under the current
+feedback semantics, then executes active validation. With the dense baseline,
+11 executable edges are attempted before candidate exhaustion: eight finish as
+`confirmed`, three as `scope_disputed`, one remains
+`dynamically_supported`, and one environment edge stays explicitly scoped.
+These statuses describe the lm-sv validator under this baseline; they are not
+claimed as framework-wide ground truth.
 
 Run solver-generated valid cases through the actual lm-sv Task1 chain:
 
