@@ -21,6 +21,7 @@ from configfuzz.probing import (
     run_manifest,
     samples_payload,
 )
+from configfuzz.selection import select_interventions
 from configfuzz.synthesis import synthesize_constraints
 
 
@@ -128,6 +129,21 @@ def build_parser() -> argparse.ArgumentParser:
     intervention.add_argument("--output", type=Path, help="write the intervention plan")
     intervention.set_defaults(handler=_run_design_intervention)
 
+    selection = subparsers.add_parser(
+        "select-interventions",
+        help="rank executable candidate edges for active validation",
+    )
+    selection.add_argument("graph", type=Path, help="dependency graph JSON")
+    selection.add_argument("baseline", type=Path, help="baseline configuration JSON")
+    selection.add_argument(
+        "--limit",
+        type=int,
+        default=10,
+        help="maximum number of ranked intervention plans",
+    )
+    selection.add_argument("--output", type=Path, help="write the ranked queue")
+    selection.set_defaults(handler=_run_select_interventions)
+
     run_intervention_parser = subparsers.add_parser(
         "run-intervention",
         help="execute designed intervention cases and emit feedback-ready samples",
@@ -137,6 +153,12 @@ def build_parser() -> argparse.ArgumentParser:
         "manifest",
         type=Path,
         help="intervention execution manifest JSON",
+    )
+    run_intervention_parser.add_argument(
+        "--candidate-index",
+        type=int,
+        default=0,
+        help="zero-based candidate index when the input is a selection queue",
     )
     run_intervention_parser.add_argument(
         "--output",
@@ -271,12 +293,31 @@ def _run_design_intervention(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_select_interventions(args: argparse.Namespace) -> int:
+    graph = DependencyGraph.from_dict(_read_json_object(args.graph))
+    baseline_payload = _read_json_object(args.baseline)
+    nested = baseline_payload.get("config")
+    baseline = nested if isinstance(nested, dict) else baseline_payload
+    queue = select_interventions(graph, baseline, limit=args.limit)
+    _write_json({"schema_version": 1, "selection": queue.to_dict()}, args.output)
+    return 0
+
+
 def _run_intervention(args: argparse.Namespace) -> int:
     plan_payload = _read_json_object(args.plan)
     manifest = InterventionExecutionManifest.from_path(args.manifest)
-    samples = run_intervention(plan_payload, manifest)
+    samples = run_intervention(
+        plan_payload,
+        manifest,
+        candidate_index=args.candidate_index,
+    )
     _write_json(
-        intervention_samples_payload(plan_payload, manifest, samples),
+        intervention_samples_payload(
+            plan_payload,
+            manifest,
+            samples,
+            candidate_index=args.candidate_index,
+        ),
         args.output,
     )
     return 0

@@ -284,6 +284,9 @@ Completed in the initial prototype:
 - an intervention execution adapter that writes joint JSON configurations,
   executes all designed roles, classifies outcomes, and matches explicit
   rejection provenance before feedback confirmation.
+- an adaptive intervention selector that filters infeasible edge polarities and
+  ranks executable candidates with an explainable status, relation,
+  uncertainty, interaction, centrality, provenance, and cost score.
 
 Next tasks:
 
@@ -291,8 +294,8 @@ Next tasks:
 2. Add return-value/object-field propagation and shell/documentation adapters.
 3. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
 4. Evaluate scanner and graph precision/recall against the reviewed corpus.
-5. Add adaptive edge selection, valid-boundary objectives, and convergence
-   criteria.
+5. Add valid-boundary objectives, automatic stopping criteria, and multi-round
+   queue execution.
 6. Model memory, device topology, and backend capability as scoped resource edges.
 7. Integrate solver-generated plans into the full lm-sv mutation and distributed
    execution path beyond the lightweight validator adapter.

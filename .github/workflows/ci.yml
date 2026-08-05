@@ -142,6 +142,21 @@ jobs:
             /tmp/configfuzz-lmsv-intervention-samples.json \
             experiments/lmsv_validator_baseline.json \
             --output /tmp/configfuzz-lmsv-intervention-feedback.json
+          python -m configfuzz select-interventions \
+            artifacts/lmsv_static_inventory.json \
+            experiments/lmsv_validator_baseline.json \
+            --limit 3 \
+            --output /tmp/configfuzz-lmsv-selection.json
+          python -m configfuzz run-intervention \
+            /tmp/configfuzz-lmsv-selection.json \
+            experiments/manifests/lmsv_hidden_size_intervention.json \
+            --candidate-index 0 \
+            --output /tmp/configfuzz-lmsv-selected-samples.json
+          python -m configfuzz apply-feedback \
+            artifacts/lmsv_static_inventory.json \
+            /tmp/configfuzz-lmsv-selected-samples.json \
+            experiments/lmsv_validator_baseline.json \
+            --output /tmp/configfuzz-lmsv-selected-feedback.json
           python - <<'PY'
           import json
           from pathlib import Path
@@ -152,6 +167,15 @@ jobs:
           feedback = json.loads(
               Path("/tmp/configfuzz-lmsv-intervention-feedback.json").read_text()
           )["feedback"]
+          selection = json.loads(
+              Path("/tmp/configfuzz-lmsv-selection.json").read_text()
+          )["selection"]
+          selected_samples = json.loads(
+              Path("/tmp/configfuzz-lmsv-selected-samples.json").read_text()
+          )["samples"]
+          selected_feedback = json.loads(
+              Path("/tmp/configfuzz-lmsv-selected-feedback.json").read_text()
+          )["feedback"]
           assert [sample["outcome"]["label"] for sample in samples] == [
               "valid",
               "invalid",
@@ -160,6 +184,15 @@ jobs:
           assert samples[1]["provenance_matched"] is True
           assert feedback["paired_interventions"] == 1
           assert feedback["confirmed_edges"] == ["dep-c47258679d480492"]
+          selected_edge = selection["candidates"][0]["edge_id"]
+          assert [sample["outcome"]["label"] for sample in selected_samples] == [
+              "valid",
+              "invalid",
+              "valid",
+          ]
+          assert selected_samples[1]["provenance_matched"] is True
+          assert selected_feedback["paired_interventions"] == 1
+          assert selected_feedback["confirmed_edges"] == [selected_edge]
           PY
       - name: Manual constraint corpus check
         run: |

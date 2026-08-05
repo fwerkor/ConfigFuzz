@@ -259,6 +259,47 @@ invalid sample as provenance matched only when its rejection output matches an
 explicit manifest pattern or the target edge's recorded source. The resulting
 sample file can be passed directly to `apply-feedback`.
 
+## Adaptive intervention selection
+
+`select-interventions` ranks candidate edges for the next active validation
+step and embeds an executable intervention plan for every selected edge:
+
+```bash
+python -m configfuzz select-interventions graph.json baseline.json \
+  --limit 10 \
+  --output selection.json
+```
+
+Confirmed and contradicted edges are skipped. Static, dynamically supported,
+environment-scoped, and scope-disputed edges are considered only when both the
+satisfying and violating cases are solver-feasible. The ranking is deliberately
+transparent. Its output reports additive components for:
+
+- current status and confidence uncertainty;
+- semantic relation class;
+- number of interacting participants and guard activation;
+- local graph centrality and provenance availability;
+- the number of fields changed by the pair;
+- unsupported expressions encountered while constructing it.
+
+Scope-disputed edges receive high priority because a paired counterexample can
+refine their guard or context. Conditional and high-order relations are favored
+over unary type checks, while expensive or weakly executable pairs are
+penalized. The components remain visible so their weights can be ablated during
+evaluation rather than treated as a hidden learned policy.
+
+The selection output is accepted directly by the runner:
+
+```bash
+python -m configfuzz run-intervention \
+  selection.json intervention-manifest.json \
+  --candidate-index 0 \
+  --output selected-samples.json
+```
+
+After feedback updates the graph, rerunning selection automatically removes
+confirmed edges and reprioritizes the remaining uncertainty.
+
 ## Runtime feedback
 
 `apply-feedback` evaluates labeled probe samples against the edges involving the

@@ -12,10 +12,12 @@ from configfuzz.graph_solver import design_edge_intervention
 from configfuzz.intervention_runner import (
     InterventionExecutionManifest,
     apply_configuration_updates,
+    resolve_intervention_payload,
     run_intervention,
 )
 from configfuzz.model import Constraint, ConstraintKind, ConstraintSet, Evidence, EvidenceKind
 from configfuzz.outcomes import ClassificationPolicy, OutcomeLabel
+from configfuzz.selection import select_interventions
 
 
 def graph_for(expression: str, parameters: tuple[str, ...]) -> DependencyGraph:
@@ -122,3 +124,49 @@ def test_execution_manifest_resolves_relative_paths(tmp_path: Path) -> None:
 
     assert manifest.baseline_config == (tmp_path / "baseline.json").resolve()
     assert manifest.cwd == tmp_path.resolve()
+
+
+def test_runs_selected_candidate_directly(tmp_path: Path) -> None:
+    graph = graph_for("x % 2 == 0", ("x",))
+    queue = {
+        "selection": select_interventions(graph, {"x": 2}, limit=1).to_dict()
+    }
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text('{"x": 2}\n', encoding="utf-8")
+    oracle = (
+        "import json,sys; "
+        "x=json.load(open(sys.argv[1]))['x']; "
+        "ok=x%2==0; "
+        "print('MILESTONE: accepted' if ok else "
+        "'CONFIG_INVALID: odd value\\nPROVENANCE: framework/config.py'); "
+        "raise SystemExit(0 if ok else 2)"
+    )
+    manifest = InterventionExecutionManifest(
+        baseline_config=baseline,
+        command=(sys.executable, "-c", oracle, "{config}"),
+        cwd=tmp_path,
+        classification=ClassificationPolicy(
+            invalid_patterns=("CONFIG_INVALID:",),
+            milestone_patterns=("MILESTONE: accepted",),
+        ),
+        provenance_patterns=(r"PROVENANCE: framework/config\.py",),
+    )
+
+    samples = run_intervention(queue, manifest, candidate_index=0)
+
+    assert [sample.outcome.label for sample in samples] == [
+        OutcomeLabel.VALID,
+        OutcomeLabel.INVALID,
+        OutcomeLabel.VALID,
+    ]
+    assert samples[1].provenance_matched
+
+
+def test_selection_candidate_index_is_validated() -> None:
+    graph = graph_for("x % 2 == 0", ("x",))
+    queue = {
+        "selection": select_interventions(graph, {"x": 2}, limit=1).to_dict()
+    }
+
+    with pytest.raises(IndexError, match="out of range"):
+        resolve_intervention_payload(queue, candidate_index=1)

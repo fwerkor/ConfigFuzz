@@ -86,10 +86,13 @@ class InterventionExecutionManifest:
 def run_intervention(
     plan_payload: Mapping[str, Any],
     manifest: InterventionExecutionManifest,
+    *,
+    candidate_index: int = 0,
 ) -> list[ProbeSample]:
-    intervention = plan_payload.get("intervention", plan_payload)
-    if not isinstance(intervention, Mapping):
-        raise ValueError("intervention plan must be an object")
+    intervention = resolve_intervention_payload(
+        plan_payload,
+        candidate_index=candidate_index,
+    )
     cases = intervention.get("cases")
     if not isinstance(cases, Mapping):
         raise ValueError("intervention plan must contain cases")
@@ -186,14 +189,48 @@ def intervention_samples_payload(
     plan_payload: Mapping[str, Any],
     manifest: InterventionExecutionManifest,
     samples: list[ProbeSample],
+    *,
+    candidate_index: int = 0,
 ) -> dict[str, Any]:
-    intervention = plan_payload.get("intervention", plan_payload)
+    intervention = resolve_intervention_payload(
+        plan_payload,
+        candidate_index=candidate_index,
+    )
     return {
         "schema_version": 1,
         "manifest": manifest.to_dict(),
         "intervention": intervention,
         "samples": [sample.to_dict() for sample in samples],
     }
+
+
+def resolve_intervention_payload(
+    payload: Mapping[str, Any],
+    *,
+    candidate_index: int = 0,
+) -> Mapping[str, Any]:
+    nested = payload.get("intervention")
+    if isinstance(nested, Mapping):
+        return nested
+    selection = payload.get("selection")
+    if isinstance(selection, Mapping):
+        candidates = selection.get("candidates")
+        if not isinstance(candidates, list):
+            raise ValueError("intervention selection must contain a candidates array")
+        if candidate_index < 0 or candidate_index >= len(candidates):
+            raise IndexError(
+                f"intervention candidate index {candidate_index} is out of range"
+            )
+        candidate = candidates[candidate_index]
+        if not isinstance(candidate, Mapping):
+            raise ValueError("selected intervention candidate must be an object")
+        intervention = candidate.get("intervention")
+        if not isinstance(intervention, Mapping):
+            raise ValueError("selected candidate has no intervention plan")
+        return intervention
+    if isinstance(payload.get("cases"), Mapping):
+        return payload
+    raise ValueError("input contains neither an intervention nor a selection queue")
 
 
 def apply_configuration_updates(

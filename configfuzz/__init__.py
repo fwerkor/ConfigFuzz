@@ -24,9 +24,11 @@ from .intervention_runner import (
     InterventionExecutionManifest,
     apply_configuration_updates,
     intervention_samples_payload,
+    resolve_intervention_payload,
     run_intervention,
 )
 from .model import Constraint, ConstraintKind, ConstraintSet, Evidence, EvidenceKind
+from .selection import InterventionCandidate, InterventionQueue, select_interventions
 
 __all__ = [
     "Constraint",
@@ -43,8 +45,10 @@ __all__ = [
     "EvidenceKind",
     "FeedbackReport",
     "InterventionCase",
+    "InterventionCandidate",
     "InterventionExecutionManifest",
     "InterventionPlan",
+    "InterventionQueue",
     "ManualConstraintRule",
     "MutationPlan",
     "SolveStatus",
@@ -54,7 +58,9 @@ __all__ = [
     "design_edge_intervention",
     "intervention_samples_payload",
     "normalize_context",
+    "resolve_intervention_payload",
     "run_intervention",
+    "select_interventions",
     "solve_graph_mutation",
 ]
 

@@ -159,6 +159,31 @@ The output contains satisfying and violating configurations plus an optional
 repaired counterpart. For guarded edges, both sides activate the guard so that
 disabling the feature cannot masquerade as positive evidence.
 
+Rank the next executable edges automatically instead of choosing an edge ID by
+hand:
+
+```bash
+python -m configfuzz select-interventions \
+  artifacts/lmsv_static_inventory.json \
+  experiments/lmsv_validator_baseline.json \
+  --limit 5 \
+  --output artifacts/lmsv_intervention_queue.json
+```
+
+Each candidate exposes an explainable score decomposition covering validation
+status, relation type, uncertainty, interaction degree, guard activation, graph
+centrality, provenance, pair cost, and unsupported-expression cost. Edges for
+which either polarity is unsatisfiable are excluded from the executable queue.
+The queue can be executed directly:
+
+```bash
+python -m configfuzz run-intervention \
+  artifacts/lmsv_intervention_queue.json \
+  experiments/manifests/lmsv_hidden_size_intervention.json \
+  --candidate-index 0 \
+  --output artifacts/lmsv_selected_intervention_samples.json
+```
+
 The included lm-sv validator adapter can execute a complete confirmation loop:
 
 ```bash
@@ -256,6 +281,7 @@ configfuzz/                 new constraint-inference prototype
   feedback.py              runtime evidence attribution and edge-state updates
   graph_solver.py          joint solver and paired-intervention designer
   intervention_runner.py   joint-config execution and provenance matching
+  selection.py             adaptive executable-edge ranking
   extractors/               static candidate extractors
   outcomes.py               runtime outcome oracle
   probing.py                manifest, generator, and subprocess harness
