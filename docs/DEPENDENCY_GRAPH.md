@@ -35,6 +35,7 @@ The status vocabulary is:
 - `dynamically_supported`;
 - `confirmed`;
 - `environment_specific`;
+- `scope_disputed`;
 - `contradicted`.
 
 Static environment/resource edges are marked `environment_specific` immediately. Other status transitions require runtime or manual evidence.
@@ -197,9 +198,10 @@ python -m configfuzz solve-mutation graph.json baseline.json \
 
 Constraint status determines enforcement:
 
-- `confirmed`, `dynamically_supported`, and `environment_specific` edges are hard;
-- `static_candidate` edges are weighted soft constraints by default;
-- `contradicted` edges are excluded;
+- `confirmed` and `environment_specific` edges are hard;
+- `static_candidate` and `dynamically_supported` edges are weighted soft
+  constraints by default;
+- `scope_disputed` and `contradicted` edges are excluded from trusted solving;
 - `--static-hard` converts static candidates to hard constraints for controlled
   experiments.
 
@@ -221,6 +223,31 @@ The included fixture changes TP from 4 to 6 and obtains:
 All six impacted static formulas are satisfied, including TP divisibility and
 the declared multiple-of-eight alignment.
 
+## Paired intervention design
+
+`design-intervention` creates a minimal satisfying/violating pair for a selected
+edge while preserving the other confirmed constraints:
+
+```bash
+python -m configfuzz design-intervention graph.json baseline.json \
+  --edge dep-c47258679d480492 \
+  --output intervention.json
+```
+
+The target edge is enforced positively for the satisfying case and negated for
+the violating case. If the edge has a guard, both cases require the guard to be
+true; a guarded implication is not considered validated merely because the
+feature was disabled. The optimizer preserves all other confirmed and
+environment-scoped edges, maximizes weighted unconfirmed evidence, minimizes
+the number of changed parameters, and then minimizes numeric distance from the
+reference configuration. A repaired case is generated from the violating
+configuration by restoring the target predicate with the same objectives.
+
+Each case includes a `probe_sample_template` containing a stable intervention
+ID, target edge ID, role, primary parameter, and joint assignments. The
+execution adapter must still classify the result and determine whether an
+explicit rejection matches the target edge's recorded provenance.
+
 ## Runtime feedback
 
 `apply-feedback` evaluates labeled probe samples against the edges involving the
@@ -235,36 +262,46 @@ python -m configfuzz apply-feedback \
 
 The attribution rules are deliberately asymmetric:
 
-- a `VALID` sample that violates an active edge contradicts that edge;
-- a `VALID` sample satisfying an edge provides positive support;
-- an `INVALID` sample supports an edge only when exactly one evaluable active
-  edge is violated;
+- a `VALID` sample satisfying an edge provides consistency evidence but does
+  not prove that the edge is necessary;
+- a `VALID` sample violating an active edge marks its current scope as disputed
+  rather than globally deleting the underlying relation;
+- an `INVALID` sample with one known violated edge provides isolated-violation
+  evidence, because an unrecovered relation may still explain the rejection;
 - multiple violated edges make the invalid sample ambiguous;
-- `UNKNOWN` is ignored;
-- `POTENTIAL_BUG` is recorded only as bug-preserving evidence and never becomes
-  invalid-domain evidence.
+- resource, infrastructure, and unknown outcomes are ignored for validity
+  learning;
+- unexplained failures and potential bugs are retained without becoming
+  invalid-domain evidence;
+- confirmation requires a satisfying/violating paired intervention whose
+  invalid member is rejected at provenance matching the selected edge.
 
-An edge becomes `confirmed` after at least three valid supports and one isolated
-invalid support. Any valid counterexample immediately marks it `contradicted`.
-Exact feedback batches are fingerprinted, so importing the same baseline and
-sample set twice does not inflate confidence.
+Consistency or an isolated violation can move an edge to
+`dynamically_supported`. A provenance-matched paired intervention moves it to
+`confirmed`. A valid counterexample moves it to `scope_disputed`, signaling
+that its guard, model scope, backend scope, or execution-stage scope must be
+refined. Exact feedback batches are fingerprinted, so importing the same
+semantic samples twice does not inflate confidence.
 
-On the real lm-sv hidden-size probe, runtime feedback confirms:
+The earlier lm-sv hidden-size probe supplies consistency and isolated-violation
+evidence for:
 
 ```text
 hidden_size % tensor_model_parallel_size == 0
 ```
 
-using five valid samples and two isolated invalid samples. It contradicts the
-unconditional candidate:
+but does not by itself prove necessity under the strengthened confirmation
+criterion. A paired intervention with rejection provenance is required before
+the edge is marked confirmed. Valid counterexamples to an unconditional
+candidate such as:
 
 ```text
 ffn_hidden_size <= hidden_size * 6
 ```
 
-because three values accepted by the validator violate that formula. This is
-evidence that the latter is a repair policy or a conditionally scoped relation,
-not a global hard validity requirement.
+indicate that the current scope is disputed. This is evidence that the formula
+may be a repair policy or a conditionally scoped relation rather than a global
+hard validity requirement.
 
 ## Current framework graphs
 
@@ -293,7 +330,7 @@ The first planner is deliberately bounded. It does not yet:
 - solve arbitrary nonlinear, quantified, or higher-order constraints;
 - reason about resource models;
 - infer causal direction for ambiguous formulas;
-- generate deliberate single-edge violations;
+- execute designed interventions and match rejection provenance automatically;
 - write mutations back into lm-sv's execution path.
 
 The next integration stage should add adaptive counterexample selection, valid

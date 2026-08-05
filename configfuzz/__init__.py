@@ -12,8 +12,11 @@ from .dependencies import (
 )
 from .feedback import FeedbackReport, apply_probe_feedback
 from .graph_solver import (
+    InterventionCase,
+    InterventionPlan,
     SolveStatus,
     SolverMutationPlan,
+    design_edge_intervention,
     normalize_context,
     solve_graph_mutation,
 )
@@ -33,11 +36,14 @@ __all__ = [
     "Evidence",
     "EvidenceKind",
     "FeedbackReport",
+    "InterventionCase",
+    "InterventionPlan",
     "ManualConstraintRule",
     "MutationPlan",
     "SolveStatus",
     "SolverMutationPlan",
     "apply_probe_feedback",
+    "design_edge_intervention",
     "normalize_context",
     "solve_graph_mutation",
 ]

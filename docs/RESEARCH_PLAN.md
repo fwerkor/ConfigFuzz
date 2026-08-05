@@ -116,12 +116,16 @@ Avoid the full Cartesian product. Jointly mutate only parameters connected by st
 
 ### 4.4 Outcome classification
 
-Use four labels:
+Use outcome labels that preserve validity, resource, infrastructure, and defect
+semantics:
 
 - `VALID`: reaches the selected execution milestone;
 - `INVALID`: explicit configuration validation rejects the input;
-- `UNKNOWN`: infrastructure or unrelated failure prevents judgment;
+- `RESOURCE_FAILURE`: capacity or resource exhaustion prevents execution;
+- `INFRASTRUCTURE_FAILURE`: launcher, cluster, network, or dependency failure;
+- `UNEXPLAINED_FAILURE`: a failure whose validity meaning is not yet known;
 - `POTENTIAL_BUG`: satisfies current constraints but exposes a crash, inconsistency, or incorrect result.
+- `UNKNOWN`: any remaining inconclusive observation.
 
 This classifier is central to the research. Treating every failed run as `INVALID` will cause the system to learn away real bugs.
 
@@ -157,7 +161,7 @@ The graph supports:
 - connected-component discovery for bounded joint exploration;
 - active-edge selection under a concrete configuration;
 - status transitions from static candidate to dynamically supported,
-  confirmed, environment-specific, or contradicted.
+  confirmed, environment-specific, scope-disputed, or contradicted.
 
 ### 4.7 Constraint-aware mutation
 
@@ -251,7 +255,8 @@ fixture and manual-baseline source, not the method's inference oracle.
 Completed in the initial prototype:
 
 - static inventory over the lm-sv baseline;
-- four-way runtime outcome classification;
+- seven-way runtime outcome classification that separates explicit invalidity,
+  resource failure, infrastructure failure, unexplained failure, and potential bugs;
 - isolated, timeout-bounded subprocess probing;
 - integer, float, Boolean, string, and enum candidate generation;
 - first Z3 templates for bounds, enums, divisibility, and contextual relations;
@@ -267,11 +272,15 @@ Completed in the initial prototype:
 - a bounded joint-mutation planner that repairs simple divisibility,
   alignment, equality, bound, and Boolean dependencies.
 - a status-aware Z3 joint solver over impacted graph edges, with confirmed and
-  dynamically supported edges enforced as hard constraints and static candidates
+  environment-scoped edges enforced as hard constraints and unconfirmed evidence
   treated as weighted soft constraints.
-- runtime feedback attribution that confirms isolated invalid-edge violations,
-  contradicts edges excluded by valid samples, preserves potential-bug inputs,
-  and deduplicates repeated feedback batches.
+- runtime feedback attribution that distinguishes consistency from necessity,
+  requires provenance-matched paired interventions for confirmation, marks valid
+  counterexamples as scope disputes, preserves potential-bug inputs, and
+  deduplicates repeated feedback batches.
+- a solver-backed paired-intervention designer that produces minimally
+  different satisfying, violating, and repaired configurations while
+  preserving other confirmed edges.
 
 Next tasks:
 
@@ -279,7 +288,9 @@ Next tasks:
 2. Add return-value/object-field propagation and shell/documentation adapters.
 3. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
 4. Evaluate scanner and graph precision/recall against the reviewed corpus.
-5. Add adaptive query selection and convergence criteria.
-6. Add valid-boundary and deliberate one-edge-violation solver objectives.
+5. Execute designed interventions and match runtime rejection provenance to the
+   target edge automatically.
+6. Add adaptive edge selection, valid-boundary objectives, and convergence
+   criteria.
 7. Model memory, device topology, and backend capability as scoped resource edges.
 8. Integrate solver-generated plans into the lm-sv mutation and execution path.

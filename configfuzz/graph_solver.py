@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import ast
+import hashlib
+import json
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping
@@ -8,6 +10,7 @@ from typing import Any, Mapping
 import z3
 
 from configfuzz.dependencies import (
+    DependencyEdge,
     DependencyGraph,
     DependencyNodeKind,
     DependencyRelation,
@@ -60,6 +63,92 @@ class SolverMutationPlan:
         }
         if self.reason is not None:
             payload["reason"] = self.reason
+        return payload
+
+
+@dataclass(frozen=True, slots=True)
+class InterventionCase:
+    role: str
+    status: SolveStatus
+    configuration: tuple[tuple[str, Any], ...] = ()
+    changes: tuple[tuple[str, Any], ...] = ()
+    hard_edges: tuple[str, ...] = ()
+    soft_edges: tuple[str, ...] = ()
+    violated_soft_edges: tuple[str, ...] = ()
+    unsupported_edges: tuple[str, ...] = ()
+    missing_context: tuple[str, ...] = ()
+    reason: str | None = None
+
+    @property
+    def assignment(self) -> dict[str, Any]:
+        return dict(self.configuration)
+
+    @property
+    def changed_values(self) -> dict[str, Any]:
+        return dict(self.changes)
+
+    def to_dict(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "role": self.role,
+            "status": self.status.value,
+            "configuration": self.assignment,
+            "changes": self.changed_values,
+            "hard_edges": list(self.hard_edges),
+            "soft_edges": list(self.soft_edges),
+            "violated_soft_edges": list(self.violated_soft_edges),
+            "unsupported_edges": list(self.unsupported_edges),
+            "missing_context": list(self.missing_context),
+        }
+        if self.reason is not None:
+            payload["reason"] = self.reason
+        return payload
+
+
+@dataclass(frozen=True, slots=True)
+class InterventionPlan:
+    intervention_id: str
+    edge_id: str
+    expression: str
+    primary_parameter: str
+    mutable_parameters: tuple[str, ...]
+    satisfying: InterventionCase
+    violating: InterventionCase
+    repaired: InterventionCase | None = None
+    provenance: tuple[dict[str, Any], ...] = ()
+
+    def to_dict(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "intervention_id": self.intervention_id,
+            "edge_id": self.edge_id,
+            "expression": self.expression,
+            "primary_parameter": self.primary_parameter,
+            "mutable_parameters": list(self.mutable_parameters),
+            "provenance": list(self.provenance),
+            "cases": {
+                "satisfying": self._case_payload(self.satisfying),
+                "violating": self._case_payload(self.violating),
+            },
+        }
+        if self.repaired is not None:
+            payload["cases"]["repaired"] = self._case_payload(self.repaired)
+        return payload
+
+    def _case_payload(self, case: InterventionCase) -> dict[str, Any]:
+        payload = case.to_dict()
+        assignment = case.assignment
+        if case.status is SolveStatus.SAT and self.primary_parameter in assignment:
+            payload["probe_sample_template"] = {
+                "parameter": self.primary_parameter,
+                "value": assignment[self.primary_parameter],
+                "assignments": {
+                    name: value
+                    for name, value in assignment.items()
+                    if name != self.primary_parameter
+                },
+                "intervention_id": self.intervention_id,
+                "intervention_edge_id": self.edge_id,
+                "intervention_role": case.role,
+            }
         return payload
 
 
@@ -170,14 +259,7 @@ def solve_graph_mutation(
             missing.update(missing_fixed)
             continue
         try:
-            predicate = _compile_text(edge.predicate, variables, kinds)
-            constraint: z3.BoolRef = _as_bool(predicate.value)
-            side_constraints = list(predicate.side_constraints)
-            if edge.guard is not None:
-                guard = _compile_text(edge.guard, variables, kinds)
-                side_constraints.extend(guard.side_constraints)
-                constraint = z3.Implies(_as_bool(guard.value), constraint)
-            full_constraint = z3.And(*side_constraints, constraint)
+            full_constraint = _compile_edge_formula(edge, variables, kinds)
             compiled_constraints[edge.id] = full_constraint
             is_hard = static_as_hard or edge.status in {
                 DependencyStatus.CONFIRMED,
@@ -200,26 +282,14 @@ def solve_graph_mutation(
         except (TypeError, z3.Z3Exception):
             unsupported.append(edge.id)
 
-    change_terms: list[z3.ArithRef] = []
-    distance_terms: list[z3.ArithRef] = []
-    for name in sorted(mutable):
-        variable = variables[name]
-        if name not in context:
-            continue
-        try:
-            baseline_literal = _literal(context[name], kinds[name])
-        except _CompileError:
-            continue
-        change_terms.append(z3.If(variable != baseline_literal, 1, 0))
-        if kinds[name] in {_ValueKind.INT, _ValueKind.REAL}:
-            distance_terms.append(
-                z3.If(variable >= baseline_literal, variable - baseline_literal, baseline_literal - variable)
-            )
-
-    if change_terms:
-        optimizer.minimize(z3.Sum(change_terms))
-    if distance_terms:
-        optimizer.minimize(z3.Sum(distance_terms))
+    _add_reference_objectives(
+        optimizer,
+        variables,
+        kinds,
+        mutable,
+        context,
+        missing,
+    )
 
     result = optimizer.check()
     if result == z3.unsat:
@@ -291,6 +361,322 @@ def solve_graph_mutation(
         out_of_scope_edges=tuple(out_of_scope),
         missing_context=tuple(sorted(missing)),
     )
+
+
+def design_edge_intervention(
+    graph: DependencyGraph,
+    baseline: Mapping[str, Any],
+    edge_id: str,
+    *,
+    include_repair: bool = True,
+) -> InterventionPlan:
+    if edge_id not in graph.edges:
+        raise KeyError(f"unknown dependency edge: {edge_id}")
+    edge = graph.edges[edge_id]
+    context = normalize_context(graph, baseline)
+    seed_mutable = {
+        name
+        for name in edge.participants
+        if graph.nodes.get(name) is not None
+        and graph.nodes[name].kind
+        in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
+    }
+    mutable = set(seed_mutable)
+    for name in tuple(seed_mutable):
+        mutable.update(
+            affected
+            for affected in graph.affected_parameters(name)
+            if graph.nodes.get(affected) is not None
+            and graph.nodes[affected].kind
+            in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
+        )
+    primary = next(
+        (name for name in edge.dependents if name in seed_mutable),
+        next((name for name in edge.participants if name in seed_mutable), ""),
+    )
+    if not primary:
+        primary = edge.participants[0]
+
+    intervention_id = _intervention_id(edge_id, context, edge.participants)
+    satisfying = _solve_intervention_case(
+        graph,
+        edge_id,
+        context,
+        mutable,
+        target_satisfied=True,
+        role="satisfying",
+    )
+    violating = _solve_intervention_case(
+        graph,
+        edge_id,
+        context,
+        mutable,
+        target_satisfied=False,
+        role="violating",
+    )
+    repaired: InterventionCase | None = None
+    if include_repair and violating.status is SolveStatus.SAT:
+        repair_reference = dict(context)
+        repair_reference.update(violating.assignment)
+        repaired = _solve_intervention_case(
+            graph,
+            edge_id,
+            repair_reference,
+            mutable,
+            target_satisfied=True,
+            role="repaired",
+        )
+    return InterventionPlan(
+        intervention_id=intervention_id,
+        edge_id=edge.id,
+        expression=edge.expression,
+        primary_parameter=primary,
+        mutable_parameters=tuple(sorted(mutable)),
+        satisfying=satisfying,
+        violating=violating,
+        repaired=repaired,
+        provenance=tuple(item.to_dict() for item in edge.evidence),
+    )
+
+
+def _solve_intervention_case(
+    graph: DependencyGraph,
+    edge_id: str,
+    reference: Mapping[str, Any],
+    mutable: set[str],
+    *,
+    target_satisfied: bool,
+    role: str,
+) -> InterventionCase:
+    edge = graph.edges[edge_id]
+    primary = next(iter(sorted(mutable)), edge.participants[0])
+    primary_value = reference.get(primary)
+    kinds = _infer_value_kinds(graph, reference, primary, primary_value)
+    variables = {name: _make_variable(name, kind) for name, kind in kinds.items()}
+    missing = {name for name in mutable if name not in reference or name not in variables}
+    if missing:
+        return InterventionCase(
+            role=role,
+            status=SolveStatus.UNKNOWN,
+            missing_context=tuple(sorted(missing)),
+            reason="mutable intervention parameters require typed baseline values",
+        )
+
+    optimizer = z3.Optimize()
+    optimizer.set(priority="lex")
+    for name, variable in variables.items():
+        if name in mutable:
+            continue
+        if name not in reference:
+            continue
+        try:
+            optimizer.add(variable == _literal(reference[name], kinds[name]))
+        except _CompileError:
+            missing.add(name)
+
+    hard_edges = [edge_id]
+    soft_edges: list[str] = []
+    unsupported: list[str] = []
+    compiled_soft: dict[str, z3.BoolRef] = {}
+    try:
+        target_formula = _compile_target_intervention(
+            edge,
+            variables,
+            kinds,
+            target_satisfied=target_satisfied,
+        )
+        optimizer.add(target_formula)
+    except (_CompileError, TypeError, z3.Z3Exception) as exc:
+        if isinstance(exc, _CompileError):
+            missing.update(exc.missing)
+        return InterventionCase(
+            role=role,
+            status=SolveStatus.UNKNOWN,
+            hard_edges=(edge_id,),
+            unsupported_edges=(edge_id,),
+            missing_context=tuple(sorted(missing)),
+            reason=f"target edge cannot be encoded exactly: {exc}",
+        )
+
+    for current in sorted(graph.edges.values(), key=lambda item: item.id):
+        if current.id == edge_id or not mutable.intersection(current.participants):
+            continue
+        if current.status in {
+            DependencyStatus.CONTRADICTED,
+            DependencyStatus.SCOPE_DISPUTED,
+        }:
+            continue
+        missing_fixed = {
+            name
+            for name in current.participants
+            if name in variables and name not in mutable and name not in reference
+        }
+        if missing_fixed:
+            unsupported.append(current.id)
+            missing.update(missing_fixed)
+            continue
+        try:
+            formula = _compile_edge_formula(current, variables, kinds)
+        except _CompileError as exc:
+            unsupported.append(current.id)
+            missing.update(exc.missing)
+            continue
+        except (TypeError, z3.Z3Exception):
+            unsupported.append(current.id)
+            continue
+        if current.status in {
+            DependencyStatus.CONFIRMED,
+            DependencyStatus.ENVIRONMENT_SPECIFIC,
+        }:
+            optimizer.add(formula)
+            hard_edges.append(current.id)
+        else:
+            optimizer.add_soft(
+                formula,
+                weight=str(max(1, round(current.confidence * 100))),
+                id="intervention_dependencies",
+            )
+            soft_edges.append(current.id)
+            compiled_soft[current.id] = formula
+
+    _add_reference_objectives(
+        optimizer,
+        variables,
+        kinds,
+        mutable,
+        reference,
+        missing,
+    )
+
+    result = optimizer.check()
+    if result == z3.unsat:
+        return InterventionCase(
+            role=role,
+            status=SolveStatus.UNSAT,
+            hard_edges=tuple(hard_edges),
+            soft_edges=tuple(soft_edges),
+            unsupported_edges=tuple(unsupported),
+            missing_context=tuple(sorted(missing)),
+            reason="target polarity conflicts with the active hard constraints",
+        )
+    if result != z3.sat:
+        return InterventionCase(
+            role=role,
+            status=SolveStatus.UNKNOWN,
+            hard_edges=tuple(hard_edges),
+            soft_edges=tuple(soft_edges),
+            unsupported_edges=tuple(unsupported),
+            missing_context=tuple(sorted(missing)),
+            reason=optimizer.reason_unknown(),
+        )
+
+    model = optimizer.model()
+    assignment = tuple(
+        (name, _model_value(model, variables[name], kinds[name]))
+        for name in sorted(mutable)
+    )
+    changes = tuple(
+        (name, value)
+        for name, value in assignment
+        if name not in reference or reference[name] != value
+    )
+    violated_soft = tuple(
+        current_id
+        for current_id in soft_edges
+        if not z3.is_true(model.eval(compiled_soft[current_id], model_completion=True))
+    )
+    return InterventionCase(
+        role=role,
+        status=SolveStatus.SAT,
+        configuration=assignment,
+        changes=changes,
+        hard_edges=tuple(hard_edges),
+        soft_edges=tuple(soft_edges),
+        violated_soft_edges=violated_soft,
+        unsupported_edges=tuple(unsupported),
+        missing_context=tuple(sorted(missing)),
+    )
+
+
+def _compile_target_intervention(
+    edge: DependencyEdge,
+    variables: Mapping[str, z3.ExprRef],
+    kinds: Mapping[str, _ValueKind],
+    *,
+    target_satisfied: bool,
+) -> z3.BoolRef:
+    predicate = _compile_text(edge.predicate, variables, kinds)
+    predicate_value = _as_bool(predicate.value)
+    side_constraints = list(predicate.side_constraints)
+    if edge.guard is None:
+        target = predicate_value if target_satisfied else z3.Not(predicate_value)
+        return z3.And(*side_constraints, target)
+    guard = _compile_text(edge.guard, variables, kinds)
+    side_constraints.extend(guard.side_constraints)
+    guard_value = _as_bool(guard.value)
+    target = predicate_value if target_satisfied else z3.Not(predicate_value)
+    return z3.And(*side_constraints, guard_value, target)
+
+
+def _add_reference_objectives(
+    optimizer: z3.Optimize,
+    variables: Mapping[str, z3.ExprRef],
+    kinds: Mapping[str, _ValueKind],
+    names: set[str],
+    reference: Mapping[str, Any],
+    missing: set[str],
+) -> None:
+    change_terms: list[z3.ArithRef] = []
+    distance_terms: list[z3.ArithRef] = []
+    for name in sorted(names):
+        if name not in reference:
+            missing.add(name)
+            continue
+        variable = variables[name]
+        try:
+            original = _literal(reference[name], kinds[name])
+        except _CompileError:
+            missing.add(name)
+            continue
+        change_terms.append(z3.If(variable != original, 1, 0))
+        if kinds[name] in {_ValueKind.INT, _ValueKind.REAL}:
+            distance_terms.append(
+                z3.If(variable >= original, variable - original, original - variable)
+            )
+    if change_terms:
+        optimizer.minimize(z3.Sum(change_terms))
+    if distance_terms:
+        optimizer.minimize(z3.Sum(distance_terms))
+
+
+def _compile_edge_formula(
+    edge: DependencyEdge,
+    variables: Mapping[str, z3.ExprRef],
+    kinds: Mapping[str, _ValueKind],
+) -> z3.BoolRef:
+    predicate = _compile_text(edge.predicate, variables, kinds)
+    constraint = _as_bool(predicate.value)
+    side_constraints = list(predicate.side_constraints)
+    if edge.guard is not None:
+        guard = _compile_text(edge.guard, variables, kinds)
+        side_constraints.extend(guard.side_constraints)
+        constraint = z3.Implies(_as_bool(guard.value), constraint)
+    return z3.And(*side_constraints, constraint)
+
+
+def _intervention_id(
+    edge_id: str,
+    context: Mapping[str, Any],
+    participants: tuple[str, ...],
+) -> str:
+    payload = {
+        "edge_id": edge_id,
+        "context": {name: context.get(name) for name in sorted(participants)},
+    }
+    digest = hashlib.sha256(
+        json.dumps(payload, sort_keys=True, default=repr).encode()
+    ).hexdigest()[:20]
+    return f"intervention-{digest}"
 
 
 def normalize_context(

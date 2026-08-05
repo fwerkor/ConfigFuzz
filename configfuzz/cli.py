@@ -9,7 +9,7 @@ from configfuzz.corpus import load_corpus
 from configfuzz.dependencies import DependencyGraph
 from configfuzz.extractors import scan_source_paths_multi
 from configfuzz.feedback import apply_probe_feedback
-from configfuzz.graph_solver import solve_graph_mutation
+from configfuzz.graph_solver import design_edge_intervention, solve_graph_mutation
 from configfuzz.probing import (
     ProbeManifest,
     load_samples,
@@ -107,6 +107,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     solve.add_argument("--output", type=Path, help="write the solver plan")
     solve.set_defaults(handler=_run_solve_mutation)
+
+    intervention = subparsers.add_parser(
+        "design-intervention",
+        help="design satisfying, violating, and repaired configurations for one edge",
+    )
+    intervention.add_argument("graph", type=Path, help="dependency graph JSON")
+    intervention.add_argument("baseline", type=Path, help="baseline configuration JSON")
+    intervention.add_argument("--edge", required=True, help="target dependency edge ID")
+    intervention.add_argument(
+        "--no-repair",
+        action="store_true",
+        help="omit the repaired counterpart",
+    )
+    intervention.add_argument("--output", type=Path, help="write the intervention plan")
+    intervention.set_defaults(handler=_run_design_intervention)
 
     feedback = subparsers.add_parser(
         "apply-feedback",
@@ -216,6 +231,21 @@ def _run_solve_mutation(args: argparse.Namespace) -> int:
         static_as_hard=args.static_hard,
     )
     _write_json({"schema_version": 1, "plan": plan.to_dict()}, args.output)
+    return 0
+
+
+def _run_design_intervention(args: argparse.Namespace) -> int:
+    graph = DependencyGraph.from_dict(_read_json_object(args.graph))
+    baseline_payload = _read_json_object(args.baseline)
+    nested = baseline_payload.get("config")
+    baseline = nested if isinstance(nested, dict) else baseline_payload
+    plan = design_edge_intervention(
+        graph,
+        baseline,
+        args.edge,
+        include_repair=not args.no_repair,
+    )
+    _write_json({"schema_version": 1, "intervention": plan.to_dict()}, args.output)
     return 0
 
 
