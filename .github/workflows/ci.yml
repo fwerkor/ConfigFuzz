@@ -157,6 +157,11 @@ jobs:
             /tmp/configfuzz-lmsv-selected-samples.json \
             experiments/lmsv_validator_baseline.json \
             --output /tmp/configfuzz-lmsv-selected-feedback.json
+          python -m configfuzz active-validate \
+            artifacts/lmsv_static_inventory.json \
+            experiments/manifests/lmsv_hidden_size_intervention.json \
+            --rounds 2 \
+            --output /tmp/configfuzz-lmsv-active-validation.json
           python - <<'PY'
           import json
           from pathlib import Path
@@ -176,6 +181,9 @@ jobs:
           selected_feedback = json.loads(
               Path("/tmp/configfuzz-lmsv-selected-feedback.json").read_text()
           )["feedback"]
+          active = json.loads(
+              Path("/tmp/configfuzz-lmsv-active-validation.json").read_text()
+          )["active_validation"]
           assert [sample["outcome"]["label"] for sample in samples] == [
               "valid",
               "invalid",
@@ -193,6 +201,13 @@ jobs:
           assert selected_samples[1]["provenance_matched"] is True
           assert selected_feedback["paired_interventions"] == 1
           assert selected_feedback["confirmed_edges"] == [selected_edge]
+          assert active["summary"]["stop_reason"] == "budget_exhausted"
+          assert active["summary"]["rounds_executed"] == 2
+          assert len(set(active["summary"]["attempted_edges"])) == 2
+          assert all(
+              round_["feedback"]["paired_interventions"] == 1
+              for round_ in active["rounds"]
+          )
           PY
       - name: Manual constraint corpus check
         run: |

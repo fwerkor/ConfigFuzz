@@ -50,6 +50,8 @@ The initial repository provides:
   violating, and repaired configurations for a selected dependency edge;
 - an intervention execution adapter that patches nested configurations, runs
   each designed case, classifies the outcome, and matches rejection provenance;
+- a bounded active-validation loop that repeatedly selects an unattempted edge,
+  executes its intervention, updates graph evidence, and reranks the remainder;
 - runtime feedback that separates consistency, isolated violations,
   provenance-matched paired interventions, and valid scope counterexamples;
 - an isolated subprocess harness driven by JSON manifests;
@@ -209,6 +211,22 @@ The execution manifest controls the command, baseline configuration, milestone
 and failure oracles, and provenance patterns. Joint assignments are written to
 a temporary configuration using exact paths or unambiguous leaf-name matching.
 
+Run the adaptive loop for several rounds:
+
+```bash
+python -m configfuzz active-validate \
+  artifacts/lmsv_static_inventory.json \
+  experiments/manifests/lmsv_hidden_size_intervention.json \
+  --rounds 10 \
+  --output artifacts/lmsv_active_validation.json
+```
+
+Each round reranks the updated graph, executes the highest-ranked unattempted
+edge, applies feedback, and carries the revised statuses into the next round.
+The loop stops when its round budget is exhausted or no executable candidate
+remains. Its output includes every selected intervention, runtime observation,
+feedback report, attempted-edge list, stop reason, and final dependency graph.
+
 Run a versioned scan against an external framework checkout:
 
 ```bash
@@ -277,6 +295,7 @@ from intended framework semantics.
 
 ```text
 configfuzz/                 new constraint-inference prototype
+  active_validation.py     multi-round select/execute/feedback loop
   dependencies.py          dependency hypergraph and joint-mutation planner
   feedback.py              runtime evidence attribution and edge-state updates
   graph_solver.py          joint solver and paired-intervention designer

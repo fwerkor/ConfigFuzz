@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Sequence
 
+from configfuzz.active_validation import run_active_validation
 from configfuzz.corpus import load_corpus
 from configfuzz.dependencies import DependencyGraph
 from configfuzz.extractors import scan_source_paths_multi
@@ -143,6 +144,25 @@ def build_parser() -> argparse.ArgumentParser:
     )
     selection.add_argument("--output", type=Path, help="write the ranked queue")
     selection.set_defaults(handler=_run_select_interventions)
+
+    active = subparsers.add_parser(
+        "active-validate",
+        help="iteratively select, execute, and learn from candidate edges",
+    )
+    active.add_argument("graph", type=Path, help="dependency graph JSON")
+    active.add_argument(
+        "manifest",
+        type=Path,
+        help="intervention execution manifest JSON",
+    )
+    active.add_argument(
+        "--rounds",
+        type=int,
+        default=10,
+        help="maximum active-validation rounds",
+    )
+    active.add_argument("--output", type=Path, help="write rounds and updated graph")
+    active.set_defaults(handler=_run_active_validation)
 
     run_intervention_parser = subparsers.add_parser(
         "run-intervention",
@@ -300,6 +320,17 @@ def _run_select_interventions(args: argparse.Namespace) -> int:
     baseline = nested if isinstance(nested, dict) else baseline_payload
     queue = select_interventions(graph, baseline, limit=args.limit)
     _write_json({"schema_version": 1, "selection": queue.to_dict()}, args.output)
+    return 0
+
+
+def _run_active_validation(args: argparse.Namespace) -> int:
+    graph = DependencyGraph.from_dict(_read_json_object(args.graph))
+    manifest = InterventionExecutionManifest.from_path(args.manifest)
+    result = run_active_validation(graph, manifest, max_rounds=args.rounds)
+    _write_json(
+        {"schema_version": 1, "active_validation": result.to_dict()},
+        args.output,
+    )
     return 0
 
 

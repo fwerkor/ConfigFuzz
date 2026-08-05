@@ -1,5 +1,10 @@
 """ConfigFuzz constraint-inference prototype."""
 
+from .active_validation import (
+    ActiveValidationResult,
+    ActiveValidationRound,
+    run_active_validation,
+)
 from .corpus import ConstraintCorpus, ManualConstraintRule
 from .dependencies import (
     DependencyEdge,
@@ -31,6 +36,8 @@ from .model import Constraint, ConstraintKind, ConstraintSet, Evidence, Evidence
 from .selection import InterventionCandidate, InterventionQueue, select_interventions
 
 __all__ = [
+    "ActiveValidationResult",
+    "ActiveValidationRound",
     "Constraint",
     "ConstraintCorpus",
     "ConstraintKind",
@@ -59,6 +66,7 @@ __all__ = [
     "intervention_samples_payload",
     "normalize_context",
     "resolve_intervention_payload",
+    "run_active_validation",
     "run_intervention",
     "select_interventions",
     "solve_graph_mutation",

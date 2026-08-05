@@ -287,6 +287,9 @@ Completed in the initial prototype:
 - an adaptive intervention selector that filters infeasible edge polarities and
   ranks executable candidates with an explainable status, relation,
   uncertainty, interaction, centrality, provenance, and cost score.
+- a bounded multi-round active-validation loop that reranks the updated graph,
+  executes the next unattempted candidate, applies feedback, and stops on budget
+  exhaustion or absence of executable candidates.
 
 Next tasks:
 
@@ -294,8 +297,8 @@ Next tasks:
 2. Add return-value/object-field propagation and shell/documentation adapters.
 3. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
 4. Evaluate scanner and graph precision/recall against the reviewed corpus.
-5. Add valid-boundary objectives, automatic stopping criteria, and multi-round
-   queue execution.
+5. Add valid-boundary objectives and information-gain or coverage-based
+   convergence criteria beyond the current budget/no-candidate stopping rules.
 6. Model memory, device topology, and backend capability as scoped resource edges.
 7. Integrate solver-generated plans into the full lm-sv mutation and distributed
    execution path beyond the lightweight validator adapter.

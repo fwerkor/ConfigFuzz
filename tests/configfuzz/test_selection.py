@@ -114,3 +114,23 @@ def test_selection_limit_is_deterministic() -> None:
     assert [item.edge_id for item in first.candidates] == [
         item.edge_id for item in second.candidates
     ]
+
+
+def test_explicitly_excluded_edges_are_not_retried() -> None:
+    graph = make_graph(
+        constraint("x % 2 == 0", ("x",)),
+        constraint("y % 2 == 0", ("y",)),
+    )
+    first = select_interventions(graph, {"x": 2, "y": 2}, limit=2)
+
+    second = select_interventions(
+        graph,
+        {"x": 2, "y": 2},
+        limit=2,
+        excluded_edge_ids={first.candidates[0].edge_id},
+    )
+
+    assert first.candidates[0].edge_id not in {
+        item.edge_id for item in second.candidates
+    }
+    assert second.skipped_excluded == 1

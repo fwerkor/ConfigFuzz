@@ -300,6 +300,37 @@ python -m configfuzz run-intervention \
 After feedback updates the graph, rerunning selection automatically removes
 confirmed edges and reprioritizes the remaining uncertainty.
 
+## Multi-round active validation
+
+`active-validate` composes selection, execution, provenance matching, and
+feedback into one bounded loop:
+
+```bash
+python -m configfuzz active-validate \
+  graph.json intervention-manifest.json \
+  --rounds 10 \
+  --output active-validation.json
+```
+
+At round $t$, the loop selects the highest-ranked executable edge not already
+attempted in the current run, executes its satisfying/violating/repaired cases,
+and applies the resulting evidence to $\mathcal{H}_t$. Round $t+1$ ranks the
+updated graph $\mathcal{H}_{t+1}$, so a confirmed edge disappears from the
+queue and consistency evidence can change the priority of neighboring edges.
+An attempted edge is not retried during the same run even when the available
+evidence is insufficient for confirmation; this prevents an unmatched or
+environment-blocked candidate from consuming the entire budget.
+
+The current stopping rules are:
+
+- `budget_exhausted`: the requested number of rounds completed;
+- `no_executable_candidates`: no unattempted edge has both solver-feasible
+  polarities.
+
+The result preserves round-level candidates, samples, feedback, and the final
+graph. More advanced convergence rules based on marginal information gain and
+coverage saturation remain future work.
+
 ## Runtime feedback
 
 `apply-feedback` evaluates labeled probe samples against the edges involving the

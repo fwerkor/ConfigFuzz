@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from collections.abc import Collection
 from typing import Any, Mapping
 
 from configfuzz.dependencies import (
@@ -77,6 +78,7 @@ class InterventionQueue:
     candidates: tuple[InterventionCandidate, ...]
     considered_edges: int
     skipped_status: int
+    skipped_excluded: int
     skipped_infeasible: int
 
     def to_dict(self) -> dict[str, Any]:
@@ -85,6 +87,7 @@ class InterventionQueue:
                 "considered_edges": self.considered_edges,
                 "selected_candidates": len(self.candidates),
                 "skipped_status": self.skipped_status,
+                "skipped_excluded": self.skipped_excluded,
                 "skipped_infeasible": self.skipped_infeasible,
             },
             "candidates": [candidate.to_dict() for candidate in self.candidates],
@@ -96,13 +99,19 @@ def select_interventions(
     baseline: Mapping[str, Any],
     *,
     limit: int = 10,
+    excluded_edge_ids: Collection[str] = (),
 ) -> InterventionQueue:
     if limit <= 0:
         raise ValueError("intervention selection limit must be positive")
     candidates: list[InterventionCandidate] = []
+    excluded = set(excluded_edge_ids)
     skipped_status = 0
+    skipped_excluded = 0
     skipped_infeasible = 0
     for edge in sorted(graph.edges.values(), key=lambda item: item.id):
+        if edge.id in excluded:
+            skipped_excluded += 1
+            continue
         if edge.status not in _ELIGIBLE_STATUSES:
             skipped_status += 1
             continue
@@ -132,6 +141,7 @@ def select_interventions(
         candidates=tuple(candidates[:limit]),
         considered_edges=len(graph.edges),
         skipped_status=skipped_status,
+        skipped_excluded=skipped_excluded,
         skipped_infeasible=skipped_infeasible,
     )
 
