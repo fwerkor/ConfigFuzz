@@ -24,6 +24,9 @@
     {
       "parameter": "hidden_size",
       "value": 168,
+      "intervention_id": "hidden-size-divisibility-pair",
+      "intervention_edge_id": "dep-c47258679d480492",
+      "intervention_role": "satisfying",
       "observation": {
         "argv": ["fixture"],
         "returncode": 0,
@@ -58,6 +61,10 @@
     {
       "parameter": "hidden_size",
       "value": 152,
+      "intervention_id": "hidden-size-divisibility-pair",
+      "intervention_edge_id": "dep-c47258679d480492",
+      "intervention_role": "violating",
+      "provenance_matched": true,
       "observation": {
         "argv": ["fixture"],
         "returncode": 2,
