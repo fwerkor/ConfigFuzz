@@ -1,0 +1,23 @@
+{
+  "baseline_config": "../lmsv_validator_baseline.json",
+  "command": [
+    "python",
+    "experiments/lmsv_task1_probe.py",
+    "--config",
+    "{config}",
+    "--task-config",
+    "examples/lmsv_task1_config.json",
+    "--prepare-only"
+  ],
+  "cwd": "../..",
+  "timeout_seconds": 30,
+  "roles": [
+    "satisfying",
+    "repaired"
+  ],
+  "classification": {
+    "milestone_patterns": [
+      "MILESTONE: ConfigFuzz Task1 configuration prepared"
+    ]
+  }
+}

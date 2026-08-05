@@ -145,6 +145,41 @@ signature or, when no explicit pattern is supplied, the target edge's recorded
 source path. This enables paired confirmation without treating an unrelated
 validation failure as evidence for the selected edge.
 
+## lm-sv Task1 execution adapter
+
+The lightweight validator adapter is used to test deliberate violations and
+obtain provenance-matched rejection evidence. Expected-valid and repaired
+configurations can additionally be passed into the actual Task1 mutation and
+training path:
+
+```bash
+python -m configfuzz run-intervention \
+  intervention.json \
+  experiments/manifests/lmsv_task1_execution.json \
+  --output task1-samples.json
+```
+
+The Task1 adapter constructs an isolated `config.json` with `task_type=1`, one
+iteration, and a `CONFIGFUZZ_ASSIGNMENTS_PATH`. `do.py` reads that generated
+configuration through `LMSV_CONFIG_PATH`, so the user's persistent lm-sv
+configuration is not overwritten. The normal mutate stage still produces the
+model artifact consumed by `parallel_mutate`, but the adapter sets `MUTNM=0`
+and skips the mutation-stage Forward preview. The selected model template is
+therefore preserved until ConfigFuzz applies its assignments.
+
+When the deterministic assignment path is present, `parallel_mutate` applies
+the ConfigFuzz values after its input has been normalized and skips its random
+parallel-parameter resampling. The original lm-sv validator then checks the
+result. Any validator repair to a ConfigFuzz-controlled field is reported as an
+explicit rejection and aborts script generation; the execution harness never
+labels a repaired configuration as the requested test case.
+
+The full manifest intentionally runs only `satisfying` and `repaired` roles.
+Deliberate violations remain in the lightweight validator loop, avoiding
+expensive distributed launches for configurations already expected to fail.
+`lmsv_task1_prepare_only.json` verifies configuration generation and assignment
+plumbing without requiring an NPU or framework environment.
+
 ## Current limitations
 
 - One target parameter is varied per manifest.
@@ -154,5 +189,6 @@ validation failure as evidence for the selected edge.
   loop.
 - A validator repair is only an invalid oracle when the adapter explicitly
   reports it as such.
-- The generic intervention runner currently patches JSON configurations; shell
-  launch arguments and framework-native configuration objects require adapters.
+- The generic runner patches JSON configurations. The lm-sv Task1 adapter now
+  carries those values into generated launch scripts, while additional
+  framework-native configuration systems still require adapters.

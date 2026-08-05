@@ -12,6 +12,10 @@ from .InfoParser import InfoParser                      # 第一段脚本，将�
 from .ParallelParameterMutator import ParallelParameterMutator          # 第二段脚本，将并行参数变异
 from .config_validator_moe import EnhancedMegatronConfigValidator  # 第三段脚本，校验并修复配置
 from .deepseek_profile import apply_deepseekv3_unified_low_memory_profile
+from utils.runtime.configfuzz_bridge import (
+    apply_configfuzz_assignments_file,
+    ensure_configfuzz_assignments_preserved,
+)
 from .yamlToBash import YamlToBashConverter, save_bash_script      # 第四段脚本，将yaml转为bash脚本
 import yaml
 from .BashToYaml import bashtoyaml
@@ -373,6 +377,7 @@ def main(
     train_iters=100,
     model_name=None,
     enable_deepseek_profile=False,
+    configfuzz_assignments=None,
 ):
     # 创建输出目录
     output_path = Path(output_dir)
@@ -425,10 +430,16 @@ def main(
     with open(standard_yaml_path, 'r') as f:
         config = yaml.safe_load(f)
 
-    # 变异并行参数, 只进行一次变异
-    mutator = ParallelParameterMutator(config)
-    mutated_config, mutated_changes = mutator.mutate_parallel_parameters()
-    print("变异的并行参数及其新值：", mutated_changes)
+    if configfuzz_assignments:
+        mutated_config, mutated_changes = apply_configfuzz_assignments_file(
+            config, configfuzz_assignments
+        )
+        print("ConfigFuzz deterministic assignments applied:", mutated_changes)
+    else:
+        # Preserve the original random parallel mutation when ConfigFuzz is not active.
+        mutator = ParallelParameterMutator(config)
+        mutated_config, mutated_changes = mutator.mutate_parallel_parameters()
+        print("变异的并行参数及其新值：", mutated_changes)
     mutated_yaml_path = output_path / "mutated_config.yaml"
     with open(mutated_yaml_path, 'w') as f:
         yaml.dump(mutated_config, f)
@@ -440,6 +451,12 @@ def main(
     # 校验并修复配置
     validator = EnhancedMegatronConfigValidator(mutated_config)
     validated_config, validated_issues, validated_warnings, validated_applied = validator.validate_and_fix()
+    if configfuzz_assignments:
+        try:
+            ensure_configfuzz_assignments_preserved(validated_config, mutated_changes)
+        except ValueError as exc:
+            print(f"CONFIG_INVALID: {exc}")
+            raise
     # 打印校验结果
     if validated_issues:
         print("校验发现的问题及其修复：", validated_issues)
@@ -525,6 +542,7 @@ def run_cli():
     parser.add_argument("--train_iters", type=int, required=False, help="覆盖配置中的 train_iters/TRAIN_ITERS")
     parser.add_argument("--model_name", type=str, required=False, help="模型名称，用于特定 profile 调整")
     parser.add_argument("--enable_deepseek_profile", action="store_true", help="启用 DeepSeekV3 低显存脚本调整")
+    parser.add_argument("--configfuzz-assignments", help="JSON file with deterministic ConfigFuzz assignments")
     
     args = parser.parse_args()
     if not args.input_file:
@@ -541,6 +559,7 @@ def run_cli():
             args.train_iters,
             args.model_name,
             args.enable_deepseek_profile,
+            args.configfuzz_assignments,
         )
     else:
         main(
@@ -552,6 +571,7 @@ def run_cli():
             args.train_iters,
             args.model_name,
             args.enable_deepseek_profile,
+            args.configfuzz_assignments,
         )
 
 

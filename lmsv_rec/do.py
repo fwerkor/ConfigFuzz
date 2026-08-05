@@ -16,7 +16,10 @@ from utils.runtime.auto_dataset import ensure_task1_data_path
 
 
 REPO_ROOT = Path(__file__).resolve().parent
-CONFIG_PATH = REPO_ROOT / "config.json"
+DEFAULT_CONFIG_PATH = REPO_ROOT / "config.json"
+CONFIG_PATH = Path(
+    os.environ.get("LMSV_CONFIG_PATH", str(DEFAULT_CONFIG_PATH))
+).expanduser().resolve()
 CONFIG_EXAMPLE_PATH = REPO_ROOT / "config.json.example"
 
 
@@ -111,6 +114,8 @@ signal.signal(signal.SIGINT, _handle_sigint)
 def ensure_config() -> None:
     if CONFIG_PATH.exists():
         return
+    if CONFIG_PATH != DEFAULT_CONFIG_PATH.resolve():
+        raise FileNotFoundError(f"指定的 LMSV_CONFIG_PATH 不存在: {CONFIG_PATH}")
     print("config.json不存在，正在使用示例创建...")
     shutil.copy(CONFIG_EXAMPLE_PATH, CONFIG_PATH)
 

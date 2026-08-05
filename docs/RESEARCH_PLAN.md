@@ -290,6 +290,10 @@ Completed in the initial prototype:
 - a bounded multi-round active-validation loop that reranks the updated graph,
   executes the next unattempted candidate, applies feedback, and stops on budget
   exhaustion or absence of executable candidates.
+- an lm-sv Task1 bridge that injects deterministic solver assignments after
+  mutation-artifact normalization, prevents random parallel resampling, rejects
+  validator-repaired target values, and launches an isolated one-iteration
+  Task1 configuration through `do.py`.
 
 Next tasks:
 
@@ -300,7 +304,8 @@ Next tasks:
 5. Add valid-boundary objectives and information-gain or coverage-based
    convergence criteria beyond the current budget/no-candidate stopping rules.
 6. Model memory, device topology, and backend capability as scoped resource edges.
-7. Integrate solver-generated plans into the full lm-sv mutation and distributed
-   execution path beyond the lightweight validator adapter.
+7. Run a reproducible Task1 campaign on configured PTA/MSA/NPU environments and
+   collect model-construction, first-step, repeated-step, and comparison
+   milestones for solver-generated cases.
 8. Build the evaluation harness for valid-rate, deep-milestone, cost, and
    bug-finding comparisons against random, type-only, and manual baselines.

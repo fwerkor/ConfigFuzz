@@ -1,0 +1,28 @@
+{
+  "task_type": 1,
+  "PTA_NAME": "mindspeed",
+  "PTA_PATH": "/opt/mindspeed",
+  "MSA_NAME": "msadapter",
+  "MSA_PATH": "/opt/msadapter",
+  "MF_NAME": "mindformers",
+  "DATASET_ROOT": "/data/datasets",
+  "tasks": {
+    "1": {
+      "MODEL_NAME": "qwen3",
+      "TOTAL_ITER": 1,
+      "COMPARE_MODE": "pta_msa",
+      "ENABLE_WEIGHT_CONVERT": false,
+      "ENABLE_MF_WEIGHT_LOAD": false,
+      "BASE_SEED": 43,
+      "MUTNM": 0,
+      "SAVE_STEPS": 1,
+      "LOAD_STEPS": 1,
+      "PTA_MAX_RUNTIME": 300,
+      "MSA_MAX_RUNTIME": 300,
+      "MULTI_NODE": {
+        "ENABLED": false,
+        "HCCL_IF_IP": ""
+      }
+    }
+  }
+}

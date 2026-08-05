@@ -16,6 +16,15 @@ jobs:
         run: python -m pip install -e '.[dev]'
       - name: Test
         run: pytest tests/configfuzz
+      - name: Compile Task1 bridge
+        run: |
+          python -m py_compile \
+            lmsv_rec/do.py \
+            lmsv_rec/utils/runtime/configfuzz_bridge.py \
+            lmsv_rec/utils/runtime/core/withnum_mutation_system.py \
+            lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/main.py \
+            lmsv_rec/utils/task/task1.py \
+            experiments/lmsv_task1_probe.py
       - name: CLI smoke test
         run: |
           python -m configfuzz scan \
@@ -137,6 +146,10 @@ jobs:
             /tmp/configfuzz-lmsv-intervention.json \
             experiments/manifests/lmsv_hidden_size_intervention.json \
             --output /tmp/configfuzz-lmsv-intervention-samples.json
+          python -m configfuzz run-intervention \
+            /tmp/configfuzz-lmsv-intervention.json \
+            experiments/manifests/lmsv_task1_prepare_only.json \
+            --output /tmp/configfuzz-lmsv-task1-prepared-samples.json
           python -m configfuzz apply-feedback \
             artifacts/lmsv_static_inventory.json \
             /tmp/configfuzz-lmsv-intervention-samples.json \
@@ -169,6 +182,9 @@ jobs:
           samples = json.loads(
               Path("/tmp/configfuzz-lmsv-intervention-samples.json").read_text()
           )["samples"]
+          task1_samples = json.loads(
+              Path("/tmp/configfuzz-lmsv-task1-prepared-samples.json").read_text()
+          )["samples"]
           feedback = json.loads(
               Path("/tmp/configfuzz-lmsv-intervention-feedback.json").read_text()
           )["feedback"]
@@ -192,6 +208,25 @@ jobs:
           assert samples[1]["provenance_matched"] is True
           assert feedback["paired_interventions"] == 1
           assert feedback["confirmed_edges"] == ["dep-c47258679d480492"]
+          assert [sample["outcome"]["label"] for sample in task1_samples] == [
+              "valid",
+              "valid",
+          ]
+          assert all(
+              "MILESTONE: ConfigFuzz Task1 configuration prepared"
+              in sample["observation"]["stdout"]
+              for sample in task1_samples
+          )
+          for sample in task1_samples:
+              prepared = json.loads(
+                  sample["observation"]["stdout"].splitlines()[-1]
+              )
+              task1 = prepared["tasks"]["1"]
+              assert task1["TOTAL_ITER"] == 1
+              assert task1["MUTNM"] == 0
+              assert task1["CONFIGFUZZ_ASSIGNMENTS_PATH"].endswith(
+                  f"/{sample['intervention_role']}.json"
+              )
           selected_edge = selection["candidates"][0]["edge_id"]
           assert [sample["outcome"]["label"] for sample in selected_samples] == [
               "valid",

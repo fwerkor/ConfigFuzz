@@ -1,0 +1,38 @@
+{
+  "baseline_config": "../lmsv_validator_baseline.json",
+  "command": [
+    "python",
+    "experiments/lmsv_task1_probe.py",
+    "--config",
+    "{config}",
+    "--task-config",
+    "lmsv_rec/config.json"
+  ],
+  "cwd": "../..",
+  "timeout_seconds": 7200,
+  "roles": [
+    "satisfying",
+    "repaired"
+  ],
+  "classification": {
+    "invalid_patterns": [
+      "CONFIG_INVALID:"
+    ],
+    "resource_patterns": [
+      "out of memory",
+      "OOM",
+      "HCCS link error"
+    ],
+    "infrastructure_patterns": [
+      "INFRASTRUCTURE_FAILURE:",
+      "connection reset",
+      "No such file or directory.*conda"
+    ],
+    "bug_patterns": [
+      "BUG_ORACLE:"
+    ],
+    "milestone_patterns": [
+      "MILESTONE: lm-sv Task1 completed with ConfigFuzz assignments"
+    ]
+  }
+}

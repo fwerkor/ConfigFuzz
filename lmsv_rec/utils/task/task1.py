@@ -45,6 +45,7 @@ class Config:
     TOTAL_ITER = 10
     BASE_SEED = 43
     MUTNM = 2
+    CONFIGFUZZ_ASSIGNMENTS_PATH = ""
     MUTATE_NODE_NUM = 1
     TEST_ITERATIONS = 10
     COMPARE_MODE = "pta_msa"
@@ -2617,12 +2618,16 @@ def run_mutate(exec_log_file=None):
         f"--args_path {MUTATION_SCHEMA_REL}"
     )
     pta_path = shlex.quote(os.environ["PTA_PATH"])
+    configfuzz_mutate_env = ""
+    if Config.CONFIGFUZZ_ASSIGNMENTS_PATH:
+        configfuzz_mutate_env = "export LMSV_MUTATE_SKIP_FORWARD=1"
     cmd = f'''
     {build_conda_activate_block(Config.PTA_ENV, load_ascend=True)}
     export PTA_PATH={pta_path}
     export PTAPATH={pta_path}
     source scripts/envset/pta.sh
     export MUTATE_ROUND=${{MUTATE_ROUND:-1}}
+    {configfuzz_mutate_env}
     export MUTATE_ARGS={shlex.quote(mutate_args)}
     bash {shlex.quote(f"{MUTATION_SCRIPT_REL}/mutate-auto.sh")}
     '''
@@ -2640,6 +2645,10 @@ def generate_pta_script(input_file, pta_script, model_name=None, enable_deepseek
     data_path = shlex.quote(Config.DATA_PATH)
     parallel_mutate_output_dir = shlex.quote(Config.PARALLEL_MUTATE_TMP_DIR)
     deepseek_profile_line = f"      --enable_deepseek_profile \\\n" if enable_deepseek_profile else ""
+    configfuzz_line = ""
+    if Config.CONFIGFUZZ_ASSIGNMENTS_PATH:
+        configfuzz_line = f"      --configfuzz-assignments {shlex.quote(Config.CONFIGFUZZ_ASSIGNMENTS_PATH)} \\\
+"
     cmd = f'''
     {build_conda_activate_block(Config.PTA_ENV, load_ascend=True)}
     export PTA_PATH={pta_path}
@@ -2651,7 +2660,7 @@ def generate_pta_script(input_file, pta_script, model_name=None, enable_deepseek
       -isc {input_shell} \
       -osc {pta_script} \
       --model_name {shlex.quote(str(model_name or Config.MODEL_NAME))} \
-{deepseek_profile_line}      --data_path {data_path}
+{deepseek_profile_line}{configfuzz_line}      --data_path {data_path}
     '''
     if exec_log_file:
         result = run_shell_to_file(cmd, exec_log_file, check=False)
@@ -2832,6 +2841,15 @@ def main(params):
     ENABLE_MF_WEIGHT_LOAD = _to_bool(params.get('ENABLE_MF_WEIGHT_LOAD', Config.ENABLE_MF_WEIGHT_LOAD))
     BASE_SEED = params.get('BASE_SEED', Config.BASE_SEED)
     MUTNM = params.get('MUTNM', 2)
+    CONFIGFUZZ_ASSIGNMENTS_PATH = str(
+        params.get(
+            'CONFIGFUZZ_ASSIGNMENTS_PATH',
+            os.environ.get('CONFIGFUZZ_ASSIGNMENTS_PATH', Config.CONFIGFUZZ_ASSIGNMENTS_PATH),
+        )
+        or ''
+    ).strip()
+    if CONFIGFUZZ_ASSIGNMENTS_PATH:
+        CONFIGFUZZ_ASSIGNMENTS_PATH = _to_abs_path(CONFIGFUZZ_ASSIGNMENTS_PATH)
     SAVE_STEPS = params.get('SAVE_STEPS', Config.SAVE_TRAIN_ITERS)
     LOAD_STEPS = params.get('LOAD_STEPS', Config.LOAD_TRAIN_ITERS)
     MF_LOSS_TOLERANCE = float(params.get('MF_LOSS_TOLERANCE', Config.MF_LOSS_TOLERANCE))
@@ -2880,6 +2898,7 @@ def main(params):
     Config.COMPARE_MODE = COMPARE_MODE
     Config.BASE_SEED = BASE_SEED
     Config.MUTNM = MUTNM
+    Config.CONFIGFUZZ_ASSIGNMENTS_PATH = CONFIGFUZZ_ASSIGNMENTS_PATH
     Config.SUPPORT_MF = run_mf
     Config.ENABLE_WEIGHT_CONVERT = ENABLE_WEIGHT_CONVERT
     Config.ENABLE_MF_WEIGHT_LOAD = ENABLE_MF_WEIGHT_LOAD
@@ -2959,6 +2978,8 @@ def main(params):
     log_kv("配置", "是否启用 MF 权重加载", ENABLE_MF_WEIGHT_LOAD)
     log_kv("配置", "基础随机种子", BASE_SEED)
     log_kv("配置", "每轮变异参数数量", MUTNM)
+    if Config.CONFIGFUZZ_ASSIGNMENTS_PATH:
+        log_kv("配置", "ConfigFuzz确定性赋值", Config.CONFIGFUZZ_ASSIGNMENTS_PATH)
     log_kv("配置", "SAVE 模式训练轮数", SAVE_STEPS)
     log_kv("配置", "LOAD 模式训练轮数", LOAD_STEPS)
     log_kv("配置", "MF loss对齐阈值", MF_LOSS_TOLERANCE)

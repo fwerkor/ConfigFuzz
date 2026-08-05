@@ -331,6 +331,39 @@ The result preserves round-level candidates, samples, feedback, and the final
 graph. More advanced convergence rules based on marginal information gain and
 coverage saturation remain future work.
 
+## lm-sv Task1 execution bridge
+
+Confirmed or expected-valid solver cases can be executed through the real
+lm-sv Task1 chain rather than stopping at the lightweight validator:
+
+```bash
+python -m configfuzz run-intervention \
+  intervention.json \
+  experiments/manifests/lmsv_task1_execution.json \
+  --output task1-samples.json
+```
+
+The bridge preserves the original Task1 architecture. The graph mutation stage
+still emits `mutating-<i>.json`; `parallel_mutate` still normalizes the artifact,
+runs `EnhancedMegatronConfigValidator`, and emits the PTA script. ConfigFuzz
+sets `MUTNM=0`, skips the mutation-stage Forward preview, and inserts its
+deterministic joint assignment after normalization and before that validator.
+The original random model and parallel resampling are therefore both skipped,
+so the generated script represents the solver case rather than an unrelated
+second mutation.
+
+The bridge enforces assignment identity across the validator boundary. If the
+validator changes a ConfigFuzz-controlled field, the case is rejected before
+training and the mismatch records both requested and repaired values. This is
+necessary because executing a silently repaired script would provide evidence
+about a different configuration. Full Task1 execution is limited to satisfying
+and repaired roles; violating roles remain inexpensive validation probes.
+
+Each run receives an isolated one-iteration lm-sv configuration via
+`LMSV_CONFIG_PATH`. CI exercises a prepare-only manifest that verifies this
+plumbing without requiring PTA, MSA, datasets, or NPU hardware. Actual training
+requires a populated `lmsv_rec/config.json` for the target environment.
+
 ## Runtime feedback
 
 `apply-feedback` evaluates labeled probe samples against the edges involving the
@@ -413,10 +446,11 @@ The first planner is deliberately bounded. It does not yet:
 - solve arbitrary nonlinear, quantified, or higher-order constraints;
 - reason about resource models;
 - infer causal direction for ambiguous formulas;
-- execute interventions through full distributed framework stages beyond the
-  current JSON/validator adapters;
-- write mutations back into lm-sv's complete mutation and launch path.
+- provide execution adapters for framework launch paths other than lm-sv
+  Task1;
+- establish deep-milestone and cost behavior through a controlled distributed
+  Task1 campaign on available NPU environments.
 
-The next integration stage should add adaptive counterexample selection,
-valid-boundary generation, resource-aware objectives, and direct lm-sv
-mutation execution from solver plans.
+The next integration stage should add valid-boundary generation,
+resource-aware objectives, information-gain stopping rules, and comparative
+distributed campaigns.

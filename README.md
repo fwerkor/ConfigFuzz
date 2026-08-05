@@ -63,12 +63,15 @@ The initial repository provides:
 - a script for building an initial static inventory from the baseline;
 - a lightweight adapter that exposes the real lm-sv validator as a runtime
   oracle;
+- an lm-sv Task1 bridge that carries deterministic solver assignments through
+  mutation-artifact normalization, validation, PTA script generation, and an
+  isolated one-iteration `do.py` launch;
 - unit tests and a minimal GitHub Actions workflow;
 - a research plan and a proposed constraint DSL.
 
-The current prototype performs one batch of static or dynamic inference. A
-full counterexample-guided loop, multi-parameter synthesis, resource modeling,
-and mutation integration remain research stages.
+The current prototype supports bounded multi-round active validation and a
+Task1 execution bridge. Full framework campaigns, multi-parameter synthesis,
+resource modeling, and information-gain convergence remain research stages.
 
 ## Quick start
 
@@ -226,6 +229,33 @@ edge, applies feedback, and carries the revised statuses into the next round.
 The loop stops when its round budget is exhausted or no executable candidate
 remains. Its output includes every selected intervention, runtime observation,
 feedback report, attempted-edge list, stop reason, and final dependency graph.
+
+Run solver-generated valid cases through the actual lm-sv Task1 chain:
+
+```bash
+python -m configfuzz run-intervention \
+  artifacts/lmsv_intervention.json \
+  experiments/manifests/lmsv_task1_execution.json \
+  --output artifacts/lmsv_task1_samples.json
+```
+
+This manifest expects a real `lmsv_rec/config.json` containing the local PTA,
+MSA, dataset, and device environment. For every selected satisfying or repaired
+case, the adapter creates an isolated one-iteration Task1 configuration and
+launches `do.py` through `LMSV_CONFIG_PATH`. The ordinary graph-mutation stage
+still creates the model artifact from the selected model template, but Task1
+sets `MUTNM=0` and skips the mutation-stage Forward preview. The normalized
+configuration is then overridden by the deterministic ConfigFuzz assignment
+before validation and PTA script generation. Random model-parameter and
+parallel-parameter resampling are both disabled in this mode.
+
+The existing lm-sv validator remains authoritative at this boundary. If it
+repairs any field assigned by ConfigFuzz, Task1 reports an explicit invalid
+configuration and does not silently train with the repaired value. Deliberately
+violating cases are therefore kept in the lightweight validator loop; the full
+Task1 manifest executes only satisfying and repaired cases. A hardware-free
+configuration-preparation smoke test is available through
+`experiments/manifests/lmsv_task1_prepare_only.json`.
 
 Run a versioned scan against an external framework checkout:
 

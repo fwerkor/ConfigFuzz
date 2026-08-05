@@ -479,6 +479,10 @@ class ConfigMutator:
         else:
             base_config = base_config.copy()
 
+        if mutation_num <= 0:
+            print("变异参数数量为0，保留模型模板配置")
+            return base_config
+
         print("\n=== 调用 mutate_config_dict ===")
         self._mutation_invocation += 1
         rng = self._make_rng(

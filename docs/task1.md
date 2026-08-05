@@ -142,6 +142,19 @@ mutating-i.json 不是最终训练输入。Task1 会继续调用 parallel_mutate
 5. EnhancedMegatronConfigValidator：一致性修复。
 6. YamlToBash：输出最终 PTA 可执行脚本。
 
+当 `tasks.1.CONFIGFUZZ_ASSIGNMENTS_PATH` 被设置时，第 4 步切换为
+ConfigFuzz 确定性覆盖：系统在配置归一化后读取 solver 生成的联合赋值，
+直接写入对应的 model/parallel/training/moe/mla section，并跳过随机并行
+参数重采样。适配器同时设置 `MUTNM=0` 并跳过 mutate 阶段的 Forward
+预演，因此前置阶段仅从指定模型模板生成结构产物，不再随机改写其他
+模型参数。之后仍执行原有 validator 和脚本生成流程。
+
+ConfigFuzz 模式要求目标赋值跨 validator 保持不变。若 validator 将某个
+目标字段修复成其他值，Task1 会在生成训练脚本前以 `CONFIG_INVALID` 结束，
+避免“请求配置”和“实际训练配置”不一致。`experiments/lmsv_task1_probe.py`
+会为每个 satisfying/repaired case 生成独立的一轮 Task1 配置，并通过
+`LMSV_CONFIG_PATH` 调用 `do.py`，不会覆盖常驻的 `config.json`。
+
 该流程的专门文档见：
 
 - [docs/PTA_PARALLEL_MUTATION.md](PTA_PARALLEL_MUTATION.md)
@@ -194,6 +207,8 @@ schema 文件： [assets/runtime/configs/mutation_schema.yaml](../lmsv_rec/asset
 
 2. 误区：mutating-i.json 的 after 与最终脚本必须完全一致。
 - 实际：并行参数与一致性修复会做收敛改写，这是预期行为。
+- 例外：启用 ConfigFuzz 确定性赋值后，被 solver 控制的字段不允许被
+  validator 静默改写；发生修复时该 case 会被拒绝。
 
 3. 误区：PTA-LOAD 返回码非 0 必定失败。
 - 实际：若当前轮 step csv 已有有效指标，可按成功处理。
