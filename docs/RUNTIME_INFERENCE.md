@@ -43,18 +43,18 @@ and integer context values and divisors.
 
 The classifier applies the following precedence:
 
-1. infrastructure pattern → `UNKNOWN`;
-2. explicit configuration rejection → `INVALID`;
-3. explicit bug oracle → `POTENTIAL_BUG`;
-4. timeout → `UNKNOWN`;
-5. successful exit with the required milestone → `VALID`;
-6. unexpected non-zero exit after the milestone → `POTENTIAL_BUG`;
-7. otherwise → `UNKNOWN`.
+1. infrastructure pattern → `INFRASTRUCTURE_FAILURE`;
+2. resource pattern → `RESOURCE_FAILURE`;
+3. explicit configuration rejection → `INVALID`;
+4. explicit bug oracle → `POTENTIAL_BUG`;
+5. timeout → `UNKNOWN`;
+6. successful exit with the required milestone → `VALID`;
+7. unexpected non-zero exit after the milestone → `UNEXPLAINED_FAILURE`;
+8. otherwise → `UNKNOWN`.
 
-Only `VALID` and `INVALID` samples are used to learn hard constraints.
-`UNKNOWN` and `POTENTIAL_BUG` remain in the sample corpus but are excluded from
-negative learning so that infrastructure failures and defect-triggering inputs
-do not become exclusion rules.
+Validity feedback uses `VALID` and explicit `INVALID` observations. Resource,
+infrastructure, unexplained, unknown, and potential-bug outcomes remain in the
+sample corpus but do not become invalid-domain evidence.
 
 ## Synthesis
 
@@ -99,6 +99,52 @@ python -m configfuzz infer manifest.json \
   --output spec.json
 ```
 
+## Executing paired interventions
+
+After `design-intervention` has produced satisfying, violating, and repaired
+configurations, `run-intervention` applies each joint assignment to a baseline
+configuration and executes it through a separate manifest:
+
+```json
+{
+  "baseline_config": "../lmsv_validator_baseline.json",
+  "command": [
+    "python",
+    "experiments/lmsv_validator_probe.py",
+    "--config",
+    "{config}",
+    "--tracked-parameters",
+    "{tracked_parameters}"
+  ],
+  "cwd": "../..",
+  "timeout_seconds": 10,
+  "classification": {
+    "invalid_patterns": ["CONFIG_INVALID:"],
+    "bug_patterns": ["BUG_ORACLE:"],
+    "milestone_patterns": ["MILESTONE: lm-sv validator accepted tracked parameters unchanged"]
+  },
+  "provenance_patterns": ["PROVENANCE:.*config_validator_moe\\.py"]
+}
+```
+
+Supported command substitutions are `{config}`, `{role}`, `{intervention_id}`,
+`{edge_id}`, `{primary_parameter}`, `{primary_value}`, `{assignments}`, and
+`{tracked_parameters}`. The runner writes each case to an isolated temporary
+JSON file. Flat graph names are resolved to exact dotted paths or to a unique
+leaf in the nested baseline; ambiguous fields are rejected rather than guessed.
+
+```bash
+python -m configfuzz run-intervention \
+  intervention-plan.json intervention-manifest.json \
+  --output intervention-samples.json
+```
+
+The output is directly accepted by `apply-feedback`. An invalid case receives
+`provenance_matched=true` only when its output matches the configured rejection
+signature or, when no explicit pattern is supplied, the target edge's recorded
+source path. This enables paired confirmation without treating an unrelated
+validation failure as evidence for the selected edge.
+
 ## Current limitations
 
 - One target parameter is varied per manifest.
@@ -108,3 +154,5 @@ python -m configfuzz infer manifest.json \
   loop.
 - A validator repair is only an invalid oracle when the adapter explicitly
   reports it as such.
+- The generic intervention runner currently patches JSON configurations; shell
+  launch arguments and framework-native configuration objects require adapters.

@@ -10,6 +10,11 @@ from configfuzz.dependencies import DependencyGraph
 from configfuzz.extractors import scan_source_paths_multi
 from configfuzz.feedback import apply_probe_feedback
 from configfuzz.graph_solver import design_edge_intervention, solve_graph_mutation
+from configfuzz.intervention_runner import (
+    InterventionExecutionManifest,
+    intervention_samples_payload,
+    run_intervention,
+)
 from configfuzz.probing import (
     ProbeManifest,
     load_samples,
@@ -122,6 +127,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     intervention.add_argument("--output", type=Path, help="write the intervention plan")
     intervention.set_defaults(handler=_run_design_intervention)
+
+    run_intervention_parser = subparsers.add_parser(
+        "run-intervention",
+        help="execute designed intervention cases and emit feedback-ready samples",
+    )
+    run_intervention_parser.add_argument("plan", type=Path, help="intervention plan JSON")
+    run_intervention_parser.add_argument(
+        "manifest",
+        type=Path,
+        help="intervention execution manifest JSON",
+    )
+    run_intervention_parser.add_argument(
+        "--output",
+        type=Path,
+        help="write feedback-ready samples",
+    )
+    run_intervention_parser.set_defaults(handler=_run_intervention)
 
     feedback = subparsers.add_parser(
         "apply-feedback",
@@ -246,6 +268,17 @@ def _run_design_intervention(args: argparse.Namespace) -> int:
         include_repair=not args.no_repair,
     )
     _write_json({"schema_version": 1, "intervention": plan.to_dict()}, args.output)
+    return 0
+
+
+def _run_intervention(args: argparse.Namespace) -> int:
+    plan_payload = _read_json_object(args.plan)
+    manifest = InterventionExecutionManifest.from_path(args.manifest)
+    samples = run_intervention(plan_payload, manifest)
+    _write_json(
+        intervention_samples_payload(plan_payload, manifest, samples),
+        args.output,
+    )
     return 0
 
 

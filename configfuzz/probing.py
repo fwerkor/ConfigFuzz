@@ -221,38 +221,17 @@ def run_probe(manifest: ProbeManifest, value: Any) -> ProbeSample:
         "value": _format_value(value),
     }
     argv = tuple(token.format_map(substitutions) for token in manifest.command)
-    env = os.environ.copy()
-    env.update(manifest.env)
-    env["CONFIGFUZZ_PARAMETER"] = manifest.parameter
-    env["CONFIGFUZZ_VALUE"] = _format_value(value)
-
-    started = time.monotonic()
-    try:
-        completed = subprocess.run(
-            argv,
-            cwd=manifest.cwd,
-            env=env,
-            capture_output=True,
-            text=True,
-            timeout=manifest.timeout_seconds,
-            check=False,
-        )
-        observation = ProcessObservation(
-            argv=argv,
-            returncode=completed.returncode,
-            stdout=completed.stdout,
-            stderr=completed.stderr,
-            duration_seconds=time.monotonic() - started,
-        )
-    except subprocess.TimeoutExpired as exc:
-        observation = ProcessObservation(
-            argv=argv,
-            returncode=None,
-            stdout=_coerce_timeout_text(exc.stdout),
-            stderr=_coerce_timeout_text(exc.stderr),
-            duration_seconds=time.monotonic() - started,
-            timed_out=True,
-        )
+    env = {
+        **manifest.env,
+        "CONFIGFUZZ_PARAMETER": manifest.parameter,
+        "CONFIGFUZZ_VALUE": _format_value(value),
+    }
+    observation = execute_command(
+        argv,
+        cwd=manifest.cwd,
+        env=env,
+        timeout_seconds=manifest.timeout_seconds,
+    )
 
     return ProbeSample(
         parameter=manifest.parameter,
@@ -260,6 +239,44 @@ def run_probe(manifest: ProbeManifest, value: Any) -> ProbeSample:
         observation=observation,
         outcome=classify_observation(observation, manifest.classification),
     )
+
+
+def execute_command(
+    argv: tuple[str, ...],
+    *,
+    cwd: Path,
+    env: Mapping[str, str],
+    timeout_seconds: float,
+) -> ProcessObservation:
+    process_env = os.environ.copy()
+    process_env.update(env)
+    started = time.monotonic()
+    try:
+        completed = subprocess.run(
+            argv,
+            cwd=cwd,
+            env=process_env,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+            check=False,
+        )
+        return ProcessObservation(
+            argv=argv,
+            returncode=completed.returncode,
+            stdout=completed.stdout,
+            stderr=completed.stderr,
+            duration_seconds=time.monotonic() - started,
+        )
+    except subprocess.TimeoutExpired as exc:
+        return ProcessObservation(
+            argv=argv,
+            returncode=None,
+            stdout=_coerce_timeout_text(exc.stdout),
+            stderr=_coerce_timeout_text(exc.stderr),
+            duration_seconds=time.monotonic() - started,
+            timed_out=True,
+        )
 
 
 def run_manifest(manifest: ProbeManifest) -> list[ProbeSample]:

@@ -132,3 +132,17 @@ def test_probe_templates_carry_intervention_metadata() -> None:
     assert satisfying["intervention_edge_id"] == edge.id
     assert satisfying["intervention_role"] == "satisfying"
     assert violating["intervention_role"] == "violating"
+
+
+def test_unconfirmed_transitive_neighbors_do_not_expand_mutable_region() -> None:
+    graph = make_graph(
+        constraint("x % y == 0", ("x", "y")),
+        constraint("y > 1 => z > 0", ("y", "z"), kind=ConstraintKind.CONDITIONAL),
+    )
+    target = next(edge for edge in graph.edges.values() if edge.expression == "x % y == 0")
+
+    plan = design_edge_intervention(graph, {"x": 4, "y": 2}, target.id)
+
+    assert plan.mutable_parameters == ("x", "y")
+    assert plan.satisfying.status is SolveStatus.SAT
+    assert plan.violating.status is SolveStatus.SAT

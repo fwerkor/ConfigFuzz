@@ -48,6 +48,8 @@ The initial repository provides:
   constraints and unconfirmed evidence as weighted soft constraints;
 - an intervention designer that generates minimally different satisfying,
   violating, and repaired configurations for a selected dependency edge;
+- an intervention execution adapter that patches nested configurations, runs
+  each designed case, classifies the outcome, and matches rejection provenance;
 - runtime feedback that separates consistency, isolated violations,
   provenance-matched paired interventions, and valid scope counterexamples;
 - an isolated subprocess harness driven by JSON manifests;
@@ -157,6 +159,31 @@ The output contains satisfying and violating configurations plus an optional
 repaired counterpart. For guarded edges, both sides activate the guard so that
 disabling the feature cannot masquerade as positive evidence.
 
+The included lm-sv validator adapter can execute a complete confirmation loop:
+
+```bash
+python -m configfuzz design-intervention \
+  artifacts/lmsv_static_inventory.json \
+  experiments/lmsv_validator_baseline.json \
+  --edge dep-c47258679d480492 \
+  --output artifacts/lmsv_intervention.json
+
+python -m configfuzz run-intervention \
+  artifacts/lmsv_intervention.json \
+  experiments/manifests/lmsv_hidden_size_intervention.json \
+  --output artifacts/lmsv_intervention_samples.json
+
+python -m configfuzz apply-feedback \
+  artifacts/lmsv_static_inventory.json \
+  artifacts/lmsv_intervention_samples.json \
+  experiments/lmsv_validator_baseline.json \
+  --output artifacts/lmsv_confirmed_graph.json
+```
+
+The execution manifest controls the command, baseline configuration, milestone
+and failure oracles, and provenance patterns. Joint assignments are written to
+a temporary configuration using exact paths or unambiguous leaf-name matching.
+
 Run a versioned scan against an external framework checkout:
 
 ```bash
@@ -228,6 +255,7 @@ configfuzz/                 new constraint-inference prototype
   dependencies.py          dependency hypergraph and joint-mutation planner
   feedback.py              runtime evidence attribution and edge-state updates
   graph_solver.py          joint solver and paired-intervention designer
+  intervention_runner.py   joint-config execution and provenance matching
   extractors/               static candidate extractors
   outcomes.py               runtime outcome oracle
   probing.py                manifest, generator, and subprocess harness

@@ -244,9 +244,20 @@ reference configuration. A repaired case is generated from the violating
 configuration by restoring the target predicate with the same objectives.
 
 Each case includes a `probe_sample_template` containing a stable intervention
-ID, target edge ID, role, primary parameter, and joint assignments. The
-execution adapter must still classify the result and determine whether an
-explicit rejection matches the target edge's recorded provenance.
+ID, target edge ID, role, primary parameter, and joint assignments.
+`run-intervention` executes those templates through a manifest-defined adapter:
+
+```bash
+python -m configfuzz run-intervention \
+  intervention.json intervention-manifest.json \
+  --output intervention-samples.json
+```
+
+The runner patches an isolated copy of the nested baseline configuration,
+executes every satisfiable role, classifies each observation, and marks an
+invalid sample as provenance matched only when its rejection output matches an
+explicit manifest pattern or the target edge's recorded source. The resulting
+sample file can be passed directly to `apply-feedback`.
 
 ## Runtime feedback
 
@@ -330,9 +341,10 @@ The first planner is deliberately bounded. It does not yet:
 - solve arbitrary nonlinear, quantified, or higher-order constraints;
 - reason about resource models;
 - infer causal direction for ambiguous formulas;
-- execute designed interventions and match rejection provenance automatically;
-- write mutations back into lm-sv's execution path.
+- execute interventions through full distributed framework stages beyond the
+  current JSON/validator adapters;
+- write mutations back into lm-sv's complete mutation and launch path.
 
-The next integration stage should add adaptive counterexample selection, valid
-boundary generation, deliberate one-edge violations, and direct lm-sv mutation
-execution from solver plans.
+The next integration stage should add adaptive counterexample selection,
+valid-boundary generation, resource-aware objectives, and direct lm-sv
+mutation execution from solver plans.

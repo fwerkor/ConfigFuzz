@@ -11,6 +11,11 @@ import random
 from pathlib import Path
 from typing import Any
 
+from configfuzz.intervention_runner import (
+    get_configuration_value,
+    resolve_configuration_path,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = (
@@ -33,13 +38,6 @@ def load_validator_class():
     return module.EnhancedMegatronConfigValidator
 
 
-def get_path(config: dict[str, Any], dotted_path: str) -> Any:
-    current: Any = config
-    for part in dotted_path.split("."):
-        current = current[part]
-    return current
-
-
 def set_path(config: dict[str, Any], dotted_path: str, value: Any) -> None:
     parts = dotted_path.split(".")
     current: dict[str, Any] = config
@@ -54,13 +52,31 @@ def set_path(config: dict[str, Any], dotted_path: str, value: Any) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
-    parser.add_argument("--parameter", required=True)
-    parser.add_argument("--value", required=True, help="JSON scalar")
+    parser.add_argument("--parameter")
+    parser.add_argument("--value", help="JSON scalar")
+    parser.add_argument(
+        "--tracked-parameters",
+        default="[]",
+        help="JSON array of fields whose validator repairs imply rejection",
+    )
     args = parser.parse_args()
 
     config = json.loads(args.config.read_text(encoding="utf-8"))
-    value = json.loads(args.value)
-    set_path(config, args.parameter, value)
+    tracked_raw = json.loads(args.tracked_parameters)
+    if not isinstance(tracked_raw, list):
+        raise ValueError("--tracked-parameters must be a JSON array")
+    tracked = [resolve_configuration_path(config, str(item)) for item in tracked_raw]
+    if args.parameter is not None:
+        if args.value is None:
+            parser.error("--value is required with --parameter")
+        parameter_path = resolve_configuration_path(config, args.parameter)
+        set_path(config, parameter_path, json.loads(args.value))
+        if parameter_path not in tracked:
+            tracked.append(parameter_path)
+    elif args.value is not None:
+        parser.error("--parameter is required with --value")
+    if not tracked:
+        parser.error("provide --parameter or --tracked-parameters")
     before = copy.deepcopy(config)
 
     try:
@@ -71,30 +87,44 @@ def main() -> int:
         print(f"BUG_ORACLE: validator raised {type(exc).__name__}: {exc}")
         return 3
 
-    original_value = get_path(before, args.parameter)
-    validated_value = get_path(validated, args.parameter)
-    if validated_value != original_value:
-        print(
-            "CONFIG_INVALID: "
-            f"{args.parameter} was repaired from {original_value!r} to {validated_value!r}"
-        )
+    repaired = []
+    for path in tracked:
+        original_value = get_configuration_value(before, path)
+        validated_value = get_configuration_value(validated, path)
+        if validated_value != original_value:
+            repaired.append((path, original_value, validated_value))
+    if repaired:
+        for path, original_value, validated_value in repaired:
+            print(
+                "CONFIG_INVALID: "
+                f"{path} was repaired from {original_value!r} to {validated_value!r}"
+            )
         for issue in issues:
-            if args.parameter.split(".")[-1] in issue:
+            if any(path.split(".")[-1] in issue for path, _, _ in repaired):
                 print(issue)
+        print(f"PROVENANCE: {VALIDATOR_PATH}")
         return 2
 
-    print("MILESTONE: lm-sv validator accepted target parameter unchanged")
-    print(
-        json.dumps(
-            {
-                "parameter": args.parameter,
-                "value": validated_value,
-                "fixes_elsewhere": fixes,
-                "warnings": warnings,
-            },
-            ensure_ascii=False,
-        )
+    legacy_mode = args.parameter is not None
+    milestone = (
+        "MILESTONE: lm-sv validator accepted target parameter unchanged"
+        if legacy_mode
+        else "MILESTONE: lm-sv validator accepted tracked parameters unchanged"
     )
+    print(milestone)
+    result = {
+        "tracked_parameters": tracked,
+        "values": {
+            path: get_configuration_value(validated, path) for path in tracked
+        },
+        "fixes_elsewhere": fixes,
+        "warnings": warnings,
+    }
+    if legacy_mode:
+        parameter_path = resolve_configuration_path(validated, args.parameter)
+        result["parameter"] = args.parameter
+        result["value"] = get_configuration_value(validated, parameter_path)
+    print(json.dumps(result, ensure_ascii=False))
     return 0
 
 

@@ -123,11 +123,44 @@ jobs:
           assert sat["status"] == "sat"
           PY
       - name: Runtime inference smoke test
-        run: >-
-          python -m configfuzz infer
-          examples/toy_parallel_size.json
-          --samples-output /tmp/configfuzz-runtime-samples.json
-          --output /tmp/configfuzz-runtime-spec.json
+        run: |
+          python -m configfuzz infer \
+            examples/toy_parallel_size.json \
+            --samples-output /tmp/configfuzz-runtime-samples.json \
+            --output /tmp/configfuzz-runtime-spec.json
+          python -m configfuzz design-intervention \
+            artifacts/lmsv_static_inventory.json \
+            experiments/lmsv_validator_baseline.json \
+            --edge dep-c47258679d480492 \
+            --output /tmp/configfuzz-lmsv-intervention.json
+          python -m configfuzz run-intervention \
+            /tmp/configfuzz-lmsv-intervention.json \
+            experiments/manifests/lmsv_hidden_size_intervention.json \
+            --output /tmp/configfuzz-lmsv-intervention-samples.json
+          python -m configfuzz apply-feedback \
+            artifacts/lmsv_static_inventory.json \
+            /tmp/configfuzz-lmsv-intervention-samples.json \
+            experiments/lmsv_validator_baseline.json \
+            --output /tmp/configfuzz-lmsv-intervention-feedback.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          samples = json.loads(
+              Path("/tmp/configfuzz-lmsv-intervention-samples.json").read_text()
+          )["samples"]
+          feedback = json.loads(
+              Path("/tmp/configfuzz-lmsv-intervention-feedback.json").read_text()
+          )["feedback"]
+          assert [sample["outcome"]["label"] for sample in samples] == [
+              "valid",
+              "invalid",
+              "valid",
+          ]
+          assert samples[1]["provenance_matched"] is True
+          assert feedback["paired_interventions"] == 1
+          assert feedback["confirmed_edges"] == ["dep-c47258679d480492"]
+          PY
       - name: Manual constraint corpus check
         run: |
           python scripts/build_lmsv_manual_corpus.py --check

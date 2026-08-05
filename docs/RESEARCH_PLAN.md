@@ -281,6 +281,9 @@ Completed in the initial prototype:
 - a solver-backed paired-intervention designer that produces minimally
   different satisfying, violating, and repaired configurations while
   preserving other confirmed edges.
+- an intervention execution adapter that writes joint JSON configurations,
+  executes all designed roles, classifies outcomes, and matches explicit
+  rejection provenance before feedback confirmation.
 
 Next tasks:
 
@@ -288,9 +291,10 @@ Next tasks:
 2. Add return-value/object-field propagation and shell/documentation adapters.
 3. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
 4. Evaluate scanner and graph precision/recall against the reviewed corpus.
-5. Execute designed interventions and match runtime rejection provenance to the
-   target edge automatically.
-6. Add adaptive edge selection, valid-boundary objectives, and convergence
+5. Add adaptive edge selection, valid-boundary objectives, and convergence
    criteria.
-7. Model memory, device topology, and backend capability as scoped resource edges.
-8. Integrate solver-generated plans into the lm-sv mutation and execution path.
+6. Model memory, device topology, and backend capability as scoped resource edges.
+7. Integrate solver-generated plans into the full lm-sv mutation and distributed
+   execution path beyond the lightweight validator adapter.
+8. Build the evaluation harness for valid-rate, deep-milestone, cost, and
+   bug-finding comparisons against random, type-only, and manual baselines.

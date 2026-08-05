@@ -1,0 +1,21 @@
+{
+  "baseline_config": "../lmsv_validator_baseline.json",
+  "command": [
+    "python",
+    "experiments/lmsv_validator_probe.py",
+    "--config",
+    "{config}",
+    "--tracked-parameters",
+    "{tracked_parameters}"
+  ],
+  "cwd": "../..",
+  "timeout_seconds": 10,
+  "classification": {
+    "invalid_patterns": ["CONFIG_INVALID:"],
+    "bug_patterns": ["BUG_ORACLE:"],
+    "milestone_patterns": ["MILESTONE: lm-sv validator accepted tracked parameters unchanged"]
+  },
+  "provenance_patterns": [
+    "PROVENANCE:.*config_validator_moe\\.py"
+  ]
+}

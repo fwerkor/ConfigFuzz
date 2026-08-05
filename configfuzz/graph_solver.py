@@ -382,14 +382,27 @@ def design_edge_intervention(
         in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
     }
     mutable = set(seed_mutable)
-    for name in tuple(seed_mutable):
-        mutable.update(
-            affected
-            for affected in graph.affected_parameters(name)
-            if graph.nodes.get(affected) is not None
-            and graph.nodes[affected].kind
-            in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
-        )
+    changed = True
+    while changed:
+        changed = False
+        for related in graph.edges.values():
+            if related.id == edge_id or related.status not in {
+                DependencyStatus.CONFIRMED,
+                DependencyStatus.ENVIRONMENT_SPECIFIC,
+            }:
+                continue
+            if not mutable.intersection(related.participants):
+                continue
+            additions = {
+                name
+                for name in related.participants
+                if graph.nodes.get(name) is not None
+                and graph.nodes[name].kind
+                in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
+            }
+            if not additions.issubset(mutable):
+                mutable.update(additions)
+                changed = True
     primary = next(
         (name for name in edge.dependents if name in seed_mutable),
         next((name for name in edge.participants if name in seed_mutable), ""),
