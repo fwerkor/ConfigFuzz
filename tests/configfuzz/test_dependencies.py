@@ -114,6 +114,24 @@ def test_conditional_relation_preserves_predicate_direction() -> None:
     )
 
 
+def test_derived_quantity_nodes_are_explicit_and_not_repairable() -> None:
+    graph = DependencyGraph.from_constraint_sets(
+        [
+            constraint_set(
+                "hidden_size",
+                "head_dim == hidden_size / num_attention_heads",
+                ConstraintKind.RELATION,
+                ("hidden_size", "num_attention_heads", "head_dim"),
+            )
+        ]
+    )
+
+    assert graph.nodes["head_dim"].kind is DependencyNodeKind.DERIVED
+    assert graph.nodes["hidden_size"].kind is DependencyNodeKind.PARAMETER
+    assert graph.nodes["num_attention_heads"].kind is DependencyNodeKind.PARAMETER
+    assert not graph._repairable_node("head_dim")
+
+
 def test_environment_nodes_and_status_are_explicit() -> None:
     graph = DependencyGraph.from_constraint_sets(
         [

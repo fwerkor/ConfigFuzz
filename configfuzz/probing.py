@@ -108,22 +108,66 @@ class ProbeSample:
     value: Any
     observation: ProcessObservation
     outcome: ClassifiedOutcome
+    assignments: tuple[tuple[str, Any], ...] = ()
+    intervention_id: str | None = None
+    intervention_edge_id: str | None = None
+    intervention_role: str | None = None
+    provenance_matched: bool = False
+
+    @property
+    def configuration_updates(self) -> dict[str, Any]:
+        updates = dict(self.assignments)
+        updates[self.parameter] = self.value
+        return updates
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        payload: dict[str, Any] = {
             "parameter": self.parameter,
             "value": self.value,
             "observation": self.observation.to_dict(),
             "outcome": self.outcome.to_dict(),
         }
+        if self.assignments:
+            payload["assignments"] = dict(self.assignments)
+        if self.intervention_id is not None:
+            payload["intervention_id"] = self.intervention_id
+        if self.intervention_edge_id is not None:
+            payload["intervention_edge_id"] = self.intervention_edge_id
+        if self.intervention_role is not None:
+            payload["intervention_role"] = self.intervention_role
+        if self.provenance_matched:
+            payload["provenance_matched"] = True
+        return payload
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ProbeSample":
+        raw_assignments = data.get("assignments", {})
+        if not isinstance(raw_assignments, Mapping):
+            raise ValueError("probe sample assignments must be an object")
         return cls(
             parameter=str(data["parameter"]),
             value=data["value"],
             observation=ProcessObservation.from_dict(data["observation"]),
             outcome=ClassifiedOutcome.from_dict(data["outcome"]),
+            assignments=tuple(
+                (str(key), value) for key, value in raw_assignments.items()
+            ),
+            intervention_id=(
+                str(data["intervention_id"])
+                if data.get("intervention_id") is not None
+                else None
+            ),
+            intervention_edge_id=(
+                str(data["intervention_edge_id"])
+                if data.get("intervention_edge_id") is not None
+                else None
+            ),
+            intervention_role=(
+                str(data["intervention_role"])
+                if data.get("intervention_role") is not None
+                else None
+            ),
+            provenance_matched=bool(data.get("provenance_matched", False)),
         )
 
 
@@ -222,7 +266,9 @@ def run_manifest(manifest: ProbeManifest) -> list[ProbeSample]:
     return [run_probe(manifest, value) for value in generate_probe_values(manifest)]
 
 
-def samples_payload(manifest: ProbeManifest, samples: Iterable[ProbeSample]) -> dict[str, Any]:
+def samples_payload(
+    manifest: ProbeManifest, samples: Iterable[ProbeSample]
+) -> dict[str, Any]:
     return {
         "schema_version": 1,
         "manifest": manifest.to_dict(),

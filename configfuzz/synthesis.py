@@ -32,7 +32,7 @@ def synthesize_constraints(
     ignored = [
         sample
         for sample in samples
-        if sample.outcome.label in {OutcomeLabel.UNKNOWN, OutcomeLabel.POTENTIAL_BUG}
+        if sample.outcome.label not in {OutcomeLabel.VALID, OutcomeLabel.INVALID}
     ]
 
     result = ConstraintSet(

@@ -12,8 +12,11 @@ _PATTERN_FLAGS = re.IGNORECASE | re.MULTILINE
 class OutcomeLabel(str, Enum):
     VALID = "valid"
     INVALID = "invalid"
-    UNKNOWN = "unknown"
+    RESOURCE_FAILURE = "resource_failure"
+    INFRASTRUCTURE_FAILURE = "infrastructure_failure"
+    UNEXPLAINED_FAILURE = "unexplained_failure"
     POTENTIAL_BUG = "potential_bug"
+    UNKNOWN = "unknown"
 
 
 @dataclass(frozen=True, slots=True)
@@ -54,6 +57,7 @@ class ProcessObservation:
 @dataclass(frozen=True, slots=True)
 class ClassificationPolicy:
     invalid_patterns: tuple[str, ...] = ()
+    resource_patterns: tuple[str, ...] = ()
     infrastructure_patterns: tuple[str, ...] = ()
     bug_patterns: tuple[str, ...] = ()
     milestone_patterns: tuple[str, ...] = ()
@@ -64,6 +68,7 @@ class ClassificationPolicy:
         data = data or {}
         return cls(
             invalid_patterns=_strings(data.get("invalid_patterns", ())),
+            resource_patterns=_strings(data.get("resource_patterns", ())),
             infrastructure_patterns=_strings(data.get("infrastructure_patterns", ())),
             bug_patterns=_strings(data.get("bug_patterns", ())),
             milestone_patterns=_strings(data.get("milestone_patterns", ())),
@@ -75,6 +80,7 @@ class ClassificationPolicy:
     def to_dict(self) -> dict[str, Any]:
         return {
             "invalid_patterns": list(self.invalid_patterns),
+            "resource_patterns": list(self.resource_patterns),
             "infrastructure_patterns": list(self.infrastructure_patterns),
             "bug_patterns": list(self.bug_patterns),
             "milestone_patterns": list(self.milestone_patterns),
@@ -118,8 +124,17 @@ def classify_observation(
     matched, pattern = _matches_any(output, policy.infrastructure_patterns)
     if matched:
         return ClassifiedOutcome(
-            OutcomeLabel.UNKNOWN,
+            OutcomeLabel.INFRASTRUCTURE_FAILURE,
             "matched an infrastructure-failure pattern",
+            pattern,
+            reached_milestone,
+        )
+
+    matched, pattern = _matches_any(output, policy.resource_patterns)
+    if matched:
+        return ClassifiedOutcome(
+            OutcomeLabel.RESOURCE_FAILURE,
+            "matched a resource-failure pattern",
             pattern,
             reached_milestone,
         )
@@ -168,8 +183,8 @@ def classify_observation(
 
     if reached_milestone and policy.unexpected_failure_after_milestone_is_bug:
         return ClassifiedOutcome(
-            OutcomeLabel.POTENTIAL_BUG,
-            "process failed after passing the configured validation milestone",
+            OutcomeLabel.UNEXPLAINED_FAILURE,
+            "process failed after passing the configured validation milestone; further triage is required before treating it as a bug candidate",
             milestone_pattern,
             True,
         )

@@ -11,7 +11,9 @@ def graph_with_edges(*constraints: Constraint) -> DependencyGraph:
     sets: dict[str, ConstraintSet] = {}
     for constraint in constraints:
         for parameter in constraint.parameters:
-            sets.setdefault(parameter, ConstraintSet(parameter=parameter)).add(constraint)
+            sets.setdefault(parameter, ConstraintSet(parameter=parameter)).add(
+                constraint
+            )
     return DependencyGraph.from_constraint_sets(sets.values())
 
 
@@ -30,6 +32,11 @@ def sample(
     label: OutcomeLabel,
     *,
     duration_seconds: float = 0.01,
+    assignments: tuple[tuple[str, object], ...] = (),
+    intervention_id: str | None = None,
+    intervention_edge_id: str | None = None,
+    intervention_role: str | None = None,
+    provenance_matched: bool = False,
 ) -> ProbeSample:
     return ProbeSample(
         parameter=parameter,
@@ -42,10 +49,15 @@ def sample(
             duration_seconds=duration_seconds,
         ),
         outcome=ClassifiedOutcome(label=label, reason="test"),
+        assignments=assignments,
+        intervention_id=intervention_id,
+        intervention_edge_id=intervention_edge_id,
+        intervention_role=intervention_role,
+        provenance_matched=provenance_matched,
     )
 
 
-def test_feedback_confirms_edge_from_valid_and_isolated_invalid_samples() -> None:
+def test_consistency_and_isolated_violation_do_not_confirm_edge() -> None:
     graph = graph_with_edges(
         edge_constraint(
             "hidden_size % tensor_model_parallel_size == 0",
@@ -65,15 +77,90 @@ def test_feedback_confirms_edge_from_valid_and_isolated_invalid_samples() -> Non
     )
 
     edge = next(iter(graph.edges.values()))
-    assert edge.status is DependencyStatus.CONFIRMED
+    assert edge.status is DependencyStatus.DYNAMICALLY_SUPPORTED
+    assert edge.id in report.supported_edges
+    assert edge.id not in report.confirmed_edges
+    stats = graph.metadata["runtime_feedback"]["edges"][edge.id]
+    assert stats["consistent_valid"] == 3
+    assert stats["isolated_violation"] == 1
+    assert stats["paired_intervention"] == 0
+
+
+def test_provenance_matched_paired_intervention_confirms_edge() -> None:
+    graph = graph_with_edges(
+        edge_constraint(
+            "hidden_size % tensor_model_parallel_size == 0",
+            ("hidden_size", "tensor_model_parallel_size"),
+        )
+    )
+    edge = next(iter(graph.edges.values()))
+
+    report = apply_probe_feedback(
+        graph,
+        {"hidden_size": 16, "tensor_model_parallel_size": 4},
+        [
+            sample(
+                "hidden_size",
+                16,
+                OutcomeLabel.VALID,
+                intervention_id="pair-1",
+                intervention_edge_id=edge.id,
+                intervention_role="satisfying",
+            ),
+            sample(
+                "hidden_size",
+                18,
+                OutcomeLabel.INVALID,
+                intervention_id="pair-1",
+                intervention_edge_id=edge.id,
+                intervention_role="violating",
+                provenance_matched=True,
+            ),
+        ],
+    )
+
+    updated = graph.edges[edge.id]
+    assert updated.status is DependencyStatus.CONFIRMED
     assert edge.id in report.confirmed_edges
-    assert edge.confidence > 0.7
-    assert graph.metadata["runtime_feedback"]["edges"][edge.id][
-        "isolated_invalid_support"
-    ] == 1
+    assert report.paired_interventions == 1
+    stats = graph.metadata["runtime_feedback"]["edges"][edge.id]
+    assert stats["paired_intervention"] == 1
+    assert stats["provenance_matched_rejection"] == 1
 
 
-def test_valid_sample_that_violates_edge_marks_it_contradicted() -> None:
+def test_paired_intervention_without_provenance_match_is_not_confirmed() -> None:
+    graph = graph_with_edges(edge_constraint("x % 2 == 0", ("x",)))
+    edge = next(iter(graph.edges.values()))
+
+    report = apply_probe_feedback(
+        graph,
+        {"x": 2},
+        [
+            sample(
+                "x",
+                2,
+                OutcomeLabel.VALID,
+                intervention_id="pair-2",
+                intervention_edge_id=edge.id,
+                intervention_role="satisfying",
+            ),
+            sample(
+                "x",
+                3,
+                OutcomeLabel.INVALID,
+                intervention_id="pair-2",
+                intervention_edge_id=edge.id,
+                intervention_role="violating",
+            ),
+        ],
+    )
+
+    assert graph.edges[edge.id].status is DependencyStatus.DYNAMICALLY_SUPPORTED
+    assert not report.confirmed_edges
+    assert report.paired_interventions == 0
+
+
+def test_valid_counterexample_marks_scope_disputed_not_globally_contradicted() -> None:
     graph = graph_with_edges(
         edge_constraint(
             "hidden_size % tensor_model_parallel_size == 0",
@@ -88,8 +175,9 @@ def test_valid_sample_that_violates_edge_marks_it_contradicted() -> None:
     )
 
     edge = next(iter(graph.edges.values()))
-    assert edge.status is DependencyStatus.CONTRADICTED
-    assert edge.id in report.contradicted_edges
+    assert edge.status is DependencyStatus.SCOPE_DISPUTED
+    assert edge.id in report.scope_disputed_edges
+    assert edge.id not in report.contradicted_edges
     assert edge.confidence < 0.7
 
 
@@ -111,10 +199,7 @@ def test_invalid_sample_with_multiple_violations_is_ambiguous() -> None:
         for edge in graph.edges.values()
     )
     assert all(
-        graph.metadata["runtime_feedback"]["edges"][edge.id][
-            "isolated_invalid_support"
-        ]
-        == 0
+        graph.metadata["runtime_feedback"]["edges"][edge.id]["isolated_violation"] == 0
         for edge in graph.edges.values()
     )
 

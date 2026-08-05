@@ -116,7 +116,8 @@ def solve_graph_mutation(
             for name in graph.affected_parameters(parameter)
             if name in variables
             and graph.nodes.get(name) is not None
-            and graph.nodes[name].kind is not DependencyNodeKind.ENVIRONMENT
+            and graph.nodes[name].kind
+            in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
         ),
     }
 
@@ -179,7 +180,6 @@ def solve_graph_mutation(
             full_constraint = z3.And(*side_constraints, constraint)
             compiled_constraints[edge.id] = full_constraint
             is_hard = static_as_hard or edge.status in {
-                DependencyStatus.DYNAMICALLY_SUPPORTED,
                 DependencyStatus.CONFIRMED,
                 DependencyStatus.ENVIRONMENT_SPECIFIC,
             }

@@ -15,6 +15,7 @@ from configfuzz.model import Constraint, ConstraintKind, ConstraintSet, Evidence
 
 class DependencyNodeKind(str, Enum):
     PARAMETER = "parameter"
+    DERIVED = "derived"
     FEATURE = "feature"
     ENVIRONMENT = "environment"
 
@@ -41,6 +42,7 @@ class DependencyStatus(str, Enum):
     DYNAMICALLY_SUPPORTED = "dynamically_supported"
     CONFIRMED = "confirmed"
     ENVIRONMENT_SPECIFIC = "environment_specific"
+    SCOPE_DISPUTED = "scope_disputed"
     CONTRADICTED = "contradicted"
 
 
@@ -624,7 +626,10 @@ class DependencyGraph:
 
     def _repairable_node(self, name: str) -> bool:
         node = self.nodes.get(name)
-        return node is not None and node.kind is not DependencyNodeKind.ENVIRONMENT
+        return node is not None and node.kind in {
+            DependencyNodeKind.PARAMETER,
+            DependencyNodeKind.FEATURE,
+        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -884,6 +889,8 @@ def _node_kind(
 ) -> DependencyNodeKind:
     if _looks_environment_name(name) or (environment_edge and _looks_environment_name(name)):
         return DependencyNodeKind.ENVIRONMENT
+    if _looks_derived_name(name):
+        return DependencyNodeKind.DERIVED
     if name in boolean_parameters or _looks_feature_name(name):
         return DependencyNodeKind.FEATURE
     return DependencyNodeKind.PARAMETER
@@ -902,6 +909,25 @@ def _looks_environment_name(name: str) -> bool:
         "world_size",
     }
     return leaf in exact or leaf.endswith(("_world_size", "_device_count", "_memory_limit"))
+
+
+def _looks_derived_name(name: str) -> bool:
+    leaf = name.rsplit(".", 1)[-1].lower()
+    exact = {
+        "data_parallel_degree",
+        "effective_context_length",
+        "head_dim",
+        "layers_per_stage",
+        "per_partition_size",
+        "tokens_per_global_batch",
+    }
+    return leaf in exact or leaf.endswith(
+        (
+            "_per_partition",
+            "_per_pipeline_stage",
+            "_per_rank",
+        )
+    )
 
 
 def _looks_feature_name(name: str) -> bool:
