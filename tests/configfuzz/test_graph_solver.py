@@ -18,12 +18,14 @@ def constraint(
     expression: str,
     kind: ConstraintKind,
     parameters: tuple[str, ...],
+    *,
+    confidence: float = 0.9,
 ) -> Constraint:
     return Constraint(
         expression=expression,
         kind=kind,
         parameters=parameters,
-        confidence=0.9,
+        confidence=confidence,
     )
 
 
@@ -179,9 +181,7 @@ def test_missing_fixed_guard_context_is_not_solver_invented() -> None:
 
     plan = solve_graph_mutation(graph, {"x": 1}, "x", 2)
 
-    conditional = next(
-        edge for edge in graph.edges.values() if edge.guard == "feature"
-    )
+    conditional = next(edge for edge in graph.edges.values() if edge.guard == "feature")
     assert conditional.id in plan.unsupported_edges
     assert "feature" in plan.missing_context
 
@@ -198,3 +198,105 @@ def test_z3_sort_mismatch_is_reported_as_unsupported() -> None:
         edge for edge in graph.edges.values() if edge.relation.value == "enum"
     )
     assert enum_edge.id in plan.unsupported_edges
+
+
+def test_semantic_anchor_is_hard_preserved() -> None:
+    graph = make_graph(
+        constraint("hidden_size: integer", ConstraintKind.TYPE, ("hidden_size",)),
+        constraint(
+            "tensor_parallel_size: integer",
+            ConstraintKind.TYPE,
+            ("tensor_parallel_size",),
+        ),
+        constraint(
+            "hidden_size % tensor_parallel_size == 0",
+            ConstraintKind.RELATION,
+            ("hidden_size", "tensor_parallel_size"),
+        ),
+    )
+
+    plan = solve_graph_mutation(
+        graph,
+        {"hidden_size": 12, "tensor_parallel_size": 3},
+        "tensor_parallel_size",
+        5,
+        semantic_anchors=("hidden_size",),
+    )
+
+    assert plan.status is SolveStatus.SAT
+    assert plan.changes == {"tensor_parallel_size": 5}
+    assert plan.semantic_anchors == ("hidden_size",)
+    relation = next(
+        edge
+        for edge in graph.edges.values()
+        if edge.predicate == "hidden_size % tensor_parallel_size == 0"
+    )
+    assert relation.id in plan.violated_soft_edges
+
+
+def test_high_confidence_candidate_precedes_edit_locality() -> None:
+    graph = make_graph(
+        constraint("hidden_size: integer", ConstraintKind.TYPE, ("hidden_size",)),
+        constraint(
+            "tensor_parallel_size: integer",
+            ConstraintKind.TYPE,
+            ("tensor_parallel_size",),
+        ),
+        constraint(
+            "hidden_size % tensor_parallel_size == 0",
+            ConstraintKind.RELATION,
+            ("hidden_size", "tensor_parallel_size"),
+            confidence=0.95,
+        ),
+    )
+
+    plan = solve_graph_mutation(
+        graph,
+        {"hidden_size": 12, "tensor_parallel_size": 3},
+        "tensor_parallel_size",
+        5,
+    )
+
+    assert plan.status is SolveStatus.SAT
+    assert plan.changes == {"tensor_parallel_size": 5, "hidden_size": 10}
+    relation = next(
+        edge
+        for edge in graph.edges.values()
+        if edge.predicate == "hidden_size % tensor_parallel_size == 0"
+    )
+    assert relation.id in plan.high_confidence_soft_edges
+    assert relation.id not in plan.violated_soft_edges
+
+
+def test_low_confidence_preference_follows_locality_objectives() -> None:
+    graph = make_graph(
+        constraint("hidden_size: integer", ConstraintKind.TYPE, ("hidden_size",)),
+        constraint(
+            "tensor_parallel_size: integer",
+            ConstraintKind.TYPE,
+            ("tensor_parallel_size",),
+        ),
+        constraint(
+            "hidden_size % tensor_parallel_size == 0",
+            ConstraintKind.RELATION,
+            ("hidden_size", "tensor_parallel_size"),
+            confidence=0.2,
+        ),
+    )
+
+    plan = solve_graph_mutation(
+        graph,
+        {"hidden_size": 12, "tensor_parallel_size": 3},
+        "tensor_parallel_size",
+        5,
+    )
+
+    assert plan.status is SolveStatus.SAT
+    assert plan.changes == {"tensor_parallel_size": 5}
+    relation = next(
+        edge
+        for edge in graph.edges.values()
+        if edge.predicate == "hidden_size % tensor_parallel_size == 0"
+    )
+    assert relation.id in plan.low_confidence_preference_edges
+    assert relation.id in plan.violated_soft_edges

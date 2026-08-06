@@ -5,7 +5,7 @@ import hashlib
 import json
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Mapping
+from typing import Any, Iterable, Mapping
 
 import z3
 
@@ -34,7 +34,10 @@ class SolverMutationPlan:
     compiled_edges: tuple[str, ...] = ()
     hard_edges: tuple[str, ...] = ()
     soft_edges: tuple[str, ...] = ()
+    high_confidence_soft_edges: tuple[str, ...] = ()
+    low_confidence_preference_edges: tuple[str, ...] = ()
     violated_soft_edges: tuple[str, ...] = ()
+    semantic_anchors: tuple[str, ...] = ()
     unsupported_edges: tuple[str, ...] = ()
     excluded_edges: tuple[str, ...] = ()
     out_of_scope_edges: tuple[str, ...] = ()
@@ -55,7 +58,12 @@ class SolverMutationPlan:
             "compiled_edges": list(self.compiled_edges),
             "hard_edges": list(self.hard_edges),
             "soft_edges": list(self.soft_edges),
+            "high_confidence_soft_edges": list(self.high_confidence_soft_edges),
+            "low_confidence_preference_edges": list(
+                self.low_confidence_preference_edges
+            ),
             "violated_soft_edges": list(self.violated_soft_edges),
+            "semantic_anchors": list(self.semantic_anchors),
             "unsupported_edges": list(self.unsupported_edges),
             "excluded_edges": list(self.excluded_edges),
             "out_of_scope_edges": list(self.out_of_scope_edges),
@@ -178,17 +186,25 @@ def solve_graph_mutation(
     value: Any,
     *,
     static_as_hard: bool = False,
+    semantic_anchors: Iterable[str] = (),
+    high_confidence_threshold: float = 0.8,
 ) -> SolverMutationPlan:
     if parameter not in graph.nodes:
         raise KeyError(f"unknown dependency node: {parameter}")
+    if not 0.0 <= high_confidence_threshold <= 1.0:
+        raise ValueError("high_confidence_threshold must be in [0, 1]")
 
+    anchors = tuple(
+        dict.fromkeys(
+            str(name)
+            for name in semantic_anchors
+            if str(name) and str(name) != parameter
+        )
+    )
     context = normalize_context(graph, baseline)
     context[parameter] = value
     kinds = _infer_value_kinds(graph, context, parameter, value)
-    variables = {
-        name: _make_variable(name, kind)
-        for name, kind in kinds.items()
-    }
+    variables = {name: _make_variable(name, kind) for name, kind in kinds.items()}
     target = variables.get(parameter)
     if target is None:
         return SolverMutationPlan(
@@ -212,6 +228,7 @@ def solve_graph_mutation(
 
     optimizer = z3.Optimize()
     optimizer.set(priority="lex")
+    missing: set[str] = set()
     try:
         optimizer.add(target == _literal(value, kinds[parameter]))
     except _CompileError as exc:
@@ -222,7 +239,29 @@ def solve_graph_mutation(
             reason=str(exc),
         )
 
-    missing: set[str] = set()
+    missing_anchors: set[str] = set()
+    for name in anchors:
+        variable = variables.get(name)
+        if variable is None or name not in context:
+            missing.add(name)
+            missing_anchors.add(name)
+            continue
+        try:
+            optimizer.add(variable == _literal(context[name], kinds[name]))
+        except _CompileError:
+            missing.add(name)
+            missing_anchors.add(name)
+
+    if missing_anchors:
+        return SolverMutationPlan(
+            status=SolveStatus.UNKNOWN,
+            target_parameter=parameter,
+            requested_value=value,
+            semantic_anchors=anchors,
+            missing_context=tuple(sorted(missing)),
+            reason="semantic anchor context is unavailable or unsupported",
+        )
+
     missing.update(name for name in mutable if name not in context)
     for name, variable in variables.items():
         if name in mutable:
@@ -238,6 +277,8 @@ def solve_graph_mutation(
     compiled: list[str] = []
     hard_edges: list[str] = []
     soft_edges: list[str] = []
+    high_confidence_soft_edges: list[str] = []
+    low_confidence_preference_edges: list[str] = []
     compiled_constraints: dict[str, z3.BoolRef] = {}
     unsupported: list[str] = []
     excluded: list[str] = []
@@ -269,12 +310,18 @@ def solve_graph_mutation(
                 optimizer.add(full_constraint)
                 hard_edges.append(edge.id)
             else:
-                optimizer.add_soft(
-                    full_constraint,
-                    weight=str(max(1, round(edge.confidence * 100))),
-                    id="static_dependencies",
-                )
                 soft_edges.append(edge.id)
+                is_high_confidence = (
+                    edge.status is DependencyStatus.DYNAMICALLY_SUPPORTED
+                    or (
+                        edge.status is not DependencyStatus.SCOPE_DISPUTED
+                        and edge.confidence >= high_confidence_threshold
+                    )
+                )
+                if is_high_confidence:
+                    high_confidence_soft_edges.append(edge.id)
+                else:
+                    low_confidence_preference_edges.append(edge.id)
             compiled.append(edge.id)
         except _CompileError as exc:
             unsupported.append(edge.id)
@@ -282,14 +329,28 @@ def solve_graph_mutation(
         except (TypeError, z3.Z3Exception):
             unsupported.append(edge.id)
 
+    for edge_id in high_confidence_soft_edges:
+        optimizer.add_soft(
+            compiled_constraints[edge_id],
+            weight="1",
+            id="high_confidence_candidates",
+        )
+
     _add_reference_objectives(
         optimizer,
         variables,
         kinds,
-        mutable,
+        mutable - set(anchors) - {parameter},
         context,
         missing,
     )
+
+    for edge_id in low_confidence_preference_edges:
+        optimizer.add_soft(
+            compiled_constraints[edge_id],
+            weight="1",
+            id="low_confidence_preferences",
+        )
 
     result = optimizer.check()
     if result == z3.unsat:
@@ -301,6 +362,9 @@ def solve_graph_mutation(
             compiled_edges=tuple(compiled),
             hard_edges=tuple(hard_edges),
             soft_edges=tuple(soft_edges),
+            high_confidence_soft_edges=tuple(high_confidence_soft_edges),
+            low_confidence_preference_edges=tuple(low_confidence_preference_edges),
+            semantic_anchors=anchors,
             unsupported_edges=tuple(unsupported),
             excluded_edges=tuple(excluded),
             out_of_scope_edges=tuple(out_of_scope),
@@ -316,6 +380,9 @@ def solve_graph_mutation(
             compiled_edges=tuple(compiled),
             hard_edges=tuple(hard_edges),
             soft_edges=tuple(soft_edges),
+            high_confidence_soft_edges=tuple(high_confidence_soft_edges),
+            low_confidence_preference_edges=tuple(low_confidence_preference_edges),
+            semantic_anchors=anchors,
             unsupported_edges=tuple(unsupported),
             excluded_edges=tuple(excluded),
             out_of_scope_edges=tuple(out_of_scope),
@@ -355,7 +422,10 @@ def solve_graph_mutation(
         compiled_edges=tuple(compiled),
         hard_edges=tuple(hard_edges),
         soft_edges=tuple(soft_edges),
+        high_confidence_soft_edges=tuple(high_confidence_soft_edges),
+        low_confidence_preference_edges=tuple(low_confidence_preference_edges),
         violated_soft_edges=violated_soft,
+        semantic_anchors=anchors,
         unsupported_edges=tuple(unsupported),
         excluded_edges=tuple(excluded),
         out_of_scope_edges=tuple(out_of_scope),
@@ -473,7 +543,9 @@ def _solve_intervention_case(
     primary_value = reference.get(primary)
     kinds = _infer_value_kinds(graph, reference, primary, primary_value)
     variables = {name: _make_variable(name, kind) for name, kind in kinds.items()}
-    missing = {name for name in mutable if name not in reference or name not in variables}
+    missing = {
+        name for name in mutable if name not in reference or name not in variables
+    }
     if missing:
         return InterventionCase(
             role=role,
@@ -794,9 +866,17 @@ def _make_variable(name: str, kind: _ValueKind) -> z3.ExprRef:
 def _literal(value: Any, kind: _ValueKind) -> z3.ExprRef:
     if kind is _ValueKind.BOOL and isinstance(value, bool):
         return z3.BoolVal(value)
-    if kind is _ValueKind.INT and isinstance(value, int) and not isinstance(value, bool):
+    if (
+        kind is _ValueKind.INT
+        and isinstance(value, int)
+        and not isinstance(value, bool)
+    ):
         return z3.IntVal(value)
-    if kind is _ValueKind.REAL and isinstance(value, (int, float)) and not isinstance(value, bool):
+    if (
+        kind is _ValueKind.REAL
+        and isinstance(value, (int, float))
+        and not isinstance(value, bool)
+    ):
         return z3.RealVal(str(value))
     if kind is _ValueKind.STRING and isinstance(value, str):
         return z3.StringVal(value)
@@ -839,7 +919,9 @@ def _compile_ast(
         path = _attribute_path(node)
         if path is not None and path in variables:
             return _CompiledExpression(variables[path])
-        raise _CompileError(f"missing solver symbol: {path or node.attr}", {path or node.attr})
+        raise _CompileError(
+            f"missing solver symbol: {path or node.attr}", {path or node.attr}
+        )
     if isinstance(node, ast.UnaryOp):
         operand = _compile_ast(node.operand, variables, kinds)
         if isinstance(node.op, ast.Not):
@@ -875,7 +957,9 @@ def _compile_ast(
         elif isinstance(node.op, ast.Pow):
             value = left.value**right.value
         else:
-            raise _CompileError(f"unsupported binary operator: {type(node.op).__name__}")
+            raise _CompileError(
+                f"unsupported binary operator: {type(node.op).__name__}"
+            )
         return _CompiledExpression(value, tuple(side))
     if isinstance(node, ast.Compare):
         left_compiled = _compile_ast(node.left, variables, kinds)
@@ -898,7 +982,9 @@ def _compile_ast(
                 clause = z3.Or(*(left == item for item in choices))
                 clauses.append(z3.Not(clause) if isinstance(op, ast.NotIn) else clause)
                 if index + 1 < len(node.ops):
-                    raise _CompileError("chained membership comparisons are unsupported")
+                    raise _CompileError(
+                        "chained membership comparisons are unsupported"
+                    )
                 continue
             right_compiled = _compile_ast(right_node, variables, kinds)
             side_constraints.extend(right_compiled.side_constraints)
@@ -933,11 +1019,17 @@ def _compile_ast(
     if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
         arguments = [_compile_ast(item, variables, kinds) for item in node.args]
         if node.func.id == "abs" and len(arguments) == 1:
-            value = z3.If(arguments[0].value >= 0, arguments[0].value, -arguments[0].value)
+            value = z3.If(
+                arguments[0].value >= 0, arguments[0].value, -arguments[0].value
+            )
         elif node.func.id in {"max", "min"} and len(arguments) >= 2:
             value = arguments[0].value
             for item in arguments[1:]:
-                condition = value >= item.value if node.func.id == "max" else value <= item.value
+                condition = (
+                    value >= item.value
+                    if node.func.id == "max"
+                    else value <= item.value
+                )
                 value = z3.If(condition, value, item.value)
         elif node.func.id in {"int", "float", "bool", "str"} and len(arguments) == 1:
             value = arguments[0].value
@@ -945,7 +1037,9 @@ def _compile_ast(
             raise _CompileError(f"unsupported call: {node.func.id}")
         return _CompiledExpression(value, _merge_side(arguments))
     if isinstance(node, (ast.Tuple, ast.List, ast.Set)):
-        raise _CompileError("collection literals are supported only in membership comparisons")
+        raise _CompileError(
+            "collection literals are supported only in membership comparisons"
+        )
     raise _CompileError(f"unsupported AST node: {type(node).__name__}")
 
 

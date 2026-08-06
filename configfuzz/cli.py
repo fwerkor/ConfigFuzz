@@ -89,7 +89,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--value",
         required=True,
         type=_parse_json_value,
-        help="requested value encoded as JSON, for example 8, true, or \"bf16\"",
+        help='requested value encoded as JSON, for example 8, true, or "bf16"',
     )
     plan.add_argument("--output", type=Path, help="write the mutation plan")
     plan.set_defaults(handler=_run_plan_mutation)
@@ -110,7 +110,19 @@ def build_parser() -> argparse.ArgumentParser:
     solve.add_argument(
         "--static-hard",
         action="store_true",
-        help="treat unvalidated static candidates as hard instead of weighted soft constraints",
+        help="treat unvalidated static candidates as hard constraints",
+    )
+    solve.add_argument(
+        "--anchor",
+        action="append",
+        default=[],
+        help="preserve a semantic-anchor parameter at its baseline value; repeatable",
+    )
+    solve.add_argument(
+        "--high-confidence-threshold",
+        type=float,
+        default=0.8,
+        help="candidate-confidence cutoff for the pre-locality preference tier",
     )
     solve.add_argument("--output", type=Path, help="write the solver plan")
     solve.set_defaults(handler=_run_solve_mutation)
@@ -186,7 +198,9 @@ def build_parser() -> argparse.ArgumentParser:
         "run-intervention",
         help="execute designed intervention cases and emit feedback-ready samples",
     )
-    run_intervention_parser.add_argument("plan", type=Path, help="intervention plan JSON")
+    run_intervention_parser.add_argument(
+        "plan", type=Path, help="intervention plan JSON"
+    )
     run_intervention_parser.add_argument(
         "manifest",
         type=Path,
@@ -232,7 +246,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--parameter",
         help="parameter to synthesize; defaults to the manifest parameter",
     )
-    synthesize.add_argument("--output", type=Path, help="write the inferred specification")
+    synthesize.add_argument(
+        "--output", type=Path, help="write the inferred specification"
+    )
     synthesize.set_defaults(handler=_run_synthesize)
 
     infer = subparsers.add_parser(
@@ -240,7 +256,9 @@ def build_parser() -> argparse.ArgumentParser:
         help="run probing and synthesize a constraint set in one command",
     )
     infer.add_argument("manifest", type=Path, help="JSON probe manifest")
-    infer.add_argument("--samples-output", type=Path, help="retain labeled runtime samples")
+    infer.add_argument(
+        "--samples-output", type=Path, help="retain labeled runtime samples"
+    )
     infer.add_argument("--output", type=Path, help="write the inferred specification")
     infer.set_defaults(handler=_run_infer)
 
@@ -311,6 +329,8 @@ def _run_solve_mutation(args: argparse.Namespace) -> int:
         args.parameter,
         args.value,
         static_as_hard=args.static_hard,
+        semantic_anchors=args.anchor,
+        high_confidence_threshold=args.high_confidence_threshold,
     )
     _write_json({"schema_version": 1, "plan": plan.to_dict()}, args.output)
     return 0
@@ -413,7 +433,9 @@ def _run_synthesize(args: argparse.Namespace) -> int:
     manifest = payload.get("manifest", {})
     parameter = args.parameter or manifest.get("parameter")
     if not parameter:
-        raise ValueError("parameter is required when the sample file has no manifest parameter")
+        raise ValueError(
+            "parameter is required when the sample file has no manifest parameter"
+        )
     context = manifest.get("context", {}) if isinstance(manifest, dict) else {}
     result = synthesize_constraints(str(parameter), samples, context=context)
     output = {
@@ -449,8 +471,12 @@ def _run_validate_corpus(args: argparse.Namespace) -> int:
     enforcement_counts: dict[str, int] = {}
     status_counts: dict[str, int] = {}
     for rule in corpus.rules:
-        strength_counts[rule.strength.value] = strength_counts.get(rule.strength.value, 0) + 1
-        enforcement_counts[rule.enforcement.value] = enforcement_counts.get(rule.enforcement.value, 0) + 1
+        strength_counts[rule.strength.value] = (
+            strength_counts.get(rule.strength.value, 0) + 1
+        )
+        enforcement_counts[rule.enforcement.value] = (
+            enforcement_counts.get(rule.enforcement.value, 0) + 1
+        )
         status_counts[rule.status.value] = status_counts.get(rule.status.value, 0) + 1
     payload = {
         "schema_version": corpus.schema_version,
