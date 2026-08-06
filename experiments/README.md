@@ -12,8 +12,11 @@ The evaluation follows one argument chain:
 
 - The RQ1 audit contains 93 constraints: 52 unary, 27 binary, 12 ternary, one four-parameter, and one five-parameter constraint; 26 have guards.
 - Static mining over pinned MindSpeed-LLM, MindSpeed, and Megatron-LM trees extracted 733 raw native-validation candidates. After excluding test, example, and documentation evidence, 70 audited constraints have at least one implementation candidate and 46 have a candidate mentioning every participant. These are review leads, not coverage labels.
-- Full Git history mining found 263 configuration-related fix candidates. The balanced RQ3 review shortlist contains 40 entries, split evenly between MindSpeed and MindSpeed-LLM.
-- RQ2 intent generation is implemented, but the final intent list is deliberately not materialized until stable baseline configurations are bound for all three workload families.
+- Primary source adjudication covers all 93 RQ1 records. For the 39 framework-legality constraints, it currently labels 13 full-explicit, 11 partial, eight implicit/delayed, and seven uncovered. This remains a primary review and requires independent confirmation before paper use.
+- RQ2 source candidates are pinned to lm-sv `e73ba3d355152a5711e2f80c1fb0d166f2ba1496`. Command-template overrides and derived parallel values are merged into an auditable `effective_config`.
+- The RQ2 generator produced 477 dense-Qwen2, 453 GQA/long-sequence ChatGLM3, and 516 Mixtral-MoE unique candidate intents. Deterministic parameter-balanced selection freezes 300 per primary workload, for a 900-intent candidate set with SHA-256 `1dd5071213f8be7cc5daac691651806eed370c33474b7ba83f3c146b07b21d5d`.
+- Full Git history mining found 263 configuration-related fix candidates. Source review retained 23 of the balanced 40-entry shortlist for buggy/fixed execution, deferred eight, and excluded nine.
+- RQ3 replay planning identifies three harnesses present on both revisions, five fixed-side tests that can be backported as test code only, 13 candidates requiring a minimal harness, and two candidates requiring root-cause separation. No candidate is yet counted as a verified historical bug.
 
 ## Pinned framework sources
 
@@ -47,6 +50,34 @@ configfuzz-experiment validate-rq1-audit experiments/rq1/constraint_audit.yaml
 configfuzz-experiment summarize rq1 experiments/rq1/constraint_audit.yaml \
   --output experiments/rq1/bootstrap_summary.json
 
+# Apply the checked-in primary adjudication without overwriting the untouched bootstrap table.
+python scripts/apply_rq1_adjudication.py \
+  experiments/rq1/constraint_audit.yaml \
+  experiments/rq1/primary_adjudication.yaml \
+  experiments/rq1/constraint_audit.primary.yaml \
+  --require-complete
+
+python scripts/validate_rq1_evidence.py \
+  experiments/rq1/constraint_audit.primary.yaml \
+  --repository-root . \
+  --source-root MindSpeed-LLM=/path/to/MindSpeed-LLM \
+  --source-root MindSpeed=/path/to/MindSpeed \
+  --source-root Megatron-LM=/path/to/Megatron-LM
+
+# Build a secondary-review packet with all primary labels and interpretations hidden.
+python scripts/prepare_rq1_secondary_review.py \
+  --audit experiments/rq1/constraint_audit.yaml \
+  --primary-adjudication experiments/rq1/primary_adjudication.yaml \
+  --packet-output experiments/rq1/secondary_review_packet.yaml \
+  --template-output experiments/rq1/secondary_review_template.yaml
+
+# After an independent reviewer fills the template, compute exact agreement,
+# Cohen's kappa, and the constraints requiring joint adjudication.
+python scripts/compare_rq1_reviews.py \
+  --primary-adjudication experiments/rq1/primary_adjudication.yaml \
+  --secondary-review experiments/rq1/secondary_review.completed.yaml \
+  --output experiments/rq1/review_agreement.json
+
 # Once satisfying/violating pairs have run, add failure-stage and resource-cost metrics.
 configfuzz-experiment summarize rq1 experiments/rq1/constraint_audit.yaml \
   --runs experiments/results/rq1.jsonl \
@@ -57,17 +88,31 @@ configfuzz-experiment summarize rq1 experiments/rq1/constraint_audit.yaml \
 
 ## RQ2: workload binding and frozen intents
 
-`rq2/workloads.yaml` declares the dense Transformer, GQA/long-sequence/FlashAttention, and MoE workload families. Bind each `baseline_config` to a small configuration that reliably completes training and checkpoint save/load before generating intents.
+`rq2/workload_candidates.source.yaml` pins candidate lm-sv model configurations and command templates for the dense Transformer, GQA/long-sequence/FlashAttention, and MoE workload families. Candidate snapshots remain unverified until each one completes an optimizer step and checkpoint save/load on the target stack.
 
 ```bash
+# Materialize command-aware candidate baselines from the pinned lm-sv revision.
+python scripts/prepare_rq2_workload_candidates.py \
+  --source-spec experiments/rq2/workload_candidates.source.yaml \
+  --source-root /path/to/lm-sv \
+  --output-dir experiments/rq2/candidates \
+  --registry-output experiments/rq2/candidate_workloads.yaml
+
+# Generate a larger unique candidate pool.
 python scripts/generate_rq2_intents.py \
   --corpus corpus/lmsv/manual_constraints.yaml \
-  --workloads experiments/rq2/workloads.yaml \
-  --output experiments/rq2/intents.yaml \
-  --frozen-output experiments/rq2/intents.frozen.yaml
+  --workloads experiments/rq2/candidate_workloads.yaml \
+  --output experiments/rq2/candidate_intents.yaml
+
+# Select exactly 300 intents per primary workload and freeze the review candidate set.
+python scripts/select_rq2_intents.py \
+  --candidates experiments/rq2/candidate_intents.yaml \
+  --workloads experiments/rq2/candidate_workloads.yaml \
+  --output experiments/rq2/selected_candidate_intents.yaml \
+  --frozen-output experiments/rq2/selected_candidate_intents.frozen.yaml
 ```
 
-The generator covers enum alternatives, numeric windows, divisibility boundaries and adjacent values, simple guard-enabling transitions, and TP/PP/EP/CP topology values. Review workload scope and retain at least 300 intents per workload before freezing. All comparison methods must consume the same frozen file.
+The generator covers enum alternatives, numeric windows, repair boundaries, adjacent values, guard-enabling transitions, type-aware baseline-relative grids, and TP/PP/EP/CP topology values. It deduplicates by `(workload, parameter, target value)`. The checked-in frozen file is a review candidate only; regenerate the final frozen set after accelerator validation. All comparison methods must consume the same final frozen file.
 
 After each workload also binds its audited dependency graph and native-validator manifest, expand every frozen intent into the five comparison cases:
 
@@ -97,6 +142,19 @@ python scripts/build_rq3_triage_shortlist.py \
   --limit 40 \
   --max-per-primary-parameter 5 \
   --max-patch-lines 2000
+
+# Validate the 40-entry source review and its 23-entry execution queue.
+python scripts/validate_rq3_source_review.py \
+  experiments/rq3/source_review.yaml \
+  --execution-queue experiments/rq3/execution_queue.yaml
+
+# Verify historical commits and harness blobs, then build unexecuted replay specifications.
+python scripts/build_rq3_replay_specs.py \
+  --execution-queue experiments/rq3/execution_queue.yaml \
+  --source-plan experiments/rq3/replay_plan.source.yaml \
+  --repository-root MindSpeed-LLM=/path/to/MindSpeed-LLM \
+  --repository-root MindSpeed=/path/to/MindSpeed \
+  --output experiments/rq3/replay_specs.yaml
 
 # Validate only after verified entries are copied into the benchmark registry.
 configfuzz-experiment validate-bugs experiments/rq3/historical_bugs.yaml

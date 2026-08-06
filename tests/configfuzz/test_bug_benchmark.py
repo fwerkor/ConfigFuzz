@@ -1,6 +1,45 @@
 from __future__ import annotations
 
-from configfuzz.bug_benchmark import build_triage_shortlist
+from pathlib import Path
+
+import yaml
+
+from configfuzz.bug_benchmark import build_triage_shortlist, validate_source_review
+
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def test_committed_rq3_source_review_matches_execution_queue() -> None:
+    result = validate_source_review(
+        ROOT / "experiments/rq3/source_review.yaml",
+        ROOT / "experiments/rq3/execution_queue.yaml",
+    )
+
+    assert result["record_count"] == 40
+    assert result["counts"] == {
+        "defer": 8,
+        "exclude": 9,
+        "retain_for_execution": 23,
+    }
+    assert result["execution_queue_count"] == 23
+
+
+def test_source_review_rejects_premature_execution_claim(tmp_path: Path) -> None:
+    review_path = ROOT / "experiments/rq3/source_review.yaml"
+    payload = yaml.safe_load(review_path.read_text(encoding="utf-8"))
+    payload["records"][0]["execution_verification"][
+        "buggy_commit_reproduced_three_times"
+    ] = True
+    invalid = tmp_path / "source_review.yaml"
+    invalid.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
+
+    try:
+        validate_source_review(invalid)
+    except ValueError as exc:
+        assert "must not claim execution verification" in str(exc)
+    else:
+        raise AssertionError("premature execution claim was accepted")
 
 
 def test_shortlist_filters_low_signal_and_balances_repositories() -> None:

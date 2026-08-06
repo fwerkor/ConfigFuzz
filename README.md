@@ -71,17 +71,22 @@ The initial repository provides:
   RQ metrics, and environment fingerprints;
 - reproducible native-validation mining over pinned MindSpeed-LLM, MindSpeed,
   and Megatron-LM revisions, producing a per-constraint manual review queue;
-- deterministic RQ2 intention generation for enumeration, numeric, divisibility,
-  guard-transition, and TP/PP/EP/CP topology boundaries;
+- command-aware RQ2 workload snapshots that merge pinned model YAML, shell
+  overrides, framework defaults, aliases, and derived parallel values;
+- deterministic RQ2 intention generation for enumeration, numeric,
+  divisibility, guard-transition, type-aware baseline grids, and TP/PP/EP/CP
+  topology boundaries, followed by parameter-balanced fixed-size selection;
 - full-history RQ3 fix mining plus a repository- and parameter-balanced manual
-  triage shortlist for constructing the historical bug benchmark;
+  triage shortlist, source adjudication, and source-verified buggy/fixed replay
+  specifications for constructing the historical bug benchmark;
 - unit tests and a minimal GitHub Actions workflow;
 - a research plan and a proposed constraint DSL.
 
 The current prototype supports bounded multi-round active validation, the
-Task1 execution bridge, and the complete non-accelerator preparation layer for
-RQ1--RQ3. Native-coverage adjudication, workload binding, historical-bug
-verification, and accelerator campaigns remain evaluation work.
+Task1 execution bridge, and the non-accelerator preparation layer for RQ1--RQ3.
+Primary native-coverage adjudication and candidate workload/replay artifacts
+are checked in, but independent review, accelerator workload binding,
+buggy/fixed verification, and the final campaigns remain evaluation work.
 
 The authoritative experiment protocol and commands are in
 [`experiments/README.md`](experiments/README.md) and

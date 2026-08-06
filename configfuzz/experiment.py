@@ -902,6 +902,8 @@ def summarize_rq1(
         ),
         "coverage_counts_all": dict(sorted(coverage_all.items())),
         "coverage_counts_reviewed": dict(sorted(coverage_reviewed.items())),
+        "coverage_by_denominator": _coverage_by_denominator(records),
+        "coverage_by_semantic_class": _coverage_by_semantic_class(records),
         "audit_complete": len(reviewed) == len(records),
         "full_coverage_rate_all": (
             _ratio(coverage_all[ValidationCoverage.FULL_EXPLICIT.value], len(records))
@@ -1199,6 +1201,65 @@ def summarize_rq3(
         "replayed_by_any_method_count": len(replayed_by_any),
         "unreplayed_bug_ids": sorted(benchmark_ids - replayed_by_any),
         "methods": methods,
+    }
+
+
+def _coverage_by_denominator(
+    records: Sequence[ConstraintAuditRecord],
+) -> dict[str, Any]:
+    grouped: dict[str, list[ConstraintAuditRecord]] = defaultdict(list)
+    for record in records:
+        review = record.metadata.get("native_validation_review", {})
+        denominator = (
+            str(review.get("coverage_denominator", "unclassified"))
+            if isinstance(review, Mapping)
+            else "unclassified"
+        )
+        grouped[denominator].append(record)
+    return {
+        denominator: _coverage_group_summary(items)
+        for denominator, items in sorted(grouped.items())
+    }
+
+
+def _coverage_by_semantic_class(
+    records: Sequence[ConstraintAuditRecord],
+) -> dict[str, Any]:
+    grouped: dict[str, list[ConstraintAuditRecord]] = defaultdict(list)
+    for record in records:
+        grouped[record.semantic_class.value].append(record)
+    return {
+        semantic_class: _coverage_group_summary(items)
+        for semantic_class, items in sorted(grouped.items())
+    }
+
+
+def _coverage_group_summary(
+    records: Sequence[ConstraintAuditRecord],
+) -> dict[str, Any]:
+    counts = Counter(item.native_validation.value for item in records)
+    reviewed = [
+        item
+        for item in records
+        if item.native_validation is not ValidationCoverage.UNREVIEWED
+    ]
+    early = [
+        item
+        for item in reviewed
+        if item.first_affected_milestone
+        in {ExecutionMilestone.ARGUMENT_PARSING, ExecutionMilestone.CONFIG_VALIDATION}
+        and item.native_validation
+        in {ValidationCoverage.FULL_EXPLICIT, ValidationCoverage.PARTIAL}
+    ]
+    return {
+        "constraint_count": len(records),
+        "reviewed_count": len(reviewed),
+        "audit_complete": len(reviewed) == len(records),
+        "coverage_counts": dict(sorted(counts.items())),
+        "full_explicit_rate": _ratio(
+            counts[ValidationCoverage.FULL_EXPLICIT.value], len(reviewed)
+        ),
+        "early_validation_rate": _ratio(len(early), len(reviewed)),
     }
 
 

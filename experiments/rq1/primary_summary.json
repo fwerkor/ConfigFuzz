@@ -1,0 +1,184 @@
+{
+  "arity_counts": {
+    "1": 52,
+    "2": 27,
+    "3": 12,
+    "4": 1,
+    "5": 1
+  },
+  "audit_complete": true,
+  "category_counts": {
+    "environment_dependency": 6,
+    "feature_interaction": 24,
+    "local": 52,
+    "structural": 11
+  },
+  "constraint_count": 93,
+  "coverage_by_denominator": {
+    "environment_scope": {
+      "audit_complete": true,
+      "constraint_count": 2,
+      "coverage_counts": {
+        "uncovered": 2
+      },
+      "early_validation_rate": 0.0,
+      "full_explicit_rate": 0.0,
+      "reviewed_count": 2
+    },
+    "framework_legality": {
+      "audit_complete": true,
+      "constraint_count": 39,
+      "coverage_counts": {
+        "full_explicit": 13,
+        "implicit_delayed": 8,
+        "partial": 11,
+        "uncovered": 7
+      },
+      "early_validation_rate": 0.38461538461538464,
+      "full_explicit_rate": 0.3333333333333333,
+      "reviewed_count": 39
+    },
+    "policy_only": {
+      "audit_complete": true,
+      "constraint_count": 52,
+      "coverage_counts": {
+        "full_explicit": 2,
+        "uncovered": 50
+      },
+      "early_validation_rate": 0.0,
+      "full_explicit_rate": 0.038461538461538464,
+      "reviewed_count": 52
+    }
+  },
+  "coverage_by_semantic_class": {
+    "implementation_limit": {
+      "audit_complete": true,
+      "constraint_count": 5,
+      "coverage_counts": {
+        "partial": 2,
+        "uncovered": 3
+      },
+      "early_validation_rate": 0.2,
+      "full_explicit_rate": 0.0,
+      "reviewed_count": 5
+    },
+    "mathematical_invariant": {
+      "audit_complete": true,
+      "constraint_count": 34,
+      "coverage_counts": {
+        "full_explicit": 13,
+        "implicit_delayed": 8,
+        "partial": 9,
+        "uncovered": 4
+      },
+      "early_validation_rate": 0.4117647058823529,
+      "full_explicit_rate": 0.38235294117647056,
+      "reviewed_count": 34
+    },
+    "optimization_preference": {
+      "audit_complete": true,
+      "constraint_count": 52,
+      "coverage_counts": {
+        "full_explicit": 2,
+        "uncovered": 50
+      },
+      "early_validation_rate": 0.0,
+      "full_explicit_rate": 0.038461538461538464,
+      "reviewed_count": 52
+    },
+    "resource_risk": {
+      "audit_complete": true,
+      "constraint_count": 2,
+      "coverage_counts": {
+        "uncovered": 2
+      },
+      "early_validation_rate": 0.0,
+      "full_explicit_rate": 0.0,
+      "reviewed_count": 2
+    }
+  },
+  "coverage_counts_all": {
+    "full_explicit": 15,
+    "implicit_delayed": 8,
+    "partial": 11,
+    "uncovered": 59
+  },
+  "coverage_counts_reviewed": {
+    "full_explicit": 15,
+    "implicit_delayed": 8,
+    "partial": 11,
+    "uncovered": 59
+  },
+  "early_validation_rate_all": 0.16129032258064516,
+  "early_validation_rate_reviewed": 0.16129032258064516,
+  "execution": {
+    "attributable_violating_run_count": 0,
+    "complete_pair_count": 0,
+    "constraints_with_any_execution": 0,
+    "cost_by_constraint_category": {},
+    "cost_by_native_validation": {},
+    "excluded_resource_or_infrastructure_count": 0,
+    "failure_mode_counts": {},
+    "failure_stage_recording_rate": null,
+    "first_failure_milestone_counts": {},
+    "gpu_seconds_wasted": {
+      "count": 0,
+      "max": null,
+      "mean": null,
+      "median": null,
+      "min": null,
+      "p95": null
+    },
+    "interpretable_error_message_rate": null,
+    "late_failure_rate": null,
+    "outcome_counts": {},
+    "peak_memory_mib": {
+      "count": 0,
+      "max": null,
+      "mean": null,
+      "median": null,
+      "min": null,
+      "p95": null
+    },
+    "run_count": 0,
+    "satisfying_pass_rate": null,
+    "satisfying_run_count": 0,
+    "time_to_detection_seconds": {
+      "count": 0,
+      "max": null,
+      "mean": null,
+      "median": null,
+      "min": null,
+      "p95": null
+    },
+    "timeout_rate": null,
+    "violating_run_count": 0
+  },
+  "first_affected_milestone_counts": {
+    "config_validation": 16,
+    "forward": 1,
+    "model_construction": 19,
+    "unknown": 57
+  },
+  "full_coverage_rate_all": 0.16129032258064516,
+  "full_coverage_rate_reviewed": 0.16129032258064516,
+  "guarded_count": 26,
+  "guarded_rate": 0.27956989247311825,
+  "reviewed_constraint_count": 93,
+  "rq": "rq1",
+  "schema_version": 1,
+  "semantic_class_counts": {
+    "implementation_limit": 5,
+    "mathematical_invariant": 34,
+    "optimization_preference": 52,
+    "resource_risk": 2
+  },
+  "software_layer_counts": {
+    "model_construction": 46,
+    "other": 47,
+    "parallel": 46,
+    "training": 46,
+    "validator": 46
+  },
+  "unreviewed_constraint_count": 0
+}

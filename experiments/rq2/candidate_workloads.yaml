@@ -1,0 +1,51 @@
+schema_version: 1
+name: rq2-workload-candidate-registry
+metadata:
+  status: source_selected_unverified
+  source_revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
+  do_not_use_for_final_campaign_until_bound: true
+workloads:
+- workload_id: dense-qwen2-small
+  family: dense_transformer
+  baseline_id: dense-qwen2-small-baseline-candidate
+  baseline_config: candidates/dense-qwen2-small.json
+  metadata:
+    target_workload_id: dense-transformer-small
+    priority: primary
+    minimum_intents: 300
+    status: source_selected_unverified
+    source_model_config: lmsv_rec/assets/runtime/model_config/qwen2.yaml
+    source_command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_qwen2.sh
+- workload_id: gqa-longseq-chatglm3
+  family: gqa_long_sequence_flash_attention
+  baseline_id: gqa-longseq-chatglm3-baseline-candidate
+  baseline_config: candidates/gqa-longseq-chatglm3.json
+  metadata:
+    target_workload_id: gqa-longseq-flash-small
+    priority: primary
+    minimum_intents: 300
+    status: source_selected_unverified
+    source_model_config: lmsv_rec/assets/runtime/model_config/chatglm3.yaml
+    source_command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_chatglm3.sh
+- workload_id: moe-mixtral-small
+  family: mixture_of_experts
+  baseline_id: moe-mixtral-small-baseline-candidate
+  baseline_config: candidates/moe-mixtral-small.json
+  metadata:
+    target_workload_id: moe-small
+    priority: primary
+    minimum_intents: 300
+    status: source_selected_unverified
+    source_model_config: lmsv_rec/assets/runtime/model_config/mixtral.yaml
+    source_command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_mixtral.sh
+- workload_id: mla-moe-deepseekv3-fallback
+  family: mla_long_sequence_moe
+  baseline_id: mla-moe-deepseekv3-fallback-candidate
+  baseline_config: candidates/mla-moe-deepseekv3-fallback.json
+  metadata:
+    target_workload_id: gqa-longseq-flash-small
+    priority: fallback
+    minimum_intents: 0
+    status: source_selected_unverified
+    source_model_config: lmsv_rec/assets/runtime/model_config/deepseekv3.yaml
+    source_command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_deepseekv3.sh

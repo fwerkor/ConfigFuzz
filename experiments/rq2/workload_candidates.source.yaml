@@ -1,0 +1,102 @@
+schema_version: 1
+name: rq2-lmsv-workload-candidate-sources
+source_repository:
+  label: lm-sv
+  revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
+  required_clean_revision: true
+candidates:
+  - candidate_id: dense-qwen2-small
+    target_workload_id: dense-transformer-small
+    baseline_id: dense-qwen2-small-baseline-candidate
+    family: dense_transformer
+    priority: primary
+    minimum_intents: 300
+    model_config: lmsv_rec/assets/runtime/model_config/qwen2.yaml
+    command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_qwen2.sh
+    world_size: 8
+    feature_evidence:
+      dense_model: true
+      grouped_query_attention: true
+      flash_attention: true
+      tensor_parallel: true
+      pipeline_parallel: true
+      checkpoint: true
+    selection_reason: >-
+      Existing compact Qwen2 configuration with no MoE experts, explicit GQA and FlashAttention flags,
+      and a complete pretraining command template.
+    blockers:
+      - bind real dataset and tokenizer paths
+      - reduce training/checkpoint intervals for campaign throughput
+      - validate one optimizer step and checkpoint save/load on the target stack
+  - candidate_id: gqa-longseq-chatglm3
+    target_workload_id: gqa-longseq-flash-small
+    baseline_id: gqa-longseq-chatglm3-baseline-candidate
+    family: gqa_long_sequence_flash_attention
+    priority: primary
+    minimum_intents: 300
+    model_config: lmsv_rec/assets/runtime/model_config/chatglm3.yaml
+    command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_chatglm3.sh
+    world_size: 8
+    feature_evidence:
+      grouped_query_attention: true
+      flash_attention: true
+      sequence_length: 8192
+      context_parallel: true
+      ulysses_context_parallel: true
+    selection_reason: >-
+      The model configuration supplies GQA, FlashAttention, and an 8192-token context, while the
+      training template exercises a 32768-token Ulysses context-parallel path.
+    blockers:
+      - reconcile the 8192-token model snapshot with the 32768-token command-template override
+      - confirm the runtime command preserves the FlashAttention path
+      - bind real dataset and tokenizer paths
+      - validate checkpoint save/load under context parallelism
+  - candidate_id: moe-mixtral-small
+    target_workload_id: moe-small
+    baseline_id: moe-mixtral-small-baseline-candidate
+    family: mixture_of_experts
+    priority: primary
+    minimum_intents: 300
+    model_config: lmsv_rec/assets/runtime/model_config/mixtral.yaml
+    command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_mixtral.sh
+    world_size: 8
+    feature_evidence:
+      mixture_of_experts: true
+      num_experts: 4
+      router_topk: 2
+      expert_parallel: true
+      all_to_all_dispatch: true
+      grouped_gemm: true
+      flash_attention: true
+    selection_reason: >-
+      Existing reduced Mixtral configuration with four experts and a command template that activates
+      EP, all-to-all token dispatch, grouped GEMM, and checkpointing.
+    blockers:
+      - reconcile model snapshot EP=1 with command-template EP=2
+      - bind real dataset and tokenizer paths
+      - confirm grouped-GEMM dependencies on the target stack
+      - validate one optimizer step and checkpoint save/load
+  - candidate_id: mla-moe-deepseekv3-fallback
+    target_workload_id: gqa-longseq-flash-small
+    baseline_id: mla-moe-deepseekv3-fallback-candidate
+    family: mla_long_sequence_moe
+    priority: fallback
+    minimum_intents: 0
+    model_config: lmsv_rec/assets/runtime/model_config/deepseekv3.yaml
+    command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_deepseekv3.sh
+    world_size: 8
+    feature_evidence:
+      mixture_of_experts: true
+      multi_latent_attention_in_command: true
+      sequence_length_in_command: 8192
+      expert_parallel: true
+      virtual_pipeline: true
+      recomputation: true
+    selection_reason: >-
+      Broad fallback for MLA, long-sequence, MoE, VPP, and recomputation boundaries when the smaller
+      ChatGLM3 attention workload does not cover the required backend paths.
+    blockers:
+      - command template contains an invalid duplicated dataset path
+      - model snapshot disables MLA while the command template enables it
+      - command scale is too large for the high-throughput campaign and must be reduced
+      - validate tokenizer, grouped-GEMM, and checkpoint dependencies

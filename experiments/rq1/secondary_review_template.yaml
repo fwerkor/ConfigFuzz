@@ -1,0 +1,783 @@
+schema_version: 1
+source_audit: constraint_audit.yaml
+source_revisions:
+  MindSpeed-LLM: 79afbee24168aae3c30dedbec9ca04504a3204e4
+  MindSpeed: 8659565fc2dc7de3caba13acd97d4e8814f1df7e
+  Megatron-LM-core_v0.12.1: a845aa7e12b3a117e24c2352b9e3e60bad2e3a17
+review_policy:
+  primary_labels_hidden: true
+  primary_notes_hidden: true
+  primary_evidence_summaries_hidden: true
+  review_source_at_recorded_locations: true
+  allowed_native_validation:
+  - full_explicit
+  - implicit_delayed
+  - partial
+  - uncovered
+  allowed_first_affected_milestone:
+  - argument_parsing
+  - backward
+  - checkpoint_save_load
+  - completed
+  - config_generation
+  - config_validation
+  - forward
+  - model_construction
+  - optimizer_step
+  - process_group_initialization
+  - repeated_training
+  - timeout
+  - unknown
+  allowed_coverage_denominator:
+  - environment_scope
+  - framework_legality
+  - policy_only
+name: rq1-secondary-review-template
+reviewer: null
+review_status: unreviewed
+record_count: 93
+records:
+- review_item_id: RQ1-001
+  constraint_id: lmsv.task6.pool.attention_softmax_in_fp32.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-002
+  constraint_id: lmsv.task6.pool.use_fused_rotary_pos_emb.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-003
+  constraint_id: lmsv.task1.vocab-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-004
+  constraint_id: lmsv.task1.position-cap
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-005
+  constraint_id: lmsv.task6.pool.init_method_std.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-006
+  constraint_id: lmsv.task1.moe-disable-bias-linear
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-007
+  constraint_id: lmsv.task6.pool.intermediate_size.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-008
+  constraint_id: lmsv.task6.pool.noised_image_input.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-009
+  constraint_id: lmsv.task6.pool.attention_dropout.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-010
+  constraint_id: lmsv.task6.pool.space_scale.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-011
+  constraint_id: lmsv.task1.cosine-decay-iters
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-012
+  constraint_id: lmsv.task6.pool.persist_layer_norm.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-013
+  constraint_id: lmsv.task1.micro-batch-positive
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-014
+  constraint_id: lmsv.task1.global-batch-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-015
+  constraint_id: lmsv.task6.pool.num_idx.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-016
+  constraint_id: lmsv.task6.pool.vocab_size.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-017
+  constraint_id: lmsv.task1.vpp-requires-pp
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-018
+  constraint_id: lmsv.task1.moe-add-bias-linear
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-019
+  constraint_id: lmsv.task6.pool.image_size.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-020
+  constraint_id: lmsv.task6.pool.window_attn_size.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-021
+  constraint_id: lmsv.task6.pool.conv_padding.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-022
+  constraint_id: lmsv.task1.moe-intermediate-tp-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-023
+  constraint_id: lmsv.task1.warmup-before-decay
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-024
+  constraint_id: lmsv.task6.pool.patch_size.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-025
+  constraint_id: lmsv.task1.alibi-context-parallel
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-026
+  constraint_id: lmsv.task6.pool.max_position_embeddings.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-027
+  constraint_id: lmsv.task6.pool.noised_image_dropout.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-028
+  constraint_id: lmsv.task6.pool.ucg_rate.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-029
+  constraint_id: lmsv.task1.sequence-within-position
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-030
+  constraint_id: lmsv.task6.pool.seq_len.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-031
+  constraint_id: lmsv.task1.mla-kv-lora-tp-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-032
+  constraint_id: lmsv.task6.pool.bias_dropout_fusion.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-033
+  constraint_id: lmsv.task6.pool.layernorm_zero_centered_gamma.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-034
+  constraint_id: lmsv.task1.moe-tp-sequence-parallel
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-035
+  constraint_id: lmsv.task1.ffn-hidden-size-cap
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-036
+  constraint_id: lmsv.task6.pool.group_query_attention.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-037
+  constraint_id: lmsv.task1.sequence-parallel-saved-activations
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-038
+  constraint_id: lmsv.task1.pipeline-model-parallel-size-positive
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-039
+  constraint_id: lmsv.task1.group-limited-num-groups
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-040
+  constraint_id: lmsv.task6.pool.drop_path.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-041
+  constraint_id: lmsv.task1.layers-vpp-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-042
+  constraint_id: lmsv.task1.saved-activations-full-recompute
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-043
+  constraint_id: lmsv.task1.padded-vocab-size
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-044
+  constraint_id: lmsv.task1.moe-topk-one-pre-softmax
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-045
+  constraint_id: lmsv.task6.pool.disable_bias_linear.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-046
+  constraint_id: lmsv.task1.mla-q-lora-tp-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-047
+  constraint_id: lmsv.task1.vpp-less-than-layers-per-stage
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-048
+  constraint_id: lmsv.task6.pool.activation_func.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-049
+  constraint_id: lmsv.task6.pool.uniform_sampling.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-050
+  constraint_id: lmsv.task6.pool.shift_scale.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-051
+  constraint_id: lmsv.task1.expert-model-parallel-size-positive
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-052
+  constraint_id: lmsv.task1.moe-topk-range
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-053
+  constraint_id: lmsv.task1.global-batch-cap
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-054
+  constraint_id: lmsv.task1.attention-heads-tp-cp-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-055
+  constraint_id: lmsv.task6.pool.bias_activation_fusion.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-056
+  constraint_id: lmsv.task6.pool.tokens_per_second.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-057
+  constraint_id: lmsv.task1.sequence-cap
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-058
+  constraint_id: lmsv.task1.mla-cp-tp-alignment
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-059
+  constraint_id: lmsv.task1.train-iters-after-warmup
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-060
+  constraint_id: lmsv.task6.pool.num_tokentypes.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-061
+  constraint_id: lmsv.task1.swiglu-ffn-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-062
+  constraint_id: lmsv.task1.flash-position-limit
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-063
+  constraint_id: lmsv.task1.group-limited-router
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-064
+  constraint_id: lmsv.task1.layers-pp-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-065
+  constraint_id: lmsv.task1.experts-ep-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-066
+  constraint_id: lmsv.task6.pool.mlp_ratio.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-067
+  constraint_id: lmsv.task6.pool.apply_rope_fusion.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-068
+  constraint_id: lmsv.task1.tensor-model-parallel-size-positive
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-069
+  constraint_id: lmsv.task1.ffn-hidden-size-tp-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-070
+  constraint_id: lmsv.task6.pool.learnable_pos_embed.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-071
+  constraint_id: lmsv.task1.sequence-parallel-requires-tp
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-072
+  constraint_id: lmsv.task6.pool.noised_image_all_concat.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-073
+  constraint_id: lmsv.task6.pool.deallocate_pipeline_outputs.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-074
+  constraint_id: lmsv.task1.flash-sequence-limit
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-075
+  constraint_id: lmsv.task6.pool.time_scale.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-076
+  constraint_id: lmsv.task6.pool.parallel_output.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-077
+  constraint_id: lmsv.task1.vpp-divides-layers-per-stage
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-078
+  constraint_id: lmsv.task6.pool.dropout_prob.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-079
+  constraint_id: lmsv.task6.pool.class_dropout_prob.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-080
+  constraint_id: lmsv.task1.alibi-flash-attention
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-081
+  constraint_id: lmsv.task1.hidden-size-tp-divisibility
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-082
+  constraint_id: lmsv.task6.pool.max_sequence_length.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-083
+  constraint_id: lmsv.task6.pool.recompute_method.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-084
+  constraint_id: lmsv.task6.pool.class_token_len.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-085
+  constraint_id: lmsv.task6.pool.apply_query_key_layer_scaling.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-086
+  constraint_id: lmsv.task6.pool.cross_attention_dim.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-087
+  constraint_id: lmsv.task1.parallel-product-world-size
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-088
+  constraint_id: lmsv.task6.pool.hidden_dropout.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-089
+  constraint_id: lmsv.task6.pool.recompute_num_layers.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-090
+  constraint_id: lmsv.task6.pool.batch_size.numeric-window
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-091
+  constraint_id: lmsv.task1.context-parallel-size-positive
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-092
+  constraint_id: lmsv.task6.pool.untie_embeddings_and_output_weights.enum
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null
+- review_item_id: RQ1-093
+  constraint_id: lmsv.task1.cp-requires-tp
+  secondary_review:
+    native_validation: null
+    first_affected_milestone: null
+    coverage_denominator: null
+    evidence_assessment: null
+    notes: null

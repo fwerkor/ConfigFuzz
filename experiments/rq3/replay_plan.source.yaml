@@ -1,0 +1,452 @@
+schema_version: 1
+name: rq3-replay-plan-sources
+status: plan_only_not_executed
+policy:
+  same_harness_on_buggy_and_fixed: true
+  fixed_only_tests_may_be_backported_as_harness_code_only: true
+  implementation_changes_must_not_be_backported: true
+  buggy_revision_requires_three_repetitions: true
+  fixed_revision_must_pass: true
+  expected_rejection_is_not_a_bug: true
+plans:
+- candidate_id: mindspeed-03bb94e94855
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_logic
+  trigger_assignments:
+    recompute_in_bubble: true
+    pipeline_model_parallel_size: '>1'
+    num_layers_per_virtual_pipeline_stage: set
+  trigger_relations:
+  - recompute_num_layers must equal num_layers/PP when per-PP-rank mode is enabled, otherwise it must equal num_layers_per_virtual_pipeline_stage
+  oracle:
+    kind: validation_or_schedule_failure
+    patterns:
+    - recompute_num_layers must be None or 0 when using recompute_in_bubble
+    fixed_expectation: derived recompute settings are idempotent and scheduling proceeds
+  unresolved:
+  - construct a CPU-level validate_args harness before using accelerator time
+- candidate_id: mindspeed-1caf2d4413e1
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_branches
+  trigger_assignments:
+    dynamic_padding: true
+    sequence_parallel: true
+    tensor_model_parallel_size: '>1'
+    micro_batch_size: '>=1'
+  trigger_relations:
+  - received dynamic sequence length must be multiplied by TP when sequence parallel is active
+  oracle:
+    kind: shape_mismatch
+    patterns:
+    - position_ids
+    - dynamic_seq_len
+    - shape
+    fixed_expectation: position-id and received-tensor shapes agree
+  unresolved:
+  - recover a compact dynamic-padding batch fixture
+- candidate_id: mindspeed-25568bbf2423
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_state_source
+  trigger_assignments:
+    context_parallel_size: '>1'
+    transformer_impl: transformer_engine
+    group_query_attention: true
+  trigger_relations:
+  - TE attention must read context_parallel_algo from current global args instead of stale config
+  oracle:
+    kind: shape_or_strategy_mismatch
+    patterns:
+    - number of GQA groups
+    - shape
+    - context_parallel_algo
+    fixed_expectation: the selected CP strategy and GQA tensor shapes match current arguments
+  unresolved:
+  - construct two configs that differ only in the stale/global CP algorithm value
+- candidate_id: mindspeed-2dbb9c599c2a
+  readiness: needs_minimal_harness
+  trigger_evidence_level: patch_and_incidental_tests
+  trigger_assignments:
+    automated_pipeline: true
+    num_layer_list: set
+    virtual_pipeline_model_parallel_size: null
+  trigger_relations:
+  - automated pipeline layer rebuilding is enabled only without VPP
+  oracle:
+    kind: schedule_or_output_mismatch
+    patterns:
+    - torch.allclose
+    - scheduling
+    fixed_expectation: layer placement and outputs match the intended automated-pipeline schedule
+  unresolved:
+  - the changed unit tests are not specific to automated pipeline; create a focused layer-placement harness
+- candidate_id: mindspeed-3dfc232bd297
+  readiness: ready_existing_harness
+  trigger_evidence_level: included_system_test
+  trigger_assignments:
+    pipeline_model_parallel_size: '>1'
+    pp_schedule_list: enabled
+  trigger_relations:
+  - pipeline tensor shapes and process groups must use the active runtime arguments
+  harness:
+    path: tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+    mode: existing_on_both_commits
+    command: pytest -q tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+  oracle:
+    kind: exception_or_shape_mismatch
+    patterns:
+    - Pipeline parallel group of backward is not initialized
+    - AttributeError
+    - shape
+    fixed_expectation: test completes without process-group or tensor-shape failure
+  unresolved:
+  - bind the test fixture and launcher used by the historical CI
+- candidate_id: mindspeed-5f1f4abf20ec
+  readiness: needs_minimal_harness
+  trigger_evidence_level: commit_description_and_patch_state_restore
+  trigger_assignments:
+    use_cpu_initialization: true
+    moe_tp_extend_ep: true
+  trigger_relations:
+  - temporary expert-TP world size and rank overrides must be restored after grouped-MLP initialization
+  oracle:
+    kind: initialization_or_state_leak
+    patterns:
+    - initialization
+    - tensor placement
+    - expert tensor parallel
+    fixed_expectation: weights initialize on the intended device and global expert-TP state is restored
+  unresolved:
+  - build a two-rank grouped-MLP initialization harness
+  - assert state restoration even when initialization raises
+- candidate_id: mindspeed-8cb3c0f81a0a
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_guard
+  trigger_assignments:
+    pipe_experts_multi_stream: true
+    sequence_parallel: false
+  trigger_relations:
+  - pipe_experts_multi_stream => sequence_parallel
+  oracle:
+    kind: exception_or_deep_failure
+    patterns:
+    - pipe-experts-multi-stream can only be used with --sequence-parallel
+    fixed_expectation: fixed revision rejects the incompatible pair before training
+  unresolved:
+  - recover a compact MoE pipe-experts workload
+  - separate expected fixed-side rejection from the pre-fix deep failure
+- candidate_id: mindspeed-b3fb85187834
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_guard
+  trigger_assignments:
+    expert_model_parallel_size: '>1'
+    context_parallel_size: '>=1'
+  trigger_relations:
+  - (data_parallel_size * context_parallel_size) % expert_model_parallel_size must equal 0 for the legacy order
+  oracle:
+    kind: parallel_group_membership
+    patterns:
+    - is not divisible by expert_model_parallel_size
+    - RuntimeError
+    fixed_expectation: valid topologies construct the expected expert/data-parallel groups
+  unresolved:
+  - choose one valid topology that fails only on the buggy group construction
+  - record expected rank groups
+- candidate_id: mindspeed-ba1e5e528ff3
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_guard
+  trigger_assignments:
+    num_experts: 2
+    moe_router_topk: 2
+  trigger_relations:
+  - historical implementation treated num_experts <= topk as invalid
+  oracle:
+    kind: exception
+    patterns:
+    - num_experts=2 is equal or smaller than topk=2
+    - torch.topk
+    fixed_expectation: fixed revision produces the documented early validator outcome for the selected invalid pair
+  unresolved:
+  - the existing unit test contains valid and boundary cases but does not isolate the argument validator
+  - decide whether equality is an expected rejection or a historical framework defect before benchmark admission
+- candidate_id: mindspeed-bdb06b9deef6
+  readiness: ready_fixed_harness_backport
+  trigger_evidence_level: fixed_commit_unit_test
+  trigger_assignments:
+    recompute_method: block
+    recompute_norm: true
+  trigger_relations:
+  - block recomputation must register the patched checkpointed forward path
+  harness:
+    path: tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+    mode: copy_fixed_test_to_buggy_checkout
+    command: pytest -q tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+    required_world_size: 8
+  oracle:
+    kind: numerical_equivalence
+    patterns:
+    - torch.allclose
+    fixed_expectation: forward outputs and input gradients equal the non-recompute reference
+  unresolved:
+  - backport the fixed-side test only
+- candidate_id: mindspeed-befe576b2920
+  readiness: needs_minimal_harness
+  trigger_evidence_level: commit_description_and_patch_branch
+  trigger_assignments:
+    num_experts: '>0'
+    recompute_activation_function: true
+  trigger_relations:
+  - an expert may receive zero tokens and must use the empty-input fallback during activation recomputation
+  oracle:
+    kind: nan_or_nonfinite
+    patterns:
+    - NaN
+    - nonfinite
+    fixed_expectation: all rank outputs, gradients, and loss remain finite
+  unresolved:
+  - force a deterministic zero-token expert assignment
+  - record the exact failing rank and tensor
+- candidate_id: mindspeed-c303a051fd66
+  readiness: ready_fixed_harness_backport
+  trigger_evidence_level: fixed_commit_unit_test
+  trigger_assignments:
+    context_parallel_size: 8
+    micro_batch_size: 2
+    context_parallel_algo: ulysses_cp_algo
+    seq_length: 8192
+  trigger_relations:
+  - Ulysses all-to-all must preserve the batch dimension when batch size exceeds one
+  harness:
+    path: tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+    mode: copy_fixed_test_to_buggy_checkout
+    command: pytest -q tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+    required_world_size: 8
+    required_device: Ascend910B
+  oracle:
+    kind: numerical_equivalence
+    patterns:
+    - torch.allclose
+    - shape
+    fixed_expectation: distributed Ulysses output matches the reference for bs=2
+  unresolved:
+  - backport the fixed-side test without the implementation patch
+- candidate_id: mindspeed-e93cbb5f80ff
+  readiness: ready_fixed_harness_backport
+  trigger_evidence_level: fixed_commit_unit_test
+  trigger_assignments:
+    tensor_model_parallel_size: 8
+    sequence_parallel: true
+    num_experts: '>0'
+    use_ascend_mc2: true
+  trigger_relations:
+  - MCore MoE must initialize the MC2 path with sequence-parallel configuration
+  harness:
+    path: tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+    mode: copy_fixed_test_to_buggy_checkout
+    command: pytest -q tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+    required_world_size: 8
+  oracle:
+    kind: numerical_equivalence
+    patterns:
+    - torch.allclose
+    - supplied weight
+    fixed_expectation: MC2-on output and gradients match the MC2-off reference within the test tolerance
+  unresolved:
+  - backport only the test file, not implementation changes
+  - confirm the historical dependency versions
+- candidate_id: mindspeed-f33404c7a526
+  readiness: ready_existing_harness
+  trigger_evidence_level: included_system_script
+  trigger_assignments:
+    tp_2d: true
+    use_flash_attn: false
+    context_parallel_algo: megatron_cp_algo
+    multi_head_latent_attention: true
+  trigger_relations:
+  - TP2D without FlashAttention must use the supported Ulysses CP path
+  harness:
+    path: tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+    mode: existing_on_both_commits
+    command: bash tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+  oracle:
+    kind: validation_or_attention_failure
+    patterns:
+    - tp-2d now only support
+    - shape
+    - attention
+    fixed_expectation: the fixed validator selects a supported CP algorithm and the attention workload completes
+  unresolved:
+  - derive a reduced model from the historical DeepSeek script
+- candidate_id: mindspeed-llm-0f8a1851fe37
+  readiness: needs_trigger_split
+  trigger_evidence_level: commit_description_multiple_fixes
+  trigger_assignments:
+    num_experts: '>0'
+    use_distributed_optimizer: true
+    position_embedding_type: alibi
+  trigger_relations:
+  - the commit combines expert-group initialization and ALiBi fixes
+  oracle:
+    kind: exception
+    patterns:
+    - Expert parallel group is not initialized
+    - optimizer
+    - alibi
+    fixed_expectation: each isolated subcase passes on the fixed revision
+  unresolved:
+  - split distributed-optimizer and ALiBi root causes into separate candidates
+  - recover an executable historical command for each subcase
+- candidate_id: mindspeed-llm-1507e52e0818
+  readiness: ready_fixed_harness_backport
+  trigger_evidence_level: fixed_commit_system_script
+  trigger_assignments:
+    pipeline_model_parallel_size: 4
+    expert_model_parallel_size: 2
+    num_layer_list: set
+    num_layers_per_virtual_pipeline_stage: null
+  trigger_relations:
+  - len(num_layer_list)=PP, sum(num_layer_list)=num_layers, and dynamic PP cannot be combined with VPP
+  harness:
+    path: tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh
+    mode: copy_fixed_test_to_buggy_checkout
+    command: bash tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh
+  oracle:
+    kind: validation_or_layer_placement
+    patterns:
+    - len(args.num_layer_list)
+    - Incorrect num_layer_list
+    - Dynamic pipeline model
+    fixed_expectation: valid dynamic layer placement builds the expected per-stage layer counts
+  unresolved:
+  - backport the script and baseline fixture together
+  - minimize the Mixtral model size
+- candidate_id: mindspeed-llm-22392902f00f
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_guard
+  trigger_assignments:
+    num_experts: '>0'
+    use_mc2: true
+    moe_grouped_gemm: true
+  trigger_relations:
+  - MC2 and grouped GEMM are unsupported together for this MoE implementation
+  oracle:
+    kind: exception
+    patterns:
+    - Moe Grouped Gemm is not supported with mc2 in MOE model
+    fixed_expectation: fixed revision rejects before model construction
+  unresolved:
+  - capture the buggy revision operator/deep failure for comparison with fixed early rejection
+- candidate_id: mindspeed-llm-27ac11d642e6
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_guard
+  trigger_assignments:
+    num_layers_per_virtual_pipeline_stage: set
+    save_model_type: not megatron
+  trigger_relations:
+  - VPP-specific queue ordering must only apply to Megatron-format checkpoint saving
+  oracle:
+    kind: checkpoint_structure
+    patterns:
+    - conversion
+    - missing
+    - layer
+    fixed_expectation: converted checkpoint contains every layer exactly once in the expected order
+  unresolved:
+  - the cited pretraining script is not a conversion reproducer; build a synthetic checkpoint queue harness
+- candidate_id: mindspeed-llm-307ca07c7949
+  readiness: needs_minimal_harness
+  trigger_evidence_level: patch_docstring
+  trigger_assignments:
+    distribute_saved_activations: true
+    context_parallel_algo: hybrid_cp_algo
+    attention_mask_type: general
+  trigger_relations:
+  - checkpoint input contains list[Tensor] and must be flattened and reconstructed
+  oracle:
+    kind: exception_or_checkpoint_mismatch
+    patterns:
+    - TypeError
+    - list[Tensor]
+    - CheckpointFunction
+    fixed_expectation: checkpoint forward/backward completes and reconstructed arguments preserve structure
+  unresolved:
+  - construct a minimal list[Tensor] checkpoint input without full training
+- candidate_id: mindspeed-llm-6f8618b622c7
+  readiness: ready_existing_harness
+  trigger_evidence_level: included_system_script
+  trigger_assignments:
+    moe_router_load_balancing_type: group_limited_greedy
+    tensor_model_parallel_size: '>1'
+    sequence_parallel: false
+    do_train: true
+  trigger_relations:
+  - training MoE with TP>1 and no sequence parallel enters the patched forward path
+  harness:
+    path: tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+    mode: existing_on_both_commits
+    command: bash tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+  oracle:
+    kind: exception_or_forward_failure
+    patterns:
+    - During training, performance may degrade if MoE and tensor parallelism
+    - group_limited_greedy
+    fixed_expectation: the intended fixed-side behavior is observed without router/forward corruption
+  unresolved:
+  - the historical script is too large for final benchmarking and needs a reduced equivalent
+- candidate_id: mindspeed-llm-885cb967359a
+  readiness: needs_trigger_split
+  trigger_evidence_level: explicit_patch_multiple_guards
+  trigger_assignments:
+    num_experts: '>0'
+    lora_target_modules: set
+  trigger_relations:
+  - LoRA/QLoRA MoE requires alltoall_seq; moe_tp_extend_ep additionally requires expert divisibility
+  oracle:
+    kind: exception_or_dispatch_failure
+    patterns:
+    - Lora and Qlora in the moe only enable the alltoall_seq
+    - local_expert_indices
+    fixed_expectation: each isolated supported configuration initializes and unsupported combinations reject early
+  unresolved:
+  - split dispatcher compatibility from expert-index/divisibility fixes
+- candidate_id: mindspeed-llm-a0edb582b143
+  readiness: needs_minimal_harness
+  trigger_evidence_level: commit_description
+  trigger_assignments:
+    use_ascend_mc2: true
+    matmul_add: true
+    swap_attention: true
+    tensor_model_parallel_size: '>1'
+  trigger_relations:
+  - the combined optimization must preserve weight.main_grad handling
+  oracle:
+    kind: exception
+    patterns:
+    - main_grad
+    - AttributeError
+    fixed_expectation: one optimizer step completes without missing main_grad
+  unresolved:
+  - recover the exact historical MC2/matmul_add flag names and a one-layer training fixture
+- candidate_id: mindspeed-llm-d4feda79a795
+  readiness: ready_fixed_harness_backport
+  trigger_evidence_level: fixed_commit_system_script
+  trigger_assignments:
+    swap_attention: true
+    enable_recompute_layers_per_pp_rank: true
+    pipeline_model_parallel_size: 4
+    num_layers_per_virtual_pipeline_stage: 2
+    tensor_model_parallel_size: 2
+  trigger_relations:
+  - swap attention counts as recomputation when validating per-PP-rank recompute settings
+  harness:
+    path: tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh
+    mode: copy_fixed_test_to_buggy_checkout
+    command: bash tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh
+  oracle:
+    kind: validation_or_training_failure
+    patterns:
+    - enable-recompute-layers-per-pp-rank
+    - AssertionError
+    fixed_expectation: the valid swap-attention configuration passes validation and training startup
+  unresolved:
+  - backport the script and expected baseline
+  - reduce model and iteration count

@@ -1,0 +1,939 @@
+schema_version: 1
+name: rq1-primary-native-validation-adjudication
+reviewer: ChatGPT-assisted primary source audit, 2026-08-06
+review_status: primary_reviewed
+source_revisions:
+  MindSpeed-LLM: 79afbee24168aae3c30dedbec9ca04504a3204e4
+  MindSpeed: 8659565fc2dc7de3caba13acd97d4e8814f1df7e
+  Megatron-LM-core_v0.12.1: a845aa7e12b3a117e24c2352b9e3e60bad2e3a17
+policy:
+  coverage_labels_are_primary_review_only: true
+  second_reviewer_required_for_final_dataset: true
+  framework_legality_denominator: Task1 framework requirements and implementation workarounds, excluding ConfigFuzz pool/search
+    policies
+  policy_only_rows_are_reported_separately: true
+  implicit_delayed: No equivalent centralized validator; invariant is enforced by later construction or execution logic.
+records:
+- constraint_id: lmsv.task1.alibi-context-parallel
+  native_validation: partial
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: MindSpeed/mindspeed/arguments.py
+    lines:
+    - 644
+    - 647
+    detail: ALiBi with context parallelism is accepted when the CP algorithm is megatron_cp_algo; other CP algorithms are
+      rejected.
+  coverage_denominator: framework_legality
+  notes: The native check covers only the CP-algorithm compatibility condition. It does not enforce the stricter predicate
+    ALiBi => CP=1.
+- constraint_id: lmsv.task1.alibi-flash-attention
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - file: MindSpeed-LLM/mindspeed_llm/features_manager/transformer/flash_attention/alibi_feature.py
+    lines:
+    - 31
+    - 38
+    detail: The framework registers an explicit non-FlashAttention ALiBi path, while other code paths also support FlashAttention;
+      no rejection equivalent to the predicate was found.
+  coverage_denominator: framework_legality
+  notes: The normalized predicate is a ConfigFuzz workaround, not a native legality rule in the pinned revision.
+- constraint_id: lmsv.task1.attention-heads-tp-cp-divisibility
+  native_validation: partial
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/transformer_config.py
+    lines:
+    - 559
+    - 563
+    detail: Megatron explicitly checks divisibility by TP.
+  - file: MindSpeed/mindspeed/arguments.py
+    lines:
+    - 650
+    - 653
+    detail: MindSpeed checks divisibility by CP*TP for the Ulysses CP algorithm.
+  coverage_denominator: framework_legality
+  notes: TP divisibility is always checked, while the CP factor is algorithm-dependent. The unconditional TP*CP predicate
+    is therefore only partially covered.
+- constraint_id: lmsv.task1.context-parallel-size-positive
+  native_validation: partial
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: MindSpeed/mindspeed/arguments.py
+    lines:
+    - 499
+    - 510
+    detail: CP participates in model-parallel-size arithmetic and world-size divisibility; zero fails through arithmetic,
+      but there is no direct CP>=1 assertion.
+  coverage_denominator: framework_legality
+  notes: Some invalid values are rejected indirectly, without a complete or explanatory positivity check.
+- constraint_id: lmsv.task1.cosine-decay-iters
+  native_validation: full_explicit
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/optimizer_param_scheduler.py
+    lines:
+    - 68
+    - 74
+    detail: OptimizerParamScheduler asserts lr_decay_steps > 0 and warmup < decay before stepping the schedule.
+  coverage_denominator: policy_only
+  notes: The check applies to all scheduler styles, including cosine.
+- constraint_id: lmsv.task1.cp-requires-tp
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - &id001
+    file: artifacts/rq1_mindspeed_static_candidates.json
+    detail: Primary source audit found no logic equivalent to the normalized predicate in the pinned framework sources; see
+      the exhaustive parameter-indexed scan artifact.
+  coverage_denominator: framework_legality
+  notes: The pinned framework supports context parallel configurations with TP=1 for compatible CP algorithms; no generic
+    CP>1 => TP>=2 validator exists.
+- constraint_id: lmsv.task1.expert-model-parallel-size-positive
+  native_validation: implicit_delayed
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/moe/moe_layer.py
+    lines:
+    - 40
+    - 46
+    detail: MoELayer asserts expert_parallel_size > 0 when the layer is instantiated.
+  coverage_denominator: framework_legality
+  notes: The invariant is enforced during MoE model construction rather than centralized argument validation.
+- constraint_id: lmsv.task1.experts-ep-divisibility
+  native_validation: full_explicit
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/moe/moe_layer.py
+    lines:
+    - 40
+    - 46
+    detail: MoELayer explicitly asserts that num_moe_experts is divisible by expert_parallel_size.
+  coverage_denominator: framework_legality
+  notes: The check is exact but occurs when constructing the MoE layer.
+- constraint_id: lmsv.task1.ffn-hidden-size-cap
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: The 6x hidden-size cap is a ConfigFuzz search-space policy; Megatron permits larger FFN dimensions.
+- constraint_id: lmsv.task1.ffn-hidden-size-tp-divisibility
+  native_validation: implicit_delayed
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/tensor_parallel/layers.py
+    lines:
+    - 758
+    - 768
+    detail: ColumnParallelLinear partitions output_size with divide(output_size, world_size).
+  - file: Megatron-LM/megatron/core/utils.py
+    lines:
+    - 307
+    - 316
+    detail: divide asserts numerator divisibility by the partition count.
+  coverage_denominator: framework_legality
+  notes: The relation is enforced by tensor-parallel layer construction, not by the native validator.
+- constraint_id: lmsv.task1.flash-position-limit
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: environment_scope
+  notes: The LMSV_FLASH_ATTN_MAX_SEQ_LENGTH environment threshold is not a native constant or capability check in the pinned
+    sources.
+- constraint_id: lmsv.task1.flash-sequence-limit
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: environment_scope
+  notes: The LMSV_FLASH_ATTN_MAX_SEQ_LENGTH environment threshold is not a native constant or capability check in the pinned
+    sources.
+- constraint_id: lmsv.task1.global-batch-cap
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: The exclusive global-batch cap is a ConfigFuzz resource policy rather than a native validity condition.
+- constraint_id: lmsv.task1.global-batch-divisibility
+  native_validation: full_explicit
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/num_microbatches_calculator.py
+    lines:
+    - 329
+    - 344
+    detail: The microbatch calculator asserts global_batch_size divisibility by micro_batch_size*data_parallel_size.
+  coverage_denominator: framework_legality
+  notes: The exact divisibility relation is checked before training iterations.
+- constraint_id: lmsv.task1.group-limited-num-groups
+  native_validation: full_explicit
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/transformer_config.py
+    lines:
+    - 986
+    - 1004
+    detail: Enabling group-limited routing requires moe_router_num_groups and checks group-topk against it.
+  coverage_denominator: framework_legality
+  notes: The current parameter names differ slightly, but the requirement that group routing has a positive group count is
+    explicit.
+- constraint_id: lmsv.task1.group-limited-router
+  native_validation: partial
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: MindSpeed-LLM/mindspeed_llm/features_manager/moe/moe_router.py
+    lines:
+    - 67
+    - 80
+    detail: The group_limited_greedy validator requires topk-group and enforces topk-group < expert_model_parallel_size.
+  coverage_denominator: framework_legality
+  notes: The upper-bound and presence checks are explicit; a direct lower-bound topk_group>=1 and a standalone EP>1 check
+    are not both present.
+- constraint_id: lmsv.task1.hidden-size-tp-divisibility
+  native_validation: implicit_delayed
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/tensor_parallel/layers.py
+    lines:
+    - 1065
+    - 1075
+    detail: RowParallelLinear partitions input_size with divide(input_size, world_size).
+  - file: Megatron-LM/megatron/core/utils.py
+    lines:
+    - 307
+    - 316
+    detail: divide asserts exact divisibility.
+  coverage_denominator: framework_legality
+  notes: Hidden-size partitioning fails during tensor-parallel layer construction.
+- constraint_id: lmsv.task1.layers-pp-divisibility
+  native_validation: full_explicit
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/arguments.py
+    lines:
+    - 480
+    - 495
+    detail: The argument validator asserts model layers are divisible by transformer pipeline size.
+  coverage_denominator: framework_legality
+  notes: The exact relation is explicitly checked before model construction.
+- constraint_id: lmsv.task1.layers-vpp-divisibility
+  native_validation: full_explicit
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/arguments.py
+    lines:
+    - 446
+    - 470
+    detail: The validator first divides layers by PP and then checks per-stage layers are divisible by layers per virtual
+      stage.
+  coverage_denominator: framework_legality
+  notes: Combined with the PP check, this is equivalent to divisibility by PP*VPP for the normalized parameter meaning.
+- constraint_id: lmsv.task1.micro-batch-positive
+  native_validation: full_explicit
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/arguments.py
+    lines:
+    - 420
+    - 426
+    detail: The argument validator asserts micro_batch_size > 0.
+  coverage_denominator: framework_legality
+  notes: The native assertion is exact.
+- constraint_id: lmsv.task1.mla-cp-tp-alignment
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: framework_legality
+  notes: No native validator requires context_parallel_size to equal tensor_model_parallel_size for MLA; this is a ConfigFuzz
+    workaround.
+- constraint_id: lmsv.task1.mla-kv-lora-tp-divisibility
+  native_validation: implicit_delayed
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/multi_latent_attention.py
+    lines:
+    - 290
+    - 312
+    detail: MLA constructs tensor-parallel KV projection layers using kv_lora_rank-derived dimensions.
+  - file: Megatron-LM/megatron/core/utils.py
+    lines:
+    - 307
+    - 316
+    detail: The shared tensor-parallel divide helper asserts divisibility.
+  coverage_denominator: framework_legality
+  notes: No centralized rank-divisibility validator exists; incompatible ranks fail while projection layers are partitioned.
+- constraint_id: lmsv.task1.mla-q-lora-tp-divisibility
+  native_validation: implicit_delayed
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/multi_latent_attention.py
+    lines:
+    - 252
+    - 288
+    detail: MLA constructs tensor-parallel query down/up projections from q_lora_rank.
+  - file: Megatron-LM/megatron/core/utils.py
+    lines:
+    - 307
+    - 316
+    detail: The shared tensor-parallel divide helper asserts divisibility.
+  coverage_denominator: framework_legality
+  notes: No centralized rank-divisibility validator exists; incompatible ranks fail during projection construction.
+- constraint_id: lmsv.task1.moe-add-bias-linear
+  native_validation: full_explicit
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/transformer_config.py
+    lines:
+    - 941
+    - 947
+    detail: TransformerConfig explicitly asserts that add_bias_linear is false when MoE is enabled.
+  coverage_denominator: framework_legality
+  notes: The native predicate is exact.
+- constraint_id: lmsv.task1.moe-disable-bias-linear
+  native_validation: partial
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/checkpointing.py
+    lines:
+    - 1050
+    - 1058
+    detail: Legacy disable_bias_linear is translated to the inverse add_bias_linear field.
+  - file: Megatron-LM/megatron/core/transformer/transformer_config.py
+    lines:
+    - 941
+    - 947
+    detail: MoE validation is performed on add_bias_linear.
+  coverage_denominator: framework_legality
+  notes: The semantic alias is covered for legacy/checkpoint paths, but disable_bias_linear is not the canonical runtime field
+    in all configuration paths.
+- constraint_id: lmsv.task1.moe-intermediate-tp-divisibility
+  native_validation: implicit_delayed
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: MindSpeed-LLM/mindspeed_llm/core/transformer/moe/moe_layer.py
+    lines:
+    - 45
+    - 50
+    detail: moe_intermediate_size is assigned as the expert FFN hidden size.
+  - file: MindSpeed/mindspeed/core/transformer/moe/layers.py
+    lines:
+    - 267
+    - 276
+    detail: Expert tensor-parallel linear layers partition output_size with divide.
+  coverage_denominator: framework_legality
+  notes: The relation is enforced only when the expert MLP is constructed.
+- constraint_id: lmsv.task1.moe-topk-one-pre-softmax
+  native_validation: partial
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/transformer_config.py
+    lines:
+    - 971
+    - 984
+    detail: The native check requires pre-softmax for topk=1 only for softmax routing and non-sinkhorn balancing.
+  coverage_denominator: framework_legality
+  notes: The normalized predicate omits native guards on score function and load-balancing type, so it is stricter than the
+    implementation.
+- constraint_id: lmsv.task1.moe-topk-range
+  native_validation: implicit_delayed
+  first_affected_milestone: forward
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/moe/router.py
+    lines:
+    - 160
+    - 171
+    detail: Router forward passes the configured k to torch.topk; k larger than the expert dimension fails here.
+  coverage_denominator: framework_legality
+  notes: No centralized complete 1<=topk<=num_experts validator was found; invalid values reach router execution.
+- constraint_id: lmsv.task1.moe-tp-sequence-parallel
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: framework_legality
+  notes: The pinned Megatron/MindSpeed revisions no longer expose a generic num_experts>0 and TP>1 => sequence_parallel validator;
+    specialized MoE communication paths support additional combinations.
+- constraint_id: lmsv.task1.padded-vocab-size
+  native_validation: implicit_delayed
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/tokenizer/tokenizer.py
+    lines:
+    - 104
+    - 124
+    detail: Tokenizer construction computes padded_vocab_size by rounding the original vocabulary upward.
+  coverage_denominator: framework_legality
+  notes: The invariant is maintained by construction rather than checked as a validator rejection.
+- constraint_id: lmsv.task1.parallel-product-world-size
+  native_validation: partial
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: MindSpeed/mindspeed/arguments.py
+    lines:
+    - 499
+    - 510
+    detail: MindSpeed checks world_size divisibility by TP*PP*CP model-parallel size.
+  - file: Megatron-LM/megatron/training/arguments.py
+    lines:
+    - 312
+    - 319
+    detail: Megatron similarly requires world_size divisibility by total model-parallel size.
+  coverage_denominator: framework_legality
+  notes: Native checks are stronger than <= for TP*PP*CP but do not multiply EP in the same way as the normalized predicate.
+- constraint_id: lmsv.task1.pipeline-model-parallel-size-positive
+  native_validation: full_explicit
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/arguments.py
+    lines:
+    - 345
+    - 351
+    detail: The argument validator explicitly asserts pipeline_model_parallel_size > 0.
+  coverage_denominator: framework_legality
+  notes: The native assertion is exact.
+- constraint_id: lmsv.task1.position-cap
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: The LMSV_MOE_MAX_SEQ_LENGTH position cap is a ConfigFuzz search/resource policy, not a native validity check.
+- constraint_id: lmsv.task1.saved-activations-full-recompute
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/transformer_config.py
+    lines:
+    - 684
+    - 721
+    detail: Native recompute validation accepts full or selective granularity and separately rejects distribute_saved_activations
+      with sequence parallelism; it does not require full solely because saved activations are distributed.
+  coverage_denominator: framework_legality
+  notes: The normalized implication is not implemented as a native constraint.
+- constraint_id: lmsv.task1.sequence-cap
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: The LMSV_MOE_MAX_SEQ_LENGTH sequence cap is a ConfigFuzz search/resource policy, not a native validity check.
+- constraint_id: lmsv.task1.sequence-parallel-requires-tp
+  native_validation: full_explicit
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/model_parallel_config.py
+    lines:
+    - 349
+    - 354
+    detail: ModelParallelConfig raises when sequence parallelism is enabled with TP=1.
+  coverage_denominator: framework_legality
+  notes: The exact implication is explicitly checked.
+- constraint_id: lmsv.task1.sequence-parallel-saved-activations
+  native_validation: full_explicit
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/transformer_config.py
+    lines:
+    - 713
+    - 721
+    detail: TransformerConfig rejects distribute_saved_activations when sequence_parallel is true.
+  coverage_denominator: framework_legality
+  notes: The exact incompatibility is explicitly checked during config construction.
+- constraint_id: lmsv.task1.sequence-within-position
+  native_validation: full_explicit
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/arguments.py
+    lines:
+    - 692
+    - 699
+    detail: The argument validator asserts max_position_embeddings >= seq_length.
+  coverage_denominator: framework_legality
+  notes: The native assertion is exact.
+- constraint_id: lmsv.task1.swiglu-ffn-divisibility
+  native_validation: partial
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/tensor_parallel/layers.py
+    lines:
+    - 758
+    - 768
+    detail: Gated MLP projection output is partitioned through the generic tensor-parallel divide path.
+  - file: Megatron-LM/megatron/core/utils.py
+    lines:
+    - 307
+    - 316
+    detail: The helper checks the actual projected dimension, not the stricter normalized ffn_hidden_size%(2*TP) predicate.
+  coverage_denominator: framework_legality
+  notes: Native layer construction enforces divisibility of the realized projection dimension, which is not equivalent to
+    the stricter ConfigFuzz SWIGLU predicate.
+- constraint_id: lmsv.task1.tensor-model-parallel-size-positive
+  native_validation: partial
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/arguments.py
+    lines:
+    - 312
+    - 319
+    detail: TP participates in total-model-size arithmetic and world-size divisibility; zero fails through arithmetic, but
+      no direct TP>=1 assertion is present.
+  coverage_denominator: framework_legality
+  notes: Invalid zero is rejected indirectly and negative values are not covered by an equivalent explicit check.
+- constraint_id: lmsv.task1.train-iters-after-warmup
+  native_validation: partial
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/optimizer_param_scheduler.py
+    lines:
+    - 68
+    - 74
+    detail: The scheduler enforces warmup < decay steps; decay defaults to the training horizon in common paths but can be
+      specified independently.
+  coverage_denominator: framework_legality
+  notes: The direct train_iters>warmup relation is not always checked when an explicit decay horizon is supplied.
+- constraint_id: lmsv.task1.vocab-divisibility
+  native_validation: uncovered
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/tokenizer/tokenizer.py
+    lines:
+    - 104
+    - 124
+    detail: The framework accepts a non-divisible original vocabulary and pads it to a multiple of make_vocab_size_divisible_by*TP.
+  coverage_denominator: framework_legality
+  notes: The original vocab_size need not satisfy the normalized predicate; native code repairs it instead of rejecting it.
+- constraint_id: lmsv.task1.vpp-divides-layers-per-stage
+  native_validation: full_explicit
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/arguments.py
+    lines:
+    - 446
+    - 470
+    detail: The argument validator explicitly checks layers per pipeline stage are divisible by layers per virtual stage.
+  coverage_denominator: framework_legality
+  notes: The native assertion is exact for the normalized parameter interpretation.
+- constraint_id: lmsv.task1.vpp-less-than-layers-per-stage
+  native_validation: uncovered
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/arguments.py
+    lines:
+    - 446
+    - 470
+    detail: The native validator requires divisibility but permits equality, which yields one virtual stage.
+  coverage_denominator: framework_legality
+  notes: The strict less-than relation is not a native requirement.
+- constraint_id: lmsv.task1.vpp-requires-pp
+  native_validation: full_explicit
+  first_affected_milestone: config_validation
+  coverage_evidence:
+  - file: Megatron-LM/megatron/training/arguments.py
+    lines:
+    - 429
+    - 441
+    detail: Using virtual pipeline scheduling requires PP>1, or PP>2 when P2P overlap is disabled.
+  coverage_denominator: framework_legality
+  notes: Native validation is at least as strong as the normalized PP>1 implication.
+- constraint_id: lmsv.task1.warmup-before-decay
+  native_validation: partial
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/optimizer_param_scheduler.py
+    lines:
+    - 68
+    - 74
+    detail: The scheduler explicitly enforces warmup_steps < decay_steps.
+  - file: Megatron-LM/megatron/training/training.py
+    lines:
+    - 1058
+    - 1092
+    detail: Training code derives decay and warmup steps from train/decay arguments before constructing the scheduler.
+  coverage_denominator: framework_legality
+  notes: Warmup<decay is explicit. Warmup<train_iters is only implied when the decay horizon is derived from train_iters,
+    so the combined min() predicate is partially covered.
+- constraint_id: lmsv.task6.pool.activation_func.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.apply_query_key_layer_scaling.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.apply_rope_fusion.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.attention_dropout.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.attention_softmax_in_fp32.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.batch_size.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.bias_activation_fusion.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.bias_dropout_fusion.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.class_dropout_prob.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.class_token_len.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.conv_padding.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.cross_attention_dim.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.deallocate_pipeline_outputs.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.disable_bias_linear.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.drop_path.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.dropout_prob.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.group_query_attention.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.hidden_dropout.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.image_size.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.init_method_std.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.intermediate_size.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.layernorm_zero_centered_gamma.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.learnable_pos_embed.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.max_position_embeddings.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.max_sequence_length.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.mlp_ratio.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.noised_image_all_concat.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.noised_image_dropout.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.noised_image_input.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.num_idx.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.num_tokentypes.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.parallel_output.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.patch_size.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.persist_layer_norm.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.recompute_method.enum
+  native_validation: full_explicit
+  first_affected_milestone: model_construction
+  coverage_evidence:
+  - file: Megatron-LM/megatron/core/transformer/transformer_config.py
+    lines:
+    - 684
+    - 696
+    detail: When recomputation is configured, recompute_method is explicitly restricted to block or uniform.
+  coverage_denominator: policy_only
+  notes: The exact Task6 enum happens to match the native recompute-method domain, but it remains classified as a mutation-pool
+    policy.
+- constraint_id: lmsv.task6.pool.recompute_num_layers.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.seq_len.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.shift_scale.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.space_scale.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.time_scale.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.tokens_per_second.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.ucg_rate.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.uniform_sampling.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.untie_embeddings_and_output_weights.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.use_fused_rotary_pos_emb.enum
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.vocab_size.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.
+- constraint_id: lmsv.task6.pool.window_attn_size.numeric-window
+  native_validation: uncovered
+  first_affected_milestone: unknown
+  coverage_evidence:
+  - *id001
+  coverage_denominator: policy_only
+  notes: This record defines a ConfigFuzz mutation-pool value or baseline-relative numeric window. Native declarations may
+    constrain type or a broader domain, but they do not enforce this exact pool policy as a legality predicate.

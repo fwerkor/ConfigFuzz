@@ -83,6 +83,16 @@ def test_generate_intents_from_bound_workload(tmp_path: Path) -> None:
         for item in intents
     )
     assert len({item["intent_id"] for item in intents}) == len(intents)
+    assert len(
+        {
+            (
+                item["workload_id"],
+                item["target_parameter"],
+                json.dumps(item["target_value"], sort_keys=True),
+            )
+            for item in intents
+        }
+    ) == len(intents)
 
 
 def test_unbound_workload_can_be_skipped(tmp_path: Path) -> None:

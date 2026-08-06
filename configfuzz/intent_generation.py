@@ -22,6 +22,13 @@ _TOPOLOGY_LEAVES = (
     "context_parallel_size",
 )
 
+_GRID_EXCLUDED_LEAVES = {
+    "world_size",
+    "LMSV_FLASH_ATTN_MAX_SEQ_LENGTH",
+    "LMSV_MAX_GLOBAL_BATCH_SIZE_EXCLUSIVE",
+    "LMSV_MOE_MAX_SEQ_LENGTH",
+}
+
 
 @dataclass(frozen=True, slots=True)
 class WorkloadSpec:
@@ -103,6 +110,9 @@ def generate_intents(
         for rule in rules:
             workload_intents.extend(_rule_intents(rule, workload, baseline))
         workload_intents.extend(
+            _parameter_grid_intents(corpus, rules, workload, baseline)
+        )
+        workload_intents.extend(
             _topology_intents(workload, baseline, topology_values=topology_values)
         )
         intents.extend(_deduplicate(workload_intents))
@@ -122,6 +132,17 @@ def generate_intent_payload(
     counts: dict[str, int] = {}
     for intent in intents:
         counts[intent.workload_id] = counts.get(intent.workload_id, 0) + 1
+    requirements = {
+        workload.workload_id: int((workload.metadata or {}).get("minimum_intents", 0))
+        for workload in workloads
+    }
+    shortfalls = {
+        workload_id: {"required": minimum, "generated": counts.get(workload_id, 0)}
+        for workload_id, minimum in requirements.items()
+        if counts.get(workload_id, 0) < minimum
+    }
+    if shortfalls:
+        raise ValueError(f"workload mutation-intent minimum not met: {shortfalls}")
     return {
         "schema_version": 1,
         "name": "rq2-generated-mutation-intents",
@@ -131,12 +152,15 @@ def generate_intent_payload(
             "workload_count": len(workloads),
             "intent_count": len(intents),
             "intents_per_workload": dict(sorted(counts.items())),
+            "minimum_intents_per_workload": dict(sorted(requirements.items())),
             "generation_policy": [
                 "enumeration alternatives",
                 "numeric window boundaries",
                 "repair boundaries and adjacent values",
                 "simple guard-enabling transitions",
+                "type-aware baseline-relative boundary grids",
                 "parallel topology values",
+                "one record per unique workload, parameter, and target value",
             ],
             "warning": (
                 "Generated intentions are candidates. Remove examples, verify workload "
@@ -328,6 +352,211 @@ def _numeric_window_values(
     return _unique_pairs(raw)
 
 
+def _parameter_grid_intents(
+    corpus: ConstraintCorpus,
+    rules: Sequence[ManualConstraintRule],
+    workload: WorkloadSpec,
+    baseline: Mapping[str, Any],
+) -> list[MutationIntent]:
+    del corpus  # The selected rules already encode the workload's corpus scope.
+    by_leaf: dict[str, set[str]] = {}
+    source_ids: dict[str, set[str]] = {}
+    for rule in rules:
+        parameters = list(rule.parameters)
+        if rule.repair:
+            parameters.extend(
+                str(rule.repair[key])
+                for key in ("target", "source")
+                if rule.repair.get(key)
+            )
+        for parameter in parameters:
+            leaf = parameter.rsplit(".", 1)[-1]
+            if leaf in _GRID_EXCLUDED_LEAVES:
+                continue
+            by_leaf.setdefault(leaf, set()).add(parameter)
+            source_ids.setdefault(leaf, set()).add(rule.id)
+
+    intents: list[MutationIntent] = []
+    divisors = _active_divisors(baseline)
+    for leaf, parameters in sorted(by_leaf.items()):
+        parameter = _preferred_parameter(parameters)
+        current = _try_get(baseline, parameter)
+        if not current.found:
+            continue
+        if leaf in _TOPOLOGY_LEAVES:
+            continue
+        if _is_number(current.value):
+            values = _baseline_grid_values(current.value, divisors=divisors)
+        elif isinstance(current.value, bool):
+            values = [(not current.value, "boolean_transition")]
+        else:
+            continue
+        for value, intent_class in values:
+            if value == current.value:
+                continue
+            intents.append(
+                _make_intent(
+                    workload,
+                    parameter,
+                    value,
+                    intent_class,
+                    source_constraint_ids=tuple(sorted(source_ids[leaf])),
+                    metadata={
+                        "baseline_value": current.value,
+                        "grid_policy": "type_aware_boundary_grid_v1",
+                        "parameter_leaf": leaf,
+                    },
+                )
+            )
+    return intents
+
+
+def _preferred_parameter(parameters: Iterable[str]) -> str:
+    return min(
+        set(parameters),
+        key=lambda item: (
+            0 if "." in item else 1,
+            0
+            if item.startswith(("model.", "training.", "parallel.", "moe.", "mla."))
+            else 1,
+            len(item),
+            item,
+        ),
+    )
+
+
+def _active_divisors(baseline: Mapping[str, Any]) -> tuple[int, ...]:
+    values: set[int] = {1, 2, 4, 8}
+    for name in (*_TOPOLOGY_LEAVES, "data_parallel_size", "world_size"):
+        resolved = _try_get(baseline, name)
+        if resolved.found and isinstance(resolved.value, int) and resolved.value > 0:
+            values.add(resolved.value)
+    return tuple(sorted(values))
+
+
+def _baseline_grid_values(
+    current: int | float,
+    *,
+    divisors: Sequence[int],
+) -> list[tuple[int | float, str]]:
+    if isinstance(current, int) and not isinstance(current, bool):
+        return _integer_grid_values(current, divisors=divisors)
+    return _float_grid_values(float(current))
+
+
+def _integer_grid_values(
+    current: int,
+    *,
+    divisors: Sequence[int],
+) -> list[tuple[int, str]]:
+    records: list[tuple[int, str]] = []
+    for distance in (1, 2, 3, 4, 8):
+        records.extend(
+            [
+                (current - distance, "integer_adjacent_below"),
+                (current + distance, "integer_adjacent_above"),
+            ]
+        )
+    for factor in (
+        0.0,
+        0.125,
+        0.25,
+        0.5,
+        0.75,
+        0.875,
+        0.9375,
+        1.0625,
+        1.125,
+        1.25,
+        1.5,
+        2.0,
+        3.0,
+        4.0,
+    ):
+        records.append((int(round(current * factor)), "integer_scale_boundary"))
+    records.extend(
+        (value, "integer_common_boundary") for value in (-1, 0, 1, 2, 4, 8, 16)
+    )
+    if current > 0:
+        lower_power = 2 ** int(math.floor(math.log2(current)))
+        upper_power = lower_power if lower_power == current else lower_power * 2
+        for boundary in {lower_power, upper_power}:
+            records.extend(
+                (boundary + offset, "integer_power_of_two_boundary")
+                for offset in (-1, 0, 1)
+            )
+    for divisor in divisors:
+        if divisor <= 0:
+            continue
+        lower = (current // divisor) * divisor
+        for boundary in {lower, lower + divisor}:
+            records.extend(
+                (boundary + offset, "integer_divisibility_boundary")
+                for offset in (-1, 0, 1)
+            )
+    return [
+        (int(value), label)
+        for value, label in _unique_pairs(records)
+        if value != current
+    ]
+
+
+def _float_grid_values(current: float) -> list[tuple[float, str]]:
+    records: list[tuple[float, str]] = []
+    epsilon = max(abs(current) * 0.01, 1e-6)
+    if current == 0.0:
+        records.extend(
+            (value, "float_zero_neighborhood")
+            for value in (
+                -1e-6,
+                1e-6,
+                1e-4,
+                1e-3,
+                1e-2,
+                5e-2,
+                0.1,
+                0.25,
+                0.5,
+                0.9,
+                1.0,
+                1.000001,
+            )
+        )
+    else:
+        for factor in (
+            -1.0,
+            0.0,
+            0.1,
+            0.25,
+            0.5,
+            0.75,
+            0.9,
+            0.99,
+            1.01,
+            1.1,
+            1.25,
+            1.5,
+            2.0,
+            4.0,
+            10.0,
+        ):
+            records.append((current * factor, "float_scale_boundary"))
+        records.extend(
+            [
+                (current - epsilon, "float_adjacent_below"),
+                (current + epsilon, "float_adjacent_above"),
+                (-epsilon, "float_sign_boundary"),
+                (0.0, "float_zero_boundary"),
+                (epsilon, "float_sign_boundary"),
+            ]
+        )
+    return [
+        (float(value), label)
+        for value, label in _unique_pairs(records)
+        if value != current and math.isfinite(float(value))
+    ]
+
+
 def _topology_intents(
     workload: WorkloadSpec,
     baseline: Mapping[str, Any],
@@ -468,6 +697,10 @@ def _try_get(configuration: Mapping[str, Any], parameter: str) -> _ResolvedValue
     if not parameter:
         return _ResolvedValue(False)
     parts = parameter.split(".")
+    leaf = parts[-1]
+    effective = configuration.get("effective_config")
+    if isinstance(effective, Mapping) and leaf in effective:
+        return _ResolvedValue(True, effective[leaf])
     current: Any = configuration
     exact = True
     for part in parts:
@@ -477,7 +710,6 @@ def _try_get(configuration: Mapping[str, Any], parameter: str) -> _ResolvedValue
         current = current[part]
     if exact:
         return _ResolvedValue(True, current)
-    leaf = parts[-1]
     matches = list(_find_leaf(configuration, leaf))
     if len(matches) == 1:
         return _ResolvedValue(True, matches[0])
@@ -524,10 +756,10 @@ def _make_intent(
 
 
 def _deduplicate(intents: Sequence[MutationIntent]) -> list[MutationIntent]:
-    selected: dict[tuple[str, str, str], MutationIntent] = {}
+    selected: dict[tuple[str, str], MutationIntent] = {}
     for intent in intents:
         value_key = json.dumps(intent.target_value, ensure_ascii=False, sort_keys=True)
-        key = (intent.target_parameter, value_key, intent.intent_class)
+        key = (intent.target_parameter, value_key)
         existing = selected.get(key)
         if existing is None:
             selected[key] = intent
@@ -537,7 +769,14 @@ def _deduplicate(intents: Sequence[MutationIntent]) -> list[MutationIntent]:
                 set(existing.source_constraint_ids) | set(intent.source_constraint_ids)
             )
         )
-        metadata = {**dict(existing.metadata), **dict(intent.metadata)}
+        alternate_classes = set(existing.metadata.get("alternate_intent_classes", ()))
+        alternate_classes.update(intent.metadata.get("alternate_intent_classes", ()))
+        alternate_classes.update((existing.intent_class, intent.intent_class))
+        metadata = {
+            **dict(existing.metadata),
+            **dict(intent.metadata),
+            "alternate_intent_classes": sorted(alternate_classes),
+        }
         selected[key] = MutationIntent(
             intent_id=existing.intent_id,
             workload_id=existing.workload_id,

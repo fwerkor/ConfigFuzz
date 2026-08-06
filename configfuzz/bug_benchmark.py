@@ -21,6 +21,100 @@ _HIGH_VALUE_RE = re.compile(
 )
 
 
+def validate_source_review(
+    review_path: str | Path,
+    execution_queue_path: str | Path | None = None,
+) -> dict[str, Any]:
+    review_raw = yaml.safe_load(Path(review_path).read_text(encoding="utf-8"))
+    if not isinstance(review_raw, Mapping):
+        raise ValueError("source-review root must be an object")
+    records = review_raw.get("records")
+    if not isinstance(records, list):
+        raise ValueError("source-review records must be a list")
+    allowed = {"retain_for_execution", "defer", "exclude"}
+    seen: set[str] = set()
+    counts: Counter[str] = Counter()
+    retained_ids: set[str] = set()
+    for raw_record in records:
+        if not isinstance(raw_record, Mapping):
+            raise ValueError("source-review record must be an object")
+        candidate_id = str(raw_record.get("candidate_id", "")).strip()
+        if not candidate_id or candidate_id in seen:
+            raise ValueError(
+                f"invalid or duplicate source-review candidate: {candidate_id!r}"
+            )
+        seen.add(candidate_id)
+        status = str(raw_record.get("source_review_status", ""))
+        if status not in allowed:
+            raise ValueError(
+                f"{candidate_id}: unsupported source-review status {status!r}"
+            )
+        counts[status] += 1
+        verification = raw_record.get("execution_verification")
+        if not isinstance(verification, Mapping):
+            raise ValueError(
+                f"{candidate_id}: execution_verification must be an object"
+            )
+        if any(value is not None for value in verification.values()):
+            raise ValueError(
+                f"{candidate_id}: source review must not claim execution verification"
+            )
+        if status == "retain_for_execution":
+            retained_ids.add(candidate_id)
+            if raw_record.get("configuration_trigger_confirmed") is not True:
+                raise ValueError(f"{candidate_id}: retained trigger must be confirmed")
+            for field in (
+                "trigger_summary",
+                "workload_evidence",
+                "failure_oracle_evidence",
+            ):
+                if not str(raw_record.get(field, "")).strip():
+                    raise ValueError(
+                        f"{candidate_id}: retained entry is missing {field}"
+                    )
+        elif (
+            status == "exclude"
+            and raw_record.get("configuration_trigger_confirmed") is True
+        ):
+            raise ValueError(
+                f"{candidate_id}: excluded entry cannot have a confirmed trigger"
+            )
+    declared = review_raw.get("counts", {})
+    if not isinstance(declared, Mapping) or {
+        key: int(declared.get(key, -1)) for key in allowed
+    } != {key: counts[key] for key in allowed}:
+        raise ValueError("source-review declared counts do not match records")
+
+    result: dict[str, Any] = {
+        "valid": True,
+        "record_count": len(records),
+        "counts": dict(sorted(counts.items())),
+        "retained_candidate_ids": sorted(retained_ids),
+    }
+    if execution_queue_path is not None:
+        queue_raw = yaml.safe_load(
+            Path(execution_queue_path).read_text(encoding="utf-8")
+        )
+        if not isinstance(queue_raw, Mapping):
+            raise ValueError("execution-queue root must be an object")
+        queue_records = queue_raw.get("candidates")
+        if not isinstance(queue_records, list):
+            raise ValueError("execution-queue candidates must be a list")
+        queue_ids = {
+            str(item.get("candidate_id", ""))
+            for item in queue_records
+            if isinstance(item, Mapping)
+        }
+        if queue_ids != retained_ids:
+            raise ValueError(
+                "execution queue does not match retained source-review entries"
+            )
+        if int(queue_raw.get("candidate_count", -1)) != len(queue_ids):
+            raise ValueError("execution-queue candidate_count is inconsistent")
+        result["execution_queue_count"] = len(queue_ids)
+    return result
+
+
 def load_fix_candidates(path: str | Path) -> list[dict[str, Any]]:
     raw = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(raw, Mapping):

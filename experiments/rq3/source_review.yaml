@@ -1,0 +1,2593 @@
+schema_version: 1
+name: rq3-source-review
+source_shortlist: triage_shortlist.yaml
+source_evidence: ../../artifacts/rq3_source_review_evidence.json
+review_status: primary_source_review
+policy:
+  retention_requires:
+  - configuration trigger supported by the patch
+  - plausible executable workload
+  - observable non-performance oracle
+  retained_entries_are_not_verified_bugs: true
+  buggy_fixed_execution_required_for_benchmark_admission: true
+  independent_second_review_required: true
+counts:
+  retain_for_execution: 23
+  defer: 8
+  exclude: 9
+records:
+- rank: 1
+  candidate_id: mindspeed-8cb3c0f81a0a
+  repository: MindSpeed
+  subject: '!440 mlp通信隐藏适配ParallelMLP，添加使用多流时不开启sp的异常抛出，重构变量名 Merge pull request !440 from xiangjunwei/master_0530'
+  buggy_commit: 94e802ceaba70054c2f23e822b97e60e36a51ea5
+  fix_commit: 8cb3c0f81a0a68c2582387c35dc8248c4681fd0f
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: pipe_experts_multi_stream=true while sequence_parallel=false
+  workload_evidence: MoE training command from the merge request documentation
+  failure_oracle_evidence: native assertion or the pre-fix incorrect/deep execution behavior
+  source_review_reason: Direct two-feature compatibility condition and an executable training path.
+  affected_parameter_candidates:
+  - recompute_granularity
+  - sequence_parallel
+  - moe_router_topk
+  - num_experts
+  - hidden_size
+  - num_layers
+  - world_size
+  - swiglu
+  changed_files:
+  - docs/features/pipeline-experts.md
+  - mindspeed/arguments.py
+  - mindspeed/model/transformer.py
+  - mindspeed/moe/pipe_experts.py
+  source_evidence:
+    commit_body: '!440 mlp通信隐藏适配ParallelMLP，添加使用多流时不开启sp的异常抛出，重构变量名
+
+      Merge pull request !440 from xiangjunwei/master_0530'
+    test_files: []
+    parameter_diff_lines:
+    - 8机, world_size = 64, sequence_len = 128k, num_layers = 4, recompute_granularity = full, hidden_size = 12288, moe_router_topk
+      = 2, ep = 4, tp = 8, dp = 2, cp = 4, pp = 1, sp = True
+    - 场景1：num_experts = 4 (num_local_experts = 1)
+    - 场景2：num_experts = 16 (num_local_experts = 4)
+    - 场景3：num_experts = 8 (num_local_experts = 2)
+    - 'if not args.sequence_parallel and args.pipe_experts_multi_stream:'
+    - 'if not args.swiglu:'
+    - output_detach_after_expert, handle = async_fw_ar_rs(output_detach_after_expert, sequence_parallel)
+    - output_detach_after_expert, handle = async_fw_ar_rs(output_detach_after_expert, sequence_parallel)
+    - 场景1：num_experts = 4, ep = 4
+    - 场景2：num_experts = 16, ep = 4
+    - 场景3：num_experts = 8, ep = 4
+    - out_detach, handle = async_fw_ar_rs(out_detach, sequence_parallel)
+    guard_diff_lines:
+    - 'if not args.sequence_parallel and args.pipe_experts_multi_stream:'
+    - raise AssertionError('--pipe-experts-multi-stream can only be used with --sequence-parallel.')
+    - 'if not args.swiglu:'
+    - 'if isinstance(output_expert, tuple):'
+    - 'if isinstance(out, tuple):'
+    oracle_diff_lines:
+    - raise AssertionError('--pipe-experts-multi-stream can only be used with --sequence-parallel.')
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 2
+  candidate_id: mindspeed-llm-3e1392c4dc11
+  repository: MindSpeed-LLM
+  subject: '!1834 修复llama-13b权重转换部分参数缺失报错 Merge pull request !1834 from wucong/fix_checkpoint'
+  buggy_commit: c653aaed08ea417b00fce40b5008a234c7f8231b
+  fix_commit: 3e1392c4dc111e85b8590b2514c9b5e5eb180b55
+  source_review_status: exclude
+  configuration_trigger_confirmed: false
+  trigger_summary: null
+  workload_evidence: null
+  failure_oracle_evidence: null
+  source_review_reason: Checkpoint import omitted parameters; the shortlisted parameter names are model fixture values rather
+    than the configuration trigger.
+  affected_parameter_candidates:
+  - untie_embeddings_and_output_weights
+  - multi_head_latent_attention
+  - max_position_embeddings
+  - moe_intermediate_size
+  - group_query_attention
+  - num_attention_heads
+  - padded_vocab_size
+  - global_batch_size
+  - intermediate_size
+  - add_bias_linear
+  - ffn_hidden_size
+  - kv_lora_rank
+  - num_experts
+  - q_lora_rank
+  - hidden_size
+  - vocab_size
+  - num_layers
+  - seq_length
+  - swiglu
+  changed_files:
+  - modellink/tasks/checkpoint/models.py
+  source_evidence:
+    commit_body: '!1834 修复llama-13b权重转换部分参数缺失报错
+
+      Merge pull request !1834 from wucong/fix_checkpoint'
+    test_files: []
+    parameter_diff_lines:
+    - self.args.seq_length = getattr(hf_args, "max_position_embeddings", 4096)
+    - self.args.global_batch_size = 1024
+    - self.args.max_position_embeddings = self.args.seq_length
+    - self.args.hidden_size = hf_args.hidden_size
+    - self.args.num_attention_heads = hf_args.num_attention_heads
+    - self.args.num_layers = hf_args.num_layers
+    - self.args.swiglu = hf_args.swiglu
+    - self.args.add_bias_linear = hf_args.add_bias_linear
+    - self.args.untie_embeddings_and_output_weights = not getattr(hf_args, "tie_word_embeddings", False)
+    - self.args.vocab_size = hf_args.vocab_size
+    - self.args.padded_vocab_size = hf_args.vocab_size
+    - self.args.ffn_hidden_size = hf_args.intermediate_size
+    guard_diff_lines:
+    - self.args.kv_channels = hf_args.kv_channels if hasattr(hf_args, "kv_channels") else None
+    - 'if self.args.shared_expert_intermediate_size is not None and self.args.n_shared_experts is None:'
+    - 'if self.args.multi_head_latent_attention:'
+    - 'if self.args.add_dense_bias:'
+    - if (
+    - 'if hf_args.num_attention_heads == 1:'
+    - raise AssertionError("Number of attention heads should be greater than 1!")
+    - 'if hasattr(hf_args, ''num_local_experts''):'
+    - raise AssertionError("You may got an incomplete config, please check hf config.json")
+    - self.args.kv_channels = hf_args.kv_channels if hasattr(hf_args, "kv_channels") else None
+    - 'if self.args.shared_expert_intermediate_size is not None and self.args.n_shared_experts is None:'
+    - 'if self.args.multi_head_latent_attention:'
+    oracle_diff_lines:
+    - raise AssertionError("Number of attention heads should be greater than 1!")
+    - 'except Exception as e:'
+    - raise AssertionError("You may got an incomplete config, please check hf config.json")
+    - raise AssertionError("Number of attention heads should be greater than 1!")
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 3
+  candidate_id: mindspeed-3dfc232bd297
+  repository: MindSpeed
+  subject: '!2279 bugfix: 修复pp和megatron_basic获取args参数的错误 Merge pull request !2279 from liurong1995/bugfix_args'
+  buggy_commit: 53463a3fbc61b87e043b02dafc30cff7e9a6d773
+  fix_commit: 3dfc232bd297b45582c833a208ca5cfc6a0a4fe7
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: pipeline parallel or multi-parameter pipeline execution
+  workload_evidence: Included system test and pipeline training configuration
+  failure_oracle_evidence: AttributeError, incorrect process-group use, or tensor-shape mismatch
+  source_review_reason: The patch directly corrects PP-dependent arguments, groups, and shapes.
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - expert_model_parallel_size
+  - context_parallel_size
+  - micro_batch_size
+  - hidden_size
+  - world_size
+  changed_files:
+  - mindspeed/core/pipeline_parallel/flexible_schedules.py
+  - mindspeed/core/pipeline_parallel/multi_parameter/adaptor.py
+  - mindspeed/core/pipeline_parallel/optimize_send_recv_comm/adaptor.py
+  - mindspeed/core/pipeline_parallel/optimize_send_recv_comm/parallel_state.py
+  - mindspeed/features_manager/pipeline_parallel/optimize_send_recv_comm.py
+  - tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+  source_evidence:
+    commit_body: '!2279 bugfix: 修复pp和megatron_basic获取args参数的错误
+
+      Merge pull request !2279 from liurong1995/bugfix_args'
+    test_files:
+    - tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+    parameter_diff_lines:
+    - 'tensor_model_parallel_size: int = 1,'
+    - 'pipeline_model_parallel_size: int = 1,'
+    - 'context_parallel_size: int = 1,'
+    - 'expert_model_parallel_size: int = 1,'
+    - 'world_size: int = torch.distributed.get_world_size()'
+    - 'num_pipeline_model_parallel_groups: int = world_size // pipeline_model_parallel_size'
+    - ranks = range(i, world_size, num_pipeline_model_parallel_groups)
+    - '"shape": (args.micro_batch_size, args.hidden_size),'
+    - '"shape": (args.micro_batch_size, args.hidden_size),'
+    - '"shape": (args.micro_batch_size, args.hidden_size),'
+    - '"shape": (args.micro_batch_size, args.hidden_size),'
+    guard_diff_lines:
+    - 'if scheduler_plan is None and getattr(arguments, "pp_schedule_list", None):'
+    - 'if nccl_communicator_config_path is not None:'
+    - 'if _PIPELINE_MODEL_PARALLEL_GROUP_FOR_NEW_STREAM is not None:'
+    - raise AttributeError(
+    - 'if get_nccl_options is not None:'
+    - 'if rank in ranks:'
+    - 'if _PIPELINE_MODEL_PARALLEL_GROUP_FOR_NEW_STREAM is None:'
+    - raise AttributeError("Pipeline parallel group of backward is not initialized")
+    - 'if scheduler_plan is None and arguments.pp_schedule_list:'
+    oracle_diff_lines:
+    - raise AttributeError(
+    - raise AttributeError("Pipeline parallel group of backward is not initialized")
+    - args.pipeline_tensor_shapes = [
+    - '"shape": (args.micro_batch_size, args.hidden_size),'
+    - '"shape": (args.micro_batch_size, args.hidden_size),'
+    - args.pipeline_tensor_shapes = [
+    - '"shape": (args.micro_batch_size, args.hidden_size),'
+    - '"shape": (args.micro_batch_size, args.hidden_size),'
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 4
+  candidate_id: mindspeed-llm-118f67aae8c6
+  repository: MindSpeed-LLM
+  subject: 'refactor: make post_norm config-driven, fix fc_type ref, clean qkv_split'
+  buggy_commit: 6b9c3f1e104cc425a95ceb7fd2b83f44d32c3e48
+  fix_commit: 118f67aae8c6a314c8e57d6cb36c3af2c2e05875
+  source_review_status: exclude
+  configuration_trigger_confirmed: false
+  trigger_summary: null
+  workload_evidence: null
+  failure_oracle_evidence: null
+  source_review_reason: Primarily checkpoint-format/refactoring work; no isolated configuration predicate or stable failure
+    oracle is established.
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - expert_model_parallel_size
+  - group_query_attention
+  - num_attention_heads
+  - hidden_size
+  changed_files:
+  - configs/checkpoint/model_cfg.json
+  - mindspeed_llm/tasks/checkpoint/convert_hf2mg.py
+  - mindspeed_llm/tasks/checkpoint/convert_mg2hf.py
+  - tests/pipeline/ut/checkpoint/test_checkpoint.json
+  source_evidence:
+    commit_body: "refactor: make post_norm config-driven, fix fc_type ref, clean qkv_split\n\nCo-authored-by: wanggangguo<wanggangguo@huawei.com>\n\
+      \n\n\n# message auto-generated for no-merge-commit merge:\n!4738 merge refactor into master\n\nrefactor: make post_norm\
+      \ config-driven, fix fc_type ref, clean qkv_split\n\nCreated-by: isfrapples\nCommit-by: wanggangguo\nMerged-by: ascend-robot\n\
+      Description: \n## What this PR does / why we need it?\n\n1. post_norm 由运行时探测改为配置驱动，model_cfg.json 显式声明\n2. fc_type 修复为从\
+      \ load_model 读取，up_down 分支无 gate\n3. 移除 qkv_split 冗余配置，ng>1 时始终 per-group 拆分\n4. 旧 checkpoint 缺少 post_attn_norm.weight\
+      \ 时容错不崩溃\n5. 移除 extra_norm_keys 遍历和 hasattr 死代码\n\n## Does this PR introduce any user-facing change?\n\n1. 新增 gemma2\
+      \ 配置项 post_norm: true，需同步 model_cfg.json\n2. 移除 qwen2-moe、qwen25、gemma2、seed-oss 的 qkv_split 配置\n3. 无 API 或 CLI 接口变更，向下兼容旧\
+      \ checkpoint\n\n## How was this patch tested?\n\n1. 13 个测试用例全部通过，覆盖 6 个模型和 2 个转换方向\n2. 每个用例包含完整权重精确对比，gate_proj 参与校验\n\
+      3. 旧 checkpoint 兼容性验证：gemma2 缺少 post_attn_norm 不崩溃\n4. 存量 bug 修复验证：llama2 k_proj 形状错误已修复\n\nfixes#1604\n\nSee merge\
+      \ request: Ascend/MindSpeed-LLM!4738"
+    test_files:
+    - tests/pipeline/ut/checkpoint/test_checkpoint.json
+    parameter_diff_lines:
+    - mlp_l0_weight = torch.chunk(linear_fc1_weight, self.tensor_model_parallel_size, dim=0)
+    - mlp_l0_weight_W = torch.chunk(gate, self.tensor_model_parallel_size, dim=0)
+    - mlp_l0_weight_V = torch.chunk(up, self.tensor_model_parallel_size, dim=0)
+    - '# presence and inequality with num_attention_heads, NOT by the'
+    - '# group_query_attention flag saved in mg checkpoint (which is unreliable).'
+    - hidden_size = qkv_weight.shape[-1]
+    - q_proj = qkv_weight[:, :repeats, ...].reshape(-1, hidden_size)
+    - 'k_proj = qkv_weight[:, repeats : repeats + 1, ...].reshape(-1, hidden_size)'
+    - v_proj = qkv_weight[:, repeats + 1 :, ...].reshape(-1, hidden_size)
+    - 'for ep_rank in range(self.expert_model_parallel_size):'
+    - 'for tp_rank in range(self.tensor_model_parallel_size):'
+    - mlp_l0_weight_W = torch.chunk(gate, self.tensor_model_parallel_size, dim=0)
+    guard_diff_lines:
+    - 'if getattr(self.load_model, "post_norm", False):'
+    - 'if getattr(self.load_model, "post_norm", False):'
+    - 'if getattr(self.load_model, "post_norm", False):'
+    - 'if extra_post_norm_key is not None:'
+    - 'if post_mlp_norm_key is not None:'
+    - 'if getattr(self.load_model, "fc_type", None) == "up_down":'
+    - 'if getattr(self.load_model, "post_norm", False):'
+    - 'if not mtp_layer_flag and getattr(self.load_model, "post_norm", False):'
+    - 'if hasattr(self.load_model, ''num_key_value_heads'') and self.load_model.num_key_value_heads != nh:'
+    - 'if getattr(self.load_model, "fc_type", None) == "up_down":'
+    - 'if getattr(self.load_model, "fc_type", None) == "up_down":'
+    - 'if getattr(self.load_model, "fc_type", None) != "up_down":'
+    oracle_diff_lines:
+    - qkv_weight = qkv_weight.reshape(
+    - qkv_weight.shape[0] // ng // (repeats + 2),
+    - qkv_weight.shape[1],
+    - hidden_size = qkv_weight.shape[-1]
+    - q_proj = qkv_weight[:, :repeats, ...].reshape(-1, hidden_size)
+    - 'k_proj = qkv_weight[:, repeats : repeats + 1, ...].reshape(-1, hidden_size)'
+    - v_proj = qkv_weight[:, repeats + 1 :, ...].reshape(-1, hidden_size)
+    - qkv_weight = qkv_weight.reshape(
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 5
+  candidate_id: mindspeed-8f9bef1affaa
+  repository: MindSpeed
+  subject: '!1452 参数副本确定性计算Bug修复 & UT补充构建 Merge pull request !1452 from Kingsleyandher/master'
+  buggy_commit: bdcd5e2c47bbb2cc35b87915298e99ed1d53d38e
+  fix_commit: 8f9bef1affaac880f95baed911140989546adadb
+  source_review_status: exclude
+  configuration_trigger_confirmed: false
+  trigger_summary: null
+  workload_evidence: null
+  failure_oracle_evidence: null
+  source_review_reason: Optimizer-copy correctness fix; audited parameter names occur in tests but do not form the trigger.
+  affected_parameter_candidates:
+  - max_sequence_length
+  - num_attention_heads
+  - hidden_size
+  - vocab_size
+  - num_layers
+  - world_size
+  changed_files:
+  - mindspeed/optimizer/distrib_optimizer.py
+  - tests_extend/unit_tests/features/algorithm/test_reuse_dptr.py
+  - tests_extend/unit_tests/features/algorithm/test_reuse_optimizer.py
+  source_evidence:
+    commit_body: '!1452 参数副本确定性计算Bug修复 & UT补充构建
+
+      Merge pull request !1452 from Kingsleyandher/master'
+    test_files:
+    - tests_extend/unit_tests/features/algorithm/test_reuse_dptr.py
+    - tests_extend/unit_tests/features/algorithm/test_reuse_optimizer.py
+    parameter_diff_lines:
+    - default_config_kwargs = dict(num_layers=8, hidden_size=512, num_attention_heads=32, use_cpu_initialization=True)
+    - model = GPTModel(config=transformer_config, transformer_layer_spec=get_gpt_layer_local_spec(), vocab_size=1024, max_sequence_length=64,
+      pre_process=pre_process, post_process=post_process)
+    - world_size = 8
+    guard_diff_lines:
+    - 'if not self.first_sub_flag and not npu_deterministic:'
+    - 'if not self.first_sub_flag and npu_deterministic:'
+    - assert hasattr(optimizer, "state")
+    - 'if "exp_avg_sq" not in optimizer.state[shard_fp32_param]:'
+    - assert shard_int32_tensor.numel() == shard_fp32_param.numel()
+    - 'if remain > 0:'
+    - assert hasattr(optimizer, "state")
+    - 'if "exp_avg_sq" not in optimizer.state[shard_fp32_param]:'
+    - assert shard_int32_tensor.numel() == shard_fp32_param.numel()
+    - 'if remain > 0:'
+    - assert torch.allclose(reuse, truth, rtol=0, atol=0)
+    - assert torch.allclose(reuse, truth, rtol=0, atol=0)
+    oracle_diff_lines:
+    - assert hasattr(optimizer, "state")
+    - assert shard_int32_tensor.numel() == shard_fp32_param.numel()
+    - exp_avg_sq_flatten = optimizer.state[shard_fp32_param]["exp_avg_sq"].reshape(-1)
+    - assert hasattr(optimizer, "state")
+    - assert shard_int32_tensor.numel() == shard_fp32_param.numel()
+    - exp_avg_sq_flatten = optimizer.state[shard_fp32_param]["exp_avg_sq"].reshape(-1)
+    - bf16_truth_tensors = [tensor.bfloat16().reshape(-1) for tensor in fp32_tensors]
+    - int32_tensors = [tensor.view(torch.int32).reshape(-1) for tensor in fp32_tensors]
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 6
+  candidate_id: mindspeed-llm-8a07245c2c43
+  repository: MindSpeed-LLM
+  subject: '!2175 【Ray GRPO】添加GRPO ST用例，并补充readme，fix config bug Merge pull request !2175 from 朱意霖/master'
+  buggy_commit: 220cb1b0983985c58e7c3ab8f8920c31d4dacef4
+  fix_commit: 8a07245c2c4303ee2b5a8a0aa839022794abeb76
+  source_review_status: exclude
+  configuration_trigger_confirmed: false
+  trigger_summary: null
+  workload_evidence: null
+  failure_oracle_evidence: null
+  source_review_reason: Changes only an example/configuration file and does not identify a framework bug in the buggy revision.
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - sequence_parallel
+  - global_batch_size
+  - micro_batch_size
+  - lr_decay_style
+  - train_iters
+  - seq_length
+  changed_files:
+  - configs/rlxf/grpo_trainer_llama32_1b.yaml
+  - docs/features/ray_grpo.md
+  - tests/st/configs/ray_grpo_full_llama32_1b_tp1pp1.yaml
+  source_evidence:
+    commit_body: '!2175 【Ray GRPO】添加GRPO ST用例，并补充readme，fix config bug
+
+      Merge pull request !2175 from 朱意霖/master'
+    test_files:
+    - tests/st/baseline_results/ray_grpo_full_llama32_1b_tp1pp1.json
+    - tests/st/configs/ray_grpo_full_llama32_1b_tp1pp1.yaml
+    - tests/st/shell_scripts/ray_grpo_full_llama32_1b_tp1pp1.sh
+    parameter_diff_lines:
+    - 'global_batch_size: 4'
+    - 'seq_length: 512'
+    - 'train_iters: 15'
+    - 'sequence_parallel: False'
+    - 'micro_batch_size: 1'
+    - 'tensor_model_parallel_size: 1'
+    - 'pipeline_model_parallel_size: 1'
+    - 'lr_decay_style: constant'
+    - 'tensor_model_parallel_size: 1'
+    - 'pipeline_model_parallel_size: 1'
+    - 'micro_batch_size: 4'
+    - 'tensor_model_parallel_size: 1'
+    guard_diff_lines: []
+    oracle_diff_lines: []
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 7
+  candidate_id: mindspeed-e93cbb5f80ff
+  repository: MindSpeed
+  subject: '!499 [bugfix]: mcore适配mc2，增加对应ut; 修复mcore MoE 环境下没有打开mc2的问题 Merge pull request !499 from Wang Xiaochao/master'
+  buggy_commit: d422f0f3f22ea44718858f42b587697595ed8995
+  fix_commit: e93cbb5f80ffb7f3126e89ac373cc43c156bfdda
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: MoE with TP/sequence parallel and MC2-related communication enabled
+  workload_evidence: Included MoE system tests
+  failure_oracle_evidence: shape mismatch, assertion failure, or output mismatch
+  source_review_reason: The patch activates the missing MC2 path for a concrete MoE configuration interaction.
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - num_attention_heads
+  - sequence_parallel
+  - hidden_size
+  - vocab_size
+  - num_layers
+  - batch_size
+  - world_size
+  - seq_len
+  changed_files:
+  - docs/features/mc2.md
+  - mindspeed/core/tensor_parallel/ascend_turbo/initialize.py
+  - tests_extend/model_tests/benchmark_model/gpt_moe/pretrain_gpt_moe_32k_cp2.sh
+  - tests_extend/unit_tests/features/mc2/test_mc2columnparallellinear.py
+  - tests_extend/unit_tests/features/mc2/test_mc2rowparallellinear.py
+  - tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+  - tests_extend/unit_tests/features/test_mc2columnparallellinear.py
+  - tests_extend/unit_tests/features/test_mc2rowparallellinear.py
+  source_evidence:
+    commit_body: '!499 [bugfix]: mcore适配mc2，增加对应ut; 修复mcore MoE 环境下没有打开mc2的问题
+
+      Merge pull request !499 from Wang Xiaochao/master'
+    test_files:
+    - tests_extend/model_tests/benchmark_model/gpt_moe/pretrain_gpt_moe_32k_cp2.sh
+    - tests_extend/model_tests/benchmark_model/llama2/pretrain_llama2_70b_phd_128k.sh
+    - tests_extend/model_tests/benchmark_model/llama2/pretrain_llama2_70b_phd_32k_cp2.sh
+    - tests_extend/unit_tests/features/mc2/test_mc2columnparallellinear.py
+    - tests_extend/unit_tests/features/mc2/test_mc2rowparallellinear.py
+    - tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+    - tests_extend/unit_tests/features/test_mc2columnparallellinear.py
+    - tests_extend/unit_tests/features/test_mc2rowparallellinear.py
+    parameter_diff_lines:
+    - transformer_config.sequence_parallel = args.sequence_parallel
+    - transformer_config.sequence_parallel = args.sequence_parallel
+    - args.tensor_model_parallel_size = 8
+    - args.seq_len = 128
+    - args.batch_size = 8
+    - args.sequence_parallel = True
+    - args.vocab_size = 512
+    - world_size = 8
+    - transformer_config = TransformerConfig(num_layers=1,
+    - hidden_size=12,
+    - num_attention_heads=4,
+    - transformer_config.sequence_parallel = args.sequence_parallel
+    guard_diff_lines:
+    - 'if weight is None:'
+    - 'if self.weight is None:'
+    - raise RuntimeError(
+    - 'if weight.shape != expected_shape:'
+    - raise RuntimeError(
+    - assert torch.allclose(output_mc2_close, output_mc2_open, rtol=0.005, atol=0.005)
+    - assert torch.allclose(output_weight_grad_mc2_close, output_weight_grad_mc2_open, rtol=0.005, atol=0.005)
+    - assert torch.allclose(linear_layer_mc2_close.bias.grad, linear_layer_mc2_open.bias.grad, rtol=0.005, atol=0.005)
+    oracle_diff_lines:
+    - raise RuntimeError(
+    - '# Check the weight passed in is the correct shape'
+    - expected_shape = (self.output_size_per_partition, self.input_size)
+    - 'if weight.shape != expected_shape:'
+    - raise RuntimeError(
+    - f"supplied weight's shape is {tuple(weight.shape)},"
+    - f"not {expected_shape} as expected"
+    - assert torch.allclose(output_mc2_close, output_mc2_open, rtol=0.005, atol=0.005)
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 8
+  candidate_id: mindspeed-llm-8ff43a117958
+  repository: MindSpeed-LLM
+  subject: '!3125 [pytorch][bugfix]fix qwen2_moe spec Merge pull request !3125 from guozhihua/fix_transformer_block_build_layer'
+  buggy_commit: ea1200a1d82293181b8a7451761c4976528fb4a7
+  fix_commit: 8ff43a117958cad4374e8bf2bc89a17ffdc6194a
+  source_review_status: defer
+  configuration_trigger_confirmed: null
+  trigger_summary: Qwen2-MoE with several newly supported options
+  workload_evidence: Broad Qwen2-MoE training configurations
+  failure_oracle_evidence: multiple possible assertions or unsupported paths
+  source_review_reason: The commit bundles feature support and several validators; one independent historical root cause must
+    be isolated first.
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  - pipeline_model_parallel_size
+  - multi_head_latent_attention
+  - num_experts
+  - num_layers
+  changed_files:
+  - examples/mcore/qwen2_moe/evaluate_qwen2_57b_a14b_ptd.sh
+  - examples/mcore/qwen2_moe/generate_qwen2_57b_a14b_ptd.sh
+  - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_32k_ptd.sh
+  - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_A3_ptd.sh
+  - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_ptd.sh
+  - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_full.sh
+  - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_full_pack.sh
+  - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_lora.sh
+  - mindspeed_llm/core/transformer/transformer_block.py
+  - mindspeed_llm/features_manager/pipeline_parallel/noop_layers.py
+  - mindspeed_llm/features_manager/tokenizer/build_tokenizer.py
+  - mindspeed_llm/features_manager/transformer/flash_attention/fusion_attention_feature.py
+  - mindspeed_llm/features_manager/transformer/mtp.py
+  - mindspeed_llm/features_manager/transformer/multi_latent_attention/mla_feature.py
+  - mindspeed_llm/features_manager/transformer/transformer_block.py
+  - mindspeed_llm/training/arguments.py
+  - tests/st/shell_scripts/qwen2_moe_tp1_pp2_ep2_cp2_32k.sh
+  source_evidence:
+    commit_body: '!3125 [pytorch][bugfix]fix qwen2_moe spec
+
+      Merge pull request !3125 from guozhihua/fix_transformer_block_build_layer'
+    test_files:
+    - examples/mcore/qwen2_moe/evaluate_qwen2_57b_a14b_ptd.sh
+    - examples/mcore/qwen2_moe/generate_qwen2_57b_a14b_ptd.sh
+    - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_32k_ptd.sh
+    - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_A3_ptd.sh
+    - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_ptd.sh
+    - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_full.sh
+    - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_full_pack.sh
+    - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_lora.sh
+    - tests/st/shell_scripts/qwen2_moe_tp1_pp2_ep2_cp2_32k.sh
+    parameter_diff_lines:
+    - raise AssertionError('The parameter kv-lora-rank should be set when use multi_head_latent_attention.'
+    - raise AssertionError('The parameter v-head-dim should be set when use multi_head_latent_attention.'
+    - raise AssertionError('The parameter qk-pos-emb-head-dim should be set when use multi_head_latent_attention.'
+    - raise AssertionError('The parameter qk-head-dim should be set when use multi_head_latent_attention.'
+    - 'if args.num_experts is None:'
+    - 'if args.first_k_dense_replace and args.num_layers <= args.first_k_dense_replace:'
+    - raise AssertionError('Num-layer ({}) must be greater than first-k-dense-replace ({}) when first-k-dense-replace is set.'.format(args.num_layers,
+    - 'if args.first_k_dense_replace and args.pipeline_model_parallel_size > 1:'
+    - 'if args.first_k_dense_replace >= args.num_layers // args.pipeline_model_parallel_size:'
+    - 'if args.num_experts is not None and args.use_ascend_mc2 and args.moe_grouped_gemm:'
+    - 'if len(args.num_layer_list.split('','')) != args.pipeline_model_parallel_size:'
+    - raise ValueError("len(args.num_layer_list) != args.pipeline_model_parallel_size")
+    guard_diff_lines:
+    - raise AssertionError('The parameter kv-lora-rank should be set when use multi_head_latent_attention.'
+    - raise AssertionError('The parameter v-head-dim should be set when use multi_head_latent_attention.'
+    - raise AssertionError('The parameter qk-pos-emb-head-dim should be set when use multi_head_latent_attention.'
+    - raise AssertionError('The parameter qk-head-dim should be set when use multi_head_latent_attention.'
+    - 'if args.num_experts is None:'
+    - 'if args.first_k_dense_replace is not None or args.moe_layer_freq is not None:'
+    - raise AssertionError('First-k-dense-replace and moe-layer-freq must be None when not using MoEs')
+    - 'if args.first_k_dense_replace and args.num_layers <= args.first_k_dense_replace:'
+    - raise AssertionError('Num-layer ({}) must be greater than first-k-dense-replace ({}) when first-k-dense-replace is set.'.format(args.num_layers,
+    - 'if args.first_k_dense_replace and args.pipeline_model_parallel_size > 1:'
+    - 'if args.first_k_dense_replace >= args.num_layers // args.pipeline_model_parallel_size:'
+    - raise AssertionError('When using first-k-dense-replace, it is not allowed for all layers within a pp stage to be dense
+      layers.')
+    oracle_diff_lines:
+    - raise AssertionError('The parameter kv-lora-rank should be set when use multi_head_latent_attention.'
+    - raise AssertionError('The parameter v-head-dim should be set when use multi_head_latent_attention.'
+    - raise AssertionError('The parameter qk-pos-emb-head-dim should be set when use multi_head_latent_attention.'
+    - raise AssertionError('The parameter qk-head-dim should be set when use multi_head_latent_attention.'
+    - raise AssertionError('First-k-dense-replace and moe-layer-freq must be None when not using MoEs')
+    - raise AssertionError('Num-layer ({}) must be greater than first-k-dense-replace ({}) when first-k-dense-replace is set.'.format(args.num_layers,
+    - raise AssertionError('When using first-k-dense-replace, it is not allowed for all layers within a pp stage to be dense
+      layers.')
+    - raise AssertionError('Moe Grouped Gemm is not supported with mc2 in MOE model.')
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 9
+  candidate_id: mindspeed-03bb94e94855
+  repository: MindSpeed
+  subject: '!2811 fix: transformer config validate bug Merge pull request !2811 from YE ZHENYUAN/master0904'
+  buggy_commit: 708af43cf9d42ec729a5cbb65bf20e0106bb67bd
+  fix_commit: 03bb94e948552071b5abe66a0ec6f04f91404ed9
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: recomputation with PP/VPP layer partitioning
+  workload_evidence: Included ripipe/recompute tests
+  failure_oracle_evidence: invalid recompute_num_layers validation or scheduling failure
+  source_review_reason: A specific derived configuration value is corrected as a function of PP/VPP.
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  - pipeline_model_parallel_size
+  - recompute_granularity
+  - recompute_num_layers
+  - recompute_method
+  - num_layers
+  changed_files:
+  - mindspeed/features_manager/pipeline_parallel/ripipe_schedules_feature.py
+  source_evidence:
+    commit_body: '!2811 fix: transformer config validate bug
+
+      Merge pull request !2811 from YE ZHENYUAN/master0904'
+    test_files: []
+    parameter_diff_lines:
+    - '# Check if recompute_num_layers is set to the value we expect'
+    - expected_recompute_num_layers = args.num_layers // args.pipeline_model_parallel_size
+    - expected_recompute_num_layers = args.num_layers_per_virtual_pipeline_stage
+    - '# Only raise error when recompute_num_layers is set and not equal to our expected value'
+    - 'if args.recompute_num_layers and args.recompute_num_layers != expected_recompute_num_layers:'
+    - 'if getattr(args, ''recompute_granularity'', None) != "full":'
+    - args.recompute_granularity = "full"
+    - 'if getattr(args, ''recompute_method'', None) != "block":'
+    - args.recompute_method = "block"
+    - 'if expected_recompute_num_layers is not None and args.recompute_num_layers != expected_recompute_num_layers:'
+    - args.recompute_num_layers = expected_recompute_num_layers
+    - 'if args.recompute_num_layers:'
+    guard_diff_lines:
+    - '# Check if recompute_num_layers is set to the value we expect'
+    - 'if getattr(args, "enable_recompute_layers_per_pp_rank", False):'
+    - '# Only raise error when recompute_num_layers is set and not equal to our expected value'
+    - 'if args.recompute_num_layers and args.recompute_num_layers != expected_recompute_num_layers:'
+    - '# Only set these values if they haven''t been set already to ensure idempotency'
+    - 'if getattr(args, ''recompute_granularity'', None) != "full":'
+    - 'if getattr(args, ''recompute_method'', None) != "block":'
+    - 'if expected_recompute_num_layers is not None and args.recompute_num_layers != expected_recompute_num_layers:'
+    - 'if args.recompute_num_layers:'
+    - 'if getattr(args, "enable_recompute_layers_per_pp_rank", False):'
+    oracle_diff_lines:
+    - '# Only raise error when recompute_num_layers is set and not equal to our expected value'
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 10
+  candidate_id: mindspeed-llm-6f8618b622c7
+  repository: MindSpeed-LLM
+  subject: '!3192 [pytorch][bugfix]change moe layer forward Merge pull request !3192 from guozhihua/fix-group-limited-greedy-bug'
+  buggy_commit: cf6e25cf7959c02fa44bf4d504aac555dda74377
+  fix_commit: 6f8618b622c71bf543c312465f17370f7e06f895
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: group_limited_greedy MoE routing with TP>1 and sequence_parallel disabled
+  workload_evidence: Included DeepSeek/MoE test script
+  failure_oracle_evidence: router assertion or forward failure
+  source_review_reason: Explicit multi-parameter trigger in the fixed validator and an executable workload.
+  affected_parameter_candidates:
+  - moe_router_load_balancing_type
+  - tensor_model_parallel_size
+  - sequence_parallel
+  - num_layers
+  changed_files:
+  - mindspeed_llm/core/transformer/moe/moe_layer.py
+  - mindspeed_llm/features_manager/moe/moe_router.py
+  source_evidence:
+    commit_body: '!3192 [pytorch][bugfix]change moe layer forward
+
+      Merge pull request !3192 from guozhihua/fix-group-limited-greedy-bug'
+    test_files:
+    - tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+    parameter_diff_lines:
+    - and self.config.tensor_model_parallel_size > 1
+    - and not self.config.sequence_parallel
+    - 'if args.moe_router_load_balancing_type == "group_limited_greedy":'
+    - self.config.num_layers,
+    - self.config.num_layers,
+    - 'if args.moe_router_load_balancing_type == "group_limited_greedy":'
+    - self.config.num_layers,
+    - self.config.num_layers,
+    guard_diff_lines:
+    - if (
+    - raise ValueError(
+    - '"During training, performance may degrade if MoE and tensor parallelism"'
+    - 'if args.moe_router_load_balancing_type == "group_limited_greedy":'
+    - 'if hasattr(args, "do_train") and args.do_train:'
+    - 'if hasattr(self.router, ''l_device_aux''):'
+    - 'if hasattr(self.router, ''l_comm_aux''):'
+    - 'if self.use_shared_expert and not self.shared_expert_overlap:'
+    - '# if shared_expert_overlap is True, the expert calculation happens in'
+    - 'if self.moe_layer_recompute:'
+    - 'if not (args.moe_allgather_overlap_comm or args.moe_alltoall_overlap_comm):'
+    - 'if args.moe_token_dispatcher_type == ''alltoall_seq'' and args.moe_alltoall_overlap_comm:'
+    oracle_diff_lines:
+    - raise ValueError(
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 11
+  candidate_id: mindspeed-c303a051fd66
+  repository: MindSpeed
+  subject: '!226 [Fix] Fix ulysses context parallel when bs greater than 1 Merge pull request !226 from 郭鹏/master'
+  buggy_commit: 1c6e0f938dd111bc1af9d735c8abd0f96d81185a
+  fix_commit: c303a051fd66c923b50f8d9d8e49ece56caabe6d
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: Ulysses context parallelism with micro-batch size greater than one
+  workload_evidence: Included context-parallel unit/system test
+  failure_oracle_evidence: shape or numerical mismatch
+  source_review_reason: The patch is scoped to a concrete CP and batch-size interaction.
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - expert_model_parallel_size
+  - context_parallel_size
+  - data_parallel_size
+  - attention_dropout
+  - world_size
+  - seq_len
+  changed_files:
+  - ascendspeed/core/context_parallel/ulysses_context_parallel.py
+  - ascendspeed/core/parallel_state.py
+  - tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ringattn_context_parallel.py
+  - tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+  source_evidence:
+    commit_body: '!226 [Fix] Fix ulysses context parallel when bs greater than 1
+
+      Merge pull request !226 from 郭鹏/master'
+    test_files:
+    - tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ringattn_context_parallel.py
+    - tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+    parameter_diff_lines:
+    - 'tensor_model_parallel_size: int = 1,'
+    - 'pipeline_model_parallel_size: int = 1,'
+    - 'context_parallel_size: int = 1,'
+    - 'expert_model_parallel_size: int = 1,'
+    - 'tensor_model_parallel_size (int, default = 1):'
+    - 'pipeline_model_parallel_size (int, default = 1):'
+    - tensor_model_parallel_size is 4 and
+    - pipeline_model_parallel_size is 2, the model will be split
+    - performed. For example, if tensor_model_parallel_size is 1,
+    - pipeline_model_parallel_size is 4,
+    - pipeline_model_parallel_size is 8 and
+    - 'context_parallel_size (int, default = 1):'
+    guard_diff_lines:
+    - Transformer layers across. For example, if
+    - performed. For example, if tensor_model_parallel_size is 1,
+    - independently. For example, if
+    - For example, assume we have 8 GPUs, if tensor model parallel
+    - are on the same DGX box. For example if we are using 2 DGX-1 boxes
+    - assert torch.distributed.is_initialized()
+    - if (
+    - raise RuntimeError(
+    - 'if data_parallel_size % expert_model_parallel_size != 0:'
+    - raise RuntimeError(
+    - 'if expert_model_parallel_size > 1 and context_parallel_size > 1:'
+    - raise RuntimeError(
+    oracle_diff_lines:
+    - other to exchange information of other sequence chunks.
+    - assert torch.distributed.is_initialized()
+    - raise RuntimeError(
+    - raise RuntimeError(
+    - raise RuntimeError(
+    - raise RuntimeError(
+    - 'except ImportError:'
+    - raise RuntimeError(
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 12
+  candidate_id: mindspeed-llm-0f8a1851fe37
+  repository: MindSpeed-LLM
+  subject: '!1062 修复moe代码合入导致的分布式优化器不可用bug * fix bug for alibi and distributed opti'
+  buggy_commit: 6a232b8f1f97735051060c0af957ba2e74ebaecc
+  fix_commit: 0f8a1851fe373e256213a796f64ae549ee6b84a3
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: MoE with distributed optimizer and ALiBi-related paths
+  workload_evidence: Existing MoE training examples in the commit
+  failure_oracle_evidence: optimizer/group initialization failure or attention failure
+  source_review_reason: Configuration interaction is plausible and source-backed, although execution must isolate one root
+    cause.
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - expert_model_parallel_size
+  - context_parallel_size
+  - world_size
+  changed_files:
+  - modellink/core/parallel_state.py
+  - modellink/model/transformer.py
+  source_evidence:
+    commit_body: '!1062 修复moe代码合入导致的分布式优化器不可用bug
+
+      * fix bug for alibi and distributed opti'
+    test_files:
+    - examples/llama/README.md
+    parameter_diff_lines:
+    - 'tensor_model_parallel_size: int = 1,'
+    - 'pipeline_model_parallel_size: int = 1,'
+    - 'context_parallel_size: int = 1,'
+    - 'expert_model_parallel_size: int = 1,'
+    - tensor_model_parallel_size,
+    - pipeline_model_parallel_size,
+    - context_parallel_size,
+    - expert_model_parallel_size,
+    - 'world_size: int = torch.distributed.get_world_size()'
+    - 'num_tensor_model_parallel_groups: int = world_size // tensor_model_parallel_size'
+    - 'num_pipeline_model_parallel_groups: int = world_size // pipeline_model_parallel_size'
+    - 'for i in range(pipeline_model_parallel_size):'
+    guard_diff_lines:
+    - 'if nccl_communicator_config_path is not None:'
+    - 'if _EXPERT_PARALLEL_GROUP is not None:'
+    - raise AttributeError('Expert parallel group is already initialized')
+    - 'if rank in ranks:'
+    - 'if torch.distributed.is_available() and torch.distributed.is_initialized():'
+    - 'if torch.distributed.is_available() and torch.distributed.is_initialized():'
+    - 'if _EXPERT_PARALLEL_GROUP is None:'
+    - raise AttributeError('Expert parallel group is not initialized')
+    - 'if _MPU_EXPERT_MODEL_PARALLEL_RANK is not None:'
+    - 'if torch.distributed.is_available() and torch.distributed.is_initialized():'
+    - 'if _MPU_EXPERT_MODEL_PARALLEL_WORLD_SIZE is not None:'
+    - 'if torch.distributed.is_available() and torch.distributed.is_initialized():'
+    oracle_diff_lines:
+    - raise AttributeError('Expert parallel group is already initialized')
+    - raise AttributeError('Expert parallel group is not initialized')
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 13
+  candidate_id: mindspeed-70ef444a72b9
+  repository: MindSpeed
+  subject: '!425 fix: Improve the scalability of context parallel; test(tests_extend/unit_tests/megatron/test_dot_product_attention.py)
+    Merge pull request !425 from 邓佳/master'
+  buggy_commit: 20440b3f7698241146ba16e63b6e97c8b9fb31dc
+  fix_commit: 70ef444a72b9d139bae6d3a4f0d61c6313cf765b
+  source_review_status: exclude
+  configuration_trigger_confirmed: false
+  trigger_summary: null
+  workload_evidence: null
+  failure_oracle_evidence: null
+  source_review_reason: Scalability/performance-oriented context-parallel change without a clear correctness failure oracle.
+  affected_parameter_candidates:
+  - context_parallel_size
+  - num_attention_heads
+  - hidden_size
+  - num_layers
+  - seq_len
+  changed_files:
+  - mindspeed/core/transformer/dot_product_attention.py
+  - tests_extend/unit_tests/megatron/test_dot_product_attention.py
+  source_evidence:
+    commit_body: '!425 fix: Improve the scalability of context parallel; test(tests_extend/unit_tests/megatron/test_dot_product_attention.py)
+
+      Merge pull request !425 from 邓佳/master'
+    test_files:
+    - tests_extend/unit_tests/megatron/test_dot_product_attention.py
+    parameter_diff_lines:
+    - 'def run_dot_product_att(cp_size, bs, seq_len, dtype):'
+    - args.context_parallel_size = cp_size
+    - initialize_model_parallel(context_parallel_size=cp_size)
+    - config = TransformerConfig(num_layers=2, hidden_size=32, num_attention_heads=4, use_cpu_initialization=True)
+    - b, n, s, d = bs, 4, seq_len, 8
+    guard_diff_lines:
+    - 'if get_context_parallel_group_for_hybrid_ring(check_initialized=False) is not None:'
+    - 'if not in_hybrid_mode:'
+    - if args.use_cp_send_recv_overlap else None
+    - args.context_parallel_algo = 'megatron_cp_algo' if cp_size > 1 else None
+    - assert isinstance(out, torch.Tensor)
+    oracle_diff_lines:
+    - assert isinstance(out, torch.Tensor)
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 14
+  candidate_id: mindspeed-llm-c06c15094bef
+  repository: MindSpeed-LLM
+  subject: '!3085 [pytorch][refactor]fix moe and fusions features in the refactor Merge pull request !3085 from guozhihua/fix_moe'
+  buggy_commit: a3fab77bc085ab6a856898a5fdba9e87aff3e353
+  fix_commit: c06c15094bef1abd6326dcf9067624dc0c9a406a
+  source_review_status: defer
+  configuration_trigger_confirmed: null
+  trigger_summary: multiple MoE/parallel options added or repaired together
+  workload_evidence: Several broad examples
+  failure_oracle_evidence: multiple unrelated failures
+  source_review_reason: The patch is too broad for one benchmark bug until an independent trigger is isolated.
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - multi_head_latent_attention
+  - ffn_hidden_size
+  - num_layers
+  changed_files:
+  - mindspeed_llm/features_manager/__init__.py
+  - mindspeed_llm/features_manager/common/embedding.py
+  - mindspeed_llm/features_manager/common/rotary.py
+  - mindspeed_llm/features_manager/megatron_basic/model_basic.py
+  - mindspeed_llm/features_manager/moe/moe_allgather_overlap.py
+  - mindspeed_llm/features_manager/moe/moe_alltoallseq_overlap.py
+  - mindspeed_llm/features_manager/moe/moe_router.py
+  - mindspeed_llm/features_manager/moe/shared_expert.py
+  - mindspeed_llm/features_manager/transformer/multi_latent_attention/mla_feature.py
+  source_evidence:
+    commit_body: '!3085 [pytorch][refactor]fix moe and fusions features in the refactor
+
+      Merge pull request !3085 from guozhihua/fix_moe'
+    test_files: []
+    parameter_diff_lines:
+    - args.moe_shared_expert_intermediate_size = args.n_shared_experts * args.ffn_hidden_size
+    - args.n_shared_experts = args.moe_shared_expert_intermediate_size // args.ffn_hidden_size
+    - num_layers_per_pipeline_stage = args.num_layers // args.pipeline_model_parallel_size
+    - 'if args.multi_head_latent_attention:'
+    guard_diff_lines:
+    - 'if args.multi_latent_attention:'
+    - 'if getattr(args, ''moe_token_dispatcher_type'', None) == "allgather":'
+    - 'if args.moe_allgather_overlap_comm:'
+    - 'if args.moe_alltoall_overlap_comm and not args.moe_token_dispatcher_type == ''alltoall_seq'':'
+    - raise AssertionError('`--moe-alltoall-overlap-comm` only support with `--moe-token-dispatcher-type alltoall_seq`.')
+    - 'if args.moe_alltoall_overlap_comm:'
+    - 'if not args.moe_permutation_async_comm:'
+    - raise AssertionError('`--moe-alltoall-overlap-comm` and `--moe-allgather-overlap-comm` only support with `--moe-permutation-async-comm`.')
+    - 'if not args.moe_grouped_gemm:'
+    - raise AssertionError('`--moe-alltoall-overlap-comm` and `--moe-allgather-overlap-comm` only support with `--moe-grouped-gemm`.')
+    - 'if args.n_shared_experts is not None and args.moe_shared_expert_intermediate_size is None:'
+    - 'if args.moe_zero_memory_num_layers is not None:'
+    oracle_diff_lines:
+    - raise AssertionError('`--moe-alltoall-overlap-comm` only support with `--moe-token-dispatcher-type alltoall_seq`.')
+    - raise AssertionError('`--moe-alltoall-overlap-comm` and `--moe-allgather-overlap-comm` only support with `--moe-permutation-async-comm`.')
+    - raise AssertionError('`--moe-alltoall-overlap-comm` and `--moe-allgather-overlap-comm` only support with `--moe-grouped-gemm`.')
+    - raise AssertionError('`--moe-zero-memory-num-layers` must be between 0 and num layers per pipeline stage')
+    - raise AssertionError('`--moe-zero-memory` must be enabled when using `--moe-zero-memory-num-layers`')
+    - raise AssertionError('`--moe-zero-memory` do not support `--moe-allgather-overlap-comm` for now.')
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 15
+  candidate_id: mindspeed-b3fb85187834
+  repository: MindSpeed
+  subject: '!1543 [bugfix] fix expert parallel group Merge pull request !1543 from ningbenzhe1/master'
+  buggy_commit: 5d85e674cbf7ffec8816ac79bcd3c0fc9359533c
+  fix_commit: b3fb8518783498ffe52bfaedecf88f5b99899b94
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: expert parallel topology where DP*CP is incompatible with EP
+  workload_evidence: MoE/EP initialization workload
+  failure_oracle_evidence: explicit RuntimeError during parallel-group initialization
+  source_review_reason: The patch contains a concrete topology predicate and deterministic oracle.
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - expert_model_parallel_size
+  - context_parallel_size
+  - data_parallel_size
+  - world_size
+  changed_files:
+  - mindspeed/core/parallel_state.py
+  source_evidence:
+    commit_body: '!1543 [bugfix] fix expert parallel group
+
+      Merge pull request !1543 from ningbenzhe1/master'
+    test_files: []
+    parameter_diff_lines:
+    - tensor_model_parallel_size,
+    - pipeline_model_parallel_size,
+    - context_parallel_size,
+    - 'world_size: int = torch.distributed.get_world_size()'
+    - 'num_tensor_model_parallel_groups: int = world_size // tensor_model_parallel_size'
+    - 'num_pipeline_model_parallel_groups: int = world_size // pipeline_model_parallel_size'
+    - 'data_parallel_size: int = world_size // ('
+    - tensor_model_parallel_size * pipeline_model_parallel_size * context_parallel_size
+    - 'if data_parallel_size * context_parallel_size % expert_model_parallel_size != 0:'
+    - f"data_parallel_size * context_parallel_size ({data_parallel_size * context_parallel_size}) is not "
+    - f"divisible by expert_model_parallel_size "
+    - 'for i in range(pipeline_model_parallel_size):'
+    guard_diff_lines:
+    - 'if order == "tp-cp-ep-dp-pp":'
+    - 'if data_parallel_size * context_parallel_size % expert_model_parallel_size != 0:'
+    - raise RuntimeError(
+    - 'if nccl_communicator_config_path is not None:'
+    - 'if rank in ranks:'
+    - 'if rank in ranks:'
+    - 'if get_context_parallel_world_size() > 1:'
+    - 'if virtual_pipeline_model_parallel_size is not None:'
+    - 'if data_parallel_size * context_parallel_size % expert_model_parallel_size != 0:'
+    - raise RuntimeError(
+    - 'if nccl_communicator_config_path is not None:'
+    oracle_diff_lines:
+    - raise RuntimeError(
+    - raise RuntimeError(
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 16
+  candidate_id: mindspeed-llm-86ff5d73ed9c
+  repository: MindSpeed-LLM
+  subject: '!1571 Del: remove moe legacy and its system tests Merge pull request !1571 from RuanZhiXiang/moe-legacy-fix'
+  buggy_commit: cd878c44cb59517588e2c903ff5d602b7f8def4b
+  fix_commit: 86ff5d73ed9c750164d6601a4cf2daf29787dfad
+  source_review_status: exclude
+  configuration_trigger_confirmed: false
+  trigger_summary: null
+  workload_evidence: null
+  failure_oracle_evidence: null
+  source_review_reason: Legacy MoE removal/cleanup rather than a reproducible configuration-related defect.
+  affected_parameter_candidates:
+  - expert_model_parallel_size
+  - moe_router_topk
+  - ffn_hidden_size
+  - num_experts
+  - hidden_size
+  changed_files:
+  - modellink/model/moe.py
+  source_evidence:
+    commit_body: '!1571 Del: remove moe legacy and its system tests
+
+      Merge pull request !1571 from RuanZhiXiang/moe-legacy-fix'
+    test_files:
+    - examples/mixtral/convert_ckpt_mixtral_hf2legacy.sh
+    - examples/mixtral/convert_ckpt_mixtral_legacy2hf.sh
+    - examples/mixtral/data_convert_mixtral_pretrain.sh
+    - examples/mixtral/evaluate_mixtral_8x7b_ptd.sh
+    - examples/mixtral/generate_mixtral_8x7b_ptd.sh
+    - examples/mixtral/pretrain_mixtral_8x7b_ptd.sh
+    - tests/README.md
+    - tests/st/baseline_results/mixtral_legacy_tp2_ep4_ptd.json
+    - tests/st/baseline_results/mixtral_mcore_tp4_cp2_ep2_ptd.json
+    - tests/st/shell_scripts/mixtral_legacy_tp2_ep4_ptd.sh
+    parameter_diff_lines:
+    - self.ffn_dim = config.ffn_hidden_size
+    - self.hidden_dim = config.hidden_size
+    - config.hidden_size,
+    - config.ffn_hidden_size,
+    - config.ffn_hidden_size,
+    - config.hidden_size,
+    - config.hidden_size,
+    - config.ffn_hidden_size,
+    - args.hidden_size,
+    - num_experts=args.num_experts,
+    - ep_size=args.expert_model_parallel_size,
+    - k=args.moe_router_topk,
+    guard_diff_lines:
+    - 'if layer_number is None:'
+    - 'if layer_number % args.expert_interval == 0:'
+    oracle_diff_lines:
+    - 'except AttributeError:'
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 17
+  candidate_id: mindspeed-1caf2d4413e1
+  repository: MindSpeed
+  subject: '!2684 修复动态padding没考虑sequence_parallel的bug Merge pull request !2684 from yuqi/new_pad_fix'
+  buggy_commit: 7932055d9fbca53691b6d286c95258a103be4f49
+  fix_commit: 1caf2d4413e100ce4fc5dc7620e238cb81262745
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: dynamic padding combined with sequence parallelism or TP
+  workload_evidence: Dynamic-padding training path
+  failure_oracle_evidence: sequence-length or tensor-shape mismatch
+  source_review_reason: The patch adjusts dynamic sequence length by TP only under the relevant parallel configuration.
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - sequence_parallel
+  - micro_batch_size
+  - seq_length
+  changed_files:
+  - mindspeed/core/context_parallel/get_batch_utils.py
+  - mindspeed/core/context_parallel/utils.py
+  - mindspeed/core/transformer/flash_attention/reset_attention_mask/adaptor.py
+  source_evidence:
+    commit_body: '!2684 修复动态padding没考虑sequence_parallel的bug
+
+      Merge pull request !2684 from yuqi/new_pad_fix'
+    test_files: []
+    parameter_diff_lines:
+    - 'if args.micro_batch_size == 1:'
+    - batched_index = batch_index(actual_seq_len_lst, args.seq_length)
+    - 'if args.sequence_parallel:'
+    - dynamic_seq_len *= args.tensor_model_parallel_size
+    - 'if args.sequence_parallel:'
+    - dynamic_seq_len *= args.tensor_model_parallel_size
+    guard_diff_lines:
+    - 'if args.micro_batch_size == 1:'
+    - 'if divisible(actual_seq_len, pad_to):'
+    - 'if args.sequence_parallel:'
+    - 'if args.sequence_parallel:'
+    - 'if divisible(tensor, pad_to):'
+    oracle_diff_lines: []
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 18
+  candidate_id: mindspeed-llm-d68728b50bc4
+  repository: MindSpeed-LLM
+  subject: '!2217 [mcore-llm]修复dense/moe场景下的异常显存峰值问题 Merge pull request !2217 from 丁子叉/master'
+  buggy_commit: 61157536c94889875ad4dff5b1748f1714f28549
+  fix_commit: d68728b50bc476f3f6b6811ff35018b55ba29559
+  source_review_status: exclude
+  configuration_trigger_confirmed: false
+  trigger_summary: null
+  workload_evidence: null
+  failure_oracle_evidence: null
+  source_review_reason: Peak-memory issue is a resource/performance problem and is excluded by the benchmark policy.
+  affected_parameter_candidates:
+  - moe_intermediate_size
+  - ffn_hidden_size
+  - hidden_size
+  changed_files:
+  - mindspeed_llm/core/transformer/moe/moe_layer.py
+  source_evidence:
+    commit_body: '!2217 [mcore-llm]修复dense/moe场景下的异常显存峰值问题
+
+      Merge pull request !2217 from 丁子叉/master'
+    test_files: []
+    parameter_diff_lines:
+    - 'if global_args.moe_intermediate_size:'
+    - moe_config.ffn_hidden_size = global_args.moe_intermediate_size
+    - shared_expert_config.ffn_hidden_size = global_args.n_shared_experts * moe_config.ffn_hidden_size
+    - shared_expert_config.hidden_size,
+    - 'if global_args.moe_intermediate_size:'
+    - self.config.ffn_hidden_size = global_args.moe_intermediate_size
+    - config.ffn_hidden_size = global_args.n_shared_experts * self.config.ffn_hidden_size
+    - config.hidden_size,
+    guard_diff_lines:
+    - 'if global_args.moe_intermediate_size:'
+    - 'if moe_config.moe_grouped_gemm:'
+    - 'if global_args.moe_intermediate_size:'
+    - 'if self.config.moe_grouped_gemm:'
+    oracle_diff_lines: []
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 19
+  candidate_id: mindspeed-f33404c7a526
+  repository: MindSpeed
+  subject: '!2278 fix: tp2d with no fa 修复不开fa情况下tp2d参数校验 Merge pull request !2278 from glhyy/masterdev'
+  buggy_commit: e47a58d0f0586a0de004ac854e996c7529030ee9
+  fix_commit: f33404c7a5263cb762c3defe69852e9c0fdecd72
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: TP2D/CP configuration with FlashAttention disabled, including MLA
+  workload_evidence: Included DeepSeek/TP2D system test
+  failure_oracle_evidence: validator error, shape mismatch, or attention failure
+  source_review_reason: Direct compatibility bug across TP2D, CP, attention backend, and MLA.
+  affected_parameter_candidates:
+  - world_size
+  - seq_length
+  - seq_len
+  changed_files:
+  - mindspeed/core/context_parallel/dot_product_attention.py
+  - mindspeed/features_manager/tensor_parallel/tp_2d.py
+  - tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+  source_evidence:
+    commit_body: '!2278 fix: tp2d with no fa 修复不开fa情况下tp2d参数校验
+
+      Merge pull request !2278 from glhyy/masterdev'
+    test_files:
+    - tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+    parameter_diff_lines:
+    - world_size = parallel_state.get_tensor_model_parallel_world_size()
+    - seq_length, bsz, n_head = query.shape[0], query.shape[1], query.shape[2]
+    - output = rearrange(output, '(b s) h d -> s b (h d)', s=seq_length, b=bsz)
+    - world_size = self.config.tp_x if self.config.tp_2d else parallel_state.get_tensor_model_parallel_world_size()
+    - seq_length, bsz, n_head, head_dim = query.shape[0], query.shape[1], query.shape[2], query.shape[3]
+    - output = rearrange(output, '(b s) h d -> s b (h d)', s=seq_len, b=bsz)
+    guard_diff_lines:
+    - 'if _cp_algo not in [''megatron_cp_algo'', ''ulysses_cp_algo'']:'
+    - 'if not getattr(args, ''use_flash_attn'', False) and _cp_algo == ''megatron_cp_algo'':'
+    - world_size = self.config.tp_x if self.config.tp_2d else parallel_state.get_tensor_model_parallel_world_size()
+    - 'if getattr(args, ''context_parallel_algo'', ''ulysses_cp_algo'') not in [''megatron_cp_algo'', ''ulysses_cp_algo'']:'
+    oracle_diff_lines:
+    - seq_length, bsz, n_head = query.shape[0], query.shape[1], query.shape[2]
+    - seq_length, bsz, n_head, head_dim = query.shape[0], query.shape[1], query.shape[2], query.shape[3]
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 20
+  candidate_id: mindspeed-llm-1507e52e0818
+  repository: MindSpeed-LLM
+  subject: '!1554 fix: solve bug of num layer list and support DPP in moe Merge pull request !1554 from RuanZhiXiang/fix-moe-DPP-VPP'
+  buggy_commit: 58e8133311e4b7707e121c075a43d28777e094b3
+  fix_commit: 1507e52e0818bef9ce77e0622cb994774bdfcbcd
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: num_layer_list with PP, total-layer count, or VPP
+  workload_evidence: Included dynamic-pipeline/system test
+  failure_oracle_evidence: explicit ValueError/assertion for list length, sum, PP, or VPP conflict
+  source_review_reason: Several exact configuration predicates are introduced with tests; each can be evaluated as a separate
+    trigger.
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  - pipeline_model_parallel_size
+  - num_layers
+  changed_files:
+  - modellink/arguments.py
+  - modellink/core/transformer/transformer_block.py
+  source_evidence:
+    commit_body: '!1554 fix: solve bug of num layer list and support DPP in moe
+
+      Merge pull request !1554 from RuanZhiXiang/fix-moe-DPP-VPP'
+    test_files:
+    - tests/README.md
+    - tests/st/baseline_results/mixtral_tp1_pp4_ep2_drop_dpp.json
+    - tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh
+    parameter_diff_lines:
+    - 'if len(args.num_layer_list.split('','')) != args.pipeline_model_parallel_size:'
+    - raise ValueError("len(args.num_layer_list) != args.pipeline_model_parallel_size")
+    - 'if not args.pipeline_model_parallel_size > 1:'
+    - 'if args.num_layers_per_virtual_pipeline_stage:'
+    - 'for index, num_layers in enumerate(num_layer_list):'
+    - prefix_sum[index + 1] = prefix_sum[index] + num_layers
+    - config.layer_offset = get_layer_offset(args.pipeline_model_parallel_size, config.num_layer_list)
+    - 'if config.layer_offset[args.pipeline_model_parallel_size] != args.num_layers:'
+    - raise ValueError(f"Incorrect num_layer_list config since its sum({config.layer_offset[args.pipeline_model_parallel_size]}
+      is unequal to total num layers({args.num_layers}).")
+    guard_diff_lines:
+    - 'if args.num_layer_list:'
+    - 'if len(args.num_layer_list.split('','')) != args.pipeline_model_parallel_size:'
+    - raise ValueError("len(args.num_layer_list) != args.pipeline_model_parallel_size")
+    - 'if not args.pipeline_model_parallel_size > 1:'
+    - raise ValueError("Dynamic pipeline model should work with pipeline parallel.")
+    - 'if args.num_layers_per_virtual_pipeline_stage:'
+    - raise ValueError("Dynamic pipeline model and virtual pipeline cannot be enabled at the same time.")
+    - 'if args.moe_expert_capacity_factor:'
+    - 'if args.num_layer_list:'
+    - 'if config.layer_offset[args.pipeline_model_parallel_size] != args.num_layers:'
+    - raise ValueError(f"Incorrect num_layer_list config since its sum({config.layer_offset[args.pipeline_model_parallel_size]}
+      is unequal to total num layers({args.num_layers}).")
+    - 'if num_layer_list:'
+    oracle_diff_lines:
+    - raise ValueError("len(args.num_layer_list) != args.pipeline_model_parallel_size")
+    - raise ValueError("Dynamic pipeline model should work with pipeline parallel.")
+    - raise ValueError("Dynamic pipeline model and virtual pipeline cannot be enabled at the same time.")
+    - raise ValueError(f"Incorrect num_layer_list config since its sum({config.layer_offset[args.pipeline_model_parallel_size]}
+      is unequal to total num layers({args.num_layers}).")
+    - raise ValueError("Dynamic pipeline model and virtual pipeline cannot be enabled at the same time.")
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 21
+  candidate_id: mindspeed-09fe6b6ff2e3
+  repository: MindSpeed
+  subject: '!681 ampipe bugfix修复无法加载mixtral模型权重问题 Merge pull request !681 from 张树仁/bugfix_moe'
+  buggy_commit: 9ee40217a4df53336121cc1aed0c5070ef38a509
+  fix_commit: 09fe6b6ff2e36554ac211f0b6d13f5887cc579da
+  source_review_status: defer
+  configuration_trigger_confirmed: null
+  trigger_summary: Ampipe/Mixtral checkpoint or weight loading
+  workload_evidence: Ampipe Mixtral workload
+  failure_oracle_evidence: missing or mismatched weights
+  source_review_reason: Likely configuration dependent, but source evidence does not yet isolate the parameter combination
+    from checkpoint-format effects.
+  affected_parameter_candidates:
+  - sequence_parallel
+  - num_experts
+  - hidden_size
+  changed_files:
+  - mindspeed/moe/ampipe/ampipe.py
+  - mindspeed/moe/ampipe/ampipe_moe_gating_computer.py
+  - mindspeed/moe/ampipe/ampipe_moe_mlp_computer.py
+  - mindspeed/moe/ampipe/ampipe_post_mlp_computer.py
+  - mindspeed/moe/moe.py
+  source_evidence:
+    commit_body: '!681 ampipe bugfix修复无法加载mixtral模型权重问题
+
+      Merge pull request !681 from 张树仁/bugfix_moe'
+    test_files: []
+    parameter_diff_lines:
+    - config = Config(hidden_size=hidden_size,
+    - num_experts=num_experts,
+    - sequence_parallel=sequence_parallel,
+    - self.config = Config(hidden_size=hidden_size,
+    - num_experts=num_experts,
+    - sequence_parallel=sequence_parallel,
+    guard_diff_lines: []
+    oracle_diff_lines:
+    - l_aux, combine_weights, dispatch_mask = self.moe.moe_layer.gate(reshaped_input)
+    - l_aux, (token_ec_idx, token_weights, expert_select_token_idx) = self.moe.moe_layer.gate(reshaped_input)
+    - reshape_index_select=reshape_index_select
+    - l_aux, combine_weights, dispatch_mask = self.moe.gate(reshaped_input)
+    - l_aux, (token_ec_idx, token_weights, expert_select_token_idx) = self.moe.gate(reshaped_input)
+    - reshape_index_select=reshape_index_select
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 22
+  candidate_id: mindspeed-llm-df8ab5e07cde
+  repository: MindSpeed-LLM
+  subject: LLama model权重转换支持自定义、GQA和MLP融合 1.支持自定义模型参数：type设为非预制模型，可自定义num_layers、num_heads、hidden_size 2.支持GQA：增加num_kv_heads参数
+    3.支持merge-mlp，开启则将gate_proj和up_proj权重合并 4.修复arguments中关于位置编码判断的bug 5.修复convert_weights_when_tp_pp_change中的若干bug
+  buggy_commit: a7ef12d257f99166d15f8544c7966df9a14087ef
+  fix_commit: df8ab5e07cde99afa2094e4b2868ce96de99bae8
+  source_review_status: exclude
+  configuration_trigger_confirmed: false
+  trigger_summary: null
+  workload_evidence: null
+  failure_oracle_evidence: null
+  source_review_reason: Very broad legacy parameter/conversion commit; no single independent configuration root cause can
+    be assigned.
+  affected_parameter_candidates:
+  - position_embedding_type
+  changed_files:
+  - ascendspeed/arguments.py
+  source_evidence:
+    commit_body: 'LLama model权重转换支持自定义、GQA和MLP融合
+
+      1.支持自定义模型参数：type设为非预制模型，可自定义num_layers、num_heads、hidden_size
+
+      2.支持GQA：增加num_kv_heads参数
+
+      3.支持merge-mlp，开启则将gate_proj和up_proj权重合并
+
+      4.修复arguments中关于位置编码判断的bug
+
+      5.修复convert_weights_when_tp_pp_change中的若干bug'
+    test_files:
+    - examples/llama2/pretrain_llama2_70B_ptd.sh
+    parameter_diff_lines:
+    - args.position_embedding_type == PositionEmbeddingType.alibi or
+    - 'args.position_embedding_type == PositionEmbeddingType.rotary):'
+    - 'args.position_embedding_type == PositionEmbeddingType.alibi):'
+    guard_diff_lines: []
+    oracle_diff_lines: []
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 23
+  candidate_id: mindspeed-2dbb9c599c2a
+  repository: MindSpeed
+  subject: '!374 automated-pipeline增加对分布式优化器、Global Attention Mask等支持修复 Merge pull request !374 from gitee-yy/master'
+  buggy_commit: 6a0279604a120d3698ad32d139f83501a61139da
+  fix_commit: 2dbb9c599c2a6ef3a5ebcf372697e9f62e83a533
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: automated pipeline scheduling with distributed optimizer/global attention mask
+  workload_evidence: Included pipeline tests
+  failure_oracle_evidence: allclose/output mismatch or scheduling failure
+  source_review_reason: Configuration-specific pipeline path with a numerical comparison oracle.
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - num_attention_heads
+  - sequence_parallel
+  - hidden_size
+  - num_layers
+  - batch_size
+  - world_size
+  - seq_len
+  changed_files:
+  - mindspeed/model/transformer.py
+  - tests_extend/unit_tests/features/moe/test_moe_token_rearrange.py
+  - tests_extend/unit_tests/features/test_mc2columnparalellinear.py
+  - tests_extend/unit_tests/features/test_mc2columnparallellinear.py
+  - tests_extend/unit_tests/features/test_mc2rowparalellinear.py
+  - tests_extend/unit_tests/features/test_mc2rowparallellinear.py
+  source_evidence:
+    commit_body: '!374 automated-pipeline增加对分布式优化器、Global Attention Mask等支持修复
+
+      Merge pull request !374 from gitee-yy/master'
+    test_files:
+    - tests_extend/unit_tests/features/moe/test_moe_token_rearrange.py
+    - tests_extend/unit_tests/features/test_mc2columnparalellinear.py
+    - tests_extend/unit_tests/features/test_mc2columnparallellinear.py
+    - tests_extend/unit_tests/features/test_mc2rowparalellinear.py
+    - tests_extend/unit_tests/features/test_mc2rowparallellinear.py
+    parameter_diff_lines:
+    - args.tensor_model_parallel_size = 8
+    - args.seq_len = 128
+    - args.batch_size = 8
+    - args.sequence_parallel = 1
+    - world_size = 8
+    - transformer_config = TransformerConfig(num_layers=1,
+    - hidden_size=12,
+    - num_attention_heads=4,
+    - initialize_model_parallel(args.tensor_model_parallel_size, 1)
+    - input_size = args.input_size_coeff * args.tensor_model_parallel_size
+    - output_size = args.output_size_coeff * args.tensor_model_parallel_size
+    - loss_weight = torch.rand([args.seq_len, args.output_size_coeff]).half().npu()
+    guard_diff_lines:
+    - 'if argument.automated_pipeline and argument.num_layer_list and argument.virtual_pipeline_model_parallel_size is None:'
+    - assert torch.allclose(output_naive, output[0], rtol=0.005, atol=0.005)
+    - assert torch.allclose(dLdA, linear_layer.weight.grad, rtol=0.005, atol=0.005)
+    - assert torch.allclose(tensor, output[0], rtol=0.005, atol=0.005)
+    - assert torch.allclose(dLdA, linear_layer.weight.grad, rtol=0.005, atol=0.005)
+    - 'if argument.automated_pipeline and argument.num_layer_list:'
+    - assert torch.allclose(output_naive, output[0], rtol=0.005, atol=0.005)
+    - assert torch.allclose(dLdA, linear_layer.weight.grad, rtol=0.005, atol=0.005)
+    - assert torch.allclose(tensor, output[0], rtol=0.005, atol=0.005)
+    - assert torch.allclose(dLdA, linear_layer.weight.grad, rtol=0.005, atol=0.005)
+    oracle_diff_lines:
+    - gather_list = [torch.zeros(input_.shape).half().npu() for _ in range(self.world_size)]
+    - assert torch.allclose(output_naive, output[0], rtol=0.005, atol=0.005)
+    - assert torch.allclose(dLdA, linear_layer.weight.grad, rtol=0.005, atol=0.005)
+    - assert torch.allclose(tensor, output[0], rtol=0.005, atol=0.005)
+    - assert torch.allclose(dLdA, linear_layer.weight.grad, rtol=0.005, atol=0.005)
+    - gather_list = [torch.zeros(input_.shape).half().npu() for _ in range(self.world_size)]
+    - assert torch.allclose(output_naive, output[0], rtol=0.005, atol=0.005)
+    - assert torch.allclose(dLdA, linear_layer.weight.grad, rtol=0.005, atol=0.005)
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 24
+  candidate_id: mindspeed-llm-4c3e129ddc9b
+  repository: MindSpeed-LLM
+  subject: '[pytorch][bugfix]fix checkpoint convert v2 bug'
+  buggy_commit: d2d50890376bec209c98887b23af1c7401d6b993
+  fix_commit: 4c3e129ddc9b4ae0fe19a7658b760130fc83f56b
+  source_review_status: defer
+  configuration_trigger_confirmed: null
+  trigger_summary: checkpoint conversion under a particular model/parallel shape
+  workload_evidence: Checkpoint conversion script
+  failure_oracle_evidence: reshape or tensor-size failure
+  source_review_reason: A real checkpoint bug is plausible, but the triggering configuration has not been isolated from model-format
+    details.
+  affected_parameter_candidates:
+  - num_experts
+  - hidden_size
+  changed_files:
+  - mindspeed_llm/tasks/checkpoint/convert_mg2hf.py
+  source_evidence:
+    commit_body: '[pytorch][bugfix]fix checkpoint convert v2 bug
+
+
+      Co-authored-by: sunjunjie1587<sunjunjie8@huawei.com>
+
+
+
+
+      # message auto-generated for no-merge-commit merge:
+
+      !3552 merge master into master
+
+
+      [pytorch][bugfix]fix checkpoint convert v2 bug
+
+
+      Created-by: sunjunjie1587
+
+      Commit-by: sunjunjie1587
+
+      Merged-by: ascend-robot
+
+      Description: fix checkpoint convert v2 bug
+
+
+      See merge request: Ascend/MindSpeed-LLM!3552'
+    test_files: []
+    parameter_diff_lines:
+    - bucket_expert_num = self.load_model.num_experts // bucket_num
+    - local_w1 = cur_w1_list[idx].reshape(self.load_model.hidden_size, -1)
+    - local_w2 = cur_w2_list[idx].reshape(-1, self.load_model.hidden_size)
+    - bucket_expert_num = self.num_experts // bucket_num
+    - local_w1 = cur_w1_list[idx].reshape(self.hidden_size, -1)
+    - local_w2 = cur_w2_list[idx].reshape(-1, self.hidden_size)
+    guard_diff_lines: []
+    oracle_diff_lines:
+    - local_w1 = cur_w1_list[idx].reshape(self.load_model.hidden_size, -1)
+    - local_w2 = cur_w2_list[idx].reshape(-1, self.load_model.hidden_size)
+    - local_w1 = cur_w1_list[idx].reshape(self.hidden_size, -1)
+    - local_w2 = cur_w2_list[idx].reshape(-1, self.hidden_size)
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 25
+  candidate_id: mindspeed-bdb06b9deef6
+  repository: MindSpeed
+  subject: '!2328 【BUGFIX!!!】UT补充&amp;recompute修复 Merge pull request !2328 from yangjie/master'
+  buggy_commit: 6d24e3b56340882fa388cfead1e4f9c9a777078d
+  fix_commit: bdb06b9deef6d4883df82b6b64835e23104c04c2
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: recompute_method=block with affected recompute settings
+  workload_evidence: Included recompute unit test
+  failure_oracle_evidence: output or gradient mismatch
+  source_review_reason: Specific recomputation configuration and numerical oracle are available.
+  affected_parameter_candidates:
+  - num_attention_heads
+  - attention_dropout
+  - recompute_method
+  - micro_batch_size
+  - hidden_dropout
+  - hidden_size
+  - num_layers
+  - world_size
+  changed_files:
+  - mindspeed/features_manager/__init__.py
+  - mindspeed/features_manager/recompute/enable_recompute_layers_per_pp_rank.py
+  - mindspeed/features_manager/recompute/recompute_method.py
+  - tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+  source_evidence:
+    commit_body: '!2328 【BUGFIX!!!】UT补充&amp;recompute修复
+
+      Merge pull request !2328 from yangjie/master'
+    test_files:
+    - tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+    parameter_diff_lines:
+    - from mindspeed.features_manager.recompute.recompute_method import RecomputeMethodFeature
+    - 'if (getattr(args, ''recompute_method'', False) and args.recompute_method == ''block''):'
+    - world_size = 8
+    - config = TransformerConfig(num_layers=4, hidden_size=12, num_attention_heads=4, use_cpu_initialization=True)
+    - config.hidden_dropout = 0
+    - config.attention_dropout = 0
+    - micro_batch_size = 2
+    - hidden_states_ref = torch.rand((sequence_length, micro_batch_size, config.hidden_size)).cuda()
+    guard_diff_lines:
+    - 'if (getattr(args, ''recompute_method'', False) and args.recompute_method == ''block''):'
+    - assert(torch.allclose(out_ref, out_test))
+    - assert(torch.allclose(hidden_states_ref.grad, hidden_states_test.grad))
+    oracle_diff_lines:
+    - assert(torch.allclose(out_ref, out_test))
+    - assert(torch.allclose(hidden_states_ref.grad, hidden_states_test.grad))
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 26
+  candidate_id: mindspeed-llm-a0edb582b143
+  repository: MindSpeed-LLM
+  subject: '!2134 bugfix:重构mc代码，修复mc2+matmul_add+swap_attention 报weight没有main_grad属性错误 Merge pull request !2134 from yanzhixiao/bugfix-mc2-mma-swap'
+  buggy_commit: 3da258360721605e2ff203f5723ae0291add3f71
+  fix_commit: a0edb582b143cd2322f63f1b741fadc32cbc417b
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: MC2 plus matmul_add and swap_attention
+  workload_evidence: Existing MC2/swap-attention training path
+  failure_oracle_evidence: 'AttributeError: weight has no main_grad'
+  source_review_reason: Clear three-feature trigger and deterministic exception oracle.
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - sequence_parallel
+  - world_size
+  changed_files:
+  - docs/features/mc2.md
+  - mindspeed_llm/core/tensor_parallel/ascend_turbo/__init__.py
+  - mindspeed_llm/core/tensor_parallel/ascend_turbo/ascend_turbo_cfg.py
+  - mindspeed_llm/core/tensor_parallel/ascend_turbo/initialize.py
+  - mindspeed_llm/core/tensor_parallel/ascend_turbo/mc2_linears_seq_parallel.py
+  - mindspeed_llm/tasks/posttrain/rlxf/training/initialize.py
+  - mindspeed_llm/training/arguments.py
+  - mindspeed_llm/training/initialize.py
+  source_evidence:
+    commit_body: '!2134 bugfix:重构mc代码，修复mc2+matmul_add+swap_attention 报weight没有main_grad属性错误
+
+      Merge pull request !2134 from yanzhixiao/bugfix-mc2-mma-swap'
+    test_files: []
+    parameter_diff_lines:
+    - 'def set_sequence_parallel(self, sequence_parallel):'
+    - self.sequence_parallel = sequence_parallel
+    - 'if not args.sequence_parallel or args.tensor_model_parallel_size == 1:'
+    - ascend_turbo_cfg.set_sequence_parallel(args.sequence_parallel)
+    - world_size = ascend_turbo_cfg.get_world_size()
+    - world_size,
+    - ctx.world_size = world_size
+    - dim_size[0] = dim_size[0] * ctx.world_size
+    - world_size = ascend_turbo_cfg.get_world_size()
+    - x, weight.t(), hcomm_info, world_size, reduce_op="sum", bias=bias
+    - ctx.world_size = world_size
+    - world_size = ctx.world_size
+    guard_diff_lines:
+    - 'if weight is None:'
+    - 'if self.weight is None:'
+    - raise RuntimeError(
+    - 'if weight.shape != expected_shape:'
+    - raise RuntimeError(
+    - bias = self.bias if not self.skip_bias_add else None
+    - output_bias = self.bias if self.skip_bias_add else None
+    - 'if not self.skip_bias_add:'
+    - output = output + self.bias if self.bias is not None else output
+    - 'if not args.sequence_parallel or args.tensor_model_parallel_size == 1:'
+    - 'if torch.__version__ > "2.0":'
+    - 'if ascend_turbo_cfg.all_gather_recomputation:'
+    oracle_diff_lines:
+    - raise RuntimeError(
+    - '# Check the weight passed in is the correct shape'
+    - expected_shape = (self.output_size_per_partition, self.input_size)
+    - 'if weight.shape != expected_shape:'
+    - raise RuntimeError(
+    - f"supplied weight's shape is {tuple(weight.shape)},"
+    - f"not {expected_shape} as expected"
+    - x = input_.reshape(input_.shape[0] * input_.shape[1], input_.shape[2])
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 27
+  candidate_id: mindspeed-25568bbf2423
+  repository: MindSpeed
+  subject: 'fix: MindSpeedTEDotProductAttention reads context_parallel_algo from global args instead of stale config'
+  buggy_commit: 53c3dc787ba392890c0b1ef500e678169fc1922a
+  fix_commit: 25568bbf2423d67e129ff42470ef7ddf47f2e37a
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: specific context_parallel_algo in Transformer Engine attention, including GQA
+  workload_evidence: CP attention test configuration
+  failure_oracle_evidence: shape assertion or incorrect query-group handling
+  source_review_reason: The patch corrects stale CP-algorithm-derived state and shape logic.
+  affected_parameter_candidates:
+  - num_attention_heads
+  - attention_dropout
+  changed_files:
+  - mindspeed/te/pytorch/attention/dot_product_attention/dot_product_attention.py
+  source_evidence:
+    commit_body: "fix: MindSpeedTEDotProductAttention reads context_parallel_algo from global args instead of stale config\n\
+      \nCo-authored-by: clc2025<chenlucong@huawei.com>\n\n\n\n# message auto-generated for no-merge-commit merge:\n!3640 merge\
+      \ test_repatch into master\n\nfix: MindSpeedTEDotProductAttention reads context_parallel_algo from global args instead\
+      \ of stale config\n\nCreated-by: clc2025\nCommit-by: clc2025\nMerged-by: ascend-robot\nDescription: ## What this PR\
+      \ does / why we need it?\n\nFix: MindSpeedTEDotProductAttention 在 repatch() 切换 context_parallel_algo 后仍然读取到旧的 CP 配置，导致\
+      \ context parallel 失败。\n\n问题背景：当调用 repatch() 将 context_parallel_algo 从 megatron_cp_algo 切换为 kvallgather_cp_algo 时，已存在的\
+      \ TransformerConfig 对象仍保留旧值。MindSpeedTEDotProductAttention 从 self.config.context_parallel_algo 读取 cp_comm_type，得到的是过时的\n\
+      megatron_cp_algo，该值不在 CPStrategyFactory._STRATEGY_MAP 中，导致 CP 初始化报错。\n\n修复方案：改为从 get_full_args().context_parallel_algo\
+      \ 读取，该方法始终返回最新的全局 args（repatch 通过 setattr 就地更新全局 args）。\n\n## Does this PR introduce any user-facing change?\n\nNA\n\
+      \n## How was this patch tested?\n\n可通过以下步骤验证：\n  1. 使用 megatron_cp_algo 启动训练\n  2. 调用 repatch() 切换为 kvallgather_cp_algo\n\
+      \  3. 确认 context parallel 正常初始化和运行，不再因 megatron_cp_algo 不在 _STRATEGY_MAP 中而报错\n\n\n\nSee merge request: Ascend/MindSpeed!3640"
+    test_files: []
+    parameter_diff_lines:
+    - assert num_attention_heads % self.num_gqa_groups == 0, (
+    - attention_dropout=self.attention_dropout,
+    - attention_dropout=self.attention_dropout,
+    - 'num_attention_heads = query_layer.shape[-2]  # noqa: F841'
+    - attention_dropout=(self.config.attention_dropout if attention_dropout is None else attention_dropout),
+    - num_attention_heads % self.num_gqa_groups == 0
+    - attention_dropout=self.attention_dropout,
+    - attention_dropout=self.attention_dropout,
+    - num_attention_heads = query_layer.shape[-2]
+    - attention_dropout=(
+    - self.config.attention_dropout if attention_dropout is None else attention_dropout
+    guard_diff_lines:
+    - self.hidden_size_per_attention_head_k = kv_channels if isinstance(kv_channels, int) else kv_channels[0]
+    - self.hidden_size_per_attention_head_v = kv_channels if isinstance(kv_channels, int) else kv_channels[1]
+    - assert num_attention_heads % self.num_gqa_groups == 0, (
+    - softmax_scale = 1.0 / math.sqrt(kv_channels if isinstance(kv_channels, int) else kv_channels[0])
+    - assert query_layer.dtype == key_layer.dtype and query_layer.dtype == value_layer.dtype, (
+    - assert key_layer.shape[:-1] == value_layer.shape[:-1], (
+    - assert query_layer.shape[-1] == key_layer.shape[-1], "Queries and keys must have the same head dimension!"
+    - assert head_dim_qk == self.hidden_size_per_attention_head_k, (
+    - assert head_dim_v == self.hidden_size_per_attention_head_v, (
+    - assert cu_seqlens_q is not None and cu_seqlens_kv is not None, (
+    - (k_channels, v_channels) if k_channels is not None and v_channels is not None else self.config.kv_channels
+    - attention_dropout=(self.config.attention_dropout if attention_dropout is None else attention_dropout),
+    oracle_diff_lines:
+    - assert num_attention_heads % self.num_gqa_groups == 0, (
+    - assert query_layer.dtype == key_layer.dtype and query_layer.dtype == value_layer.dtype, (
+    - assert key_layer.shape[:-1] == value_layer.shape[:-1], (
+    - 'num_attention_heads = query_layer.shape[-2]  # noqa: F841'
+    - assert query_layer.shape[-1] == key_layer.shape[-1], "Queries and keys must have the same head dimension!"
+    - assert head_dim_qk == self.hidden_size_per_attention_head_k, (
+    - assert head_dim_v == self.hidden_size_per_attention_head_v, (
+    - assert cu_seqlens_q is not None and cu_seqlens_kv is not None, (
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 28
+  candidate_id: mindspeed-llm-27ac11d642e6
+  repository: MindSpeed-LLM
+  subject: '!1290 Llama2-70b参数优化 + 权重转换bug修复 Merge pull request !1290 from wucong/llama270b'
+  buggy_commit: f31514a83ae52cdb65d25b8bf409181fd0e43a56
+  fix_commit: 27ac11d642e67458652832a5087adb4783c3a391
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: VPP during Megatron checkpoint conversion
+  workload_evidence: Checkpoint conversion with virtual pipeline stages
+  failure_oracle_evidence: missing/misplaced model shards or conversion failure
+  source_review_reason: Concrete VPP/checkpoint interaction; execution is required to confirm a stable oracle.
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  changed_files:
+  - tools/checkpoint/saver_megatron.py
+  source_evidence:
+    commit_body: '!1290 Llama2-70b参数优化 + 权重转换bug修复
+
+      Merge pull request !1290 from wucong/llama270b'
+    test_files:
+    - examples/llama2/README.md
+    - examples/llama2/README_en.md
+    - examples/llama2/pretrain_llama2_70b_ptd.sh
+    parameter_diff_lines:
+    - 'if args.num_layers_per_virtual_pipeline_stage and args.save_model_type == ''megatron'':'
+    - 'if args.num_layers_per_virtual_pipeline_stage and args.save_model_type == ''megatron'':'
+    - 'if args.num_layers_per_virtual_pipeline_stage and args.save_model_type == ''megatron'':'
+    - 'if args.num_layers_per_virtual_pipeline_stage and args.save_model_type == ''megatron'':'
+    - 'if args.num_layers_per_virtual_pipeline_stage:'
+    - 'if args.num_layers_per_virtual_pipeline_stage:'
+    - 'if args.num_layers_per_virtual_pipeline_stage:'
+    - 'if args.num_layers_per_virtual_pipeline_stage:'
+    guard_diff_lines:
+    - 'if args.num_layers_per_virtual_pipeline_stage and args.save_model_type == ''megatron'':'
+    - 'if args.num_layers_per_virtual_pipeline_stage and args.save_model_type == ''megatron'':'
+    - 'if args.num_layers_per_virtual_pipeline_stage and args.save_model_type == ''megatron'':'
+    - 'if args.num_layers_per_virtual_pipeline_stage and args.save_model_type == ''megatron'':'
+    - 'if args.num_layers_per_virtual_pipeline_stage:'
+    - 'if args.num_layers_per_virtual_pipeline_stage:'
+    - 'if args.num_layers_per_virtual_pipeline_stage:'
+    - 'if args.num_layers_per_virtual_pipeline_stage:'
+    oracle_diff_lines: []
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 29
+  candidate_id: mindspeed-89255434104a
+  repository: MindSpeed
+  subject: '!411 解决deepspeed_moe场景下，overlap_allreduce开启报错的问题 Merge pull request !411 from 张宇鹏/master_0614'
+  buggy_commit: 5efd0baead99badd3348812c00e6c848cd4255a8
+  fix_commit: 89255434104a0314cecf7c9ecde6f75952d99a2a
+  source_review_status: defer
+  configuration_trigger_confirmed: null
+  trigger_summary: legacy DeepSpeed MoE with overlap_allreduce
+  workload_evidence: Legacy DeepSpeed MoE training path
+  failure_oracle_evidence: runtime error
+  source_review_reason: Configuration interaction is likely, but the path is legacy and environment support must be confirmed
+    before benchmark admission.
+  affected_parameter_candidates:
+  - sequence_parallel
+  changed_files:
+  - mindspeed/model/transformer.py
+  - mindspeed/moe/config.py
+  - mindspeed/moe/gate.py
+  - mindspeed/moe/moe.py
+  source_evidence:
+    commit_body: '!411 解决deepspeed_moe场景下，overlap_allreduce开启报错的问题
+
+      Merge pull request !411 from 张宇鹏/master_0614'
+    test_files: []
+    parameter_diff_lines:
+    - sequence_parallel=global_args.sequence_parallel
+    - sequence_parallel=global_args.sequence_parallel
+    - sequence_parallel=False
+    - self.sequence_parallel = sequence_parallel
+    - setattr(self.weight, 'sequence_parallel', config.sequence_parallel)
+    - 'sequence_parallel=False):'
+    - sequence_parallel=sequence_parallel
+    guard_diff_lines:
+    - 'if self.weight.weight.dtype != torch.float32:'
+    oracle_diff_lines: []
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 30
+  candidate_id: mindspeed-llm-d4feda79a795
+  repository: MindSpeed-LLM
+  subject: '!1734 [master] add swap-attention ST and bugfix validation of enable-recompute-pp-rank Merge pull request !1734
+    from RuanZhiXiang/swap-st'
+  buggy_commit: ae409aa0098830719b7bca04c1ce741a899dc96c
+  fix_commit: d4feda79a79548753c4609e3fd9f2704649a0dd3
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: swap_attention with enable_recompute_pp_rank
+  workload_evidence: Included swap-attention system test
+  failure_oracle_evidence: explicit validation failure or training error
+  source_review_reason: Direct feature interaction and executable test evidence.
+  affected_parameter_candidates:
+  - recompute_granularity
+  - recompute_method
+  changed_files:
+  - modellink/training/arguments.py
+  source_evidence:
+    commit_body: '!1734 [master] add swap-attention ST and bugfix validation of enable-recompute-pp-rank
+
+      Merge pull request !1734 from RuanZhiXiang/swap-st'
+    test_files:
+    - tests/README.md
+    - tests/st/baseline_results/llama2_tp2_pp4_vpp2_swap.json
+    - tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh
+    parameter_diff_lines:
+    - enable_vanilla_recomputation = args.recompute_granularity is not None and args.recompute_method == 'block'
+    - enable_recomputation = args.recompute_granularity is not None and args.recompute_method == 'block'
+    guard_diff_lines: []
+    oracle_diff_lines: []
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 31
+  candidate_id: mindspeed-befe576b2920
+  repository: MindSpeed
+  subject: '!1466 解决Megatron MoE场景开启激活函数重计算报错RANK NaN的问题 Merge pull request !1466 from 张宇鹏/master_1126'
+  buggy_commit: 9392e29163a672034be4f630ca520e463fbf8bc2
+  fix_commit: befe576b2920cc4fdd5c2186ca131201a3b9202e
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: MoE with activation recomputation
+  workload_evidence: MoE recompute training workload
+  failure_oracle_evidence: NaN in rank output/loss
+  source_review_reason: Clear two-feature trigger and numerical oracle.
+  affected_parameter_candidates:
+  - activation_func
+  - hidden_size
+  changed_files:
+  - mindspeed/core/transformer/moe/experts.py
+  source_evidence:
+    commit_body: '!1466 解决Megatron MoE场景开启激活函数重计算报错RANK NaN的问题
+
+      Merge pull request !1466 from 张宇鹏/master_1126'
+    test_files: []
+    parameter_diff_lines:
+    - w1 = self.weight1.view(self.num_local_experts, self.config.hidden_size, -1)
+    - w2 = self.weight2.view(self.num_local_experts, -1, self.config.hidden_size)
+    - intermediate_parallel = self.activation_checkpoint_manager.checkpoint(self.activation_func,
+    - w1 = self.weight1.view(self.config.hidden_size, -1)
+    - w2 = self.weight2.view(-1, self.config.hidden_size)
+    - intermediate_parallel = self.activation_checkpoint_manager.checkpoint(self.activation_func,
+    - w1 = self.weight1.view(self.num_local_experts, self.config.hidden_size, -1)
+    - w2 = self.weight2.view(self.num_local_experts, -1, self.config.hidden_size)
+    - intermediate_parallel = self.activation_checkpoint_manager.checkpoint(self.activation_func,
+    guard_diff_lines:
+    - 'if permuted_local_hidden_states.nelement() != 0:'
+    - assert torch.count_nonzero(tokens_per_expert) == 0
+    oracle_diff_lines:
+    - assert torch.count_nonzero(tokens_per_expert) == 0
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 32
+  candidate_id: mindspeed-llm-eb9a13d762ef
+  repository: MindSpeed-LLM
+  subject: '!3148 [pytorch][bigfix]fix pipeline cases in v2 Merge pull request !3148 from yanzhixiao/fix-v2-0815'
+  buggy_commit: 50b1b1c437c57012dc08656ee423a4ce9e5bf99e
+  fix_commit: eb9a13d762effd9214bd5b18199a6a4d16c58adb
+  source_review_status: defer
+  configuration_trigger_confirmed: null
+  trigger_summary: pipeline schedule v2 across several options
+  workload_evidence: Pipeline v2 examples
+  failure_oracle_evidence: multiple possible scheduling failures
+  source_review_reason: The commit combines multiple pipeline fixes and requires root-cause separation.
+  affected_parameter_candidates:
+  - world_size
+  - seq_len
+  changed_files:
+  - mindspeed_llm/features_manager/models/module.py
+  - mindspeed_llm/features_manager/transformer/transformer_block.py
+  - mindspeed_llm/training/arguments.py
+  - tests/pipeline/context_parallel/test_ringattn_context_parallel.py
+  - tests/pipeline/model_module/test_attention.py
+  source_evidence:
+    commit_body: '!3148 [pytorch][bigfix]fix pipeline cases in v2
+
+      Merge pull request !3148 from yanzhixiao/fix-v2-0815'
+    test_files:
+    - tests/pipeline/baichuan2-13B/baichuan2_13b_tp8_pp1_mcore.sh
+    - tests/pipeline/context_parallel/test_ringattn_context_parallel.py
+    - tests/pipeline/model_module/test_attention.py
+    - tests/pipeline/qwen25/tune_qwen25_0point5b_tp1_pp1_pack.sh
+    parameter_diff_lines:
+    - run_attention_module((2, 8192, torch.bfloat16), use_mcore, True, self.world_size, 2)
+    - run_attention_module((2, 8192, torch.bfloat16), use_mcore, True, self.world_size, 1)
+    - run_attention_module((2, 8192, torch.bfloat16), use_mcore, True, self.world_size, 8)
+    guard_diff_lines: []
+    oracle_diff_lines: []
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 33
+  candidate_id: mindspeed-ba1e5e528ff3
+  repository: MindSpeed
+  subject: '!327 [bugfix]修复num_experts数量不大于topk时出现的异常 Merge pull request !327 from liujianxing/dev_zsr'
+  buggy_commit: daea717cbac5fb7b9df19e8f18f9ad5c1e7c77a7
+  fix_commit: ba1e5e528ff3810351d4226dec125033da27db07
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: moe_router_topk greater than or equal to num_experts
+  workload_evidence: Small MoE router configuration and included tests
+  failure_oracle_evidence: explicit validator error or torch.topk failure
+  source_review_reason: Exact parameter relation, small workload, and deterministic oracle.
+  affected_parameter_candidates:
+  - moe_router_topk
+  - num_experts
+  - hidden_size
+  changed_files:
+  - ascendspeed/arguments.py
+  - ascendspeed/moe/gate.py
+  - ascendspeed/moe/utils.py
+  - tests_extend/unit_tests/features/moe/test_moe_token_rearrange.py
+  source_evidence:
+    commit_body: '!327 [bugfix]修复num_experts数量不大于topk时出现的异常
+
+      Merge pull request !327 from liujianxing/dev_zsr'
+    test_files:
+    - tests_extend/unit_tests/features/moe/test_moe_token_rearrange.py
+    parameter_diff_lines:
+    - 'if args.num_experts <= args.moe_router_topk:'
+    - raise ValueError(f"num_experts={args.num_experts} is equal or smaller than topk={args.moe_router_topk}!"
+    - '"ne_4_k_1": TopKGate(Config(hidden_size=2, num_experts=4, topk=1)),'
+    - '"ne_4_k_2": TopKGate(Config(hidden_size=2, num_experts=4, topk=2)),'
+    - '"ne_2_k_2": TopKGate(Config(hidden_size=2, num_experts=2, topk=2)),'
+    - 'def get_moe_layer_output(self, topk, input_data, ep_size, num_experts):'
+    - expert = Experts(self.parallel_mlp, num_experts).npu()
+    - gate = self.topk_gate.get(f"ne_{num_experts}_k_{topk}", None)
+    - num_local_experts=num_experts // ep_size
+    - (num_experts, topk) = ne_topk
+    - output_base = self.get_moe_layer_output(args_base.moe_router_topk, input_data, ep, num_experts)
+    - output_rearrage = self.get_moe_layer_output(args_rearrange.moe_router_topk, input_data, ep, num_experts)
+    guard_diff_lines:
+    - 'if args.num_experts <= args.moe_router_topk:'
+    - raise ValueError(f"num_experts={args.num_experts} is equal or smaller than topk={args.moe_router_topk}!"
+    - self.topk_gate_1 if topk == 1 else self.topk_gate_2,
+    oracle_diff_lines:
+    - raise ValueError(f"num_experts={args.num_experts} is equal or smaller than topk={args.moe_router_topk}!"
+    - '# 重排过程：计算出每个专家选择的token的索引：expert_select_token_idx，shape为: [E*C]'
+    - '# shape变化过程：[S, E]->[C, E]->[E, C]->[E*C]'
+    - '# 重排过程：计算出每个专家选择的token的索引：expert_select_token_idx，shape为: [E*C]'
+    - '# shape变化过程：[S, E]->[C, E]->[E, C]->[E*C]'
+    - '# ���Ź��̣������ÿ��ר��ѡ���token��������expert_select_token_idx��shapeΪ: [E*C]'
+    - '# shape�仯���̣�[S, E]->[C, E]->[E, C]->[E*C]'
+    - '# ���Ź��̣������ÿ��ר��ѡ���token��������expert_select_token_idx��shapeΪ: [E*C]'
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 34
+  candidate_id: mindspeed-llm-885cb967359a
+  repository: MindSpeed-LLM
+  subject: '[pytorch][bugfix]fix lora bug in moe'
+  buggy_commit: cb248046ffad2cad7bda4d72a03060ea20dfd3a3
+  fix_commit: 885cb967359a492ead664fadf2bab6bb5100361c
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: LoRA/QLoRA combined with MoE dispatcher or incompatible options
+  workload_evidence: LoRA MoE training examples
+  failure_oracle_evidence: explicit compatibility assertion or dispatcher failure
+  source_review_reason: Source adds concrete compatibility checks for configuration combinations.
+  affected_parameter_candidates:
+  - num_experts
+  changed_files:
+  - mindspeed_llm/core/transformer/moe/moe_layer.py
+  - mindspeed_llm/features_manager/finetune/lora.py
+  source_evidence:
+    commit_body: '[pytorch][bugfix]fix lora bug in moe
+
+
+      Co-authored-by: guozhihua2<guozhihua2@huawei.com>
+
+
+
+
+      # message auto-generated for no-merge-commit merge:
+
+      !3532 merge lora_bug_ifx into master
+
+
+      [pytorch][bugfix]fix lora bug in moe
+
+
+      Created-by: guozhihua2
+
+      Commit-by: guozhihua2
+
+      Merged-by: ascend-robot
+
+      Description: 1.增加非overlap场景下的lora和qlora
+
+      2.增加mtp-tp-extend-ep场景下的lora和qlora
+
+
+      See merge request: Ascend/MindSpeed-LLM!3532'
+    test_files: []
+    parameter_diff_lines:
+    - 'if args.num_experts and (has_valid_lora_target and args.moe_token_dispatcher_type != "alltoall_seq"):'
+    guard_diff_lines:
+    - 'if self.config.moe_tp_extend_ep:'
+    - 'if not self.config.num_moe_experts % (self.expert_parallel_size * tp_size):'
+    - raise ValueError("ep * tp must be divisible by the number of experts")
+    - 'if not self.config.num_moe_experts % self.expert_parallel_size:'
+    - raise ValueError("ep must be divisible by the number of experts")
+    - 'if not all(map(lambda x: x < self.config.num_moe_experts, self.local_expert_indices)):'
+    - raise ValueError("local_expert_indices must all be <= experts")
+    - 'if hasattr(global_args, "moe_alltoall_overlap_comm") and global_args.moe_alltoall_overlap_comm:'
+    - 'if global_args.moe_alltoall_overlap_comm:'
+    - 'if args.num_experts and (has_valid_lora_target and args.moe_token_dispatcher_type != "alltoall_seq"):'
+    - raise AssertionError('Lora and Qlora in the moe only enable the alltoall_seq.')
+    - 'if global_args.moe_allgather_overlap_comm or global_args.moe_alltoall_overlap_comm:'
+    oracle_diff_lines:
+    - raise ValueError("ep * tp must be divisible by the number of experts")
+    - raise ValueError("ep must be divisible by the number of experts")
+    - raise ValueError("local_expert_indices must all be <= experts")
+    - raise AssertionError('Lora and Qlora in the moe only enable the alltoall_seq.')
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 35
+  candidate_id: mindspeed-1b9c563b2c86
+  repository: MindSpeed
+  subject: fix:balanced moe supported for dualpipev
+  buggy_commit: e05ed6f5cf48e0c8cee3131486de68408ac44019
+  fix_commit: 1b9c563b2c86d3f4019fdfd4940adb6f00700592
+  source_review_status: defer
+  configuration_trigger_confirmed: null
+  trigger_summary: balanced MoE dual-pipeline configuration
+  workload_evidence: Dual-pipeline MoE example
+  failure_oracle_evidence: unclear
+  source_review_reason: Appears largely feature enablement; a pre-fix correctness failure must be demonstrated.
+  affected_parameter_candidates:
+  - bias_dropout_fusion
+  - moe_router_topk
+  - hidden_dropout
+  changed_files:
+  - mindspeed/core/transformer/moe/moe_feature/balanced_moe/overlap_funcs/fwdbwd.py
+  - mindspeed/core/transformer/moe/moe_feature/fb_overlap/transformer_layer.py
+  source_evidence:
+    commit_body: 'fix:balanced moe supported for dualpipev
+
+
+      Co-authored-by: liz<lizhi166@huawei.com>
+
+
+
+
+      # message auto-generated for no-merge-commit merge:
+
+      !3344 merge fix_bm into master
+
+
+      fix:balanced moe supported for dualpipev
+
+
+      Created-by: Liz_
+
+      Commit-by: liz
+
+      Merged-by: ascend-robot
+
+      Description: What this PR does / why we need it?
+
+      Please describe the background and detailed changes of the PR. If it is a bugfix, please attach the related issue.
+
+
+
+      Does this PR introduce any user-facing change?
+
+      Please describe whether the PR will result in any user-facing usage changes. If there is related documentation, please
+      specify its path.
+
+
+      How was this patch tested?
+
+      Please explain how to verify the correctness and effectiveness of this feature, as well as its usage constraints and
+      limitations.
+
+      验证报告：https://wiki.huawei.com/domains/159101/wiki/324516/WIKI2026032710569328
+
+
+      See merge request: Ascend/MindSpeed!3344'
+    test_files: []
+    parameter_diff_lines:
+    - hidden_states = fwd_layer.mlp_bda(fwd_layer.training, fwd_layer.config.bias_dropout_fusion)(
+    - mlp_output_with_bias, residual2, fwd_layer.hidden_dropout
+    - K = args.moe_router_topk
+    - hidden_states = fwd_layer.mlp_bda(fwd_layer.training, fwd_layer.config.bias_dropout_fusion)(
+    - (mlp_output, None), residual2, fwd_layer.hidden_dropout
+    guard_diff_lines:
+    - checkpoint_context = torch.no_grad() if checkpoint else nullcontext()
+    - 'if handle is not None:'
+    - bwd_shared_experts = bwd_layer_graph.layer.mlp.shared_experts if use_shared_experts else None
+    - 'if bwd_layer_graph.unperm2_swap_manager:'
+    - 'if bwd_layer_graph.attn_swap_managers:'
+    - 'if use_shared_experts:'
+    - shared_experts_grad = bwd_layer_output_grad if bwd_unperm_a2a_handle is None else \
+    - 'if bwd_unperm_a2a_handle is None:'
+    - 'if tp_size > 1 and a2a_hooked_on_attention:'
+    - 'if args.moe_zero_memory == ''level0'':'
+    - 'if bwd_unperm_a2a_handle is None and tp_size > 1 and a2a_hooked_on_attention:'
+    - 'if recomp_norm:'
+    oracle_diff_lines:
+    - H = bwd_layer_graph.unperm2_swap_manager.npu_tensor.shape[-1]
+    - probs_grad = bwd_layer_graph.unperm2_swap_manager.npu_tensor.reshape(-1, K, H).to(probs_dtype) * output_grad.to(
+    - raise NotImplementedError('forward dense & backward moe is not yet implemented.')
+    - raise NotImplementedError('forward moe & backward dense is not yet implemented.')
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 36
+  candidate_id: mindspeed-llm-22392902f00f
+  repository: MindSpeed-LLM
+  subject: '!1502 fix: solve problem occurs when using mc2 + moe Merge pull request !1502 from RuanZhiXiang/fix-mc2-moe'
+  buggy_commit: e060f047d316be35779f35d9db2e2da28e279d55
+  fix_commit: 22392902f00f14cb9b4264731afcee7c47f3e9d5
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: MC2 with MoE grouped_gemm enabled
+  workload_evidence: MoE MC2 training configuration
+  failure_oracle_evidence: explicit assertion or operator failure
+  source_review_reason: Concrete unsupported feature combination and deterministic oracle.
+  affected_parameter_candidates:
+  - num_experts
+  changed_files:
+  - modellink/arguments.py
+  source_evidence:
+    commit_body: '!1502 fix: solve problem occurs when using mc2 + moe
+
+      Merge pull request !1502 from RuanZhiXiang/fix-mc2-moe'
+    test_files: []
+    parameter_diff_lines:
+    - 'if args.num_experts is not None and args.use_mc2 and args.moe_grouped_gemm:'
+    guard_diff_lines:
+    - 'if args.num_experts is not None and args.use_mc2 and args.moe_grouped_gemm:'
+    - raise AssertionError('Moe Grouped Gemm is not supported with mc2 in MOE model.')
+    oracle_diff_lines:
+    - raise AssertionError('Moe Grouped Gemm is not supported with mc2 in MOE model.')
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 37
+  candidate_id: mindspeed-255be5014077
+  repository: MindSpeed
+  subject: add moe fix router v6
+  buggy_commit: da699862bb3828eb826eb3ee5fe608cded25ce2c
+  fix_commit: 255be5014077de0c80659833798074b9f6df7daa
+  source_review_status: exclude
+  configuration_trigger_confirmed: false
+  trigger_summary: null
+  workload_evidence: null
+  failure_oracle_evidence: null
+  source_review_reason: Router v6 addition/fix lacks an isolated historical configuration failure and behaves as feature development.
+  affected_parameter_candidates:
+  - expert_model_parallel_size
+  - num_experts
+  changed_files:
+  - mindspeed/core/transformer/moe/moe_utils.py
+  - mindspeed/features_manager/__init__.py
+  - mindspeed/features_manager/moe/moe_fix_router.py
+  source_evidence:
+    commit_body: add moe fix router v6
+    test_files: []
+    parameter_diff_lines:
+    - '- routing_probs (torch.Tensor): A tensor of shape [num_tokens, num_experts] containing'
+    - '- routing_map (torch.Tensor): A mask tensor of shape [num_tokens, num_experts]'
+    - '- tokens_per_expert (torch.Tensor): A tensor of shape [num_experts] containing'
+    - assert logits.dim() == 2, f"Expected 2D logits [num_tokens, num_experts], got {logits.dim()}."
+    - num_tokens, num_experts = logits.shape
+    - num_experts=num_experts,
+    - num_tokens=num_tokens * topk, num_experts=num_experts, capacity_factor=capacity_factor
+    - 'if args.expert_model_parallel_size <= 1:'
+    - '''expert_model_parallel_size must be greater than 1'')'
+    guard_diff_lines:
+    - 'capacity_factor (float): The capacity factor of each expert. Will drop tokens if the number'
+    - assert logits.dim() == 2, f"Expected 2D logits [num_tokens, num_experts], got {logits.dim()}."
+    - 'if group_topk:'
+    - 'if score_function == "softmax":'
+    - 'if use_pre_softmax:'
+    - 'if expert_bias is not None:'
+    - probs = scores / (scores.sum(dim=-1, keepdim=True) + 1e-20) if topk > 1 else scores
+    - 'raise ValueError(f"Invalid score_function: {score_function}")'
+    - 'if scaling_factor:'
+    - 'if args.fix_router:'
+    - 'if capacity_factor is None:'
+    - 'if drop_policy == "probs":'
+    oracle_diff_lines:
+    - '- routing_probs (torch.Tensor): A tensor of shape [num_tokens, num_experts] containing'
+    - '- routing_map (torch.Tensor): A mask tensor of shape [num_tokens, num_experts]'
+    - '- tokens_per_expert (torch.Tensor): A tensor of shape [num_experts] containing'
+    - assert logits.dim() == 2, f"Expected 2D logits [num_tokens, num_experts], got {logits.dim()}."
+    - num_tokens, num_experts = logits.shape
+    - 'raise ValueError(f"Invalid score_function: {score_function}")'
+    - dtype=torch.int64).view(top_indices.shape) % logits.shape[-1]
+    - 'raise ValueError(f"Invalid drop_policy: {drop_policy}")'
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 38
+  candidate_id: mindspeed-llm-307ca07c7949
+  repository: MindSpeed-LLM
+  subject: 'fix(torch): fix checkpoint compatibility issue'
+  buggy_commit: 57b6573a59a65c6105324e81a60b83b3421c3182
+  fix_commit: 307ca07c794919b319a9a5abc05bba5749966ba2
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: checkpointing with distribute_saved_activations producing list[Tensor] state
+  workload_evidence: Activation-distribution checkpoint workload
+  failure_oracle_evidence: TypeError or checkpoint save/load failure
+  source_review_reason: Concrete feature/checkpoint interaction and exception oracle.
+  affected_parameter_candidates:
+  - distribute_saved_activations
+  changed_files:
+  - mindspeed_llm/core/tensor_parallel/layers.py
+  source_evidence:
+    commit_body: 'fix(torch): fix checkpoint compatibility issue
+
+
+      Co-authored-by: zhyebin01<zhangyebin@h-partners.com>
+
+
+
+
+      # message auto-generated for no-merge-commit merge:
+
+      !4253 merge bugfix into master
+
+
+      fix(torch): fix checkpoint compatibility issue
+
+
+      Created-by: zhyebin01
+
+      Commit-by: zhyebin01
+
+      Merged-by: ascend-robot
+
+      Description: [pytorch][bugfix]fix checkpoint compatibility issue
+
+
+      See merge request: Ascend/MindSpeed-LLM!4253'
+    test_files: []
+    parameter_diff_lines:
+    - return fn(ctx, wrapped_run_func, distribute_saved_activations, *flat_args)
+    - return fn(ctx, run_function, distribute_saved_activations, *args)
+    guard_diff_lines:
+    - 'if isinstance(arg, (list, tuple)) and len(arg) > 0 and torch.is_tensor(arg[0]):'
+    - 'if stype == "seq":'
+    oracle_diff_lines:
+    - Fixes TypeError caused by Megatron CheckpointFunction not supporting list[Tensor] inputs.
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 39
+  candidate_id: mindspeed-5f1f4abf20ec
+  repository: MindSpeed
+  subject: 'fix: adapt cpu-initialization and moe-tp-extend-ep'
+  buggy_commit: 6c3c4bf2dfa91e0456d8bf6aea3a55d13f499670
+  fix_commit: 5f1f4abf20ec0f0987afd00c60741b257f2801da
+  source_review_status: retain_for_execution
+  configuration_trigger_confirmed: true
+  trigger_summary: CPU initialization together with moe_tp_extend_ep
+  workload_evidence: Small MoE initialization workload
+  failure_oracle_evidence: initialization assertion or tensor-placement failure
+  source_review_reason: Explicit two-option incompatibility in model construction.
+  affected_parameter_candidates:
+  - activation_func
+  - moe_router_topk
+  changed_files:
+  - mindspeed/core/transformer/moe/experts.py
+  - mindspeed/core/transformer/moe/moe_feature/overlap/experts.py
+  - mindspeed/core/transformer/moe/moe_feature/tp_extend_ep/experts.py
+  source_evidence:
+    commit_body: 'fix: adapt cpu-initialization and moe-tp-extend-ep
+
+
+      Co-authored-by: wuweiqiang24<wuweiqiang11@huawei.com>
+
+
+
+
+      # message auto-generated for no-merge-commit merge:
+
+      !3590 merge fix/moe-tp-extend-ep-cpu-init into master
+
+
+      fix: adapt cpu-initialization and moe-tp-extend-ep
+
+
+      Created-by: wuweiqiang24
+
+      Commit-by: wuweiqiang24
+
+      Merged-by: ascend-robot
+
+      Description: ## What this PR does / why we need it?
+
+
+      修复--use-cpu-initialization与--moe-tp-extend-ep特性不兼容的问题
+
+
+      ## Does this PR introduce any user-facing change?
+
+
+      不涉及
+
+
+      ## How was this patch tested?
+
+
+      不涉及
+
+
+      注：因修改pre-commit导致代码超过100行
+
+
+
+      See merge request: Ascend/MindSpeed!3590'
+    test_files: []
+    parameter_diff_lines:
+    - (self.weight1, self.weight2, self.activation_func, group_list, self.layer_number),
+    - (self.weight1, self.weight2, self.activation_func, group_list, self.layer_number),
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+    - self.activation_func, False, fc1_output
+    - intermediate_parallel = self.activation_checkpoint_manager.checkpoint(self.activation_func, False, h)
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+    - assert self.config.moe_router_topk == 1, "`moe_apply_probs_on_input` only works with `moe_router_topk`=1."
+    - self.activation_func,
+    - (self.weight1, self.weight2, self.activation_func, group_list, self.layer_number, self.config),
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+    - assert self.config.moe_router_topk == 1, "`moe_apply_probs_on_input` only works with `moe_router_topk`=1."
+    - self.activation_func,
+    guard_diff_lines:
+    - 'if args_.moe_tp_extend_ep:'
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+    - 'if self.config.moe_tp_extend_ep:'
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+    - assert self.config.moe_router_topk == 1, "`moe_apply_probs_on_input` only works with `moe_router_topk`=1."
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+    - assert self.config.moe_router_topk == 1, "`moe_apply_probs_on_input` only works with `moe_router_topk`=1."
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+    - assert self.config.moe_router_topk == 1, "`moe_apply_probs_on_input` only works with `moe_router_topk`=1."
+    - 'if args_.moe_tp_extend_ep:'
+    - assert (self.config.activation_func == F.silu
+    - 'if self.config.moe_tp_extend_ep:'
+    oracle_diff_lines:
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+    - permuted_local_hidden_states.shape[0] // self.config.num_moe_experts,
+    - permuted_local_hidden_states.shape[0] // self.config.num_moe_experts,
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+    - assert self.config.moe_router_topk == 1, "`moe_apply_probs_on_input` only works with `moe_router_topk`=1."
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+    - assert self.config.moe_router_topk == 1, "`moe_apply_probs_on_input` only works with `moe_router_topk`=1."
+    - assert self.config.activation_func == F.silu, 'Activation function must be silu when using fused_swiglu.'
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 40
+  candidate_id: mindspeed-llm-3e61861d7ce3
+  repository: MindSpeed-LLM
+  subject: '[pytorch][bugfix]update lora moe in alltoall-overlap and gemm'
+  buggy_commit: 3e3a5ab092aa2b1a772e7b5e069f851c5d0d988f
+  fix_commit: 3e61861d7ce3676407fc29dfd230184cc18f7863
+  source_review_status: defer
+  configuration_trigger_confirmed: null
+  trigger_summary: LoRA MoE with all-to-all overlap/GEMM variants
+  workload_evidence: LoRA MoE examples
+  failure_oracle_evidence: unclear among several paths
+  source_review_reason: Broad feature update; one independent pre-fix failure must be isolated.
+  affected_parameter_candidates:
+  - activation_func
+  changed_files:
+  - mindspeed_llm/tasks/posttrain/lora/moe/experts.py
+  source_evidence:
+    commit_body: '[pytorch][bugfix]update lora moe in alltoall-overlap and gemm
+
+
+      Co-authored-by: guozhihua2<guozhihua2@huawei.com>
+
+
+
+
+      # message auto-generated for no-merge-commit merge:
+
+      !3924 merge update_lora_in_gemm_and_overlap_master into master
+
+
+      [pytorch][bugfix]update lora moe in alltoall-overlap and gemm
+
+
+      Created-by: guozhihua2
+
+      Commit-by: guozhihua2
+
+      Merged-by: ascend-robot
+
+      Description: 1. 同步mindspeed的修改，更新lora在overlap和gemm的处理逻辑。
+
+
+      See merge request: Ascend/MindSpeed-LLM!3924'
+    test_files:
+    - examples/mcore/deepseek3/tune_deepseek3_671b_16k_lora_A3_ptd.sh
+    - examples/mcore/deepseek3/tune_deepseek3_671b_4k_lora_A3_ptd.sh
+    - examples/mcore/deepseek3/tune_deepseek3_671b_4k_lora_ptd.sh
+    - examples/mcore/deepseek3/tune_deepseek3_671b_4k_qlora_ptd.sh
+    parameter_diff_lines:
+    - original_weight2_a, original_weight2_b, activation_func, \
+    - ctx.activation_func = activation_func
+    - act_without_probs = activation_func(x)
+    - activation_func = ctx.activation_func
+    - act_without_probs_ = activation_func(act_inputs)
+    - self.activation_func = fused_swiglu
+    - self.activation_func,
+    - return self.config.activation_func(x[0]) * x[1]
+    - self.activation_func = glu
+    guard_diff_lines:
+    - 'if not config.moe_permute_fusion:'
+    oracle_diff_lines: []
+  execution_verification:
+    workload_bound: null
+    failure_oracle_implemented: null
+    buggy_commit_reproduced_three_times: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null

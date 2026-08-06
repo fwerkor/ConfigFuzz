@@ -1,0 +1,881 @@
+schema_version: 1
+name: rq3-buggy-fixed-replay-specifications
+status: planned_not_executed
+source_execution_queue: execution_queue.yaml
+source_plan: replay_plan.source.yaml
+source_plan_sha256: b9a4b5b1399afb2dea7216ce7fa7b3c906e7293fdbbfaef25ec3e2784aa154c1
+policy:
+  same_harness_on_buggy_and_fixed: true
+  fixed_only_tests_may_be_backported_as_harness_code_only: true
+  implementation_changes_must_not_be_backported: true
+  buggy_revision_requires_three_repetitions: true
+  fixed_revision_must_pass: true
+  expected_rejection_is_not_a_bug: true
+candidate_count: 23
+readiness_counts:
+  needs_minimal_harness: 13
+  needs_trigger_split: 2
+  ready_existing_harness: 3
+  ready_fixed_harness_backport: 5
+repository_counts:
+  MindSpeed: 14
+  MindSpeed-LLM: 9
+records:
+- rank: 1
+  candidate_id: mindspeed-8cb3c0f81a0a
+  repository: MindSpeed
+  subject: '!440 mlp通信隐藏适配ParallelMLP，添加使用多流时不开启sp的异常抛出，重构变量名 Merge pull request !440 from xiangjunwei/master_0530'
+  buggy_commit: 94e802ceaba70054c2f23e822b97e60e36a51ea5
+  fix_commit: 8cb3c0f81a0a68c2582387c35dc8248c4681fd0f
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_guard
+  trigger:
+    assignments:
+      pipe_experts_multi_stream: true
+      sequence_parallel: false
+    relations:
+    - pipe_experts_multi_stream => sequence_parallel
+  harness: null
+  oracle:
+    kind: exception_or_deep_failure
+    patterns:
+    - pipe-experts-multi-stream can only be used with --sequence-parallel
+    fixed_expectation: fixed revision rejects the incompatible pair before training
+  unresolved:
+  - recover a compact MoE pipe-experts workload
+  - separate expected fixed-side rejection from the pre-fix deep failure
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 3
+  candidate_id: mindspeed-3dfc232bd297
+  repository: MindSpeed
+  subject: '!2279 bugfix: 修复pp和megatron_basic获取args参数的错误 Merge pull request !2279 from liurong1995/bugfix_args'
+  buggy_commit: 53463a3fbc61b87e043b02dafc30cff7e9a6d773
+  fix_commit: 3dfc232bd297b45582c833a208ca5cfc6a0a4fe7
+  claim_status: replay_plan_only_not_executed
+  readiness: ready_existing_harness
+  trigger_evidence_level: included_system_test
+  trigger:
+    assignments:
+      pipeline_model_parallel_size: '>1'
+      pp_schedule_list: enabled
+    relations:
+    - pipeline tensor shapes and process groups must use the active runtime arguments
+  harness:
+    path: tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+    mode: existing_on_both_commits
+    command: pytest -q tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+    exists_on_buggy_commit: true
+    exists_on_fixed_commit: true
+    buggy_blob: 12e96e9e960f67df83bd2b1bf0c219863d424312
+    fixed_blob: 07b6ea49c457170ca4134c5647ef3b95b78aae12
+    backport_test_code_only: false
+    extraction_command: git show 3dfc232bd297b45582c833a208ca5cfc6a0a4fe7:tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+      > tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+  oracle:
+    kind: exception_or_shape_mismatch
+    patterns:
+    - Pipeline parallel group of backward is not initialized
+    - AttributeError
+    - shape
+    fixed_expectation: test completes without process-group or tensor-shape failure
+  unresolved:
+  - bind the test fixture and launcher used by the historical CI
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 7
+  candidate_id: mindspeed-e93cbb5f80ff
+  repository: MindSpeed
+  subject: '!499 [bugfix]: mcore适配mc2，增加对应ut; 修复mcore MoE 环境下没有打开mc2的问题 Merge pull request !499 from Wang Xiaochao/master'
+  buggy_commit: d422f0f3f22ea44718858f42b587697595ed8995
+  fix_commit: e93cbb5f80ffb7f3126e89ac373cc43c156bfdda
+  claim_status: replay_plan_only_not_executed
+  readiness: ready_fixed_harness_backport
+  trigger_evidence_level: fixed_commit_unit_test
+  trigger:
+    assignments:
+      tensor_model_parallel_size: 8
+      sequence_parallel: true
+      num_experts: '>0'
+      use_ascend_mc2: true
+    relations:
+    - MCore MoE must initialize the MC2 path with sequence-parallel configuration
+  harness:
+    path: tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+    mode: copy_fixed_test_to_buggy_checkout
+    command: pytest -q tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+    exists_on_buggy_commit: false
+    exists_on_fixed_commit: true
+    buggy_blob: null
+    fixed_blob: b66201e93cdcced974692efcb6ce43f55c318f36
+    backport_test_code_only: true
+    extraction_command: git show e93cbb5f80ffb7f3126e89ac373cc43c156bfdda:tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+      > tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+    required_world_size: 8
+  oracle:
+    kind: numerical_equivalence
+    patterns:
+    - torch.allclose
+    - supplied weight
+    fixed_expectation: MC2-on output and gradients match the MC2-off reference within the test tolerance
+  unresolved:
+  - backport only the test file, not implementation changes
+  - confirm the historical dependency versions
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 9
+  candidate_id: mindspeed-03bb94e94855
+  repository: MindSpeed
+  subject: '!2811 fix: transformer config validate bug Merge pull request !2811 from YE ZHENYUAN/master0904'
+  buggy_commit: 708af43cf9d42ec729a5cbb65bf20e0106bb67bd
+  fix_commit: 03bb94e948552071b5abe66a0ec6f04f91404ed9
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_logic
+  trigger:
+    assignments:
+      recompute_in_bubble: true
+      pipeline_model_parallel_size: '>1'
+      num_layers_per_virtual_pipeline_stage: set
+    relations:
+    - recompute_num_layers must equal num_layers/PP when per-PP-rank mode is enabled, otherwise it must equal num_layers_per_virtual_pipeline_stage
+  harness: null
+  oracle:
+    kind: validation_or_schedule_failure
+    patterns:
+    - recompute_num_layers must be None or 0 when using recompute_in_bubble
+    fixed_expectation: derived recompute settings are idempotent and scheduling proceeds
+  unresolved:
+  - construct a CPU-level validate_args harness before using accelerator time
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 10
+  candidate_id: mindspeed-llm-6f8618b622c7
+  repository: MindSpeed-LLM
+  subject: '!3192 [pytorch][bugfix]change moe layer forward Merge pull request !3192 from guozhihua/fix-group-limited-greedy-bug'
+  buggy_commit: cf6e25cf7959c02fa44bf4d504aac555dda74377
+  fix_commit: 6f8618b622c71bf543c312465f17370f7e06f895
+  claim_status: replay_plan_only_not_executed
+  readiness: ready_existing_harness
+  trigger_evidence_level: included_system_script
+  trigger:
+    assignments:
+      moe_router_load_balancing_type: group_limited_greedy
+      tensor_model_parallel_size: '>1'
+      sequence_parallel: false
+      do_train: true
+    relations:
+    - training MoE with TP>1 and no sequence parallel enters the patched forward path
+  harness:
+    path: tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+    mode: existing_on_both_commits
+    command: bash tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+    exists_on_buggy_commit: true
+    exists_on_fixed_commit: true
+    buggy_blob: 3bc42016348a4ba05e2f4689bd4a5fcc38ceb8af
+    fixed_blob: c1f0b49db65dd62851491e9801af3f92bc04e7cd
+    backport_test_code_only: false
+    extraction_command: git show 6f8618b622c71bf543c312465f17370f7e06f895:tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+      > tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+  oracle:
+    kind: exception_or_forward_failure
+    patterns:
+    - During training, performance may degrade if MoE and tensor parallelism
+    - group_limited_greedy
+    fixed_expectation: the intended fixed-side behavior is observed without router/forward corruption
+  unresolved:
+  - the historical script is too large for final benchmarking and needs a reduced equivalent
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 11
+  candidate_id: mindspeed-c303a051fd66
+  repository: MindSpeed
+  subject: '!226 [Fix] Fix ulysses context parallel when bs greater than 1 Merge pull request !226 from 郭鹏/master'
+  buggy_commit: 1c6e0f938dd111bc1af9d735c8abd0f96d81185a
+  fix_commit: c303a051fd66c923b50f8d9d8e49ece56caabe6d
+  claim_status: replay_plan_only_not_executed
+  readiness: ready_fixed_harness_backport
+  trigger_evidence_level: fixed_commit_unit_test
+  trigger:
+    assignments:
+      context_parallel_size: 8
+      micro_batch_size: 2
+      context_parallel_algo: ulysses_cp_algo
+      seq_length: 8192
+    relations:
+    - Ulysses all-to-all must preserve the batch dimension when batch size exceeds one
+  harness:
+    path: tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+    mode: copy_fixed_test_to_buggy_checkout
+    command: pytest -q tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+    exists_on_buggy_commit: false
+    exists_on_fixed_commit: true
+    buggy_blob: null
+    fixed_blob: 1bababdb4425b3d7e83a68f9929f8a47a8828aaa
+    backport_test_code_only: true
+    extraction_command: git show c303a051fd66c923b50f8d9d8e49ece56caabe6d:tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+      > tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+    required_world_size: 8
+    required_device: Ascend910B
+  oracle:
+    kind: numerical_equivalence
+    patterns:
+    - torch.allclose
+    - shape
+    fixed_expectation: distributed Ulysses output matches the reference for bs=2
+  unresolved:
+  - backport the fixed-side test without the implementation patch
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 12
+  candidate_id: mindspeed-llm-0f8a1851fe37
+  repository: MindSpeed-LLM
+  subject: '!1062 修复moe代码合入导致的分布式优化器不可用bug * fix bug for alibi and distributed opti'
+  buggy_commit: 6a232b8f1f97735051060c0af957ba2e74ebaecc
+  fix_commit: 0f8a1851fe373e256213a796f64ae549ee6b84a3
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_trigger_split
+  trigger_evidence_level: commit_description_multiple_fixes
+  trigger:
+    assignments:
+      num_experts: '>0'
+      use_distributed_optimizer: true
+      position_embedding_type: alibi
+    relations:
+    - the commit combines expert-group initialization and ALiBi fixes
+  harness: null
+  oracle:
+    kind: exception
+    patterns:
+    - Expert parallel group is not initialized
+    - optimizer
+    - alibi
+    fixed_expectation: each isolated subcase passes on the fixed revision
+  unresolved:
+  - split distributed-optimizer and ALiBi root causes into separate candidates
+  - recover an executable historical command for each subcase
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 15
+  candidate_id: mindspeed-b3fb85187834
+  repository: MindSpeed
+  subject: '!1543 [bugfix] fix expert parallel group Merge pull request !1543 from ningbenzhe1/master'
+  buggy_commit: 5d85e674cbf7ffec8816ac79bcd3c0fc9359533c
+  fix_commit: b3fb8518783498ffe52bfaedecf88f5b99899b94
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_guard
+  trigger:
+    assignments:
+      expert_model_parallel_size: '>1'
+      context_parallel_size: '>=1'
+    relations:
+    - (data_parallel_size * context_parallel_size) % expert_model_parallel_size must equal 0 for the legacy order
+  harness: null
+  oracle:
+    kind: parallel_group_membership
+    patterns:
+    - is not divisible by expert_model_parallel_size
+    - RuntimeError
+    fixed_expectation: valid topologies construct the expected expert/data-parallel groups
+  unresolved:
+  - choose one valid topology that fails only on the buggy group construction
+  - record expected rank groups
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 17
+  candidate_id: mindspeed-1caf2d4413e1
+  repository: MindSpeed
+  subject: '!2684 修复动态padding没考虑sequence_parallel的bug Merge pull request !2684 from yuqi/new_pad_fix'
+  buggy_commit: 7932055d9fbca53691b6d286c95258a103be4f49
+  fix_commit: 1caf2d4413e100ce4fc5dc7620e238cb81262745
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_branches
+  trigger:
+    assignments:
+      dynamic_padding: true
+      sequence_parallel: true
+      tensor_model_parallel_size: '>1'
+      micro_batch_size: '>=1'
+    relations:
+    - received dynamic sequence length must be multiplied by TP when sequence parallel is active
+  harness: null
+  oracle:
+    kind: shape_mismatch
+    patterns:
+    - position_ids
+    - dynamic_seq_len
+    - shape
+    fixed_expectation: position-id and received-tensor shapes agree
+  unresolved:
+  - recover a compact dynamic-padding batch fixture
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 19
+  candidate_id: mindspeed-f33404c7a526
+  repository: MindSpeed
+  subject: '!2278 fix: tp2d with no fa 修复不开fa情况下tp2d参数校验 Merge pull request !2278 from glhyy/masterdev'
+  buggy_commit: e47a58d0f0586a0de004ac854e996c7529030ee9
+  fix_commit: f33404c7a5263cb762c3defe69852e9c0fdecd72
+  claim_status: replay_plan_only_not_executed
+  readiness: ready_existing_harness
+  trigger_evidence_level: included_system_script
+  trigger:
+    assignments:
+      tp_2d: true
+      use_flash_attn: false
+      context_parallel_algo: megatron_cp_algo
+      multi_head_latent_attention: true
+    relations:
+    - TP2D without FlashAttention must use the supported Ulysses CP path
+  harness:
+    path: tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+    mode: existing_on_both_commits
+    command: bash tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+    exists_on_buggy_commit: true
+    exists_on_fixed_commit: true
+    buggy_blob: f94a6e3840f8797dd1d5a73726c217ac0eda6476
+    fixed_blob: 187810db71c543081495f9d645b8ed4fcc4adb1f
+    backport_test_code_only: false
+    extraction_command: git show f33404c7a5263cb762c3defe69852e9c0fdecd72:tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+      > tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+  oracle:
+    kind: validation_or_attention_failure
+    patterns:
+    - tp-2d now only support
+    - shape
+    - attention
+    fixed_expectation: the fixed validator selects a supported CP algorithm and the attention workload completes
+  unresolved:
+  - derive a reduced model from the historical DeepSeek script
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 20
+  candidate_id: mindspeed-llm-1507e52e0818
+  repository: MindSpeed-LLM
+  subject: '!1554 fix: solve bug of num layer list and support DPP in moe Merge pull request !1554 from RuanZhiXiang/fix-moe-DPP-VPP'
+  buggy_commit: 58e8133311e4b7707e121c075a43d28777e094b3
+  fix_commit: 1507e52e0818bef9ce77e0622cb994774bdfcbcd
+  claim_status: replay_plan_only_not_executed
+  readiness: ready_fixed_harness_backport
+  trigger_evidence_level: fixed_commit_system_script
+  trigger:
+    assignments:
+      pipeline_model_parallel_size: 4
+      expert_model_parallel_size: 2
+      num_layer_list: set
+      num_layers_per_virtual_pipeline_stage: null
+    relations:
+    - len(num_layer_list)=PP, sum(num_layer_list)=num_layers, and dynamic PP cannot be combined with VPP
+  harness:
+    path: tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh
+    mode: copy_fixed_test_to_buggy_checkout
+    command: bash tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh
+    exists_on_buggy_commit: false
+    exists_on_fixed_commit: true
+    buggy_blob: null
+    fixed_blob: 1944bd1a8abf43845b40085f6defdd3a84488b74
+    backport_test_code_only: true
+    extraction_command: git show 1507e52e0818bef9ce77e0622cb994774bdfcbcd:tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh
+      > tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh
+  oracle:
+    kind: validation_or_layer_placement
+    patterns:
+    - len(args.num_layer_list)
+    - Incorrect num_layer_list
+    - Dynamic pipeline model
+    fixed_expectation: valid dynamic layer placement builds the expected per-stage layer counts
+  unresolved:
+  - backport the script and baseline fixture together
+  - minimize the Mixtral model size
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 23
+  candidate_id: mindspeed-2dbb9c599c2a
+  repository: MindSpeed
+  subject: '!374 automated-pipeline增加对分布式优化器、Global Attention Mask等支持修复 Merge pull request !374 from gitee-yy/master'
+  buggy_commit: 6a0279604a120d3698ad32d139f83501a61139da
+  fix_commit: 2dbb9c599c2a6ef3a5ebcf372697e9f62e83a533
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: patch_and_incidental_tests
+  trigger:
+    assignments:
+      automated_pipeline: true
+      num_layer_list: set
+      virtual_pipeline_model_parallel_size: null
+    relations:
+    - automated pipeline layer rebuilding is enabled only without VPP
+  harness: null
+  oracle:
+    kind: schedule_or_output_mismatch
+    patterns:
+    - torch.allclose
+    - scheduling
+    fixed_expectation: layer placement and outputs match the intended automated-pipeline schedule
+  unresolved:
+  - the changed unit tests are not specific to automated pipeline; create a focused layer-placement harness
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 25
+  candidate_id: mindspeed-bdb06b9deef6
+  repository: MindSpeed
+  subject: '!2328 【BUGFIX!!!】UT补充&amp;recompute修复 Merge pull request !2328 from yangjie/master'
+  buggy_commit: 6d24e3b56340882fa388cfead1e4f9c9a777078d
+  fix_commit: bdb06b9deef6d4883df82b6b64835e23104c04c2
+  claim_status: replay_plan_only_not_executed
+  readiness: ready_fixed_harness_backport
+  trigger_evidence_level: fixed_commit_unit_test
+  trigger:
+    assignments:
+      recompute_method: block
+      recompute_norm: true
+    relations:
+    - block recomputation must register the patched checkpointed forward path
+  harness:
+    path: tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+    mode: copy_fixed_test_to_buggy_checkout
+    command: pytest -q tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+    exists_on_buggy_commit: false
+    exists_on_fixed_commit: true
+    buggy_blob: null
+    fixed_blob: 41f774a6d85378678f36ed53b5f96e68a7dc86fb
+    backport_test_code_only: true
+    extraction_command: git show bdb06b9deef6d4883df82b6b64835e23104c04c2:tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+      > tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+    required_world_size: 8
+  oracle:
+    kind: numerical_equivalence
+    patterns:
+    - torch.allclose
+    fixed_expectation: forward outputs and input gradients equal the non-recompute reference
+  unresolved:
+  - backport the fixed-side test only
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 26
+  candidate_id: mindspeed-llm-a0edb582b143
+  repository: MindSpeed-LLM
+  subject: '!2134 bugfix:重构mc代码，修复mc2+matmul_add+swap_attention 报weight没有main_grad属性错误 Merge pull request !2134 from yanzhixiao/bugfix-mc2-mma-swap'
+  buggy_commit: 3da258360721605e2ff203f5723ae0291add3f71
+  fix_commit: a0edb582b143cd2322f63f1b741fadc32cbc417b
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: commit_description
+  trigger:
+    assignments:
+      use_ascend_mc2: true
+      matmul_add: true
+      swap_attention: true
+      tensor_model_parallel_size: '>1'
+    relations:
+    - the combined optimization must preserve weight.main_grad handling
+  harness: null
+  oracle:
+    kind: exception
+    patterns:
+    - main_grad
+    - AttributeError
+    fixed_expectation: one optimizer step completes without missing main_grad
+  unresolved:
+  - recover the exact historical MC2/matmul_add flag names and a one-layer training fixture
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 27
+  candidate_id: mindspeed-25568bbf2423
+  repository: MindSpeed
+  subject: 'fix: MindSpeedTEDotProductAttention reads context_parallel_algo from global args instead of stale config'
+  buggy_commit: 53c3dc787ba392890c0b1ef500e678169fc1922a
+  fix_commit: 25568bbf2423d67e129ff42470ef7ddf47f2e37a
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_state_source
+  trigger:
+    assignments:
+      context_parallel_size: '>1'
+      transformer_impl: transformer_engine
+      group_query_attention: true
+    relations:
+    - TE attention must read context_parallel_algo from current global args instead of stale config
+  harness: null
+  oracle:
+    kind: shape_or_strategy_mismatch
+    patterns:
+    - number of GQA groups
+    - shape
+    - context_parallel_algo
+    fixed_expectation: the selected CP strategy and GQA tensor shapes match current arguments
+  unresolved:
+  - construct two configs that differ only in the stale/global CP algorithm value
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 28
+  candidate_id: mindspeed-llm-27ac11d642e6
+  repository: MindSpeed-LLM
+  subject: '!1290 Llama2-70b参数优化 + 权重转换bug修复 Merge pull request !1290 from wucong/llama270b'
+  buggy_commit: f31514a83ae52cdb65d25b8bf409181fd0e43a56
+  fix_commit: 27ac11d642e67458652832a5087adb4783c3a391
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_guard
+  trigger:
+    assignments:
+      num_layers_per_virtual_pipeline_stage: set
+      save_model_type: not megatron
+    relations:
+    - VPP-specific queue ordering must only apply to Megatron-format checkpoint saving
+  harness: null
+  oracle:
+    kind: checkpoint_structure
+    patterns:
+    - conversion
+    - missing
+    - layer
+    fixed_expectation: converted checkpoint contains every layer exactly once in the expected order
+  unresolved:
+  - the cited pretraining script is not a conversion reproducer; build a synthetic checkpoint queue harness
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 30
+  candidate_id: mindspeed-llm-d4feda79a795
+  repository: MindSpeed-LLM
+  subject: '!1734 [master] add swap-attention ST and bugfix validation of enable-recompute-pp-rank Merge pull request !1734
+    from RuanZhiXiang/swap-st'
+  buggy_commit: ae409aa0098830719b7bca04c1ce741a899dc96c
+  fix_commit: d4feda79a79548753c4609e3fd9f2704649a0dd3
+  claim_status: replay_plan_only_not_executed
+  readiness: ready_fixed_harness_backport
+  trigger_evidence_level: fixed_commit_system_script
+  trigger:
+    assignments:
+      swap_attention: true
+      enable_recompute_layers_per_pp_rank: true
+      pipeline_model_parallel_size: 4
+      num_layers_per_virtual_pipeline_stage: 2
+      tensor_model_parallel_size: 2
+    relations:
+    - swap attention counts as recomputation when validating per-PP-rank recompute settings
+  harness:
+    path: tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh
+    mode: copy_fixed_test_to_buggy_checkout
+    command: bash tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh
+    exists_on_buggy_commit: false
+    exists_on_fixed_commit: true
+    buggy_blob: null
+    fixed_blob: bf10b806b88ad549b3cf8a659b579602227dc633
+    backport_test_code_only: true
+    extraction_command: git show d4feda79a79548753c4609e3fd9f2704649a0dd3:tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh
+      > tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh
+  oracle:
+    kind: validation_or_training_failure
+    patterns:
+    - enable-recompute-layers-per-pp-rank
+    - AssertionError
+    fixed_expectation: the valid swap-attention configuration passes validation and training startup
+  unresolved:
+  - backport the script and expected baseline
+  - reduce model and iteration count
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 31
+  candidate_id: mindspeed-befe576b2920
+  repository: MindSpeed
+  subject: '!1466 解决Megatron MoE场景开启激活函数重计算报错RANK NaN的问题 Merge pull request !1466 from 张宇鹏/master_1126'
+  buggy_commit: 9392e29163a672034be4f630ca520e463fbf8bc2
+  fix_commit: befe576b2920cc4fdd5c2186ca131201a3b9202e
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: commit_description_and_patch_branch
+  trigger:
+    assignments:
+      num_experts: '>0'
+      recompute_activation_function: true
+    relations:
+    - an expert may receive zero tokens and must use the empty-input fallback during activation recomputation
+  harness: null
+  oracle:
+    kind: nan_or_nonfinite
+    patterns:
+    - NaN
+    - nonfinite
+    fixed_expectation: all rank outputs, gradients, and loss remain finite
+  unresolved:
+  - force a deterministic zero-token expert assignment
+  - record the exact failing rank and tensor
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 33
+  candidate_id: mindspeed-ba1e5e528ff3
+  repository: MindSpeed
+  subject: '!327 [bugfix]修复num_experts数量不大于topk时出现的异常 Merge pull request !327 from liujianxing/dev_zsr'
+  buggy_commit: daea717cbac5fb7b9df19e8f18f9ad5c1e7c77a7
+  fix_commit: ba1e5e528ff3810351d4226dec125033da27db07
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_guard
+  trigger:
+    assignments:
+      num_experts: 2
+      moe_router_topk: 2
+    relations:
+    - historical implementation treated num_experts <= topk as invalid
+  harness: null
+  oracle:
+    kind: exception
+    patterns:
+    - num_experts=2 is equal or smaller than topk=2
+    - torch.topk
+    fixed_expectation: fixed revision produces the documented early validator outcome for the selected invalid pair
+  unresolved:
+  - the existing unit test contains valid and boundary cases but does not isolate the argument validator
+  - decide whether equality is an expected rejection or a historical framework defect before benchmark admission
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 34
+  candidate_id: mindspeed-llm-885cb967359a
+  repository: MindSpeed-LLM
+  subject: '[pytorch][bugfix]fix lora bug in moe'
+  buggy_commit: cb248046ffad2cad7bda4d72a03060ea20dfd3a3
+  fix_commit: 885cb967359a492ead664fadf2bab6bb5100361c
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_trigger_split
+  trigger_evidence_level: explicit_patch_multiple_guards
+  trigger:
+    assignments:
+      num_experts: '>0'
+      lora_target_modules: set
+    relations:
+    - LoRA/QLoRA MoE requires alltoall_seq; moe_tp_extend_ep additionally requires expert divisibility
+  harness: null
+  oracle:
+    kind: exception_or_dispatch_failure
+    patterns:
+    - Lora and Qlora in the moe only enable the alltoall_seq
+    - local_expert_indices
+    fixed_expectation: each isolated supported configuration initializes and unsupported combinations reject early
+  unresolved:
+  - split dispatcher compatibility from expert-index/divisibility fixes
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 36
+  candidate_id: mindspeed-llm-22392902f00f
+  repository: MindSpeed-LLM
+  subject: '!1502 fix: solve problem occurs when using mc2 + moe Merge pull request !1502 from RuanZhiXiang/fix-mc2-moe'
+  buggy_commit: e060f047d316be35779f35d9db2e2da28e279d55
+  fix_commit: 22392902f00f14cb9b4264731afcee7c47f3e9d5
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: explicit_patch_guard
+  trigger:
+    assignments:
+      num_experts: '>0'
+      use_mc2: true
+      moe_grouped_gemm: true
+    relations:
+    - MC2 and grouped GEMM are unsupported together for this MoE implementation
+  harness: null
+  oracle:
+    kind: exception
+    patterns:
+    - Moe Grouped Gemm is not supported with mc2 in MOE model
+    fixed_expectation: fixed revision rejects before model construction
+  unresolved:
+  - capture the buggy revision operator/deep failure for comparison with fixed early rejection
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 38
+  candidate_id: mindspeed-llm-307ca07c7949
+  repository: MindSpeed-LLM
+  subject: 'fix(torch): fix checkpoint compatibility issue'
+  buggy_commit: 57b6573a59a65c6105324e81a60b83b3421c3182
+  fix_commit: 307ca07c794919b319a9a5abc05bba5749966ba2
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: patch_docstring
+  trigger:
+    assignments:
+      distribute_saved_activations: true
+      context_parallel_algo: hybrid_cp_algo
+      attention_mask_type: general
+    relations:
+    - checkpoint input contains list[Tensor] and must be flattened and reconstructed
+  harness: null
+  oracle:
+    kind: exception_or_checkpoint_mismatch
+    patterns:
+    - TypeError
+    - list[Tensor]
+    - CheckpointFunction
+    fixed_expectation: checkpoint forward/backward completes and reconstructed arguments preserve structure
+  unresolved:
+  - construct a minimal list[Tensor] checkpoint input without full training
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+- rank: 39
+  candidate_id: mindspeed-5f1f4abf20ec
+  repository: MindSpeed
+  subject: 'fix: adapt cpu-initialization and moe-tp-extend-ep'
+  buggy_commit: 6c3c4bf2dfa91e0456d8bf6aea3a55d13f499670
+  fix_commit: 5f1f4abf20ec0f0987afd00c60741b257f2801da
+  claim_status: replay_plan_only_not_executed
+  readiness: needs_minimal_harness
+  trigger_evidence_level: commit_description_and_patch_state_restore
+  trigger:
+    assignments:
+      use_cpu_initialization: true
+      moe_tp_extend_ep: true
+    relations:
+    - temporary expert-TP world size and rank overrides must be restored after grouped-MLP initialization
+  harness: null
+  oracle:
+    kind: initialization_or_state_leak
+    patterns:
+    - initialization
+    - tensor placement
+    - expert tensor parallel
+    fixed_expectation: weights initialize on the intended device and global expert-TP state is restored
+  unresolved:
+  - build a two-rank grouped-MLP initialization harness
+  - assert state restoration even when initialization raises
+  execution_verification:
+    buggy_runs: []
+    fixed_runs: []
+    buggy_reproduced_three_times: null
+    fixed_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null

@@ -23,6 +23,7 @@ from configfuzz.experiment import (
     build_rq1_audit_dataset,
     build_rq1_candidate_queue,
     freeze_intent_file,
+    load_audit_dataset,
     summarize_rq1,
     summarize_rq2,
     summarize_rq3,
@@ -31,6 +32,7 @@ from configfuzz.experiment import (
 
 ROOT = Path(__file__).resolve().parents[2]
 CORPUS = ROOT / "corpus/lmsv/manual_constraints.yaml"
+PRIMARY_AUDIT = ROOT / "experiments/rq1/constraint_audit.primary.yaml"
 
 
 def test_rq1_bootstrap_preserves_all_manual_rules_without_fake_coverage() -> None:
@@ -108,6 +110,27 @@ def test_rq1_summary_reports_paired_failure_costs() -> None:
     assert execution["time_to_detection_seconds"]["median"] == 20.0
     assert execution["gpu_seconds_wasted"]["p95"] == 40.0
     assert execution["cost_by_constraint_category"]["structural"]["run_count"] == 1
+
+
+def test_primary_audit_is_complete_and_uses_separate_denominators() -> None:
+    dataset = load_audit_dataset(PRIMARY_AUDIT)
+    summary = summarize_rq1(dataset)
+
+    assert summary["reviewed_constraint_count"] == 93
+    assert summary["audit_complete"] is True
+    legality = summary["coverage_by_denominator"]["framework_legality"]
+    assert legality["constraint_count"] == 39
+    assert legality["coverage_counts"] == {
+        "full_explicit": 13,
+        "implicit_delayed": 8,
+        "partial": 11,
+        "uncovered": 7,
+    }
+    assert summary["coverage_by_denominator"]["policy_only"]["constraint_count"] == 52
+    assert all(
+        item.review_status is ReviewStatus.PRIMARY_REVIEWED for item in dataset.records
+    )
+    assert all(len(item.coverage_evidence) >= 1 for item in dataset.records)
 
 
 def test_reviewed_coverage_requires_source_or_execution_evidence() -> None:
