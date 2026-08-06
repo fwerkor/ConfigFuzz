@@ -1,0 +1,1352 @@
+schema_version: 1
+name: rq3-historical-bug-triage-shortlist
+status: candidate_only
+selection_policy:
+  limit: 40
+  eligible_candidate_count: 78
+  explicit_fix_language_required: true
+  configuration_signal_required: true
+  docs_and_tests_only_excluded: true
+  max_patch_lines: 2000
+  max_per_primary_parameter: 5
+  repository_round_robin: true
+warning: Shortlisted commits are not benchmark bugs. Each entry must still satisfy the historical-bug inclusion criteria through
+  source review and buggy/fixed differential execution.
+triage_checklist:
+- identify the concrete triggering configuration parameters
+- construct or recover a workload without giving the exact reproducer to test methods
+- define an observable non-performance failure oracle
+- verify failure on the parent buggy commit at least three times
+- verify the same generated configuration passes on the fix commit
+- confirm the patch root cause matches the observed failure
+- minimize the triggering parameter combination
+- assign development or evaluation split only after verification
+shortlist_count: 40
+repository_counts:
+  MindSpeed: 20
+  MindSpeed-LLM: 20
+primary_parameter_counts:
+  activation_func: 1
+  context_parallel_size: 5
+  distribute_saved_activations: 1
+  expert_model_parallel_size: 3
+  hidden_size: 3
+  moe_router_topk: 2
+  num_attention_heads: 1
+  num_experts: 5
+  num_layers_per_virtual_pipeline_stage: 1
+  pipeline_model_parallel_size: 5
+  position_embedding_type: 1
+  recompute_method: 2
+  seq_length: 1
+  sequence_parallel: 3
+  tensor_model_parallel_size: 5
+  world_size: 1
+candidates:
+- rank: 1
+  candidate_id: mindspeed-8cb3c0f81a0a
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!440 mlp通信隐藏适配ParallelMLP，添加使用多流时不开启sp的异常抛出，重构变量名 Merge pull request !440 from xiangjunwei/master_0530'
+  merge_request_number: 440
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/440
+  buggy_commit: 94e802ceaba70054c2f23e822b97e60e36a51ea5
+  fix_commit: 8cb3c0f81a0a68c2582387c35dc8248c4681fd0f
+  authored_at: '2024-06-20T08:14:40+00:00'
+  affected_parameter_candidates:
+  - recompute_granularity
+  - sequence_parallel
+  - moe_router_topk
+  - num_experts
+  - hidden_size
+  - num_layers
+  - world_size
+  - swiglu
+  primary_parameter: sequence_parallel
+  changed_files:
+  - docs/features/pipeline-experts.md
+  - mindspeed/arguments.py
+  - mindspeed/model/transformer.py
+  - mindspeed/moe/pipe_experts.py
+  patch_lines: 68
+  triage_score: 17.932
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 2
+  candidate_id: mindspeed-llm-3e1392c4dc11
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!1834 修复llama-13b权重转换部分参数缺失报错 Merge pull request !1834 from wucong/fix_checkpoint'
+  merge_request_number: 1834
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/1834
+  buggy_commit: c653aaed08ea417b00fce40b5008a234c7f8231b
+  fix_commit: 3e1392c4dc111e85b8590b2514c9b5e5eb180b55
+  authored_at: '2024-11-07T03:15:35+00:00'
+  affected_parameter_candidates:
+  - untie_embeddings_and_output_weights
+  - multi_head_latent_attention
+  - max_position_embeddings
+  - moe_intermediate_size
+  - group_query_attention
+  - num_attention_heads
+  - padded_vocab_size
+  - global_batch_size
+  - intermediate_size
+  - add_bias_linear
+  - ffn_hidden_size
+  - kv_lora_rank
+  - num_experts
+  - q_lora_rank
+  - hidden_size
+  - vocab_size
+  - num_layers
+  - seq_length
+  - swiglu
+  primary_parameter: num_experts
+  changed_files:
+  - modellink/tasks/checkpoint/models.py
+  patch_lines: 112
+  triage_score: 18.388
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 3
+  candidate_id: mindspeed-3dfc232bd297
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!2279 bugfix: 修复pp和megatron_basic获取args参数的错误 Merge pull request !2279 from liurong1995/bugfix_args'
+  merge_request_number: 2279
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2279
+  buggy_commit: 53463a3fbc61b87e043b02dafc30cff7e9a6d773
+  fix_commit: 3dfc232bd297b45582c833a208ca5cfc6a0a4fe7
+  authored_at: '2025-05-14T01:33:16+00:00'
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - expert_model_parallel_size
+  - context_parallel_size
+  - micro_batch_size
+  - hidden_size
+  - world_size
+  primary_parameter: context_parallel_size
+  changed_files:
+  - mindspeed/core/pipeline_parallel/flexible_schedules.py
+  - mindspeed/core/pipeline_parallel/multi_parameter/adaptor.py
+  - mindspeed/core/pipeline_parallel/optimize_send_recv_comm/adaptor.py
+  - mindspeed/core/pipeline_parallel/optimize_send_recv_comm/parallel_state.py
+  - mindspeed/features_manager/pipeline_parallel/optimize_send_recv_comm.py
+  - tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+  patch_lines: 195
+  triage_score: 17.705
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 4
+  candidate_id: mindspeed-llm-118f67aae8c6
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: 'refactor: make post_norm config-driven, fix fc_type ref, clean qkv_split'
+  merge_request_number: null
+  merge_request_url: null
+  buggy_commit: 6b9c3f1e104cc425a95ceb7fd2b83f44d32c3e48
+  fix_commit: 118f67aae8c6a314c8e57d6cb36c3af2c2e05875
+  authored_at: '2026-07-30T19:39:42+08:00'
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - expert_model_parallel_size
+  - group_query_attention
+  - num_attention_heads
+  - hidden_size
+  primary_parameter: expert_model_parallel_size
+  changed_files:
+  - configs/checkpoint/model_cfg.json
+  - mindspeed_llm/tasks/checkpoint/convert_hf2mg.py
+  - mindspeed_llm/tasks/checkpoint/convert_mg2hf.py
+  - tests/pipeline/ut/checkpoint/test_checkpoint.json
+  patch_lines: 271
+  triage_score: 17.229
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 5
+  candidate_id: mindspeed-8f9bef1affaa
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!1452 参数副本确定性计算Bug修复 & UT补充构建 Merge pull request !1452 from Kingsleyandher/master'
+  merge_request_number: 1452
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/1452
+  buggy_commit: bdcd5e2c47bbb2cc35b87915298e99ed1d53d38e
+  fix_commit: 8f9bef1affaac880f95baed911140989546adadb
+  authored_at: '2024-11-28T03:04:07+00:00'
+  affected_parameter_candidates:
+  - max_sequence_length
+  - num_attention_heads
+  - hidden_size
+  - vocab_size
+  - num_layers
+  - world_size
+  primary_parameter: hidden_size
+  changed_files:
+  - mindspeed/optimizer/distrib_optimizer.py
+  - tests_extend/unit_tests/features/algorithm/test_reuse_dptr.py
+  - tests_extend/unit_tests/features/algorithm/test_reuse_optimizer.py
+  patch_lines: 282
+  triage_score: 16.718
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 6
+  candidate_id: mindspeed-llm-8a07245c2c43
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!2175 【Ray GRPO】添加GRPO ST用例，并补充readme，fix config bug Merge pull request !2175 from 朱意霖/master'
+  merge_request_number: 2175
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/2175
+  buggy_commit: 220cb1b0983985c58e7c3ab8f8920c31d4dacef4
+  fix_commit: 8a07245c2c4303ee2b5a8a0aa839022794abeb76
+  authored_at: '2025-01-24T08:48:58+00:00'
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - sequence_parallel
+  - global_batch_size
+  - micro_batch_size
+  - lr_decay_style
+  - train_iters
+  - seq_length
+  primary_parameter: pipeline_model_parallel_size
+  changed_files:
+  - configs/rlxf/grpo_trainer_llama32_1b.yaml
+  - docs/features/ray_grpo.md
+  - tests/st/configs/ray_grpo_full_llama32_1b_tp1pp1.yaml
+  patch_lines: 210
+  triage_score: 16.79
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 7
+  candidate_id: mindspeed-e93cbb5f80ff
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!499 [bugfix]: mcore适配mc2，增加对应ut; 修复mcore MoE 环境下没有打开mc2的问题 Merge pull request !499 from Wang Xiaochao/master'
+  merge_request_number: 499
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/499
+  buggy_commit: d422f0f3f22ea44718858f42b587697595ed8995
+  fix_commit: e93cbb5f80ffb7f3126e89ac373cc43c156bfdda
+  authored_at: '2024-07-10T04:10:06+00:00'
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - num_attention_heads
+  - sequence_parallel
+  - hidden_size
+  - vocab_size
+  - num_layers
+  - batch_size
+  - world_size
+  - seq_len
+  primary_parameter: tensor_model_parallel_size
+  changed_files:
+  - docs/features/mc2.md
+  - mindspeed/core/tensor_parallel/ascend_turbo/initialize.py
+  - tests_extend/model_tests/benchmark_model/gpt_moe/pretrain_gpt_moe_32k_cp2.sh
+  - tests_extend/unit_tests/features/mc2/test_mc2columnparallellinear.py
+  - tests_extend/unit_tests/features/mc2/test_mc2rowparallellinear.py
+  - tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+  - tests_extend/unit_tests/features/test_mc2columnparallellinear.py
+  - tests_extend/unit_tests/features/test_mc2rowparallellinear.py
+  patch_lines: 119
+  triage_score: 16.581
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 8
+  candidate_id: mindspeed-llm-8ff43a117958
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!3125 [pytorch][bugfix]fix qwen2_moe spec Merge pull request !3125 from guozhihua/fix_transformer_block_build_layer'
+  merge_request_number: 3125
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3125
+  buggy_commit: ea1200a1d82293181b8a7451761c4976528fb4a7
+  fix_commit: 8ff43a117958cad4374e8bf2bc89a17ffdc6194a
+  authored_at: '2025-08-18T11:12:20+00:00'
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  - pipeline_model_parallel_size
+  - multi_head_latent_attention
+  - num_experts
+  - num_layers
+  primary_parameter: pipeline_model_parallel_size
+  changed_files:
+  - examples/mcore/qwen2_moe/evaluate_qwen2_57b_a14b_ptd.sh
+  - examples/mcore/qwen2_moe/generate_qwen2_57b_a14b_ptd.sh
+  - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_32k_ptd.sh
+  - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_A3_ptd.sh
+  - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_ptd.sh
+  - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_full.sh
+  - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_full_pack.sh
+  - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_lora.sh
+  - mindspeed_llm/core/transformer/transformer_block.py
+  - mindspeed_llm/features_manager/pipeline_parallel/noop_layers.py
+  - mindspeed_llm/features_manager/tokenizer/build_tokenizer.py
+  - mindspeed_llm/features_manager/transformer/flash_attention/fusion_attention_feature.py
+  - mindspeed_llm/features_manager/transformer/mtp.py
+  - mindspeed_llm/features_manager/transformer/multi_latent_attention/mla_feature.py
+  - mindspeed_llm/features_manager/transformer/transformer_block.py
+  - mindspeed_llm/training/arguments.py
+  - tests/st/shell_scripts/qwen2_moe_tp1_pp2_ep2_cp2_32k.sh
+  patch_lines: 103
+  triage_score: 15.897
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 9
+  candidate_id: mindspeed-03bb94e94855
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!2811 fix: transformer config validate bug Merge pull request !2811 from YE ZHENYUAN/master0904'
+  merge_request_number: 2811
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2811
+  buggy_commit: 708af43cf9d42ec729a5cbb65bf20e0106bb67bd
+  fix_commit: 03bb94e948552071b5abe66a0ec6f04f91404ed9
+  authored_at: '2025-09-04T12:33:01+00:00'
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  - pipeline_model_parallel_size
+  - recompute_granularity
+  - recompute_num_layers
+  - recompute_method
+  - num_layers
+  primary_parameter: pipeline_model_parallel_size
+  changed_files:
+  - mindspeed/features_manager/pipeline_parallel/ripipe_schedules_feature.py
+  patch_lines: 23
+  triage_score: 15.977
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 10
+  candidate_id: mindspeed-llm-6f8618b622c7
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!3192 [pytorch][bugfix]change moe layer forward Merge pull request !3192 from guozhihua/fix-group-limited-greedy-bug'
+  merge_request_number: 3192
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3192
+  buggy_commit: cf6e25cf7959c02fa44bf4d504aac555dda74377
+  fix_commit: 6f8618b622c71bf543c312465f17370f7e06f895
+  authored_at: '2025-08-25T07:53:32+00:00'
+  affected_parameter_candidates:
+  - moe_router_load_balancing_type
+  - tensor_model_parallel_size
+  - sequence_parallel
+  - num_layers
+  primary_parameter: tensor_model_parallel_size
+  changed_files:
+  - mindspeed_llm/core/transformer/moe/moe_layer.py
+  - mindspeed_llm/features_manager/moe/moe_router.py
+  patch_lines: 105
+  triage_score: 15.395
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 11
+  candidate_id: mindspeed-c303a051fd66
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!226 [Fix] Fix ulysses context parallel when bs greater than 1 Merge pull request !226 from 郭鹏/master'
+  merge_request_number: 226
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/226
+  buggy_commit: 1c6e0f938dd111bc1af9d735c8abd0f96d81185a
+  fix_commit: c303a051fd66c923b50f8d9d8e49ece56caabe6d
+  authored_at: '2024-04-30T07:17:20+00:00'
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - expert_model_parallel_size
+  - context_parallel_size
+  - data_parallel_size
+  - attention_dropout
+  - world_size
+  - seq_len
+  primary_parameter: context_parallel_size
+  changed_files:
+  - ascendspeed/core/context_parallel/ulysses_context_parallel.py
+  - ascendspeed/core/parallel_state.py
+  - tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ringattn_context_parallel.py
+  - tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+  patch_lines: 588
+  triage_score: 15.912
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 12
+  candidate_id: mindspeed-llm-0f8a1851fe37
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!1062 修复moe代码合入导致的分布式优化器不可用bug * fix bug for alibi and distributed opti'
+  merge_request_number: 1062
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/1062
+  buggy_commit: 6a232b8f1f97735051060c0af957ba2e74ebaecc
+  fix_commit: 0f8a1851fe373e256213a796f64ae549ee6b84a3
+  authored_at: '2024-03-19T02:32:12+00:00'
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - expert_model_parallel_size
+  - context_parallel_size
+  - world_size
+  primary_parameter: context_parallel_size
+  changed_files:
+  - modellink/core/parallel_state.py
+  - modellink/model/transformer.py
+  patch_lines: 184
+  triage_score: 15.316
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 13
+  candidate_id: mindspeed-70ef444a72b9
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!425 fix: Improve the scalability of context parallel; test(tests_extend/unit_tests/megatron/test_dot_product_attention.py)
+    Merge pull request !425 from 邓佳/master'
+  merge_request_number: 425
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/425
+  buggy_commit: 20440b3f7698241146ba16e63b6e97c8b9fb31dc
+  fix_commit: 70ef444a72b9d139bae6d3a4f0d61c6313cf765b
+  authored_at: '2024-06-18T09:16:04+00:00'
+  affected_parameter_candidates:
+  - context_parallel_size
+  - num_attention_heads
+  - hidden_size
+  - num_layers
+  - seq_len
+  primary_parameter: context_parallel_size
+  changed_files:
+  - mindspeed/core/transformer/dot_product_attention.py
+  - tests_extend/unit_tests/megatron/test_dot_product_attention.py
+  patch_lines: 85
+  triage_score: 15.415
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 14
+  candidate_id: mindspeed-llm-c06c15094bef
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!3085 [pytorch][refactor]fix moe and fusions features in the refactor Merge pull request !3085 from guozhihua/fix_moe'
+  merge_request_number: 3085
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3085
+  buggy_commit: a3fab77bc085ab6a856898a5fdba9e87aff3e353
+  fix_commit: c06c15094bef1abd6326dcf9067624dc0c9a406a
+  authored_at: '2025-08-05T13:07:44+00:00'
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - multi_head_latent_attention
+  - ffn_hidden_size
+  - num_layers
+  primary_parameter: pipeline_model_parallel_size
+  changed_files:
+  - mindspeed_llm/features_manager/__init__.py
+  - mindspeed_llm/features_manager/common/embedding.py
+  - mindspeed_llm/features_manager/common/rotary.py
+  - mindspeed_llm/features_manager/megatron_basic/model_basic.py
+  - mindspeed_llm/features_manager/moe/moe_allgather_overlap.py
+  - mindspeed_llm/features_manager/moe/moe_alltoallseq_overlap.py
+  - mindspeed_llm/features_manager/moe/moe_router.py
+  - mindspeed_llm/features_manager/moe/shared_expert.py
+  - mindspeed_llm/features_manager/transformer/multi_latent_attention/mla_feature.py
+  patch_lines: 111
+  triage_score: 14.989
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 15
+  candidate_id: mindspeed-b3fb85187834
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!1543 [bugfix] fix expert parallel group Merge pull request !1543 from ningbenzhe1/master'
+  merge_request_number: 1543
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/1543
+  buggy_commit: 5d85e674cbf7ffec8816ac79bcd3c0fc9359533c
+  fix_commit: b3fb8518783498ffe52bfaedecf88f5b99899b94
+  authored_at: '2024-12-03T12:04:07+00:00'
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - expert_model_parallel_size
+  - context_parallel_size
+  - data_parallel_size
+  - world_size
+  primary_parameter: context_parallel_size
+  changed_files:
+  - mindspeed/core/parallel_state.py
+  patch_lines: 221
+  triage_score: 14.779
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 16
+  candidate_id: mindspeed-llm-86ff5d73ed9c
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!1571 Del: remove moe legacy and its system tests Merge pull request !1571 from RuanZhiXiang/moe-legacy-fix'
+  merge_request_number: 1571
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/1571
+  buggy_commit: cd878c44cb59517588e2c903ff5d602b7f8def4b
+  fix_commit: 86ff5d73ed9c750164d6601a4cf2daf29787dfad
+  authored_at: '2024-08-30T06:21:07+00:00'
+  affected_parameter_candidates:
+  - expert_model_parallel_size
+  - moe_router_topk
+  - ffn_hidden_size
+  - num_experts
+  - hidden_size
+  primary_parameter: expert_model_parallel_size
+  changed_files:
+  - modellink/model/moe.py
+  patch_lines: 118
+  triage_score: 14.882
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 17
+  candidate_id: mindspeed-1caf2d4413e1
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!2684 修复动态padding没考虑sequence_parallel的bug Merge pull request !2684 from yuqi/new_pad_fix'
+  merge_request_number: 2684
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2684
+  buggy_commit: 7932055d9fbca53691b6d286c95258a103be4f49
+  fix_commit: 1caf2d4413e100ce4fc5dc7620e238cb81262745
+  authored_at: '2025-07-31T09:28:34+00:00'
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - sequence_parallel
+  - micro_batch_size
+  - seq_length
+  primary_parameter: tensor_model_parallel_size
+  changed_files:
+  - mindspeed/core/context_parallel/get_batch_utils.py
+  - mindspeed/core/context_parallel/utils.py
+  - mindspeed/core/transformer/flash_attention/reset_attention_mask/adaptor.py
+  patch_lines: 16
+  triage_score: 14.484
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 18
+  candidate_id: mindspeed-llm-d68728b50bc4
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!2217 [mcore-llm]修复dense/moe场景下的异常显存峰值问题 Merge pull request !2217 from 丁子叉/master'
+  merge_request_number: 2217
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/2217
+  buggy_commit: 61157536c94889875ad4dff5b1748f1714f28549
+  fix_commit: d68728b50bc476f3f6b6811ff35018b55ba29559
+  authored_at: '2025-02-17T09:29:51+00:00'
+  affected_parameter_candidates:
+  - moe_intermediate_size
+  - ffn_hidden_size
+  - hidden_size
+  primary_parameter: hidden_size
+  changed_files:
+  - mindspeed_llm/core/transformer/moe/moe_layer.py
+  patch_lines: 26
+  triage_score: 13.474
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 19
+  candidate_id: mindspeed-f33404c7a526
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!2278 fix: tp2d with no fa 修复不开fa情况下tp2d参数校验 Merge pull request !2278 from glhyy/masterdev'
+  merge_request_number: 2278
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2278
+  buggy_commit: e47a58d0f0586a0de004ac854e996c7529030ee9
+  fix_commit: f33404c7a5263cb762c3defe69852e9c0fdecd72
+  authored_at: '2025-05-12T03:40:32+00:00'
+  affected_parameter_candidates:
+  - world_size
+  - seq_length
+  - seq_len
+  primary_parameter: seq_length
+  changed_files:
+  - mindspeed/core/context_parallel/dot_product_attention.py
+  - mindspeed/features_manager/tensor_parallel/tp_2d.py
+  - tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+  patch_lines: 16
+  triage_score: 13.984
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 20
+  candidate_id: mindspeed-llm-1507e52e0818
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!1554 fix: solve bug of num layer list and support DPP in moe Merge pull request !1554 from RuanZhiXiang/fix-moe-DPP-VPP'
+  merge_request_number: 1554
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/1554
+  buggy_commit: 58e8133311e4b7707e121c075a43d28777e094b3
+  fix_commit: 1507e52e0818bef9ce77e0622cb994774bdfcbcd
+  authored_at: '2024-09-10T01:02:45+00:00'
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  - pipeline_model_parallel_size
+  - num_layers
+  primary_parameter: pipeline_model_parallel_size
+  changed_files:
+  - modellink/arguments.py
+  - modellink/core/transformer/transformer_block.py
+  patch_lines: 70
+  triage_score: 12.43
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 21
+  candidate_id: mindspeed-09fe6b6ff2e3
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!681 ampipe bugfix修复无法加载mixtral模型权重问题 Merge pull request !681 from 张树仁/bugfix_moe'
+  merge_request_number: 681
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/681
+  buggy_commit: 9ee40217a4df53336121cc1aed0c5070ef38a509
+  fix_commit: 09fe6b6ff2e36554ac211f0b6d13f5887cc579da
+  authored_at: '2024-08-22T07:23:40+00:00'
+  affected_parameter_candidates:
+  - sequence_parallel
+  - num_experts
+  - hidden_size
+  primary_parameter: sequence_parallel
+  changed_files:
+  - mindspeed/moe/ampipe/ampipe.py
+  - mindspeed/moe/ampipe/ampipe_moe_gating_computer.py
+  - mindspeed/moe/ampipe/ampipe_moe_mlp_computer.py
+  - mindspeed/moe/ampipe/ampipe_post_mlp_computer.py
+  - mindspeed/moe/moe.py
+  patch_lines: 56
+  triage_score: 13.944
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 22
+  candidate_id: mindspeed-llm-df8ab5e07cde
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: LLama model权重转换支持自定义、GQA和MLP融合 1.支持自定义模型参数：type设为非预制模型，可自定义num_layers、num_heads、hidden_size 2.支持GQA：增加num_kv_heads参数
+    3.支持merge-mlp，开启则将gate_proj和up_proj权重合并 4.修复arguments中关于位置编码判断的bug 5.修复convert_weights_when_tp_pp_change中的若干bug
+  merge_request_number: null
+  merge_request_url: null
+  buggy_commit: a7ef12d257f99166d15f8544c7966df9a14087ef
+  fix_commit: df8ab5e07cde99afa2094e4b2868ce96de99bae8
+  authored_at: '2023-11-07T11:36:07+08:00'
+  affected_parameter_candidates:
+  - position_embedding_type
+  primary_parameter: position_embedding_type
+  changed_files:
+  - ascendspeed/arguments.py
+  patch_lines: 3
+  triage_score: 11.497
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 23
+  candidate_id: mindspeed-2dbb9c599c2a
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!374 automated-pipeline增加对分布式优化器、Global Attention Mask等支持修复 Merge pull request !374 from gitee-yy/master'
+  merge_request_number: 374
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/374
+  buggy_commit: 6a0279604a120d3698ad32d139f83501a61139da
+  fix_commit: 2dbb9c599c2a6ef3a5ebcf372697e9f62e83a533
+  authored_at: '2024-06-03T09:30:06+00:00'
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - num_attention_heads
+  - sequence_parallel
+  - hidden_size
+  - num_layers
+  - batch_size
+  - world_size
+  - seq_len
+  primary_parameter: tensor_model_parallel_size
+  changed_files:
+  - mindspeed/model/transformer.py
+  - tests_extend/unit_tests/features/moe/test_moe_token_rearrange.py
+  - tests_extend/unit_tests/features/test_mc2columnparalellinear.py
+  - tests_extend/unit_tests/features/test_mc2columnparallellinear.py
+  - tests_extend/unit_tests/features/test_mc2rowparalellinear.py
+  - tests_extend/unit_tests/features/test_mc2rowparallellinear.py
+  patch_lines: 273
+  triage_score: 13.627
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 24
+  candidate_id: mindspeed-llm-4c3e129ddc9b
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '[pytorch][bugfix]fix checkpoint convert v2 bug'
+  merge_request_number: null
+  merge_request_url: null
+  buggy_commit: d2d50890376bec209c98887b23af1c7401d6b993
+  fix_commit: 4c3e129ddc9b4ae0fe19a7658b760130fc83f56b
+  authored_at: '2025-10-22T14:41:11+08:00'
+  affected_parameter_candidates:
+  - num_experts
+  - hidden_size
+  primary_parameter: num_experts
+  changed_files:
+  - mindspeed_llm/tasks/checkpoint/convert_mg2hf.py
+  patch_lines: 6
+  triage_score: 10.494
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 25
+  candidate_id: mindspeed-bdb06b9deef6
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!2328 【BUGFIX!!!】UT补充&amp;recompute修复 Merge pull request !2328 from yangjie/master'
+  merge_request_number: 2328
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2328
+  buggy_commit: 6d24e3b56340882fa388cfead1e4f9c9a777078d
+  fix_commit: bdb06b9deef6d4883df82b6b64835e23104c04c2
+  authored_at: '2025-05-29T06:26:20+00:00'
+  affected_parameter_candidates:
+  - num_attention_heads
+  - attention_dropout
+  - recompute_method
+  - micro_batch_size
+  - hidden_dropout
+  - hidden_size
+  - num_layers
+  - world_size
+  primary_parameter: recompute_method
+  changed_files:
+  - mindspeed/features_manager/__init__.py
+  - mindspeed/features_manager/recompute/enable_recompute_layers_per_pp_rank.py
+  - mindspeed/features_manager/recompute/recompute_method.py
+  - tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+  patch_lines: 89
+  triage_score: 13.411
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 26
+  candidate_id: mindspeed-llm-a0edb582b143
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!2134 bugfix:重构mc代码，修复mc2+matmul_add+swap_attention 报weight没有main_grad属性错误 Merge pull request !2134 from yanzhixiao/bugfix-mc2-mma-swap'
+  merge_request_number: 2134
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/2134
+  buggy_commit: 3da258360721605e2ff203f5723ae0291add3f71
+  fix_commit: a0edb582b143cd2322f63f1b741fadc32cbc417b
+  authored_at: '2025-02-27T12:22:48+00:00'
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - sequence_parallel
+  - world_size
+  primary_parameter: tensor_model_parallel_size
+  changed_files:
+  - docs/features/mc2.md
+  - mindspeed_llm/core/tensor_parallel/ascend_turbo/__init__.py
+  - mindspeed_llm/core/tensor_parallel/ascend_turbo/ascend_turbo_cfg.py
+  - mindspeed_llm/core/tensor_parallel/ascend_turbo/initialize.py
+  - mindspeed_llm/core/tensor_parallel/ascend_turbo/mc2_linears_seq_parallel.py
+  - mindspeed_llm/tasks/posttrain/rlxf/training/initialize.py
+  - mindspeed_llm/training/arguments.py
+  - mindspeed_llm/training/initialize.py
+  patch_lines: 402
+  triage_score: 10.298
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 27
+  candidate_id: mindspeed-25568bbf2423
+  status: needs_source_review
+  repository: MindSpeed
+  subject: 'fix: MindSpeedTEDotProductAttention reads context_parallel_algo from global args instead of stale config'
+  merge_request_number: null
+  merge_request_url: null
+  buggy_commit: 53c3dc787ba392890c0b1ef500e678169fc1922a
+  fix_commit: 25568bbf2423d67e129ff42470ef7ddf47f2e37a
+  authored_at: '2026-07-10T16:31:30+08:00'
+  affected_parameter_candidates:
+  - num_attention_heads
+  - attention_dropout
+  primary_parameter: num_attention_heads
+  changed_files:
+  - mindspeed/te/pytorch/attention/dot_product_attention/dot_product_attention.py
+  patch_lines: 121
+  triage_score: 12.379
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 28
+  candidate_id: mindspeed-llm-27ac11d642e6
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!1290 Llama2-70b参数优化 + 权重转换bug修复 Merge pull request !1290 from wucong/llama270b'
+  merge_request_number: 1290
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/1290
+  buggy_commit: f31514a83ae52cdb65d25b8bf409181fd0e43a56
+  fix_commit: 27ac11d642e67458652832a5087adb4783c3a391
+  authored_at: '2024-05-29T01:58:38+00:00'
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  primary_parameter: num_layers_per_virtual_pipeline_stage
+  changed_files:
+  - tools/checkpoint/saver_megatron.py
+  patch_lines: 8
+  triage_score: 9.992
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 29
+  candidate_id: mindspeed-89255434104a
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!411 解决deepspeed_moe场景下，overlap_allreduce开启报错的问题 Merge pull request !411 from 张宇鹏/master_0614'
+  merge_request_number: 411
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/411
+  buggy_commit: 5efd0baead99badd3348812c00e6c848cd4255a8
+  fix_commit: 89255434104a0314cecf7c9ecde6f75952d99a2a
+  authored_at: '2024-06-15T03:25:32+00:00'
+  affected_parameter_candidates:
+  - sequence_parallel
+  primary_parameter: sequence_parallel
+  changed_files:
+  - mindspeed/model/transformer.py
+  - mindspeed/moe/config.py
+  - mindspeed/moe/gate.py
+  - mindspeed/moe/moe.py
+  patch_lines: 19
+  triage_score: 11.981
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 30
+  candidate_id: mindspeed-llm-d4feda79a795
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!1734 [master] add swap-attention ST and bugfix validation of enable-recompute-pp-rank Merge pull request !1734
+    from RuanZhiXiang/swap-st'
+  merge_request_number: 1734
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/1734
+  buggy_commit: ae409aa0098830719b7bca04c1ce741a899dc96c
+  fix_commit: d4feda79a79548753c4609e3fd9f2704649a0dd3
+  authored_at: '2024-09-29T02:38:57+00:00'
+  affected_parameter_candidates:
+  - recompute_granularity
+  - recompute_method
+  primary_parameter: recompute_method
+  changed_files:
+  - modellink/training/arguments.py
+  patch_lines: 5
+  triage_score: 9.495
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 31
+  candidate_id: mindspeed-befe576b2920
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!1466 解决Megatron MoE场景开启激活函数重计算报错RANK NaN的问题 Merge pull request !1466 from 张宇鹏/master_1126'
+  merge_request_number: 1466
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/1466
+  buggy_commit: 9392e29163a672034be4f630ca520e463fbf8bc2
+  fix_commit: befe576b2920cc4fdd5c2186ca131201a3b9202e
+  authored_at: '2024-11-29T01:14:06+00:00'
+  affected_parameter_candidates:
+  - activation_func
+  - hidden_size
+  primary_parameter: hidden_size
+  changed_files:
+  - mindspeed/core/transformer/moe/experts.py
+  patch_lines: 36
+  triage_score: 11.964
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 32
+  candidate_id: mindspeed-llm-eb9a13d762ef
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!3148 [pytorch][bigfix]fix pipeline cases in v2 Merge pull request !3148 from yanzhixiao/fix-v2-0815'
+  merge_request_number: 3148
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3148
+  buggy_commit: 50b1b1c437c57012dc08656ee423a4ce9e5bf99e
+  fix_commit: eb9a13d762effd9214bd5b18199a6a4d16c58adb
+  authored_at: '2025-08-15T16:45:28+00:00'
+  affected_parameter_candidates:
+  - world_size
+  - seq_len
+  primary_parameter: world_size
+  changed_files:
+  - mindspeed_llm/features_manager/models/module.py
+  - mindspeed_llm/features_manager/transformer/transformer_block.py
+  - mindspeed_llm/training/arguments.py
+  - tests/pipeline/context_parallel/test_ringattn_context_parallel.py
+  - tests/pipeline/model_module/test_attention.py
+  patch_lines: 37
+  triage_score: 9.463
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 33
+  candidate_id: mindspeed-ba1e5e528ff3
+  status: needs_source_review
+  repository: MindSpeed
+  subject: '!327 [bugfix]修复num_experts数量不大于topk时出现的异常 Merge pull request !327 from liujianxing/dev_zsr'
+  merge_request_number: 327
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/327
+  buggy_commit: daea717cbac5fb7b9df19e8f18f9ad5c1e7c77a7
+  fix_commit: ba1e5e528ff3810351d4226dec125033da27db07
+  authored_at: '2024-05-16T13:04:03+00:00'
+  affected_parameter_candidates:
+  - moe_router_topk
+  - num_experts
+  - hidden_size
+  primary_parameter: num_experts
+  changed_files:
+  - ascendspeed/arguments.py
+  - ascendspeed/moe/gate.py
+  - ascendspeed/moe/utils.py
+  - tests_extend/unit_tests/features/moe/test_moe_token_rearrange.py
+  patch_lines: 61
+  triage_score: 11.939
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 34
+  candidate_id: mindspeed-llm-885cb967359a
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '[pytorch][bugfix]fix lora bug in moe'
+  merge_request_number: null
+  merge_request_url: null
+  buggy_commit: cb248046ffad2cad7bda4d72a03060ea20dfd3a3
+  fix_commit: 885cb967359a492ead664fadf2bab6bb5100361c
+  authored_at: '2025-10-22T17:29:48+08:00'
+  affected_parameter_candidates:
+  - num_experts
+  primary_parameter: num_experts
+  changed_files:
+  - mindspeed_llm/core/transformer/moe/moe_layer.py
+  - mindspeed_llm/features_manager/finetune/lora.py
+  patch_lines: 63
+  triage_score: 9.437
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 35
+  candidate_id: mindspeed-1b9c563b2c86
+  status: needs_source_review
+  repository: MindSpeed
+  subject: fix:balanced moe supported for dualpipev
+  merge_request_number: null
+  merge_request_url: null
+  buggy_commit: e05ed6f5cf48e0c8cee3131486de68408ac44019
+  fix_commit: 1b9c563b2c86d3f4019fdfd4940adb6f00700592
+  authored_at: '2026-03-28T15:13:48+08:00'
+  affected_parameter_candidates:
+  - bias_dropout_fusion
+  - moe_router_topk
+  - hidden_dropout
+  primary_parameter: moe_router_topk
+  changed_files:
+  - mindspeed/core/transformer/moe/moe_feature/balanced_moe/overlap_funcs/fwdbwd.py
+  - mindspeed/core/transformer/moe/moe_feature/fb_overlap/transformer_layer.py
+  patch_lines: 566
+  triage_score: 11.934
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 36
+  candidate_id: mindspeed-llm-22392902f00f
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '!1502 fix: solve problem occurs when using mc2 + moe Merge pull request !1502 from RuanZhiXiang/fix-mc2-moe'
+  merge_request_number: 1502
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/1502
+  buggy_commit: e060f047d316be35779f35d9db2e2da28e279d55
+  fix_commit: 22392902f00f14cb9b4264731afcee7c47f3e9d5
+  authored_at: '2024-08-12T11:04:11+00:00'
+  affected_parameter_candidates:
+  - num_experts
+  primary_parameter: num_experts
+  changed_files:
+  - modellink/arguments.py
+  patch_lines: 2
+  triage_score: 8.998
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 37
+  candidate_id: mindspeed-255be5014077
+  status: needs_source_review
+  repository: MindSpeed
+  subject: add moe fix router v6
+  merge_request_number: null
+  merge_request_url: null
+  buggy_commit: da699862bb3828eb826eb3ee5fe608cded25ce2c
+  fix_commit: 255be5014077de0c80659833798074b9f6df7daa
+  authored_at: '2026-01-08T19:36:36+08:00'
+  affected_parameter_candidates:
+  - expert_model_parallel_size
+  - num_experts
+  primary_parameter: expert_model_parallel_size
+  changed_files:
+  - mindspeed/core/transformer/moe/moe_utils.py
+  - mindspeed/features_manager/__init__.py
+  - mindspeed/features_manager/moe/moe_fix_router.py
+  patch_lines: 159
+  triage_score: 11.341
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 38
+  candidate_id: mindspeed-llm-307ca07c7949
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: 'fix(torch): fix checkpoint compatibility issue'
+  merge_request_number: null
+  merge_request_url: null
+  buggy_commit: 57b6573a59a65c6105324e81a60b83b3421c3182
+  fix_commit: 307ca07c794919b319a9a5abc05bba5749966ba2
+  authored_at: '2026-03-17T17:15:58+08:00'
+  affected_parameter_candidates:
+  - distribute_saved_activations
+  primary_parameter: distribute_saved_activations
+  changed_files:
+  - mindspeed_llm/core/tensor_parallel/layers.py
+  patch_lines: 39
+  triage_score: 8.961
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 39
+  candidate_id: mindspeed-5f1f4abf20ec
+  status: needs_source_review
+  repository: MindSpeed
+  subject: 'fix: adapt cpu-initialization and moe-tp-extend-ep'
+  merge_request_number: null
+  merge_request_url: null
+  buggy_commit: 6c3c4bf2dfa91e0456d8bf6aea3a55d13f499670
+  fix_commit: 5f1f4abf20ec0f0987afd00c60741b257f2801da
+  authored_at: '2026-07-01T15:25:36+08:00'
+  affected_parameter_candidates:
+  - activation_func
+  - moe_router_topk
+  primary_parameter: moe_router_topk
+  changed_files:
+  - mindspeed/core/transformer/moe/experts.py
+  - mindspeed/core/transformer/moe/moe_feature/overlap/experts.py
+  - mindspeed/core/transformer/moe/moe_feature/tp_extend_ep/experts.py
+  patch_lines: 296
+  triage_score: 11.204
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null
+- rank: 40
+  candidate_id: mindspeed-llm-3e61861d7ce3
+  status: needs_source_review
+  repository: MindSpeed-LLM
+  subject: '[pytorch][bugfix]update lora moe in alltoall-overlap and gemm'
+  merge_request_number: null
+  merge_request_url: null
+  buggy_commit: 3e3a5ab092aa2b1a772e7b5e069f851c5d0d988f
+  fix_commit: 3e61861d7ce3676407fc29dfd230184cc18f7863
+  authored_at: '2025-12-12T15:38:52+08:00'
+  affected_parameter_candidates:
+  - activation_func
+  primary_parameter: activation_func
+  changed_files:
+  - mindspeed_llm/tasks/posttrain/lora/moe/experts.py
+  patch_lines: 83
+  triage_score: 8.917
+  review:
+    configuration_trigger_confirmed: null
+    workload_identified: null
+    failure_oracle_identified: null
+    buggy_commit_reproduced: null
+    fixed_commit_passed: null
+    root_cause_matched: null
+    minimum_configuration_recorded: null
+    benchmark_split: null
+    notes: null

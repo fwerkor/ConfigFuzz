@@ -1,0 +1,259 @@
+from __future__ import annotations
+
+import json
+import re
+from collections import Counter
+from pathlib import Path
+from typing import Any, Mapping, Sequence
+
+import yaml
+
+
+_EXPLICIT_FIX_RE = re.compile(
+    r"\bbugfix\b|\bfix(?:ed|es|ing)?\b|修复|修正|解决|异常|错误",
+    re.I,
+)
+_LOW_SIGNAL_RE = re.compile(r"\breadme\b|\bdocs?\b|文档|资料修正|clean\s*code", re.I)
+_HIGH_VALUE_RE = re.compile(
+    r"parallel|并行|context|pipeline|expert|moe|checkpoint|config|参数|配置|"
+    r"shape|维度|crash|hang|assert|recompute|sequence|attention",
+    re.I,
+)
+
+
+def load_fix_candidates(path: str | Path) -> list[dict[str, Any]]:
+    raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(raw, Mapping):
+        raise ValueError("fix-candidate root must be an object")
+    candidates: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for item in raw.get("candidates", ()):
+        if not isinstance(item, Mapping):
+            raise ValueError("fix candidate must be an object")
+        candidate = dict(item)
+        candidate_id = str(candidate.get("candidate_id", ""))
+        if not candidate_id:
+            repository = str(candidate.get("repository", "repo")).lower()
+            commit = str(candidate.get("fix_commit", ""))
+            candidate_id = f"{repository}-{commit[:12]}"
+            candidate["candidate_id"] = candidate_id
+        if candidate_id in seen:
+            raise ValueError(f"duplicate fix candidate id: {candidate_id}")
+        seen.add(candidate_id)
+        candidates.append(candidate)
+    return candidates
+
+
+def build_triage_shortlist(
+    candidates: Sequence[Mapping[str, Any]],
+    *,
+    limit: int = 40,
+    max_per_primary_parameter: int = 5,
+    max_patch_lines: int = 2000,
+) -> dict[str, Any]:
+    if limit < 1:
+        raise ValueError("limit must be positive")
+    if max_per_primary_parameter < 1:
+        raise ValueError("max_per_primary_parameter must be positive")
+    eligible = [
+        _ranked_candidate(item)
+        for item in candidates
+        if _eligible(item, max_patch_lines=max_patch_lines)
+    ]
+    eligible.sort(
+        key=lambda item: (
+            -float(item["triage_score"]),
+            int(item["patch_lines"]),
+            str(item["authored_at"]),
+            str(item["candidate_id"]),
+        )
+    )
+
+    by_repository: dict[str, list[dict[str, Any]]] = {}
+    for item in eligible:
+        by_repository.setdefault(str(item["repository"]), []).append(item)
+    repositories = sorted(by_repository)
+    selected: list[dict[str, Any]] = []
+    selected_ids: set[str] = set()
+    primary_counts: Counter[str] = Counter()
+
+    while len(selected) < limit:
+        added = False
+        for repository in repositories:
+            for item in by_repository[repository]:
+                candidate_id = str(item["candidate_id"])
+                if candidate_id in selected_ids:
+                    continue
+                primary = _primary_parameter(item)
+                if primary_counts[primary] >= max_per_primary_parameter:
+                    continue
+                selected.append(_shortlist_record(item, rank=len(selected) + 1))
+                selected_ids.add(candidate_id)
+                primary_counts[primary] += 1
+                added = True
+                break
+            if len(selected) >= limit:
+                break
+        if not added:
+            break
+
+    return {
+        "schema_version": 1,
+        "name": "rq3-historical-bug-triage-shortlist",
+        "status": "candidate_only",
+        "selection_policy": {
+            "limit": limit,
+            "eligible_candidate_count": len(eligible),
+            "explicit_fix_language_required": True,
+            "configuration_signal_required": True,
+            "docs_and_tests_only_excluded": True,
+            "max_patch_lines": max_patch_lines,
+            "max_per_primary_parameter": max_per_primary_parameter,
+            "repository_round_robin": True,
+        },
+        "warning": (
+            "Shortlisted commits are not benchmark bugs. Each entry must still satisfy "
+            "the historical-bug inclusion criteria through source review and buggy/fixed "
+            "differential execution."
+        ),
+        "triage_checklist": [
+            "identify the concrete triggering configuration parameters",
+            "construct or recover a workload without giving the exact reproducer to test methods",
+            "define an observable non-performance failure oracle",
+            "verify failure on the parent buggy commit at least three times",
+            "verify the same generated configuration passes on the fix commit",
+            "confirm the patch root cause matches the observed failure",
+            "minimize the triggering parameter combination",
+            "assign development or evaluation split only after verification",
+        ],
+        "shortlist_count": len(selected),
+        "repository_counts": dict(
+            sorted(Counter(item["repository"] for item in selected).items())
+        ),
+        "primary_parameter_counts": dict(sorted(primary_counts.items())),
+        "candidates": selected,
+    }
+
+
+def dump_triage_shortlist(payload: Mapping[str, Any], path: str | Path) -> None:
+    output = Path(path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        yaml.safe_dump(dict(payload), allow_unicode=True, sort_keys=False, width=120),
+        encoding="utf-8",
+    )
+
+
+def _eligible(candidate: Mapping[str, Any], *, max_patch_lines: int) -> bool:
+    subject = str(candidate.get("subject", ""))
+    if not _EXPLICIT_FIX_RE.search(subject) or not _HIGH_VALUE_RE.search(subject):
+        return False
+    files = [str(item) for item in candidate.get("changed_files", ())]
+    if not files:
+        return False
+    implementation_files = [
+        item
+        for item in files
+        if not re.search(
+            r"(^|/)(docs?|tests?(?:_extend)?|unit_tests?|system_tests?|examples?)(/|$)|README",
+            item,
+            re.I,
+        )
+    ]
+    if not implementation_files:
+        return False
+    patch_lines = int(candidate.get("patch_additions", 0)) + int(
+        candidate.get("patch_deletions", 0)
+    )
+    if patch_lines <= 0 or patch_lines > max_patch_lines:
+        return False
+    parameters = [
+        str(item) for item in candidate.get("affected_parameter_candidates", ())
+    ]
+    return bool(
+        parameters and candidate.get("buggy_commit") and candidate.get("fix_commit")
+    )
+
+
+def _ranked_candidate(candidate: Mapping[str, Any]) -> dict[str, Any]:
+    item = dict(candidate)
+    subject = str(item.get("subject", ""))
+    files = [str(value) for value in item.get("changed_files", ())]
+    parameters = [str(value) for value in item.get("affected_parameter_candidates", ())]
+    patch_lines = int(item.get("patch_additions", 0)) + int(
+        item.get("patch_deletions", 0)
+    )
+    base_score = float(item.get("score", 0.0))
+    score = base_score
+    score += min(len(parameters), 5) * 0.5
+    score += (
+        2.0 if re.search(r"config|参数|配置|validation|校验", subject, re.I) else 0.0
+    )
+    score += (
+        1.5 if re.search(r"crash|hang|assert|异常|报错|error", subject, re.I) else 0.0
+    )
+    score += 1.0 if re.search(r"parallel|并行|moe|checkpoint", subject, re.I) else 0.0
+    score -= 1.5 if _LOW_SIGNAL_RE.search(subject) else 0.0
+    score -= min(patch_lines / 1000.0, 2.0)
+    score -= min(max(len(files) - 5, 0) * 0.1, 1.0)
+    item["patch_lines"] = patch_lines
+    item["triage_score"] = round(score, 6)
+    return item
+
+
+def _primary_parameter(candidate: Mapping[str, Any]) -> str:
+    parameters = [
+        str(item) for item in candidate.get("affected_parameter_candidates", ())
+    ]
+    preferred = (
+        "context_parallel_size",
+        "pipeline_model_parallel_size",
+        "expert_model_parallel_size",
+        "tensor_model_parallel_size",
+        "sequence_parallel",
+        "num_experts",
+        "moe_router_topk",
+        "recompute_method",
+        "recompute_num_layers",
+        "hidden_size",
+        "num_attention_heads",
+        "micro_batch_size",
+        "seq_length",
+    )
+    for parameter in preferred:
+        if parameter in parameters:
+            return parameter
+    return parameters[0] if parameters else "unknown"
+
+
+def _shortlist_record(candidate: Mapping[str, Any], *, rank: int) -> dict[str, Any]:
+    return {
+        "rank": rank,
+        "candidate_id": candidate["candidate_id"],
+        "status": "needs_source_review",
+        "repository": candidate["repository"],
+        "subject": candidate["subject"],
+        "merge_request_number": candidate.get("merge_request_number"),
+        "merge_request_url": candidate.get("merge_request_url"),
+        "buggy_commit": candidate["buggy_commit"],
+        "fix_commit": candidate["fix_commit"],
+        "authored_at": candidate["authored_at"],
+        "affected_parameter_candidates": list(
+            candidate.get("affected_parameter_candidates", ())
+        ),
+        "primary_parameter": _primary_parameter(candidate),
+        "changed_files": list(candidate.get("changed_files", ())),
+        "patch_lines": candidate["patch_lines"],
+        "triage_score": candidate["triage_score"],
+        "review": {
+            "configuration_trigger_confirmed": None,
+            "workload_identified": None,
+            "failure_oracle_identified": None,
+            "buggy_commit_reproduced": None,
+            "fixed_commit_passed": None,
+            "root_cause_matched": None,
+            "minimum_configuration_recorded": None,
+            "benchmark_split": None,
+            "notes": None,
+        },
+    }

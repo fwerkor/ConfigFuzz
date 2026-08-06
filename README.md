@@ -66,12 +66,26 @@ The initial repository provides:
 - an lm-sv Task1 bridge that carries deterministic solver assignments through
   mutation-artifact normalization, validation, PTA script generation, and an
   isolated one-iteration `do.py` launch;
+- a three-RQ experiment layer with an evidence-gated 93-constraint audit,
+  frozen mutation intentions, unified JSONL campaign records, deterministic
+  RQ metrics, and environment fingerprints;
+- reproducible native-validation mining over pinned MindSpeed-LLM, MindSpeed,
+  and Megatron-LM revisions, producing a per-constraint manual review queue;
+- deterministic RQ2 intention generation for enumeration, numeric, divisibility,
+  guard-transition, and TP/PP/EP/CP topology boundaries;
+- full-history RQ3 fix mining plus a repository- and parameter-balanced manual
+  triage shortlist for constructing the historical bug benchmark;
 - unit tests and a minimal GitHub Actions workflow;
 - a research plan and a proposed constraint DSL.
 
-The current prototype supports bounded multi-round active validation and a
-Task1 execution bridge. Full framework campaigns, multi-parameter synthesis,
-resource modeling, and information-gain convergence remain research stages.
+The current prototype supports bounded multi-round active validation, the
+Task1 execution bridge, and the complete non-accelerator preparation layer for
+RQ1--RQ3. Native-coverage adjudication, workload binding, historical-bug
+verification, and accelerator campaigns remain evaluation work.
+
+The authoritative experiment protocol and commands are in
+[`experiments/README.md`](experiments/README.md) and
+[`experiments/protocol.yaml`](experiments/protocol.yaml).
 
 ## Quick start
 
@@ -343,9 +357,14 @@ from intended framework semantics.
 ## Repository layout
 
 ```text
-configfuzz/                 new constraint-inference prototype
+configfuzz/                 constraint inference and experiment infrastructure
   active_validation.py     multi-round select/execute/feedback loop
+  bug_benchmark.py         historical-fix shortlist construction
   dependencies.py          dependency hypergraph and joint-mutation planner
+  experiment.py            RQ schemas, records, summaries, and fingerprints
+  experiment_campaign.py   five-method RQ2 campaign planning
+  experiment_cli.py        experiment preparation and analysis CLI
+  intent_generation.py     deterministic RQ2 mutation-intent generation
   feedback.py              runtime evidence attribution and edge-state updates
   graph_solver.py          joint solver and paired-intervention designer
   intervention_runner.py   joint-config execution and provenance matching
@@ -358,7 +377,7 @@ scripts/                    experiment and inventory utilities
 tests/configfuzz/           focused prototype tests
 artifacts/                  generated research inventories and framework scans
 corpus/lmsv/                normalized lm-sv manual constraints
-experiments/                lm-sv runtime adapter and manifests
+experiments/                three-RQ protocol, audited datasets, and runtime manifests
 examples/                   deterministic runtime and framework-static fixtures
 docs/RESEARCH_PLAN.md       research questions and evaluation plan
 docs/CONSTRAINT_DSL.md      supported constraint representation

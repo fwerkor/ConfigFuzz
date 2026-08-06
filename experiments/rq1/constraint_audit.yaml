@@ -1,0 +1,3867 @@
+schema_version: 1
+name: lmsv-manual-constraints-rq1-audit
+source_corpus:
+  name: lmsv-manual-constraints
+  schema_version: 1
+  baseline:
+    repository: fwerkor/lm-sv
+    commit: e73ba3d35
+    role: manual-rule corpus and evaluation reference; not framework source input
+    coverage:
+      included:
+      - Task1 EnhancedMegatronConfigValidator repair rules
+      - Task6 primary mutable_params_pool.yaml sampling rules
+      pending:
+      - Task1 ParallelParameterMutator sampling and repair rules
+      - Task2-Task5 task-specific validators and mutators
+      - Task6 inline fallback parameter pool
+      - shell-script and framework-template constraints
+  record_count: 93
+records:
+- constraint_id: lmsv.task1.alibi-context-parallel
+  participants:
+  - model.position_embedding_type
+  - parallel.context_parallel_size
+  predicate: model.position_embedding_type == "alibi" => parallel.context_parallel_size == 1
+  guard: model.position_embedding_type == "alibi"
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: model.position_embedding_type == "alibi"
+  arity: 2
+  category: feature_interaction
+  semantic_class: implementation_limit
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 143
+    - 174
+    symbol: EnhancedMegatronConfigValidator._check_alibi_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: workaround
+    manual_status: reviewed
+    rationale: lm-sv disables context parallel for ALiBi because the current PTA/MindSpeed path does not support that combination
+      reliably.
+    repair:
+      target: parallel.context_parallel_size
+      strategy: set
+      value: 1
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.alibi-flash-attention
+  participants:
+  - model.position_embedding_type
+  - model.use_flash_attention
+  predicate: model.position_embedding_type == "alibi" => model.use_flash_attention == false
+  guard: model.position_embedding_type == "alibi"
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: model.position_embedding_type == "alibi"
+  arity: 2
+  category: feature_interaction
+  semantic_class: implementation_limit
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 143
+    - 185
+    symbol: EnhancedMegatronConfigValidator._check_alibi_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: workaround
+    manual_status: reviewed
+    rationale: lm-sv turns off explicit flash attention for ALiBi in the current implementation stack.
+    repair:
+      target: model.use_flash_attention
+      strategy: set
+      value: false
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.attention-heads-tp-cp-divisibility
+  participants:
+  - model.num_attention_heads
+  - parallel.tensor_model_parallel_size
+  - parallel.context_parallel_size
+  predicate: model.num_attention_heads % (parallel.tensor_model_parallel_size * parallel.context_parallel_size) == 0
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 3
+  category: structural
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 209
+    - 224
+    symbol: EnhancedMegatronConfigValidator._check_attention_heads
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Attention heads must be partitionable across tensor and Ulysses context-parallel groups.
+    repair:
+      target: model.num_attention_heads
+      strategy: nearest_divisible
+      divisor: parallel.tensor_model_parallel_size * parallel.context_parallel_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.context-parallel-size-positive
+  participants:
+  - parallel.context_parallel_size
+  predicate: parallel.context_parallel_size >= 1
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 1
+  category: local
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Parallel group sizes must be positive integers.
+    repair:
+      target: parallel.context_parallel_size
+      strategy: set
+      value: 1
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.cosine-decay-iters
+  participants:
+  - training.lr_decay_style
+  - training.lr_decay_iters
+  - training.train_iters
+  predicate: training.lr_decay_style == "cosine" => training.lr_decay_iters > 0
+  guard: training.lr_decay_style == "cosine"
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: training.lr_decay_style == "cosine"
+  arity: 3
+  category: feature_interaction
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 677
+    - 722
+    symbol: EnhancedMegatronConfigValidator._check_lr_schedule
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: lm-sv fills a missing cosine decay horizon from train_iters to keep generated schedules runnable.
+    repair:
+      target: training.lr_decay_iters
+      strategy: copy
+      source: training.train_iters
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.cp-requires-tp
+  participants:
+  - parallel.context_parallel_size
+  - parallel.tensor_model_parallel_size
+  predicate: parallel.context_parallel_size > 1 => parallel.tensor_model_parallel_size >= 2
+  guard: parallel.context_parallel_size > 1
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.context_parallel_size > 1
+  arity: 2
+  category: feature_interaction
+  semantic_class: implementation_limit
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: workaround
+    manual_status: reviewed
+    rationale: The current lm-sv Ulysses configuration disables CP when TP is one.
+    repair:
+      target: parallel.context_parallel_size
+      strategy: set
+      value: 1
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.expert-model-parallel-size-positive
+  participants:
+  - parallel.expert_model_parallel_size
+  predicate: parallel.expert_model_parallel_size >= 1
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 1
+  category: local
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Parallel group sizes must be positive integers.
+    repair:
+      target: parallel.expert_model_parallel_size
+      strategy: set
+      value: 1
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.experts-ep-divisibility
+  participants:
+  - moe.num_experts
+  - parallel.expert_model_parallel_size
+  predicate: moe.num_experts > 0 => moe.num_experts % parallel.expert_model_parallel_size == 0
+  guard: moe.num_experts > 0
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.num_experts > 0
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 474
+    - 489
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Experts must distribute evenly across expert-parallel ranks.
+    repair:
+      target: moe.num_experts
+      strategy: nearest_divisible
+      divisor: parallel.expert_model_parallel_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.ffn-hidden-size-cap
+  participants:
+  - model.ffn_hidden_size
+  - model.hidden_size
+  predicate: model.ffn_hidden_size <= 6 * model.hidden_size
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: structural
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 187
+    - 196
+    symbol: EnhancedMegatronConfigValidator._check_ffn_hidden_size_limit
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The validator caps the FFN expansion ratio at six to keep generated configurations within the tested lm-sv
+      space.
+    repair:
+      target: model.ffn_hidden_size
+      strategy: cap
+      expression: 6 * model.hidden_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.ffn-hidden-size-tp-divisibility
+  participants:
+  - model.ffn_hidden_size
+  - parallel.tensor_model_parallel_size
+  predicate: model.ffn_hidden_size % parallel.tensor_model_parallel_size == 0
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: structural
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 226
+    - 237
+    symbol: EnhancedMegatronConfigValidator._check_ffn_hidden_size
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: The FFN intermediate dimension must divide evenly across tensor-parallel ranks.
+    repair:
+      target: model.ffn_hidden_size
+      strategy: nearest_divisible
+      divisor: parallel.tensor_model_parallel_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.flash-position-limit
+  participants:
+  - model.use_flash_attention
+  - model.max_position_embeddings
+  - env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+  predicate: model.use_flash_attention == true => model.max_position_embeddings <= env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+  guard: model.use_flash_attention == true
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    hardware:
+    - Ascend NPU
+    stage: configuration-validation
+    condition: model.use_flash_attention == true
+  arity: 3
+  category: environment_dependency
+  semantic_class: resource_risk
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 723
+    - 759
+    symbol: EnhancedMegatronConfigValidator._check_flash_attention_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: environment_limit
+    manual_status: reviewed
+    rationale: lm-sv keeps maximum positions within the tested Ascend flash-attention sequence limit.
+    repair:
+      target: model.max_position_embeddings
+      strategy: cap
+      expression: env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.flash-sequence-limit
+  participants:
+  - model.use_flash_attention
+  - model.seq_length
+  - env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+  predicate: model.use_flash_attention == true => model.seq_length <= env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+  guard: model.use_flash_attention == true
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    hardware:
+    - Ascend NPU
+    stage: configuration-validation
+    condition: model.use_flash_attention == true
+  arity: 3
+  category: environment_dependency
+  semantic_class: resource_risk
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 723
+    - 759
+    symbol: EnhancedMegatronConfigValidator._check_flash_attention_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: environment_limit
+    manual_status: reviewed
+    rationale: The configured Ascend flash-attention path is bounded by an environment-specific tested sequence length.
+    repair:
+      target: model.seq_length
+      strategy: cap
+      expression: env.LMSV_FLASH_ATTN_MAX_SEQ_LENGTH
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.global-batch-cap
+  participants:
+  - training.global_batch_size
+  - env.LMSV_MAX_GLOBAL_BATCH_SIZE_EXCLUSIVE
+  predicate: training.global_batch_size <= env.LMSV_MAX_GLOBAL_BATCH_SIZE_EXCLUSIVE
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: environment_dependency
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 273
+    - 373
+    symbol: EnhancedMegatronConfigValidator._check_global_batch_size
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: lm-sv caps generated global batches using an environment-configurable testing policy rather than a universal
+      framework limit.
+    repair:
+      target: training.global_batch_size
+      strategy: cap
+      expression: env.LMSV_MAX_GLOBAL_BATCH_SIZE_EXCLUSIVE
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.global-batch-divisibility
+  participants:
+  - training.global_batch_size
+  - parallel.data_parallel_size
+  - training.micro_batch_size
+  predicate: training.global_batch_size % (parallel.data_parallel_size * training.micro_batch_size) == 0
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 3
+  category: structural
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 273
+    - 373
+    symbol: EnhancedMegatronConfigValidator._check_global_batch_size
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: The global batch must be decomposable into data-parallel micro batches.
+    repair:
+      target: training.global_batch_size
+      strategy: nearest_lower_divisible
+      divisor: parallel.data_parallel_size * training.micro_batch_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.group-limited-num-groups
+  participants:
+  - moe.topk_group
+  - moe.moe_router_num_groups
+  predicate: moe.topk_group >= 1 => moe.moe_router_num_groups >= 1
+  guard: moe.topk_group >= 1
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.topk_group >= 1
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 562
+    - 582
+    symbol: EnhancedMegatronConfigValidator._ensure_group_limited_router_groups
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Enabling grouped routing requires an explicit positive group count.
+    repair:
+      target: moe.moe_router_num_groups
+      strategy: set
+      expression: parallel.expert_model_parallel_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.group-limited-router
+  participants:
+  - moe.moe_router_load_balancing_type
+  - parallel.expert_model_parallel_size
+  - moe.topk_group
+  predicate: moe.moe_router_load_balancing_type == "group_limited_greedy" => parallel.expert_model_parallel_size > 1 and 1
+    <= moe.topk_group < parallel.expert_model_parallel_size
+  guard: moe.moe_router_load_balancing_type == "group_limited_greedy"
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.moe_router_load_balancing_type == "group_limited_greedy"
+  arity: 3
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 551
+    - 560
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Group-limited routing requires multiple expert groups and a selected-group count below EP.
+    repair:
+      target: moe.moe_router_load_balancing_type
+      strategy: set
+      value: aux_loss
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.hidden-size-tp-divisibility
+  participants:
+  - model.hidden_size
+  - parallel.tensor_model_parallel_size
+  predicate: model.hidden_size % parallel.tensor_model_parallel_size == 0
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: structural
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 198
+    - 207
+    symbol: EnhancedMegatronConfigValidator._check_hidden_size
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Tensor parallel sharding requires the hidden dimension to divide evenly across TP ranks.
+    repair:
+      target: model.hidden_size
+      strategy: nearest_divisible
+      divisor: parallel.tensor_model_parallel_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.layers-pp-divisibility
+  participants:
+  - model.num_layers
+  - parallel.pipeline_model_parallel_size
+  predicate: model.num_layers % parallel.pipeline_model_parallel_size == 0
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: structural
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 252
+    - 263
+    symbol: EnhancedMegatronConfigValidator._check_num_layers
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Pipeline stages require an integral allocation of transformer layers.
+    repair:
+      target: model.num_layers
+      strategy: nearest_divisible
+      divisor: parallel.pipeline_model_parallel_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.layers-vpp-divisibility
+  participants:
+  - parallel.num_layers_per_virtual_pipeline_stage
+  - model.num_layers
+  - parallel.pipeline_model_parallel_size
+  predicate: parallel.num_layers_per_virtual_pipeline_stage > 1 => model.num_layers % (parallel.pipeline_model_parallel_size
+    * parallel.num_layers_per_virtual_pipeline_stage) == 0
+  guard: parallel.num_layers_per_virtual_pipeline_stage > 1
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.num_layers_per_virtual_pipeline_stage > 1
+  arity: 3
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 252
+    - 271
+    symbol: EnhancedMegatronConfigValidator._check_num_layers
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Virtual pipeline chunks require each physical stage to contain an integral number of chunks.
+    repair:
+      target: model.num_layers
+      strategy: nearest_divisible
+      divisor: parallel.pipeline_model_parallel_size * parallel.num_layers_per_virtual_pipeline_stage
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.micro-batch-positive
+  participants:
+  - training.micro_batch_size
+  predicate: training.micro_batch_size >= 1
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 1
+  category: local
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 273
+    - 373
+    symbol: EnhancedMegatronConfigValidator._check_global_batch_size
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: A micro batch must contain at least one sample.
+    repair:
+      target: training.micro_batch_size
+      strategy: set
+      value: 1
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.mla-cp-tp-alignment
+  participants:
+  - mla.multi_head_latent_attention
+  - parallel.tensor_model_parallel_size
+  - parallel.context_parallel_size
+  predicate: mla.multi_head_latent_attention == true and parallel.tensor_model_parallel_size > 1 => parallel.context_parallel_size
+    == parallel.tensor_model_parallel_size
+  guard: mla.multi_head_latent_attention == true and parallel.tensor_model_parallel_size > 1
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: mla.multi_head_latent_attention == true and parallel.tensor_model_parallel_size > 1
+  arity: 3
+  category: feature_interaction
+  semantic_class: implementation_limit
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 761
+    - 833
+    symbol: EnhancedMegatronConfigValidator._check_mla_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: workaround
+    manual_status: reviewed
+    rationale: lm-sv aligns CP and TP for the current DeepSeek MLA path, otherwise it falls back to TP=CP=1.
+    repair:
+      target: parallel.context_parallel_size
+      strategy: align_or_fallback
+      source: parallel.tensor_model_parallel_size
+      fallback: 1
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.mla-kv-lora-tp-divisibility
+  participants:
+  - mla.kv_lora_rank
+  - parallel.tensor_model_parallel_size
+  predicate: mla.kv_lora_rank > 0 => mla.kv_lora_rank % parallel.tensor_model_parallel_size == 0
+  guard: mla.kv_lora_rank > 0
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: mla.kv_lora_rank > 0
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 814
+    - 824
+    symbol: EnhancedMegatronConfigValidator._check_mla_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: KV-LoRA rank must divide across tensor-parallel ranks.
+    repair:
+      target: mla.kv_lora_rank
+      strategy: nearest_divisible
+      divisor: parallel.tensor_model_parallel_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.mla-q-lora-tp-divisibility
+  participants:
+  - mla.q_lora_rank
+  - parallel.tensor_model_parallel_size
+  predicate: mla.q_lora_rank > 0 => mla.q_lora_rank % parallel.tensor_model_parallel_size == 0
+  guard: mla.q_lora_rank > 0
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: mla.q_lora_rank > 0
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 803
+    - 813
+    symbol: EnhancedMegatronConfigValidator._check_mla_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Q-LoRA rank must divide across tensor-parallel ranks.
+    repair:
+      target: mla.q_lora_rank
+      strategy: nearest_divisible
+      divisor: parallel.tensor_model_parallel_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.moe-add-bias-linear
+  participants:
+  - moe.num_experts
+  - model.add_bias_linear
+  predicate: moe.num_experts > 0 => model.add_bias_linear == false
+  guard: moe.num_experts > 0
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.num_experts > 0
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 522
+    - 540
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: The supported MoE implementation disables linear-layer bias.
+    repair:
+      target: model.add_bias_linear
+      strategy: set
+      value: false
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.moe-disable-bias-linear
+  participants:
+  - moe.num_experts
+  - model.disable_bias_linear
+  predicate: moe.num_experts > 0 => model.disable_bias_linear == true
+  guard: moe.num_experts > 0
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.num_experts > 0
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 522
+    - 540
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: The inverse bias flag is normalized to the same supported MoE setting.
+    repair:
+      target: model.disable_bias_linear
+      strategy: set
+      value: true
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.moe-intermediate-tp-divisibility
+  participants:
+  - moe.moe_intermediate_size
+  - parallel.tensor_model_parallel_size
+  predicate: moe.moe_intermediate_size > 0 => moe.moe_intermediate_size % parallel.tensor_model_parallel_size == 0
+  guard: moe.moe_intermediate_size > 0
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.moe_intermediate_size > 0
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 489
+    - 495
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: MoE intermediate projections must divide across tensor-parallel ranks.
+    repair:
+      target: moe.moe_intermediate_size
+      strategy: nearest_divisible
+      divisor: parallel.tensor_model_parallel_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.moe-topk-one-pre-softmax
+  participants:
+  - moe.moe_router_topk
+  - moe.moe_router_pre_softmax
+  predicate: moe.moe_router_topk == 1 => moe.moe_router_pre_softmax == true
+  guard: moe.moe_router_topk == 1
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.moe_router_topk == 1
+  arity: 2
+  category: feature_interaction
+  semantic_class: implementation_limit
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 510
+    - 522
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: workaround
+    manual_status: reviewed
+    rationale: lm-sv enables pre-softmax routing for top-k one to match the current supported router path.
+    repair:
+      target: moe.moe_router_pre_softmax
+      strategy: set
+      value: true
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.moe-topk-range
+  participants:
+  - moe.num_experts
+  - moe.moe_router_topk
+  predicate: moe.num_experts > 0 => 1 <= moe.moe_router_topk <= moe.num_experts
+  guard: moe.num_experts > 0
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.num_experts > 0
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 495
+    - 510
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: The router must select at least one and no more than the available number of experts.
+    repair:
+      target: moe.moe_router_topk
+      strategy: clamp
+      lower: 1
+      upper: moe.num_experts
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.moe-tp-sequence-parallel
+  participants:
+  - moe.num_experts
+  - parallel.tensor_model_parallel_size
+  - parallel.sequence_parallel
+  predicate: moe.num_experts > 0 and parallel.tensor_model_parallel_size > 1 => parallel.sequence_parallel == true
+  guard: moe.num_experts > 0 and parallel.tensor_model_parallel_size > 1
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: moe.num_experts > 0 and parallel.tensor_model_parallel_size > 1
+  arity: 3
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 540
+    - 551
+    symbol: EnhancedMegatronConfigValidator._check_moe_parameters
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Megatron MoE training with TP greater than one requires sequence parallelism.
+    repair:
+      target: parallel.sequence_parallel
+      strategy: set
+      value: true
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.padded-vocab-size
+  participants:
+  - model.padded_vocab_size
+  - model.vocab_size
+  predicate: model.padded_vocab_size >= model.vocab_size
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: structural
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 915
+    - 938
+    symbol: EnhancedMegatronConfigValidator._check_vocab_size
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Padding cannot reduce the original vocabulary.
+    repair:
+      target: model.padded_vocab_size
+      strategy: raise_to
+      source: model.vocab_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.parallel-product-world-size
+  participants:
+  - parallel.tensor_model_parallel_size
+  - parallel.pipeline_model_parallel_size
+  - parallel.expert_model_parallel_size
+  - parallel.context_parallel_size
+  - env.world_size
+  predicate: parallel.tensor_model_parallel_size * parallel.pipeline_model_parallel_size * parallel.expert_model_parallel_size
+    * parallel.context_parallel_size <= env.world_size
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 5
+  category: environment_dependency
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: The product of independent parallel dimensions cannot exceed the available distributed world size.
+    repair:
+      target: parallel.context_parallel_size
+      strategy: set
+      value: 1
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.pipeline-model-parallel-size-positive
+  participants:
+  - parallel.pipeline_model_parallel_size
+  predicate: parallel.pipeline_model_parallel_size >= 1
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 1
+  category: local
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Parallel group sizes must be positive integers.
+    repair:
+      target: parallel.pipeline_model_parallel_size
+      strategy: set
+      value: 1
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.position-cap
+  participants:
+  - model.max_position_embeddings
+  - env.LMSV_MOE_MAX_SEQ_LENGTH
+  predicate: model.max_position_embeddings <= env.LMSV_MOE_MAX_SEQ_LENGTH
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: environment_dependency
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 882
+    - 913
+    symbol: EnhancedMegatronConfigValidator._check_sequence_length
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: lm-sv applies the same mutation budget cap to maximum position embeddings.
+    repair:
+      target: model.max_position_embeddings
+      strategy: cap
+      expression: env.LMSV_MOE_MAX_SEQ_LENGTH
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.saved-activations-full-recompute
+  participants:
+  - training.distribute_saved_activations
+  - training.recompute_granularity
+  predicate: training.distribute_saved_activations == true => training.recompute_granularity == "full"
+  guard: training.distribute_saved_activations == true
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: training.distribute_saved_activations == true
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 940
+    - 961
+    symbol: EnhancedMegatronConfigValidator._check_recompute_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Megatron supports distributed saved activations only for full recomputation.
+    repair:
+      target: training.distribute_saved_activations
+      strategy: set
+      value: false
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.sequence-cap
+  participants:
+  - model.seq_length
+  - env.LMSV_MOE_MAX_SEQ_LENGTH
+  predicate: model.seq_length <= env.LMSV_MOE_MAX_SEQ_LENGTH
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: environment_dependency
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 882
+    - 913
+    symbol: EnhancedMegatronConfigValidator._check_sequence_length
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: lm-sv applies an environment-configurable sequence cap to bound mutation cost; it is not a universal model
+      limit.
+    repair:
+      target: model.seq_length
+      strategy: cap
+      expression: env.LMSV_MOE_MAX_SEQ_LENGTH
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.sequence-parallel-requires-tp
+  participants:
+  - parallel.sequence_parallel
+  - parallel.tensor_model_parallel_size
+  predicate: parallel.sequence_parallel == true => parallel.tensor_model_parallel_size >= 2
+  guard: parallel.sequence_parallel == true
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.sequence_parallel == true
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Sequence parallelism is meaningful only when tensor parallelism spans more than one rank.
+    repair:
+      target: parallel.sequence_parallel
+      strategy: set
+      value: false
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.sequence-parallel-saved-activations
+  participants:
+  - parallel.sequence_parallel
+  - training.distribute_saved_activations
+  predicate: parallel.sequence_parallel == true => training.distribute_saved_activations == false
+  guard: parallel.sequence_parallel == true
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.sequence_parallel == true
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 940
+    - 961
+    symbol: EnhancedMegatronConfigValidator._check_recompute_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Megatron does not support distributed saved activations together with sequence parallelism.
+    repair:
+      target: training.distribute_saved_activations
+      strategy: set
+      value: false
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.sequence-within-position
+  participants:
+  - model.seq_length
+  - model.max_position_embeddings
+  predicate: model.seq_length <= model.max_position_embeddings
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: structural
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 882
+    - 913
+    symbol: EnhancedMegatronConfigValidator._check_sequence_length
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: The requested sequence length must fit inside the configured positional range.
+    repair:
+      target: model.max_position_embeddings
+      strategy: raise_to
+      source: model.seq_length
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.swiglu-ffn-divisibility
+  participants:
+  - model.swiglu
+  - model.hidden_act
+  - model.ffn_hidden_size
+  - parallel.tensor_model_parallel_size
+  predicate: (model.swiglu == true or model.hidden_act == "swiglu") => model.ffn_hidden_size % (2 * parallel.tensor_model_parallel_size)
+    == 0
+  guard: model.swiglu == true or model.hidden_act == "swiglu"
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: model.swiglu == true or model.hidden_act == "swiglu"
+  arity: 4
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 226
+    - 250
+    symbol: EnhancedMegatronConfigValidator._check_ffn_hidden_size
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: SwiGLU splits the local FFN projection in two, so the sharded dimension must remain even.
+    repair:
+      target: model.ffn_hidden_size
+      strategy: nearest_divisible
+      divisor: 2 * parallel.tensor_model_parallel_size
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.tensor-model-parallel-size-positive
+  participants:
+  - parallel.tensor_model_parallel_size
+  predicate: parallel.tensor_model_parallel_size >= 1
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 1
+  category: local
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 374
+    - 423
+    symbol: EnhancedMegatronConfigValidator._check_parallel_constraints
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Parallel group sizes must be positive integers.
+    repair:
+      target: parallel.tensor_model_parallel_size
+      strategy: set
+      value: 1
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.train-iters-after-warmup
+  participants:
+  - training.train_iters
+  - training.lr_warmup_iters
+  predicate: training.train_iters > training.lr_warmup_iters
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: structural
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 677
+    - 722
+    symbol: EnhancedMegatronConfigValidator._check_lr_schedule
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: At least one non-warmup training iteration must remain.
+    repair:
+      target: training.train_iters
+      strategy: set
+      expression: training.lr_warmup_iters + 1
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.vocab-divisibility
+  participants:
+  - model.vocab_size
+  - model.make_vocab_size_divisible_by
+  predicate: model.vocab_size % model.make_vocab_size_divisible_by == 0
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 2
+  category: structural
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 915
+    - 938
+    symbol: EnhancedMegatronConfigValidator._check_vocab_size
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Vocabulary padding/alignment requires divisibility by the configured alignment factor.
+    repair:
+      target: model.vocab_size
+      strategy: nearest_divisible
+      divisor: model.make_vocab_size_divisible_by
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.vpp-divides-layers-per-stage
+  participants:
+  - parallel.num_layers_per_virtual_pipeline_stage
+  - model.num_layers
+  - parallel.pipeline_model_parallel_size
+  predicate: parallel.num_layers_per_virtual_pipeline_stage > 1 => (model.num_layers / parallel.pipeline_model_parallel_size)
+    % parallel.num_layers_per_virtual_pipeline_stage == 0
+  guard: parallel.num_layers_per_virtual_pipeline_stage > 1
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.num_layers_per_virtual_pipeline_stage > 1
+  arity: 3
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 584
+    - 676
+    symbol: EnhancedMegatronConfigValidator._check_pipeline_interleaving
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Each physical stage must divide into an integral number of virtual chunks.
+    repair:
+      target: parallel.num_layers_per_virtual_pipeline_stage
+      strategy: largest_valid_factor_or_disable
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.vpp-less-than-layers-per-stage
+  participants:
+  - parallel.num_layers_per_virtual_pipeline_stage
+  - model.num_layers
+  - parallel.pipeline_model_parallel_size
+  predicate: parallel.num_layers_per_virtual_pipeline_stage > 1 => parallel.num_layers_per_virtual_pipeline_stage < model.num_layers
+    / parallel.pipeline_model_parallel_size
+  guard: parallel.num_layers_per_virtual_pipeline_stage > 1
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.num_layers_per_virtual_pipeline_stage > 1
+  arity: 3
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 584
+    - 676
+    symbol: EnhancedMegatronConfigValidator._check_pipeline_interleaving
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: A virtual chunk must be smaller than the number of layers assigned to a physical stage.
+    repair:
+      target: parallel.num_layers_per_virtual_pipeline_stage
+      strategy: disable
+      value: false
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.vpp-requires-pp
+  participants:
+  - parallel.num_layers_per_virtual_pipeline_stage
+  - parallel.pipeline_model_parallel_size
+  predicate: parallel.num_layers_per_virtual_pipeline_stage > 1 => parallel.pipeline_model_parallel_size > 1
+  guard: parallel.num_layers_per_virtual_pipeline_stage > 1
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+    condition: parallel.num_layers_per_virtual_pipeline_stage > 1
+  arity: 2
+  category: feature_interaction
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 584
+    - 676
+    symbol: EnhancedMegatronConfigValidator._check_pipeline_interleaving
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Interleaved pipeline scheduling requires more than one physical pipeline stage.
+    repair:
+      target: parallel.pipeline_model_parallel_size
+      strategy: set_or_disable
+      preferred: 2
+      fallback: false
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task1.warmup-before-decay
+  participants:
+  - training.lr_warmup_iters
+  - training.train_iters
+  - training.lr_decay_iters
+  predicate: training.lr_warmup_iters < min(training.train_iters, training.lr_decay_iters)
+  guard: null
+  scope:
+    tasks:
+    - '1'
+    backends:
+    - PTA
+    frameworks:
+    - MindSpeed-LLM
+    - Megatron-LM
+    stage: configuration-validation
+  arity: 3
+  category: structural
+  semantic_class: mathematical_invariant
+  provenance:
+  - file: lmsv_rec/utils/runtime/mutate_and_forward/parallel_mutate/config_validator_moe.py
+    source_type: manual_validator
+    lines:
+    - 677
+    - 722
+    symbol: EnhancedMegatronConfigValidator._check_lr_schedule
+  software_layers:
+  - validator
+  - parallel
+  - training
+  - model_construction
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: repair
+    manual_strength: framework_requirement
+    manual_status: reviewed
+    rationale: Warmup must end before training and decay schedules finish.
+    repair:
+      target: training.lr_warmup_iters
+      strategy: fraction
+      expression: 0.1 * min(training.train_iters, training.lr_decay_iters)
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.activation_func.enum
+  participants:
+  - activation_func
+  predicate: activation_func in {"gelu", "silu"}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.apply_query_key_layer_scaling.enum
+  participants:
+  - apply_query_key_layer_scaling
+  predicate: apply_query_key_layer_scaling in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.apply_rope_fusion.enum
+  participants:
+  - apply_rope_fusion
+  predicate: apply_rope_fusion in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.attention_dropout.numeric-window
+  participants:
+  - attention_dropout
+  predicate: max(0.0, baseline(attention_dropout) * 0.5) <= attention_dropout <= min(1.0, baseline(attention_dropout) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.attention_softmax_in_fp32.enum
+  participants:
+  - attention_softmax_in_fp32
+  predicate: attention_softmax_in_fp32 in {true, "LayerNorm", "RMSNorm"}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.batch_size.numeric-window
+  participants:
+  - batch_size
+  predicate: max(4, baseline(batch_size) * 0.5) <= batch_size <= min(8, baseline(batch_size) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.bias_activation_fusion.enum
+  participants:
+  - bias_activation_fusion
+  predicate: bias_activation_fusion in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.bias_dropout_fusion.enum
+  participants:
+  - bias_dropout_fusion
+  predicate: bias_dropout_fusion in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.class_dropout_prob.numeric-window
+  participants:
+  - class_dropout_prob
+  predicate: max(0.0, baseline(class_dropout_prob) * 0.5) <= class_dropout_prob <= min(0.3, baseline(class_dropout_prob) *
+    2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.class_token_len.numeric-window
+  participants:
+  - class_token_len
+  predicate: max(1, baseline(class_token_len) * 0.5) <= class_token_len <= min(2, baseline(class_token_len) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.conv_padding.enum
+  participants:
+  - conv_padding
+  predicate: conv_padding in {0, 1}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.cross_attention_dim.numeric-window
+  participants:
+  - cross_attention_dim
+  predicate: max(1024, baseline(cross_attention_dim) * 0.5) <= cross_attention_dim <= min(4096, baseline(cross_attention_dim)
+    * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.deallocate_pipeline_outputs.enum
+  participants:
+  - deallocate_pipeline_outputs
+  predicate: deallocate_pipeline_outputs in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.disable_bias_linear.enum
+  participants:
+  - disable_bias_linear
+  predicate: disable_bias_linear in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.drop_path.numeric-window
+  participants:
+  - drop_path
+  predicate: max(0.0, baseline(drop_path) * 0.5) <= drop_path <= min(0.3, baseline(drop_path) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.dropout_prob.numeric-window
+  participants:
+  - dropout_prob
+  predicate: max(0.1, baseline(dropout_prob) * 0.5) <= dropout_prob <= min(0.1, baseline(dropout_prob) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.group_query_attention.enum
+  participants:
+  - group_query_attention
+  predicate: group_query_attention in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.hidden_dropout.numeric-window
+  participants:
+  - hidden_dropout
+  predicate: max(0.0, baseline(hidden_dropout) * 0.5) <= hidden_dropout <= min(1.0, baseline(hidden_dropout) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.image_size.numeric-window
+  participants:
+  - image_size
+  predicate: max(224, baseline(image_size) * 0.5) <= image_size <= min(224, baseline(image_size) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.init_method_std.enum
+  participants:
+  - init_method_std
+  predicate: init_method_std in {0.01}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.intermediate_size.numeric-window
+  participants:
+  - intermediate_size
+  predicate: max(855, baseline(intermediate_size) * 0.5) <= intermediate_size <= min(3420, baseline(intermediate_size) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.layernorm_zero_centered_gamma.enum
+  participants:
+  - layernorm_zero_centered_gamma
+  predicate: layernorm_zero_centered_gamma in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.learnable_pos_embed.enum
+  participants:
+  - learnable_pos_embed
+  predicate: learnable_pos_embed in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.max_position_embeddings.numeric-window
+  participants:
+  - max_position_embeddings
+  predicate: max(1000, baseline(max_position_embeddings) * 0.5) <= max_position_embeddings <= min(128000, baseline(max_position_embeddings)
+    * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.max_sequence_length.numeric-window
+  participants:
+  - max_sequence_length
+  predicate: max(128, baseline(max_sequence_length) * 0.5) <= max_sequence_length <= min(228, baseline(max_sequence_length)
+    * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.mlp_ratio.numeric-window
+  participants:
+  - mlp_ratio
+  predicate: max(2.0, baseline(mlp_ratio) * 0.7) <= mlp_ratio <= min(8.0, baseline(mlp_ratio) * 1.5)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.noised_image_all_concat.enum
+  participants:
+  - noised_image_all_concat
+  predicate: noised_image_all_concat in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.noised_image_dropout.numeric-window
+  participants:
+  - noised_image_dropout
+  predicate: max(0.0, baseline(noised_image_dropout) * 0.5) <= noised_image_dropout <= min(0.2, baseline(noised_image_dropout)
+    * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.noised_image_input.enum
+  participants:
+  - noised_image_input
+  predicate: noised_image_input in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.num_idx.numeric-window
+  participants:
+  - num_idx
+  predicate: max(200, baseline(num_idx) * 0.5) <= num_idx <= min(1000, baseline(num_idx) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.num_tokentypes.numeric-window
+  participants:
+  - num_tokentypes
+  predicate: max(2, baseline(num_tokentypes) * 0.5) <= num_tokentypes <= min(4, baseline(num_tokentypes) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.parallel_output.enum
+  participants:
+  - parallel_output
+  predicate: parallel_output in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.patch_size.numeric-window
+  participants:
+  - patch_size
+  predicate: max(16, baseline(patch_size) * 0.5) <= patch_size <= min(16, baseline(patch_size) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.persist_layer_norm.enum
+  participants:
+  - persist_layer_norm
+  predicate: persist_layer_norm in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.recompute_method.enum
+  participants:
+  - recompute_method
+  predicate: recompute_method in {"block", "uniform"}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.recompute_num_layers.numeric-window
+  participants:
+  - recompute_num_layers
+  predicate: max(2, baseline(recompute_num_layers) * 0.5) <= recompute_num_layers <= min(64, baseline(recompute_num_layers)
+    * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.seq_len.numeric-window
+  participants:
+  - seq_len
+  predicate: max(10, baseline(seq_len) * 0.5) <= seq_len <= min(20, baseline(seq_len) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.shift_scale.numeric-window
+  participants:
+  - shift_scale
+  predicate: max(1.0, baseline(shift_scale) * 0.5) <= shift_scale <= min(20.0, baseline(shift_scale) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.space_scale.numeric-window
+  participants:
+  - space_scale
+  predicate: max(0.0, baseline(space_scale) * 0.5) <= space_scale <= min(0.3, baseline(space_scale) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.time_scale.numeric-window
+  participants:
+  - time_scale
+  predicate: max(0.0, baseline(time_scale) * 0.5) <= time_scale <= min(0.3, baseline(time_scale) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.tokens_per_second.numeric-window
+  participants:
+  - tokens_per_second
+  predicate: max(2, baseline(tokens_per_second) * 0.5) <= tokens_per_second <= min(64, baseline(tokens_per_second) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.ucg_rate.numeric-window
+  participants:
+  - ucg_rate
+  predicate: max(0.0, baseline(ucg_rate) * 0.5) <= ucg_rate <= min(2.0, baseline(ucg_rate) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.uniform_sampling.enum
+  participants:
+  - uniform_sampling
+  predicate: uniform_sampling in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.untie_embeddings_and_output_weights.enum
+  participants:
+  - untie_embeddings_and_output_weights
+  predicate: untie_embeddings_and_output_weights in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.use_fused_rotary_pos_emb.enum
+  participants:
+  - use_fused_rotary_pos_emb
+  predicate: use_fused_rotary_pos_emb in {true, false}
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator restricts generated values to this explicit candidate set.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.vocab_size.numeric-window
+  participants:
+  - vocab_size
+  predicate: max(10000, baseline(vocab_size) * 0.5) <= vocab_size <= min(11000, baseline(vocab_size) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone
+- constraint_id: lmsv.task6.pool.window_attn_size.numeric-window
+  participants:
+  - window_attn_size
+  predicate: max(56, baseline(window_attn_size) * 0.5) <= window_attn_size <= min(448, baseline(window_attn_size) * 2.0)
+  guard: null
+  scope:
+    tasks:
+    - '6'
+    backends:
+    - PTA
+    - MSA
+    stage: mutation-generation
+  arity: 1
+  category: local
+  semantic_class: optimization_preference
+  provenance:
+  - file: lmsv_rec/mutable_params_pool.yaml
+    source_type: parameter_pool
+  software_layers:
+  - other
+  first_affected_milestone: unknown
+  native_validation: unreviewed
+  coverage_evidence: []
+  review_status: unreviewed
+  reviewers: []
+  notes: null
+  metadata:
+    manual_enforcement: sample
+    manual_strength: lmsv_policy
+    manual_status: reviewed
+    rationale: The Task6 mutator samples this parameter inside the intersection of an absolute range and a baseline-relative
+      factor window.
+    repair: null
+    classification_origin: deterministic-bootstrap; manually review category, semantic class, framework coverage, and first
+      affected milestone

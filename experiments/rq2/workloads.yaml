@@ -1,0 +1,52 @@
+schema_version: 1
+name: rq2-workload-registry
+workloads:
+  - workload_id: dense-transformer-small
+    family: dense_transformer
+    status: pending_environment_binding
+    baseline_id: dense-transformer-small-baseline
+    baseline_config: null
+    dependency_graph: null
+    native_validator_manifest: null
+    semantic_anchors: []
+    command_manifest: null
+    required_paths:
+      - tensor_parallel
+      - pipeline_parallel
+      - sequence_parallel
+      - recomputation
+      - optimizer_overlap
+    acceptance_milestone: checkpoint_save_load
+    notes: Bind a small stable MindSpeed training configuration before the compute campaign.
+  - workload_id: gqa-longseq-flash-small
+    family: gqa_long_sequence_flash_attention
+    status: pending_environment_binding
+    baseline_id: gqa-longseq-flash-small-baseline
+    baseline_config: null
+    dependency_graph: null
+    native_validator_manifest: null
+    semantic_anchors: []
+    command_manifest: null
+    required_paths:
+      - grouped_query_attention
+      - long_sequence
+      - flash_attention
+      - context_parallel
+    acceptance_milestone: checkpoint_save_load
+    notes: Use a configuration that activates long-sequence and attention-kernel constraints.
+  - workload_id: moe-small
+    family: mixture_of_experts
+    status: pending_environment_binding
+    baseline_id: moe-small-baseline
+    baseline_config: null
+    dependency_graph: null
+    native_validator_manifest: null
+    semantic_anchors: []
+    command_manifest: null
+    required_paths:
+      - expert_parallel
+      - tensor_parallel
+      - all_to_all_communication
+      - optimizer_overlap
+    acceptance_milestone: checkpoint_save_load
+    notes: Use a small MoE model that still activates expert-routing and topology constraints.

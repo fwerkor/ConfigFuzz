@@ -1,0 +1,126 @@
+schema_version: 1
+name: ConfigFuzz three-RQ experiment protocol
+argument_chain:
+  - rq1: configuration constraints are complex, incompletely validated, and costly when violated
+  - rq2: constraint-guided coordinated mutation produces more deep, valid, and diverse executions
+  - rq3: deeper constraint-boundary exploration improves historical bug replay and new bug discovery
+milestone_order:
+  - config_generation
+  - argument_parsing
+  - config_validation
+  - model_construction
+  - process_group_initialization
+  - forward
+  - backward
+  - optimizer_step
+  - repeated_training
+  - checkpoint_save_load
+  - completed
+outcomes:
+  - valid
+  - expected_rejection
+  - resource_failure
+  - infrastructure_failure
+  - unexplained_failure
+  - potential_bug
+  - unknown
+rq1:
+  question: >-
+    What characteristics do MindSpeed configuration constraints exhibit, how extensively
+    are they covered by native validation, and what costs arise when uncovered constraints
+    are violated?
+  audit_dataset: rq1/constraint_audit.yaml
+  required_pair_controls:
+    - same workload, hardware environment, and random seed
+    - only target-constraint participants may differ
+    - violating configuration should violate only the target hard constraint when feasible
+    - satisfying configuration must reach the intended milestone
+  primary_metrics:
+    - constraint category, arity, guard, scope, and software-layer distributions
+    - full explicit, partial, implicit/delayed, and uncovered validation rates
+    - first-failure milestone distribution
+    - median and P95 time-to-failure and GPU-seconds wasted
+    - crash, hang, silent-abnormal, timeout, and interpretable-message rates
+rq2:
+  question: >-
+    Under identical mutation intents and budgets, can ConfigFuzz generate more deep,
+    valid, and diverse test executions while preserving the requested target value?
+  methods:
+    raw_mutation:
+      target_assignment: preserved
+      native_validator: false
+      manual_constraint_filter: false
+      coordinated_repair: false
+    native_validator_guided:
+      target_assignment: preserved
+      native_validator: true
+      manual_constraint_filter: false
+      coordinated_repair: false
+    constraint_filter_only:
+      target_assignment: preserved
+      native_validator: optional
+      manual_constraint_filter: true
+      coordinated_repair: false
+    configfuzz:
+      target_assignment: fixed
+      native_validator: optional
+      manual_constraint_filter: true
+      coordinated_repair: affected_hypergraph_region
+    global_repair:
+      target_assignment: fixed
+      native_validator: optional
+      manual_constraint_filter: true
+      coordinated_repair: all_parameters
+  target_milestone: optimizer_step
+  minimum_random_seeds: 5
+  budget_controls:
+    - identical frozen mutation-intent set
+    - identical hardware and software environment
+    - identical per-test timeout
+    - identical test-count and GPU-hour budgets
+  primary_metrics:
+    - deep_execution_yield_per_gpu_hour
+    - target_value_retention_rate
+    - coordinated_parameter_count and modification_distance
+    - stage reach rates and expected rejection rate
+    - constraint, boundary, guard, topology, feature-interaction, and backend-path diversity
+rq3:
+  question: >-
+    Can ConfigFuzz replay and discover more real configuration-related framework bugs
+    at lower cost than existing configuration-testing methods?
+  historical_bug_dataset: rq3/historical_bugs.yaml
+  replay_oracle:
+    - same generated configuration fails on buggy commit
+    - same generated configuration passes on fixed commit
+    - failure signature and patch root cause agree
+    - failure repeats at least three times
+    - duplicate failures are grouped by independent root cause
+  benchmark_policy:
+    development_split: older bugs may be used during implementation
+    evaluation_split: newer bugs are reserved for final results
+    exact_reproducer_input: forbidden
+  current_version_triage:
+    - exclude known constraint violations
+    - exclude ordinary resource exhaustion
+    - exclude infrastructure failures
+    - repeat at least three times with fixed environment and seed
+    - minimize the triggering configuration
+    - construct a differential or metamorphic control
+    - seek developer confirmation
+  primary_metrics:
+    - historical bug replay rate
+    - tests, wall time, and GPU-hours to first reproducer
+    - independent reproducible and developer-confirmed bugs
+    - GPU-hours per confirmed bug and false-positive rate
+recording:
+  run_format: JSON Lines
+  required_context:
+    - source commits
+    - environment fingerprint
+    - baseline and workload identifiers
+    - mutation-intent fingerprint
+    - method, seed, timeout, and budget
+    - deepest execution milestone
+    - RQ1 constraint ID, satisfying/violating role, first-failure milestone, failure mode, and message quality
+    - cumulative campaign test index, wall time, and GPU-seconds for time-to-first-reproducer
+    - outcome and triage evidence

@@ -188,6 +188,7 @@ def solve_graph_mutation(
     static_as_hard: bool = False,
     semantic_anchors: Iterable[str] = (),
     high_confidence_threshold: float = 0.8,
+    mutable_parameters: Iterable[str] | None = None,
 ) -> SolverMutationPlan:
     if parameter not in graph.nodes:
         raise KeyError(f"unknown dependency node: {parameter}")
@@ -214,17 +215,30 @@ def solve_graph_mutation(
             reason="target parameter type is unsupported",
         )
 
-    mutable = {
-        parameter,
-        *(
-            name
-            for name in graph.affected_parameters(parameter)
-            if name in variables
-            and graph.nodes.get(name) is not None
-            and graph.nodes[name].kind
-            in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
-        ),
-    }
+    if mutable_parameters is None:
+        mutable = {
+            parameter,
+            *(
+                name
+                for name in graph.affected_parameters(parameter)
+                if name in variables
+                and graph.nodes.get(name) is not None
+                and graph.nodes[name].kind
+                in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
+            ),
+        }
+    else:
+        mutable = {
+            parameter,
+            *(
+                str(name)
+                for name in mutable_parameters
+                if str(name) in variables
+                and graph.nodes.get(str(name)) is not None
+                and graph.nodes[str(name)].kind
+                in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
+            ),
+        }
 
     optimizer = z3.Optimize()
     optimizer.set(priority="lex")

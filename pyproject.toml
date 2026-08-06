@@ -23,6 +23,7 @@ dev = [
 
 [project.scripts]
 configfuzz = "configfuzz.cli:main"
+configfuzz-experiment = "configfuzz.experiment_cli:main"
 
 [tool.setuptools.packages.find]
 include = ["configfuzz*"]

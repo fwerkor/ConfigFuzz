@@ -1,0 +1,15 @@
+schema_version: 1
+name: mindspeed-configuration-bug-benchmark
+selection_criteria:
+  - identifiable buggy commit
+  - identifiable fixed commit
+  - triggered by one or more configuration parameters
+  - executable workload available
+  - observable failure oracle
+  - not a pure performance issue or ordinary out-of-memory failure
+policy:
+  target_bug_count: 20-40
+  exact_reproducer_is_tool_input: false
+  minimum_repetitions: 3
+  deduplication_unit: independent_root_cause
+bugs: []

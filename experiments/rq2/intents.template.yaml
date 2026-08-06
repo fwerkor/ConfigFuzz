@@ -1,0 +1,25 @@
+schema_version: 1
+name: rq2-mutation-intents-template
+metadata:
+  status: template
+  minimum_per_workload: 300
+  generation_policy:
+    - parameter bounds and adjacent values
+    - legal divisibility boundaries and neighboring illegal values
+    - guard transitions from disabled to enabled
+    - alternative TP, PP, EP, and CP topology decompositions
+    - feature interactions
+    - backend, version, and capability boundaries
+  freeze_before_campaign: true
+intents:
+  - intent_id: example-hidden-size-tp-boundary
+    workload_id: dense-transformer-small
+    baseline_id: dense-transformer-small-baseline
+    target_parameter: model.hidden_size
+    target_value: 3073
+    intent_class: divisibility_adjacent_value
+    source_constraint_ids:
+      - lmsv.task1.hidden-size-tp-divisibility
+    metadata:
+      example_only: true
+      remove_before_final_freeze: true

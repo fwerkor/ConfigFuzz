@@ -1,0 +1,90 @@
+{
+  "arity_counts": {
+    "1": 52,
+    "2": 27,
+    "3": 12,
+    "4": 1,
+    "5": 1
+  },
+  "audit_complete": false,
+  "category_counts": {
+    "environment_dependency": 6,
+    "feature_interaction": 24,
+    "local": 52,
+    "structural": 11
+  },
+  "constraint_count": 93,
+  "coverage_counts_all": {
+    "unreviewed": 93
+  },
+  "coverage_counts_reviewed": {},
+  "early_validation_rate_all": null,
+  "early_validation_rate_reviewed": null,
+  "execution": {
+    "attributable_violating_run_count": 0,
+    "complete_pair_count": 0,
+    "constraints_with_any_execution": 0,
+    "cost_by_constraint_category": {},
+    "cost_by_native_validation": {},
+    "excluded_resource_or_infrastructure_count": 0,
+    "failure_mode_counts": {},
+    "failure_stage_recording_rate": null,
+    "first_failure_milestone_counts": {},
+    "gpu_seconds_wasted": {
+      "count": 0,
+      "max": null,
+      "mean": null,
+      "median": null,
+      "min": null,
+      "p95": null
+    },
+    "interpretable_error_message_rate": null,
+    "late_failure_rate": null,
+    "outcome_counts": {},
+    "peak_memory_mib": {
+      "count": 0,
+      "max": null,
+      "mean": null,
+      "median": null,
+      "min": null,
+      "p95": null
+    },
+    "run_count": 0,
+    "satisfying_pass_rate": null,
+    "satisfying_run_count": 0,
+    "time_to_detection_seconds": {
+      "count": 0,
+      "max": null,
+      "mean": null,
+      "median": null,
+      "min": null,
+      "p95": null
+    },
+    "timeout_rate": null,
+    "violating_run_count": 0
+  },
+  "first_affected_milestone_counts": {
+    "unknown": 93
+  },
+  "full_coverage_rate_all": null,
+  "full_coverage_rate_reviewed": null,
+  "guarded_count": 26,
+  "guarded_rate": 0.27956989247311825,
+  "reviewed_constraint_count": 0,
+  "rq": "rq1",
+  "schema_version": 1,
+  "semantic_class_counts": {
+    "implementation_limit": 5,
+    "mathematical_invariant": 34,
+    "optimization_preference": 52,
+    "resource_risk": 2
+  },
+  "software_layer_counts": {
+    "model_construction": 46,
+    "other": 47,
+    "parallel": 46,
+    "training": 46,
+    "validator": 46
+  },
+  "unreviewed_constraint_count": 93
+}

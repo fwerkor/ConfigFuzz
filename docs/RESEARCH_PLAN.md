@@ -12,48 +12,47 @@ ConfigFuzz investigates the following problem:
 
 ## 2. Research questions
 
-### RQ1: Constraint recovery accuracy
+The evaluation follows a continuous argument chain: RQ1 establishes the problem and its cost, RQ2 evaluates ConfigFuzz's coordinated mutation mechanism, and RQ3 determines whether the additional deep execution translates into defect discovery.
 
-How accurately can ConfigFuzz recover manually encoded constraints when those constraints are hidden from the inference component?
+### RQ1: Constraint characteristics, native coverage, and violation cost
 
-Metrics:
-
-- precision and recall over normalized atomic constraints;
-- valid-domain agreement on independently generated configurations;
-- accuracy by constraint class;
-- confidence calibration.
-
-### RQ2: Testing efficiency
-
-Does inferred constraint guidance reduce wasted executions?
+What characteristics do MindSpeed configuration constraints exhibit, how extensively are they covered by native validation, and what costs arise when uncovered constraints are violated?
 
 Metrics:
 
-- valid configuration rate;
-- number of initialization failures;
-- time and device-hours per valid test;
-- number of unique valid boundary configurations under a fixed budget.
+- constraint category, arity, guard, scope, semantic class, and software-layer distributions;
+- full explicit, partial, implicit/delayed, and uncovered validation rates;
+- first-failure milestone distribution;
+- median and P95 time-to-failure, GPU-seconds wasted, timeout rate, and error-message quality.
 
-### RQ3: Bug-finding effectiveness
+The reviewed manual corpus is the empirical object of study. It is not used as a self-oracle for evaluating recovery accuracy.
 
-Does ConfigFuzz preserve or improve defect discovery compared with unrestricted mutation and manually constrained mutation?
+### RQ2: Deep execution efficiency, intent preservation, and diversity
 
-Metrics:
-
-- unique confirmed defects;
-- time to first defect;
-- defect-triggering configuration diversity;
-- failures incorrectly learned as invalid constraints.
-
-### RQ4: Generalization
-
-Can constraints inferred from one model, framework version, or hardware environment transfer to unseen parameters or environments?
+Under identical frozen mutation intents and testing budgets, can ConfigFuzz generate more deep, valid, and diverse executions while preserving the requested target value?
 
 Metrics:
 
-- leave-one-model-out performance;
-- cross-version and cross-hardware valid-domain agreement;
-- proportion of hard, conditional, environment, and resource constraints correctly separated.
+- deep execution yield per GPU-hour and stage reach rates;
+- target-value retention rate;
+- coordinated-parameter count, modification distance, and solver cost;
+- expected rejection and delayed failure rates;
+- constraint, boundary, guard-transition, topology, feature-interaction, and backend-path diversity.
+
+The required methods are raw mutation, native-validator guidance, constraint filtering without repair, ConfigFuzz's affected-region repair, and the global-repair ablation.
+
+### RQ3: Historical bug replay and current bug discovery
+
+Can ConfigFuzz replay and discover more real configuration-related framework bugs at lower cost than the comparison methods?
+
+Metrics:
+
+- historical bug replay rate under a buggy/fixed differential oracle;
+- tests, wall time, and GPU-hours to the first reproducer;
+- independent reproducible, developer-confirmed, and fixed current-version bugs;
+- GPU-hours per confirmed bug and false-positive rate.
+
+Historical exact reproducers are reserved for final confirmation and are never supplied as search inputs. Failures are counted only after excluding expected rejection, ordinary resource exhaustion, and infrastructure faults.
 
 ## 3. Constraint ontology
 
@@ -174,40 +173,33 @@ Use inferred constraints in four modes:
 
 Inputs that satisfy all inferred constraints but trigger system failure should be prioritized as potential defects.
 
-## 5. Baseline dataset construction
+## 5. Experimental datasets
 
-Use the current lm-sv snapshot as a labeled corpus.
+### 5.1 RQ1 constraint audit
 
-1. Enumerate mutable parameters from YAML pools, validators, mutators, scripts, and model configuration templates.
-2. Normalize each manually implemented rule into the DSL.
-3. Record source location, model scope, environment scope, and whether the code rejects, repairs, or merely warns.
-4. Hide each target rule from ConfigFuzz during evaluation while retaining the remaining program context.
-5. Validate inferred rules against generated configurations and, where feasible, actual executions.
+`corpus/lmsv/manual_constraints.yaml` is transformed into `experiments/rq1/constraint_audit.yaml`. Each record contains the normalized predicate and guard, participants, arity, scope, category, semantic class, provenance, software layer, first affected milestone, native-validation label, evidence, and review state.
 
-The corpus should distinguish:
+Bootstrap classifications are deterministic annotation aids. Native coverage and first affected milestone remain unknown until supported by source or execution evidence. The current source-review queue is generated from pinned MindSpeed-LLM, MindSpeed, and Megatron-LM trees and must not be interpreted as automatic coverage labels.
 
-- rules confidently required by the underlying framework;
-- conservative rules chosen by lm-sv;
-- empirical resource limits;
-- workaround rules for known implementation defects.
+### 5.2 RQ2 workloads and mutation intents
 
-The normalized corpus lives at `corpus/lmsv/manual_constraints.yaml`. It uses a
-single schema for validator repairs and mutation-pool sampling rules while
-retaining enforcement behavior, semantic strength, scope, source location, and
-repair strategy. The corpus is evaluation data and a manual baseline; it must
-not be supplied to the framework-side inference component during testing.
+The workload registry contains a small dense Transformer, a GQA/long-sequence/FlashAttention workload, and a MoE workload. Once their stable baseline configurations are bound, ConfigFuzz generates candidate intents for enumeration alternatives, numeric boundaries, divisibility boundaries and adjacent values, simple guard transitions, and TP/PP/EP/CP topologies. The final list is manually checked and frozen with a content hash before any method runs.
 
-## 6. Experimental baselines
+### 5.3 RQ3 historical bug benchmark
 
-Compare against:
+Historical candidates are mined from configuration-related fix commits with identifiable parent revisions. A diverse shortlist is manually reviewed before entries are admitted to `experiments/rq3/historical_bugs.yaml`. Admission requires a workload, observable non-performance oracle, repeatable failure on the buggy commit, passage on the fixed commit, and agreement with the patch root cause. Older verified bugs form the development split; newer verified bugs form the final evaluation split.
 
-1. unrestricted random mutation;
-2. type-only mutation;
-3. manually maintained lm-sv constraints;
-4. static extraction only;
-5. dynamic probing only;
-6. static + active probing + synthesis (ConfigFuzz);
-7. optional LLM-only proposal baseline.
+## 6. Experimental methods
+
+RQ2 and RQ3 use the same core methods:
+
+1. **Raw Mutation**: apply only the requested target assignment.
+2. **Native-Validator Guided**: reject configurations caught by the framework validator without coordinating parameters.
+3. **Constraint-Filter Only**: apply the audited constraints only as a filter.
+4. **ConfigFuzz**: fix the target assignment and coordinate the minimum affected parameter region.
+5. **Global Repair**: allow all parameters to change, serving as the locality ablation.
+
+All methods use identical baselines, frozen intents, hardware/software environments, per-test timeouts, test-count budgets, and GPU-hour budgets. Randomized methods run at least five seeds.
 
 ## 7. Initial implementation stages
 
@@ -250,67 +242,34 @@ fixture and manual-baseline source, not the method's inference oracle.
 - retain manual constraints as fallback;
 - compare mutation efficiency and bug discovery.
 
-## 8. Immediate tasks
+## 8. Experiment readiness
 
-Completed in the initial prototype:
+Completed without accelerator access:
 
-- static inventory over the lm-sv baseline;
-- seven-way runtime outcome classification that separates explicit invalidity,
-  resource failure, infrastructure failure, unexplained failure, and potential bugs;
-- isolated, timeout-bounded subprocess probing;
-- integer, float, Boolean, string, and enum candidate generation;
-- first Z3 templates for bounds, enums, divisibility, and contextual relations;
-- a real lm-sv validator adapter and hidden-size recovery experiment.
-- a normalized corpus of reviewed Task1 validator rules and Task6 mutation-pool rules.
-- a strict static scanner that removes known name-matching false positives,
-  normalizes guarded relations, and scans multiple parameters in parallel.
-- bounded interprocedural propagation for direct helper-function calls.
-- argparse, dataclass, `Literal`, field-metadata, and YAML schema extraction.
-- a versioned Megatron-LM framework-side scan at commit `42460a7`.
-- an explicit dependency hypergraph with qualified configuration paths,
-  directional impact queries, condition evaluation, and edge status.
-- a bounded joint-mutation planner that repairs simple divisibility,
-  alignment, equality, bound, and Boolean dependencies.
-- a status-aware Z3 joint solver over impacted graph edges, with confirmed and
-  environment-scoped edges enforced as hard constraints and unconfirmed evidence
-  treated as weighted soft constraints.
-- runtime feedback attribution that distinguishes consistency from necessity,
-  requires provenance-matched paired interventions for confirmation, marks valid
-  counterexamples as scope disputes, preserves potential-bug inputs, and
-  deduplicates repeated feedback batches.
-- a solver-backed paired-intervention designer that produces minimally
-  different satisfying, violating, and repaired configurations while
-  preserving other confirmed edges.
-- an intervention execution adapter that writes joint JSON configurations,
-  executes all designed roles, classifies outcomes, and matches explicit
-  rejection provenance before feedback confirmation.
-- an adaptive intervention selector that filters infeasible edge polarities and
-  ranks executable candidates with an explainable status, relation,
-  uncertainty, interaction, centrality, provenance, and cost score.
-- exact branch-and-bound pruning for intervention ranking plus configurable Z3
-  case timeouts, preventing one difficult candidate from stalling a campaign.
-- a bounded multi-round active-validation loop that reranks the updated graph,
-  executes the next unattempted candidate, applies feedback, and stops on budget
-  exhaustion or absence of executable candidates.
-- a reproducible dense-baseline lm-sv run that reapplies legacy samples under
-  the current semantics, attempts 11 executable edges, and retains both
-  confirmed and scope-disputed outcomes in the final graph.
-- an lm-sv Task1 bridge that injects deterministic solver assignments after
-  mutation-artifact normalization, prevents random parallel resampling, rejects
-  validator-repaired target values, and launches an isolated one-iteration
-  Task1 configuration through `do.py`.
+- a 93-record RQ1 audit dataset with evidence-gated review fields;
+- pinned static mining over MindSpeed-LLM, MindSpeed, and the required Megatron-LM revision;
+- a ranked per-constraint native-validation review queue;
+- deterministic RQ1, RQ2, and RQ3 metric aggregation;
+- a unified JSONL run schema that records generation, intent preservation, milestones, outcomes, cost, diversity, and bug-oracle evidence;
+- workload and intent registries for the three RQ2 workload families;
+- deterministic generation and SHA-256 freezing of RQ2 mutation intentions after baselines are bound;
+- full-history mining of configuration-related fix candidates and a balanced 40-item RQ3 source-review shortlist;
+- schemas and validators for the final historical bug benchmark;
+- repository/environment fingerprinting and focused unit tests.
 
-Next tasks:
+Remaining source-review work:
 
-1. Attach model, backend, hardware, and execution-stage scope to graph edges.
-2. Add return-value/object-field propagation and shell/documentation adapters.
-3. Use `_apply_fix` arguments and repair strategies to rank candidate semantics.
-4. Evaluate scanner and graph precision/recall against the reviewed corpus.
-5. Add valid-boundary objectives and information-gain or coverage-based
-   convergence criteria beyond the current budget/no-candidate stopping rules.
-6. Model memory, device topology, and backend capability as scoped resource edges.
-7. Run a reproducible Task1 campaign on configured PTA/MSA/NPU environments and
-   collect model-construction, first-step, repeated-step, and comparison
-   milestones for solver-generated cases.
-8. Build the evaluation harness for valid-rate, deep-milestone, cost, and
-   bug-finding comparisons against random, type-only, and manual baselines.
+1. Manually adjudicate the RQ1 native-validation candidates and record exact code evidence.
+2. Review the 23 constraints with no implementation-side static candidate for likely implicit or delayed enforcement sites.
+3. Triage the RQ3 shortlist into verified development/evaluation bugs.
+4. Bind stable dense, long-sequence/GQA/FlashAttention, and MoE baseline configurations.
+5. Review and freeze at least 300 mutation intents per bound workload.
+
+Remaining accelerator work:
+
+1. Execute RQ1 satisfying/violating pairs and record first failure, wall time, GPU-seconds, peak memory, timeout, and message quality.
+2. Run the five RQ2 methods under identical intent and GPU-hour budgets for at least five seeds where randomness applies.
+3. Replay the verified historical benchmark on buggy/fixed revisions.
+4. Run current-version campaigns, minimize independent failures, and seek developer confirmation.
+
+`experiments/protocol.yaml` is the authoritative machine-readable experiment specification.
