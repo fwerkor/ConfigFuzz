@@ -27,6 +27,7 @@ class CampaignWorkload:
     baseline_id: str
     baseline_config: Path
     dependency_graph: Path
+    static_dependency_graph: Path | None = None
     semantic_anchors: tuple[str, ...] = ()
     native_validator_manifest: Path | None = None
 
@@ -48,11 +49,18 @@ class CampaignWorkload:
             validator_path = _resolve_existing_path(
                 validator, base_dir, workload_id, "native_validator_manifest"
             )
+        static_graph = data.get("static_dependency_graph")
+        static_graph_path = None
+        if static_graph is not None:
+            static_graph_path = _resolve_existing_path(
+                static_graph, base_dir, workload_id, "static_dependency_graph"
+            )
         return cls(
             workload_id=workload_id,
             baseline_id=baseline_id,
             baseline_config=baseline_config,
             dependency_graph=dependency_graph,
+            static_dependency_graph=static_graph_path,
             semantic_anchors=tuple(
                 str(item) for item in data.get("semantic_anchors", ())
             ),
@@ -66,6 +74,7 @@ class CampaignCase:
     workload_id: str
     baseline_id: str
     intent_id: str
+    intent_pool: str
     method: ExperimentMethod
     target_parameter: str
     target_value: Any
@@ -86,6 +95,7 @@ class CampaignCase:
             "workload_id": self.workload_id,
             "baseline_id": self.baseline_id,
             "intent_id": self.intent_id,
+            "intent_pool": self.intent_pool,
             "method": self.method.value,
             "target_parameter": self.target_parameter,
             "target_value": self.target_value,
@@ -159,11 +169,14 @@ def plan_campaign(
         ExperimentMethod.RAW_MUTATION,
         ExperimentMethod.NATIVE_VALIDATOR_GUIDED,
         ExperimentMethod.CONSTRAINT_FILTER_ONLY,
+        ExperimentMethod.STATIC_HARD_CONFIGFUZZ,
         ExperimentMethod.CONFIGFUZZ,
         ExperimentMethod.GLOBAL_REPAIR,
     ),
 ) -> dict[str, Any]:
-    cache: dict[str, tuple[Mapping[str, Any], DependencyGraph]] = {}
+    cache: dict[
+        str, tuple[Mapping[str, Any], DependencyGraph, DependencyGraph]
+    ] = {}
     cases: list[CampaignCase] = []
     for intent in intents:
         workload = workloads.get(intent.workload_id)
@@ -178,10 +191,18 @@ def plan_campaign(
             cache[workload.workload_id] = (
                 _load_json_object(workload.baseline_config),
                 _load_dependency_graph(workload.dependency_graph),
+                _load_dependency_graph(
+                    workload.static_dependency_graph or workload.dependency_graph
+                ),
             )
-        baseline, graph = cache[workload.workload_id]
+        baseline, graph, static_graph = cache[workload.workload_id]
         for method in methods:
-            cases.append(_plan_case(workload, baseline, graph, intent, method))
+            method_graph = (
+                static_graph
+                if method is ExperimentMethod.STATIC_HARD_CONFIGFUZZ
+                else graph
+            )
+            cases.append(_plan_case(workload, baseline, method_graph, intent, method))
     method_counts: dict[str, int] = {}
     status_counts: dict[str, int] = {}
     for case in cases:
@@ -212,6 +233,7 @@ def _plan_case(
         "workload_id": workload.workload_id,
         "baseline_id": workload.baseline_id,
         "intent_id": intent.intent_id,
+        "intent_pool": intent.intent_pool,
         "method": method,
         "target_parameter": intent.target_parameter,
         "target_value": intent.target_value,
@@ -302,7 +324,7 @@ def _plan_case(
         baseline,
         intent.target_parameter,
         intent.target_value,
-        static_as_hard=True,
+        static_as_hard=(method is ExperimentMethod.STATIC_HARD_CONFIGFUZZ),
         semantic_anchors=workload.semantic_anchors,
         mutable_parameters=all_mutable,
     )
@@ -344,6 +366,17 @@ def _plan_case(
                 "all_parameters"
                 if method is ExperimentMethod.GLOBAL_REPAIR
                 else "affected_hypergraph_region"
+            ),
+            "constraint_treatment": (
+                "all_static_candidates_hard"
+                if method is ExperimentMethod.STATIC_HARD_CONFIGFUZZ
+                else "status_and_confidence_aware"
+            ),
+            "constraint_graph_source": (
+                "pre_validation_static_graph"
+                if method is ExperimentMethod.STATIC_HARD_CONFIGFUZZ
+                and workload.static_dependency_graph is not None
+                else "validated_graph"
             ),
         },
     )

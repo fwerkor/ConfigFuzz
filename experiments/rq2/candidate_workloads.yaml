@@ -5,47 +5,80 @@ metadata:
   source_revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
   do_not_use_for_final_campaign_until_bound: true
 workloads:
-- workload_id: dense-qwen2-small
-  family: dense_transformer
-  baseline_id: dense-qwen2-small-baseline-candidate
-  baseline_config: candidates/dense-qwen2-small.json
+- workload_id: qwen2-train
+  family: qwen2_dense_gqa
+  baseline_id: qwen2-train-baseline-candidate
+  baseline_config: candidates/qwen2-train.json
   metadata:
-    target_workload_id: dense-transformer-small
+    target_workload_id: qwen2-train
     priority: primary
-    minimum_intents: 300
+    minimum_intents: 150
     status: source_selected_unverified
     source_model_config: lmsv_rec/assets/runtime/model_config/qwen2.yaml
     source_command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_qwen2.sh
-- workload_id: gqa-longseq-chatglm3
-  family: gqa_long_sequence_flash_attention
-  baseline_id: gqa-longseq-chatglm3-baseline-candidate
-  baseline_config: candidates/gqa-longseq-chatglm3.json
+- workload_id: llama2-train
+  family: llama2_dense_rope
+  baseline_id: llama2-train-baseline-candidate
+  baseline_config: candidates/llama2-train.json
   metadata:
-    target_workload_id: gqa-longseq-flash-small
+    target_workload_id: llama2-train
     priority: primary
-    minimum_intents: 300
+    minimum_intents: 150
+    status: source_selected_unverified
+    source_model_config: lmsv_rec/assets/runtime/model_config/llama2.yaml
+    source_command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_llama2.sh
+- workload_id: chatglm3-train
+  family: chatglm3_gqa_long_sequence
+  baseline_id: chatglm3-train-baseline-candidate
+  baseline_config: candidates/chatglm3-train.json
+  metadata:
+    target_workload_id: chatglm3-train
+    priority: primary
+    minimum_intents: 150
     status: source_selected_unverified
     source_model_config: lmsv_rec/assets/runtime/model_config/chatglm3.yaml
     source_command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_chatglm3.sh
-- workload_id: moe-mixtral-small
-  family: mixture_of_experts
-  baseline_id: moe-mixtral-small-baseline-candidate
-  baseline_config: candidates/moe-mixtral-small.json
+- workload_id: mixtral-train
+  family: mixtral_moe
+  baseline_id: mixtral-train-baseline-candidate
+  baseline_config: candidates/mixtral-train.json
   metadata:
-    target_workload_id: moe-small
+    target_workload_id: mixtral-train
     priority: primary
-    minimum_intents: 300
+    minimum_intents: 150
     status: source_selected_unverified
     source_model_config: lmsv_rec/assets/runtime/model_config/mixtral.yaml
     source_command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_mixtral.sh
-- workload_id: mla-moe-deepseekv3-fallback
-  family: mla_long_sequence_moe
-  baseline_id: mla-moe-deepseekv3-fallback-candidate
-  baseline_config: candidates/mla-moe-deepseekv3-fallback.json
+- workload_id: deepseekv3-train
+  family: deepseekv3_mla_moe
+  baseline_id: deepseekv3-train-baseline-candidate
+  baseline_config: candidates/deepseekv3-train.json
   metadata:
-    target_workload_id: gqa-longseq-flash-small
-    priority: fallback
-    minimum_intents: 0
+    target_workload_id: deepseekv3-train
+    priority: primary
+    minimum_intents: 150
     status: source_selected_unverified
     source_model_config: lmsv_rec/assets/runtime/model_config/deepseekv3.yaml
     source_command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_deepseekv3.sh
+- workload_id: internvl3-train
+  family: internvl3_vision_text
+  baseline_id: internvl3-train-baseline-candidate
+  baseline_config: candidates/internvl3-train.json
+  metadata:
+    target_workload_id: internvl3-train
+    priority: primary
+    minimum_intents: 150
+    status: source_selected_unverified
+    source_model_config: lmsv_rec/assets/mm_configs/model_8B.json
+    source_command_template: lmsv_rec/scripts/runtime/mm_pta_internvl3.sh
+- workload_id: cogvideox-train
+  family: cogvideox_video_text
+  baseline_id: cogvideox-train-baseline-candidate
+  baseline_config: candidates/cogvideox-train.json
+  metadata:
+    target_workload_id: cogvideox-train
+    priority: primary
+    minimum_intents: 150
+    status: source_selected_unverified
+    source_model_config: lmsv_rec/assets/mm_configs/model_cogvideox.json
+    source_command_template: lmsv_rec/scripts/runtime/mm_pta_cogvideox.sh

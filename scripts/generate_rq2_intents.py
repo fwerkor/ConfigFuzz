@@ -15,7 +15,16 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Generate and optionally freeze an RQ2 mutation-intent set."
     )
-    parser.add_argument("--corpus", type=Path, required=True)
+    parser.add_argument(
+        "--corpus",
+        type=Path,
+        help="constraint corpus used only when --include-constraint-challenge is set",
+    )
+    parser.add_argument(
+        "--include-constraint-challenge",
+        action="store_true",
+        help="also generate relation/guard-derived stress intents",
+    )
     parser.add_argument("--workloads", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--frozen-output", type=Path)
@@ -32,12 +41,15 @@ def main() -> int:
         help="parallel size to include; repeatable (defaults: 1, 2, 4, 8)",
     )
     args = parser.parse_args()
+    if args.include_constraint_challenge and args.corpus is None:
+        parser.error("--include-constraint-challenge requires --corpus")
 
     payload = generate_intent_payload(
         args.corpus,
         args.workloads,
         skip_unbound=args.skip_unbound,
         topology_values=tuple(args.topology_values or (1, 2, 4, 8)),
+        include_constraint_challenge=args.include_constraint_challenge,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(

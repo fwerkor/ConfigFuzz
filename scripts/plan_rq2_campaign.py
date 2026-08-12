@@ -35,6 +35,7 @@ def main() -> int:
             ExperimentMethod.RAW_MUTATION,
             ExperimentMethod.NATIVE_VALIDATOR_GUIDED,
             ExperimentMethod.CONSTRAINT_FILTER_ONLY,
+            ExperimentMethod.STATIC_HARD_CONFIGFUZZ,
             ExperimentMethod.CONFIGFUZZ,
             ExperimentMethod.GLOBAL_REPAIR,
         )

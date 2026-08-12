@@ -183,7 +183,7 @@ Bootstrap classifications are deterministic annotation aids. Native coverage and
 
 ### 5.2 RQ2 workloads and mutation intents
 
-The workload registry contains a small dense Transformer, a GQA/long-sequence/FlashAttention workload, and a MoE workload. Once their stable baseline configurations are bound, ConfigFuzz generates candidate intents for enumeration alternatives, numeric boundaries, divisibility boundaries and adjacent values, simple guard transitions, and TP/PP/EP/CP topologies. The final list is manually checked and frozen with a content hash before any method runs.
+The workload registry contains seven training subjects: Qwen2, Llama2, ChatGLM3, Mixtral, DeepSeek-V3, InternVL3, and CogVideoX. Once their stable baseline configurations are bound, the primary RQ2 intent pool is generated independently of ConfigFuzz's recovered constraints: scalar fields exposed by the qualified baseline receive generic numeric/Boolean boundary mutations, and TP/PP/EP/CP fields receive generic topology values. Relation-derived divisibility boundaries, guard transitions, and other constraint-focused cases are emitted into a separate `constraint_challenge` pool. The primary `method_independent` pool selects 150 intents per workload and is frozen with a content hash before any method runs; the challenge pool is reported separately when used.
 
 ### 5.3 RQ3 historical bug benchmark
 
@@ -196,8 +196,9 @@ RQ2 and RQ3 use the same core methods:
 1. **Raw Mutation**: apply only the requested target assignment.
 2. **Native-Validator Guided**: reject configurations caught by the framework validator without coordinating parameters.
 3. **Constraint-Filter Only**: apply the audited constraints only as a filter.
-4. **ConfigFuzz**: fix the target assignment and coordinate the minimum affected parameter region.
-5. **Global Repair**: allow all parameters to change, serving as the locality ablation.
+4. **Static-Hard ConfigFuzz**: coordinate the affected region while treating every statically recovered candidate as a hard constraint. This ablates execution validation and uncertainty-aware constraint status.
+5. **ConfigFuzz**: fix the target assignment, hard-enforce confirmed/environment-specific relations, retain unresolved candidates as confidence-tiered guidance, and coordinate the affected parameter region.
+6. **Global Repair**: use the same status-aware constraint treatment as ConfigFuzz while allowing all parameters to change, serving as the locality ablation.
 
 All methods use identical baselines, frozen intents, hardware/software environments, per-test timeouts, test-count budgets, and GPU-hour budgets. Randomized methods run at least five seeds.
 
@@ -250,8 +251,8 @@ Completed without accelerator access:
 - pinned static mining over MindSpeed-LLM, MindSpeed, and the required Megatron-LM revision;
 - a ranked per-constraint native-validation review queue;
 - deterministic RQ1, RQ2, and RQ3 metric aggregation;
-- a unified JSONL run schema that records generation, intent preservation, milestones, outcomes, cost, diversity, and bug-oracle evidence;
-- workload and intent registries for the three RQ2 workload families;
+- a unified JSONL run schema that records generation, intent preservation, active constraints and provenance, constraint status changes, affected repair region, exact solver modifications, milestones, outcomes, cost, runtime behavior signatures, and bug-oracle/root-cause evidence;
+- workload and intent registries for all seven RQ2 training subjects;
 - deterministic generation and SHA-256 freezing of RQ2 mutation intentions after baselines are bound;
 - full-history mining of configuration-related fix candidates and a balanced 40-item RQ3 source-review shortlist;
 - schemas and validators for the final historical bug benchmark;
@@ -263,12 +264,12 @@ Remaining source-review work:
 2. Review the 23 constraints with no implementation-side static candidate for likely implicit or delayed enforcement sites.
 3. Triage the RQ3 shortlist into verified development/evaluation bugs.
 4. Bind stable dense, long-sequence/GQA/FlashAttention, and MoE baseline configurations.
-5. Review and freeze at least 300 mutation intents per bound workload.
+5. Regenerate and freeze the method-independent mutation-intent pool after baseline qualification; retain constraint-challenge intents as a separately reported stress subset.
 
 Remaining accelerator work:
 
 1. Execute RQ1 satisfying/violating pairs and record first failure, wall time, GPU-seconds, peak memory, timeout, and message quality.
-2. Run the five RQ2 methods under identical intent and GPU-hour budgets for at least five seeds where randomness applies.
+2. Run the six RQ2 methods under identical intent and GPU-hour budgets for at least five seeds where randomness applies.
 3. Replay the verified historical benchmark on buggy/fixed revisions.
 4. Run current-version campaigns, minimize independent failures, and seek developer confirmation.
 

@@ -4,19 +4,19 @@ source_repository:
   label: lm-sv
   revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
   clean: true
-candidate_count: 4
-primary_candidate_count: 3
+candidate_count: 7
+primary_candidate_count: 7
 policy:
   candidate_is_not_bound_workload: true
   accelerator_validation_required: true
   final_binding_requires_optimizer_step_and_checkpoint: true
 candidates:
-- candidate_id: dense-qwen2-small
-  target_workload_id: dense-transformer-small
-  baseline_id: dense-qwen2-small-baseline-candidate
-  family: dense_transformer
+- candidate_id: qwen2-train
+  target_workload_id: qwen2-train
+  baseline_id: qwen2-train-baseline-candidate
+  family: qwen2_dense_gqa
   priority: primary
-  minimum_intents: 300
+  minimum_intents: 150
   model_config: lmsv_rec/assets/runtime/model_config/qwen2.yaml
   command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_qwen2.sh
   world_size: 8
@@ -27,110 +27,187 @@ candidates:
     tensor_parallel: true
     pipeline_parallel: true
     checkpoint: true
-  selection_reason: Existing compact Qwen2 configuration with no MoE experts, explicit GQA and FlashAttention flags, and a
-    complete pretraining command template.
+  selection_reason: Compact dense/GQA workload with TP/PP, FlashAttention, and checkpoint paths.
   blockers:
   - bind real dataset and tokenizer paths
   - reduce training/checkpoint intervals for campaign throughput
-  - validate one optimizer step and checkpoint save/load on the target stack
+  - validate optimizer step, repeated training, and checkpoint save/load on the target stack
   source_revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
   model_config_sha256: 8844f20d8a2afbc039d7758517e7ca13a6c9fb7b960e5ac2e27cfb8685d26ec9
   command_template_sha256: bef2e7a88cdcb5386398313e85e6980effce3f5f59e36d4224ee276745fba012
-  baseline_snapshot: candidates/dense-qwen2-small.json
+  baseline_snapshot: candidates/qwen2-train.json
   baseline_snapshot_sha256: e986e65fbf7938ef518d9d4d743ff1b977f32e94bacbc9e336e9dc7fa3f5bc0b
   command_override_count: 60
   effective_parameter_count: 87
   status: source_selected_unverified
-- candidate_id: gqa-longseq-chatglm3
-  target_workload_id: gqa-longseq-flash-small
-  baseline_id: gqa-longseq-chatglm3-baseline-candidate
-  family: gqa_long_sequence_flash_attention
+- candidate_id: llama2-train
+  target_workload_id: llama2-train
+  baseline_id: llama2-train-baseline-candidate
+  family: llama2_dense_rope
   priority: primary
-  minimum_intents: 300
+  minimum_intents: 150
+  model_config: lmsv_rec/assets/runtime/model_config/llama2.yaml
+  command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_llama2.sh
+  world_size: 8
+  feature_evidence:
+    dense_model: true
+    rope: true
+    rmsnorm: true
+    tensor_parallel: true
+    pipeline_parallel: true
+    fused_kernels: true
+  selection_reason: Independent dense architecture family with RoPE/RMSNorm and fused-kernel paths.
+  blockers:
+  - bind real dataset and tokenizer paths
+  - validate fused-kernel availability on the pinned NPU software stack
+  - validate optimizer step, repeated training, and checkpoint save/load
+  source_revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
+  model_config_sha256: c5d54a63d064d9a58af8b18b0e9134f0e586ff0c44abe1aef40eea60e87ae43a
+  command_template_sha256: 9df19e7d63da7d7bf7a788ba4b273cfceac6c3c67696c69fa581f468ddee64db
+  baseline_snapshot: candidates/llama2-train.json
+  baseline_snapshot_sha256: 3830536bbeef14c52b74a3872f72264dd693b95045ecf49053516fe72f1b0091
+  command_override_count: 52
+  effective_parameter_count: 76
+  status: source_selected_unverified
+- candidate_id: chatglm3-train
+  target_workload_id: chatglm3-train
+  baseline_id: chatglm3-train-baseline-candidate
+  family: chatglm3_gqa_long_sequence
+  priority: primary
+  minimum_intents: 150
   model_config: lmsv_rec/assets/runtime/model_config/chatglm3.yaml
   command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_chatglm3.sh
   world_size: 8
   feature_evidence:
     grouped_query_attention: true
     flash_attention: true
-    sequence_length: 8192
+    long_sequence: true
     context_parallel: true
     ulysses_context_parallel: true
-  selection_reason: The model configuration supplies GQA, FlashAttention, and an 8192-token context, while the training template
-    exercises a 32768-token Ulysses context-parallel path.
+  selection_reason: GQA and long-sequence workload that activates context-parallel and attention-backend constraints.
   blockers:
-  - reconcile the 8192-token model snapshot with the 32768-token command-template override
-  - confirm the runtime command preserves the FlashAttention path
-  - bind real dataset and tokenizer paths
-  - validate checkpoint save/load under context parallelism
+  - reconcile model snapshot sequence length with command-template overrides
+  - confirm the runtime command preserves the FlashAttention and Ulysses paths
+  - bind dataset/tokenizer paths and validate checkpoint save/load under context parallelism
   source_revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
   model_config_sha256: 358308993d3e531aea418205ff100039272476f57bcba279dc599916effc2ad9
   command_template_sha256: 9c5c7f6d570ca848b3f2f966ad60ae0ae6bd5ca664bc780a1fcf90347f32d7f5
-  baseline_snapshot: candidates/gqa-longseq-chatglm3.json
+  baseline_snapshot: candidates/chatglm3-train.json
   baseline_snapshot_sha256: 5232087aa1484873cf779ca9f5ea3e2a025cbb9fb95c0c4107ac9997f397aee6
   command_override_count: 68
   effective_parameter_count: 91
   status: source_selected_unverified
-- candidate_id: moe-mixtral-small
-  target_workload_id: moe-small
-  baseline_id: moe-mixtral-small-baseline-candidate
-  family: mixture_of_experts
+- candidate_id: mixtral-train
+  target_workload_id: mixtral-train
+  baseline_id: mixtral-train-baseline-candidate
+  family: mixtral_moe
   priority: primary
-  minimum_intents: 300
+  minimum_intents: 150
   model_config: lmsv_rec/assets/runtime/model_config/mixtral.yaml
   command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_mixtral.sh
   world_size: 8
   feature_evidence:
     mixture_of_experts: true
-    num_experts: 4
-    router_topk: 2
     expert_parallel: true
     all_to_all_dispatch: true
     grouped_gemm: true
     flash_attention: true
-  selection_reason: Existing reduced Mixtral configuration with four experts and a command template that activates EP, all-to-all
-    token dispatch, grouped GEMM, and checkpointing.
+  selection_reason: Reduced MoE workload covering EP, routing, all-to-all dispatch, and grouped GEMM.
   blockers:
-  - reconcile model snapshot EP=1 with command-template EP=2
+  - reconcile model-snapshot and command-template EP values
   - bind real dataset and tokenizer paths
-  - confirm grouped-GEMM dependencies on the target stack
-  - validate one optimizer step and checkpoint save/load
+  - validate grouped-GEMM dependencies and checkpoint save/load
   source_revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
   model_config_sha256: 371cd30024a738802e1ce1de95a649a3ed130ff8768fc9a0cd89ba1cb22f694d
   command_template_sha256: 2578f69582d45b9b964b488f88d42f78bdc86da4c96690b34bb34a8d6311c137
-  baseline_snapshot: candidates/moe-mixtral-small.json
+  baseline_snapshot: candidates/mixtral-train.json
   baseline_snapshot_sha256: 9f1e41b5ff9ec5f36c4394c7192637e2a1abcac10bfb0e0608c9e1ca4ce1b335
   command_override_count: 71
   effective_parameter_count: 91
   status: source_selected_unverified
-- candidate_id: mla-moe-deepseekv3-fallback
-  target_workload_id: gqa-longseq-flash-small
-  baseline_id: mla-moe-deepseekv3-fallback-candidate
-  family: mla_long_sequence_moe
-  priority: fallback
-  minimum_intents: 0
+- candidate_id: deepseekv3-train
+  target_workload_id: deepseekv3-train
+  baseline_id: deepseekv3-train-baseline-candidate
+  family: deepseekv3_mla_moe
+  priority: primary
+  minimum_intents: 150
   model_config: lmsv_rec/assets/runtime/model_config/deepseekv3.yaml
   command_template: lmsv_rec/scripts/templates/pretrain_example/pretrain_mutated_deepseekv3.sh
   world_size: 8
   feature_evidence:
+    multi_latent_attention: true
     mixture_of_experts: true
-    multi_latent_attention_in_command: true
-    sequence_length_in_command: 8192
     expert_parallel: true
     virtual_pipeline: true
     recomputation: true
-  selection_reason: Broad fallback for MLA, long-sequence, MoE, VPP, and recomputation boundaries when the smaller ChatGLM3
-    attention workload does not cover the required backend paths.
+  selection_reason: MLA+MoE family covering routed/shared experts, VPP, recomputation, and cross-feature constraints.
   blockers:
-  - command template contains an invalid duplicated dataset path
-  - model snapshot disables MLA while the command template enables it
-  - command scale is too large for the high-throughput campaign and must be reduced
-  - validate tokenizer, grouped-GEMM, and checkpoint dependencies
+  - repair the duplicated dataset path in the source command template when binding the executable manifest
+  - reconcile model-snapshot MLA settings with command overrides
+  - reduce command scale and validate tokenizer, grouped-GEMM, and checkpoint dependencies
   source_revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
   model_config_sha256: 293cfb988582b5bc60e52d5fa79658208c02be204b6edcb818f474caa976432b
   command_template_sha256: bb120f1a178e1f24ae23db765dcfd98d0dadcaa14dac456310e2bd8d62a5a22c
-  baseline_snapshot: candidates/mla-moe-deepseekv3-fallback.json
+  baseline_snapshot: candidates/deepseekv3-train.json
   baseline_snapshot_sha256: 14f3f08b42dee6e368f39d67e421dff174bfea47ecc40fb46b1c88eb69b32877
   command_override_count: 101
   effective_parameter_count: 116
+  status: source_selected_unverified
+- candidate_id: internvl3-train
+  target_workload_id: internvl3-train
+  baseline_id: internvl3-train-baseline-candidate
+  family: internvl3_vision_text
+  priority: primary
+  minimum_intents: 150
+  model_config: lmsv_rec/assets/mm_configs/model_8B.json
+  command_template: lmsv_rec/scripts/runtime/mm_pta_internvl3.sh
+  world_size: 8
+  feature_evidence:
+    multimodal: true
+    vision_encoder: true
+    projector: true
+    text_decoder: true
+    cross_component_shape: true
+    cross_component_precision: true
+  selection_reason: Supported vision-language training path with vision encoder, projector, decoder, and cross-component constraints.
+  blockers:
+  - bind InternVL3 checkpoint, dataset, and tokenizer assets on the NPU environment
+  - materialize the final MindSpeed-MM command after environment substitution
+  - validate optimizer step, repeated training, and checkpoint save/load
+  source_revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
+  model_config_sha256: 26f428d3acc975fd5b297dbf53a1b25d11051fa4434d166c4c4ec2c718c7b134
+  command_template_sha256: 71355ea5ae55379c599392415ddaf6f64d7ec61848445b7aa4b1cc3516013543
+  baseline_snapshot: candidates/internvl3-train.json
+  baseline_snapshot_sha256: 44e5cc7c61e4826259474428ec15ca02a442d09d8b87f5758c6407362109eda7
+  command_override_count: 0
+  effective_parameter_count: 10
+  status: source_selected_unverified
+- candidate_id: cogvideox-train
+  target_workload_id: cogvideox-train
+  baseline_id: cogvideox-train-baseline-candidate
+  family: cogvideox_video_text
+  priority: primary
+  minimum_intents: 150
+  model_config: lmsv_rec/assets/mm_configs/model_cogvideox.json
+  command_template: lmsv_rec/scripts/runtime/mm_pta_cogvideox.sh
+  world_size: 8
+  feature_evidence:
+    multimodal: true
+    video_diffusion: true
+    text_encoder: true
+    vae: true
+    latent_shape: true
+    cross_component_constraints: true
+  selection_reason: Supported video-text training path covering text encoder, VAE, diffusion model, and latent-shape constraints.
+  blockers:
+  - bind CogVideoX checkpoint and video dataset assets on the NPU environment
+  - materialize the final MindSpeed-MM command after environment substitution
+  - validate optimizer step, repeated training, and checkpoint save/load
+  source_revision: e73ba3d355152a5711e2f80c1fb0d166f2ba1496
+  model_config_sha256: 9f144e2adcbe6609b41b5df4fe85eff7d398520eb1b7ce6030219509c6388659
+  command_template_sha256: e97f61c82194272a098e50b141b5b7f900ed0053b55211d9f9e122e66ab6ec6a
+  baseline_snapshot: candidates/cogvideox-train.json
+  baseline_snapshot_sha256: 97687aa61632fd59c9a54f1eee4033b8ab87fb1f307207d692e51ed8f7ba21bc
+  command_override_count: 0
+  effective_parameter_count: 10
   status: source_selected_unverified

@@ -20,12 +20,19 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--frozen-output", type=Path)
     parser.add_argument("--default-per-primary-workload", type=int, default=300)
+    parser.add_argument(
+        "--intent-pool",
+        choices=("method_independent", "constraint_challenge"),
+        default="method_independent",
+        help="candidate pool to select from",
+    )
     args = parser.parse_args()
 
     payload = select_balanced_intents(
         args.candidates,
         args.workloads,
         default_per_primary_workload=args.default_per_primary_workload,
+        intent_pool=args.intent_pool,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(

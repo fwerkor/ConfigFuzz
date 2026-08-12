@@ -51,6 +51,17 @@ def test_plan_campaign_expands_all_methods_and_global_ablation(tmp_path: Path) -
                 dependents=("z",),
                 status=DependencyStatus.CONFIRMED,
             ),
+            "y-static-two": DependencyEdge(
+                id="y-static-two",
+                expression="y == 2",
+                predicate="y == 2",
+                relation=DependencyRelation.EQUALITY,
+                participants=("y",),
+                drivers=(),
+                dependents=("y",),
+                status=DependencyStatus.STATIC_CANDIDATE,
+                confidence=0.95,
+            ),
         },
     )
     graph_path = tmp_path / "graph.json"
@@ -68,6 +79,7 @@ def test_plan_campaign_expands_all_methods_and_global_ablation(tmp_path: Path) -
                         "family": "dense",
                         "baseline_config": "baseline.json",
                         "dependency_graph": "graph.json",
+                        "static_dependency_graph": "graph.json",
                         "native_validator_manifest": "validator.json",
                         "semantic_anchors": [],
                     }
@@ -108,7 +120,7 @@ def test_plan_campaign_expands_all_methods_and_global_ablation(tmp_path: Path) -
     )
     cases = {item["method"]: item for item in payload["cases"]}
 
-    assert payload["case_count"] == 5
+    assert payload["case_count"] == 6
     assert cases["raw_mutation"]["assignments"] == {"x": 9}
     assert cases["native_validator_guided"]["preflight"] == "native_validator"
     assert cases["native_validator_guided"]["status"] == "ready"
@@ -122,6 +134,11 @@ def test_plan_campaign_expands_all_methods_and_global_ablation(tmp_path: Path) -
     assert local["assignments"]["x"] == 9
     assert "y" in local["coordinated_parameters"]
     assert "z" not in local["coordinated_parameters"]
+    assert local["metadata"]["constraint_treatment"] == "status_and_confidence_aware"
+    static_hard = cases["static_hard_configfuzz"]
+    assert static_hard["status"] == "unsat"
+    assert static_hard["metadata"]["constraint_treatment"] == "all_static_candidates_hard"
+    assert static_hard["metadata"]["constraint_graph_source"] == "pre_validation_static_graph"
     global_repair = cases["global_repair"]
     assert global_repair["status"] == "ready"
     assert global_repair["assignments"]["x"] == 9

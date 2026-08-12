@@ -223,9 +223,13 @@ def validate_workload_candidate_manifest(
         if str(candidate.get("priority", "primary")) == "primary":
             primary_roles.add(str(candidate.get("target_workload_id", "")))
     required_roles = {
-        "dense-transformer-small",
-        "gqa-longseq-flash-small",
-        "moe-small",
+        "qwen2-train",
+        "llama2-train",
+        "chatglm3-train",
+        "mixtral-train",
+        "deepseekv3-train",
+        "internvl3-train",
+        "cogvideox-train",
     }
     if primary_roles != required_roles:
         raise ValueError(

@@ -25,6 +25,7 @@ from configfuzz.experiment import (
     freeze_intent_file,
     load_audit_dataset,
     summarize_rq1,
+    summarize_recovered_constraint_model,
     summarize_rq2,
     summarize_rq3,
 )
@@ -59,6 +60,62 @@ def test_rq1_bootstrap_preserves_all_manual_rules_without_fake_coverage() -> Non
     assert summary["constraint_count"] == 93
     assert summary["reviewed_constraint_count"] == 0
     assert summary["full_coverage_rate_reviewed"] is None
+
+
+def test_recovered_constraint_model_summary_tracks_validation_status(tmp_path: Path) -> None:
+    from configfuzz.dependencies import (
+        DependencyEdge,
+        DependencyGraph,
+        DependencyNode,
+        DependencyNodeKind,
+        DependencyRelation,
+        DependencyStatus,
+    )
+
+    graph = DependencyGraph(
+        nodes={
+            "x": DependencyNode("x", DependencyNodeKind.PARAMETER),
+            "y": DependencyNode("y", DependencyNodeKind.PARAMETER),
+        },
+        edges={
+            "confirmed": DependencyEdge(
+                id="confirmed",
+                expression="x >= 1",
+                predicate="x >= 1",
+                relation=DependencyRelation.BOUND,
+                participants=("x",),
+                drivers=(),
+                dependents=("x",),
+                status=DependencyStatus.CONFIRMED,
+            ),
+            "disputed": DependencyEdge(
+                id="disputed",
+                expression="y >= 1",
+                predicate="y >= 1",
+                relation=DependencyRelation.BOUND,
+                participants=("y",),
+                drivers=(),
+                dependents=("y",),
+                status=DependencyStatus.SCOPE_DISPUTED,
+            ),
+        },
+        metadata={
+            "runtime_feedback": {
+                "edges": {
+                    "confirmed": {"paired_intervention": 1},
+                    "disputed": {"valid_counterexample": 2},
+                }
+            }
+        },
+    )
+    artifact = tmp_path / "graph.json"
+    artifact.write_text(json.dumps(graph.to_dict()), encoding="utf-8")
+
+    summary = summarize_recovered_constraint_model(artifact)
+    assert summary["confirmed_count"] == 1
+    assert summary["scope_disputed_count"] == 1
+    assert summary["paired_confirmation_count"] == 1
+    assert summary["valid_counterexample_count"] == 2
 
 
 def test_rq1_summary_reports_paired_failure_costs() -> None:
@@ -313,14 +370,20 @@ def test_rq2_summary_reports_yield_retention_and_diversity() -> None:
     raw = summary["methods"]["raw_mutation"]
 
     assert configfuzz["deep_execution_count"] == 1
+    assert configfuzz["intent_preserving_deep_execution_count"] == 1
+    assert configfuzz["intent_preserving_deep_execution_rate"] == 0.5
     assert configfuzz["gpu_hours"] == 1.0
     assert configfuzz["deep_execution_yield_per_gpu_hour"] == 1.0
+    assert configfuzz["intent_preserving_deep_execution_yield_per_gpu_hour"] == 1.0
     assert configfuzz["gpu_hours_per_deep_execution"] == 1.0
     assert configfuzz["target_value_retention_rate"] == 1.0
     assert configfuzz["diversity"]["constraints"] == 2
     assert configfuzz["coordinated_parameter_count"]["median"] == 1.5
     assert configfuzz["modification_distance"]["median"] == 1.0
     assert configfuzz["stage_reach_rates"]["optimizer_step"] == 0.5
+    assert configfuzz["diversity"]["runtime_behavior_ids"] == 2
+    assert configfuzz["diversity"]["behavior_signatures"] == 1
+    assert configfuzz["diversity"]["behavior_signature_entropy_bits"] == 0.0
     assert raw["outcome_counts"] == {"expected_rejection": 1}
     assert raw["expected_rejection_rate"] == 1.0
 

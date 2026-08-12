@@ -63,23 +63,34 @@ def test_generate_intents_from_bound_workload(tmp_path: Path) -> None:
         item["target_parameter"] == "model.hidden_size"
         and item["target_value"] == 17
         and item["intent_class"] == "divisibility_adjacent_value"
+        and item["intent_pool"] == "constraint_challenge"
+        for item in intents
+    )
+    assert any(
+        item["target_parameter"] == "model.hidden_size"
+        and item["target_value"] == 17
+        and item["intent_pool"] == "method_independent"
+        and item["source_constraint_ids"] == []
         for item in intents
     )
     assert any(
         item["target_parameter"] == "parallel.sequence_parallel"
         and item["target_value"] is True
+        and item["intent_pool"] == "constraint_challenge"
         for item in intents
     )
     assert any(
         item["target_parameter"] == "bias_dropout_fusion"
         and item["target_value"] is False
         and item["intent_class"] == "enumeration_alternative"
+        and item["intent_pool"] == "constraint_challenge"
         for item in intents
     )
     assert any(
         item["target_parameter"] == "tensor_model_parallel_size"
         and item["target_value"] == 8
         and item["intent_class"] == "parallel_topology"
+        and item["intent_pool"] == "method_independent"
         for item in intents
     )
     assert len({item["intent_id"] for item in intents}) == len(intents)
@@ -87,6 +98,7 @@ def test_generate_intents_from_bound_workload(tmp_path: Path) -> None:
         {
             (
                 item["workload_id"],
+                item["intent_pool"],
                 item["target_parameter"],
                 json.dumps(item["target_value"], sort_keys=True),
             )
@@ -117,3 +129,36 @@ def test_unbound_workload_can_be_skipped(tmp_path: Path) -> None:
     payload = generate_intent_payload(CORPUS, workloads, skip_unbound=True)
     assert payload["metadata"]["workload_count"] == 0
     assert payload["intents"] == []
+
+
+def test_method_independent_pool_does_not_require_constraint_corpus(tmp_path: Path) -> None:
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(
+        json.dumps({"model": {"hidden_size": 16}, "world_size": 8}),
+        encoding="utf-8",
+    )
+    workloads = tmp_path / "workloads.yaml"
+    workloads.write_text(
+        yaml.safe_dump(
+            {
+                "workloads": [
+                    {
+                        "workload_id": "dense",
+                        "family": "dense",
+                        "baseline_id": "base",
+                        "baseline_config": "baseline.json",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    payload = generate_intent_payload(
+        None, workloads, include_constraint_challenge=False
+    )
+    assert payload["metadata"]["source_corpus"] is None
+    assert payload["metadata"]["constraint_challenge_included"] is False
+    assert payload["intents"]
+    assert all(item["intent_pool"] == "method_independent" for item in payload["intents"])
+    assert all(not item["source_constraint_ids"] for item in payload["intents"])

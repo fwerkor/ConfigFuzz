@@ -4,6 +4,7 @@ import hashlib
 import json
 import math
 import platform
+import random
 import re
 import statistics
 import subprocess
@@ -103,6 +104,7 @@ class ExperimentMethod(str, Enum):
     RAW_MUTATION = "raw_mutation"
     NATIVE_VALIDATOR_GUIDED = "native_validator_guided"
     CONSTRAINT_FILTER_ONLY = "constraint_filter_only"
+    STATIC_HARD_CONFIGFUZZ = "static_hard_configfuzz"
     CONFIGFUZZ = "configfuzz"
     GLOBAL_REPAIR = "global_repair"
 
@@ -335,6 +337,7 @@ class MutationIntent:
     target_parameter: str
     target_value: Any
     intent_class: str
+    intent_pool: str = "method_independent"
     source_constraint_ids: tuple[str, ...] = ()
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
@@ -347,6 +350,7 @@ class MutationIntent:
             target_parameter=_required_string(data, "target_parameter"),
             target_value=data.get("target_value"),
             intent_class=_required_string(data, "intent_class"),
+            intent_pool=str(data.get("intent_pool", "method_independent")),
             source_constraint_ids=tuple(
                 str(item) for item in data.get("source_constraint_ids", ())
             ),
@@ -361,6 +365,7 @@ class MutationIntent:
             "target_parameter": self.target_parameter,
             "target_value": self.target_value,
             "intent_class": self.intent_class,
+            "intent_pool": self.intent_pool,
             "source_constraint_ids": list(self.source_constraint_ids),
             "metadata": dict(self.metadata),
         }
@@ -386,6 +391,7 @@ class ExperimentRunRecord:
     gpu_seconds: float
     peak_memory_mib: float | None
     timed_out: bool
+    intent_pool: str | None = None
     constraint_id: str | None = None
     pair_role: ConstraintPairRole | None = None
     first_failure_milestone: ExecutionMilestone | None = None
@@ -400,7 +406,17 @@ class ExperimentRunRecord:
     topologies: tuple[str, ...] = ()
     feature_interactions: tuple[str, ...] = ()
     backend_paths: tuple[str, ...] = ()
+    behavior_ids: tuple[str, ...] = ()
+    behavior_signature: str | None = None
+    active_constraint_ids: tuple[str, ...] = ()
+    affected_region: tuple[str, ...] = ()
+    solver_modifications: Mapping[str, Any] = field(default_factory=dict)
+    constraint_status_before: Mapping[str, str] = field(default_factory=dict)
+    constraint_status_after: Mapping[str, str] = field(default_factory=dict)
+    refined_constraint_ids: tuple[str, ...] = ()
+    constraint_provenance_ids: tuple[str, ...] = ()
     bug_id: str | None = None
+    root_cause_id: str | None = None
     buggy_failed: bool | None = None
     fixed_passed: bool | None = None
     root_cause_match: bool | None = None
@@ -444,6 +460,7 @@ class ExperimentRunRecord:
             workload_id=_required_string(data, "workload_id"),
             baseline_id=_required_string(data, "baseline_id"),
             intent_id=_optional_string(data.get("intent_id")),
+            intent_pool=_optional_string(data.get("intent_pool")),
             seed=int(data["seed"]) if data.get("seed") is not None else None,
             generated=bool(data.get("generated", False)),
             target_value_preserved=(
@@ -514,7 +531,35 @@ class ExperimentRunRecord:
             topologies=_string_tuple(data.get("topologies", ())),
             feature_interactions=_string_tuple(data.get("feature_interactions", ())),
             backend_paths=_string_tuple(data.get("backend_paths", ())),
+            behavior_ids=_string_tuple(data.get("behavior_ids", ())),
+            behavior_signature=_optional_string(data.get("behavior_signature")),
+            active_constraint_ids=_string_tuple(data.get("active_constraint_ids", ())),
+            affected_region=_string_tuple(data.get("affected_region", ())),
+            solver_modifications=_mapping(
+                data.get("solver_modifications", {}), "solver_modifications"
+            ),
+            constraint_status_before={
+                str(key): str(value)
+                for key, value in _mapping(
+                    data.get("constraint_status_before", {}),
+                    "constraint_status_before",
+                ).items()
+            },
+            constraint_status_after={
+                str(key): str(value)
+                for key, value in _mapping(
+                    data.get("constraint_status_after", {}),
+                    "constraint_status_after",
+                ).items()
+            },
+            refined_constraint_ids=_string_tuple(
+                data.get("refined_constraint_ids", ())
+            ),
+            constraint_provenance_ids=_string_tuple(
+                data.get("constraint_provenance_ids", ())
+            ),
             bug_id=_optional_string(data.get("bug_id")),
+            root_cause_id=_optional_string(data.get("root_cause_id")),
             buggy_failed=(
                 bool(data["buggy_failed"])
                 if data.get("buggy_failed") is not None
@@ -547,6 +592,7 @@ class ExperimentRunRecord:
             "workload_id": self.workload_id,
             "baseline_id": self.baseline_id,
             "intent_id": self.intent_id,
+            "intent_pool": self.intent_pool,
             "seed": self.seed,
             "generated": self.generated,
             "target_value_preserved": self.target_value_preserved,
@@ -579,7 +625,17 @@ class ExperimentRunRecord:
             "topologies": list(self.topologies),
             "feature_interactions": list(self.feature_interactions),
             "backend_paths": list(self.backend_paths),
+            "behavior_ids": list(self.behavior_ids),
+            "behavior_signature": self.behavior_signature,
+            "active_constraint_ids": list(self.active_constraint_ids),
+            "affected_region": list(self.affected_region),
+            "solver_modifications": dict(self.solver_modifications),
+            "constraint_status_before": dict(self.constraint_status_before),
+            "constraint_status_after": dict(self.constraint_status_after),
+            "refined_constraint_ids": list(self.refined_constraint_ids),
+            "constraint_provenance_ids": list(self.constraint_provenance_ids),
             "bug_id": self.bug_id,
+            "root_cause_id": self.root_cause_id,
             "buggy_failed": self.buggy_failed,
             "fixed_passed": self.fixed_passed,
             "root_cause_match": self.root_cause_match,
@@ -864,6 +920,7 @@ def load_historical_bugs(path: str | Path) -> list[HistoricalBugRecord]:
 def summarize_rq1(
     dataset: ConstraintAuditDataset,
     run_records: Sequence[ExperimentRunRecord] = (),
+    recovered_model_path: str | Path | None = None,
 ) -> dict[str, Any]:
     records = dataset.records
     reviewed = [
@@ -920,7 +977,74 @@ def summarize_rq1(
         "first_affected_milestone_counts": _counter(
             item.first_affected_milestone.value for item in records
         ),
+        "recovered_model": (
+            summarize_recovered_constraint_model(recovered_model_path)
+            if recovered_model_path is not None
+            else None
+        ),
         "execution": _summarize_rq1_execution(dataset, rq1_runs),
+    }
+
+
+def summarize_recovered_constraint_model(path: str | Path) -> dict[str, Any]:
+    """Summarize the lifecycle of recovered constraints after execution feedback."""
+
+    from configfuzz.dependencies import DependencyGraph, DependencyStatus
+
+    raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    root = _mapping(raw, "recovered constraint model")
+    graph_payload: Mapping[str, Any]
+    if isinstance(root.get("dependency_graph"), Mapping):
+        graph_payload = _mapping(root["dependency_graph"], "dependency_graph")
+    elif isinstance(root.get("active_validation"), Mapping) and isinstance(
+        root["active_validation"].get("dependency_graph"), Mapping
+    ):
+        graph_payload = _mapping(
+            root["active_validation"]["dependency_graph"], "dependency_graph"
+        )
+    else:
+        graph_payload = root
+    graph = DependencyGraph.from_dict(graph_payload)
+    status_counts = Counter(edge.status.value for edge in graph.edges.values())
+    runtime_feedback = graph.metadata.get("runtime_feedback", {})
+    edge_stats = (
+        runtime_feedback.get("edges", {})
+        if isinstance(runtime_feedback, Mapping)
+        else {}
+    )
+    if not isinstance(edge_stats, Mapping):
+        edge_stats = {}
+    valid_counterexamples = sum(
+        int(stats.get("valid_counterexample", 0))
+        for stats in edge_stats.values()
+        if isinstance(stats, Mapping)
+    )
+    paired_interventions = sum(
+        int(stats.get("paired_intervention", 0))
+        for stats in edge_stats.values()
+        if isinstance(stats, Mapping)
+    )
+    supported_statuses = {
+        DependencyStatus.DYNAMICALLY_SUPPORTED.value,
+        DependencyStatus.CONFIRMED.value,
+        DependencyStatus.ENVIRONMENT_SPECIFIC.value,
+    }
+    supported_count = sum(status_counts[name] for name in supported_statuses)
+    return {
+        "constraint_count": len(graph.edges),
+        "status_counts": dict(sorted(status_counts.items())),
+        "execution_supported_count": supported_count,
+        "confirmed_count": status_counts[DependencyStatus.CONFIRMED.value],
+        "environment_specific_count": status_counts[
+            DependencyStatus.ENVIRONMENT_SPECIFIC.value
+        ],
+        "scope_disputed_count": status_counts[DependencyStatus.SCOPE_DISPUTED.value],
+        "contradicted_count": status_counts[DependencyStatus.CONTRADICTED.value],
+        "remaining_static_candidate_count": status_counts[
+            DependencyStatus.STATIC_CANDIDATE.value
+        ],
+        "valid_counterexample_count": valid_counterexamples,
+        "paired_confirmation_count": paired_interventions,
     }
 
 
@@ -951,6 +1075,9 @@ def summarize_rq2(
             if MILESTONE_ORDER[item.deepest_milestone]
             >= MILESTONE_ORDER[target_milestone]
         ]
+        intent_preserving_deep = [
+            item for item in deep if item.target_value_preserved is True
+        ]
         gpu_hours = sum(item.gpu_seconds for item in method_records) / 3600.0
         modification_counts = [len(item.coordinated_parameters) for item in generated]
         modification_distances = [
@@ -977,6 +1104,17 @@ def summarize_rq2(
             if MILESTONE_ORDER[item.deepest_milestone]
             >= MILESTONE_ORDER[ExecutionMilestone.FORWARD]
         ]
+        runtime_behavior_ids = {
+            value
+            for item in method_records
+            for value in _runtime_behavior_ids(item)
+        }
+        signatures = [
+            signature
+            for item in method_records
+            if (signature := _runtime_behavior_signature(item)) is not None
+        ]
+        unique_signatures = set(signatures)
         methods[method.value] = {
             "run_count": len(method_records),
             "unique_intent_count": len(
@@ -995,9 +1133,16 @@ def summarize_rq2(
             ),
             "deep_execution_count": len(deep),
             "deep_execution_rate": _ratio(len(deep), len(method_records)),
+            "intent_preserving_deep_execution_count": len(intent_preserving_deep),
+            "intent_preserving_deep_execution_rate": _ratio(
+                len(intent_preserving_deep), len(method_records)
+            ),
             "gpu_hours": gpu_hours,
             "deep_execution_yield_per_gpu_hour": (
                 len(deep) / gpu_hours if gpu_hours > 0 else None
+            ),
+            "intent_preserving_deep_execution_yield_per_gpu_hour": (
+                len(intent_preserving_deep) / gpu_hours if gpu_hours > 0 else None
             ),
             "gpu_hours_per_deep_execution": (gpu_hours / len(deep) if deep else None),
             "expected_rejection_rate": _ratio(
@@ -1078,14 +1223,199 @@ def summarize_rq2(
                 "backend_paths": len(
                     {value for item in method_records for value in item.backend_paths}
                 ),
+                "runtime_behavior_ids": len(runtime_behavior_ids),
+                "runtime_behavior_ids_per_gpu_hour": (
+                    len(runtime_behavior_ids) / gpu_hours if gpu_hours > 0 else None
+                ),
+                "behavior_signatures": len(unique_signatures),
+                "behavior_signatures_per_gpu_hour": (
+                    len(unique_signatures) / gpu_hours if gpu_hours > 0 else None
+                ),
+                "behavior_signature_entropy_bits": _entropy_bits(signatures),
             },
         }
     return {
         "schema_version": 1,
         "rq": "rq2",
         "target_milestone": target_milestone.value,
+        "intent_pool_counts": _counter(
+            item.intent_pool or "unspecified"
+            for item in records
+            if item.rq == "rq2"
+        ),
         "methods": methods,
+        "static_hard_ablation": _summarize_static_hard_ablation(
+            records, target_milestone
+        ),
+        "paired_intent_statistics": _paired_intent_ipde_statistics(
+            records, target_milestone
+        ),
     }
+
+
+def _summarize_static_hard_ablation(
+    records: Sequence[ExperimentRunRecord],
+    target_milestone: ExecutionMilestone,
+) -> dict[str, Any] | None:
+    def key(record: ExperimentRunRecord) -> tuple[str, str | None, int | None]:
+        return record.workload_id, record.intent_id, record.seed
+
+    normal = {
+        key(item): item
+        for item in records
+        if item.rq == "rq2" and item.method is ExperimentMethod.CONFIGFUZZ
+    }
+    static_hard = {
+        key(item): item
+        for item in records
+        if item.rq == "rq2"
+        and item.method is ExperimentMethod.STATIC_HARD_CONFIGFUZZ
+    }
+    paired_keys = sorted(set(normal) & set(static_hard), key=repr)
+    if not paired_keys:
+        return None
+
+    def ipde(record: ExperimentRunRecord) -> bool:
+        return bool(
+            record.target_value_preserved is True
+            and MILESTONE_ORDER[record.deepest_milestone]
+            >= MILESTONE_ORDER[target_milestone]
+        )
+
+    normal_success = sum(ipde(normal[item]) for item in paired_keys)
+    static_success = sum(ipde(static_hard[item]) for item in paired_keys)
+    false_exclusions = sum(
+        ipde(normal[item]) and not static_hard[item].generated for item in paired_keys
+    )
+    lost_deep = sum(
+        ipde(normal[item]) and not ipde(static_hard[item]) for item in paired_keys
+    )
+    return {
+        "paired_case_count": len(paired_keys),
+        "configfuzz_ipde_rate": _ratio(normal_success, len(paired_keys)),
+        "static_hard_ipde_rate": _ratio(static_success, len(paired_keys)),
+        "paired_ipde_rate_difference": (
+            (normal_success - static_success) / len(paired_keys)
+        ),
+        "false_exclusion_candidate_count": false_exclusions,
+        "false_exclusion_candidate_rate": _ratio(false_exclusions, len(paired_keys)),
+        "lost_ipde_count": lost_deep,
+        "lost_ipde_rate": _ratio(lost_deep, len(paired_keys)),
+    }
+
+
+def _paired_intent_ipde_statistics(
+    records: Sequence[ExperimentRunRecord],
+    target_milestone: ExecutionMilestone,
+    *,
+    bootstrap_samples: int = 2000,
+) -> dict[str, Any]:
+    """Perform paired RQ2 inference after clustering repeated seeds by intent."""
+
+    def success(record: ExperimentRunRecord) -> int:
+        return int(
+            record.target_value_preserved is True
+            and MILESTONE_ORDER[record.deepest_milestone]
+            >= MILESTONE_ORDER[target_milestone]
+        )
+
+    clustered: dict[
+        ExperimentMethod, dict[tuple[str, str], list[int]]
+    ] = defaultdict(lambda: defaultdict(list))
+    for record in records:
+        if record.rq != "rq2" or record.intent_id is None:
+            continue
+        clustered[record.method][(record.workload_id, record.intent_id)].append(
+            success(record)
+        )
+
+    reference = clustered.get(ExperimentMethod.CONFIGFUZZ, {})
+    raw_results: list[tuple[ExperimentMethod, dict[str, Any]]] = []
+    for method in ExperimentMethod:
+        if method is ExperimentMethod.CONFIGFUZZ or method not in clustered:
+            continue
+        paired_keys = sorted(set(reference) & set(clustered[method]))
+        if not paired_keys:
+            continue
+        differences = [
+            statistics.fmean(reference[key])
+            - statistics.fmean(clustered[method][key])
+            for key in paired_keys
+        ]
+        ci_low, ci_high = _cluster_bootstrap_mean_ci(
+            differences,
+            samples=bootstrap_samples,
+            seed=f"rq2-ipde:{method.value}",
+        )
+        raw_results.append(
+            (
+                method,
+                {
+                    "paired_intent_count": len(paired_keys),
+                    "configfuzz_minus_baseline_ipde_rate_difference": statistics.fmean(
+                        differences
+                    ),
+                    "cluster_bootstrap_95ci": [ci_low, ci_high],
+                    "paired_sign_test_p": _paired_sign_test_pvalue(differences),
+                },
+            )
+        )
+
+    adjusted = _holm_adjust(
+        [(method.value, result["paired_sign_test_p"]) for method, result in raw_results]
+    )
+    return {
+        method.value: {
+            **result,
+            "holm_adjusted_p": adjusted.get(method.value),
+        }
+        for method, result in raw_results
+    }
+
+
+def _cluster_bootstrap_mean_ci(
+    values: Sequence[float], *, samples: int, seed: str
+) -> tuple[float, float]:
+    if not values:
+        return (math.nan, math.nan)
+    rng = random.Random(seed)
+    n = len(values)
+    estimates = [
+        statistics.fmean(values[rng.randrange(n)] for _ in range(n))
+        for _ in range(max(1, samples))
+    ]
+    estimates.sort()
+    low_index = max(0, int(0.025 * (len(estimates) - 1)))
+    high_index = min(len(estimates) - 1, int(0.975 * (len(estimates) - 1)))
+    return estimates[low_index], estimates[high_index]
+
+
+def _paired_sign_test_pvalue(values: Sequence[float]) -> float | None:
+    positive = sum(value > 0 for value in values)
+    negative = sum(value < 0 for value in values)
+    n = positive + negative
+    if n == 0:
+        return None
+    k = min(positive, negative)
+    tail = sum(math.comb(n, index) for index in range(k + 1)) / (2**n)
+    return min(1.0, 2.0 * tail)
+
+
+def _holm_adjust(
+    values: Sequence[tuple[str, float | None]],
+) -> dict[str, float | None]:
+    valid = sorted(
+        ((name, value) for name, value in values if value is not None),
+        key=lambda item: float(item[1]),
+    )
+    adjusted: dict[str, float | None] = {name: None for name, _ in values}
+    running = 0.0
+    m = len(valid)
+    for rank, (name, raw) in enumerate(valid):
+        candidate = min(1.0, float(raw) * (m - rank))
+        running = max(running, candidate)
+        adjusted[name] = running
+    return adjusted
 
 
 def summarize_rq3(
@@ -1690,6 +2020,39 @@ def _distribution(values: Sequence[float | int]) -> dict[str, Any]:
         "min": ordered[0],
         "max": ordered[-1],
     }
+
+
+def _runtime_behavior_ids(record: ExperimentRunRecord) -> tuple[str, ...]:
+    if record.behavior_ids:
+        return tuple(sorted(set(record.behavior_ids)))
+    # Backward-compatible derivation for records produced before explicit behavior IDs
+    # were added. Input-only constraint/boundary identifiers are intentionally excluded.
+    derived = {
+        *(f"topology:{value}" for value in record.topologies),
+        *(f"feature:{value}" for value in record.feature_interactions),
+        *(f"backend:{value}" for value in record.backend_paths),
+    }
+    return tuple(sorted(derived))
+
+
+def _runtime_behavior_signature(record: ExperimentRunRecord) -> str | None:
+    if record.behavior_signature:
+        return record.behavior_signature
+    behavior_ids = _runtime_behavior_ids(record)
+    if not behavior_ids:
+        return None
+    payload = json.dumps(behavior_ids, ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
+
+
+def _entropy_bits(values: Sequence[str]) -> float | None:
+    if not values:
+        return None
+    counts = Counter(values)
+    total = len(values)
+    return -sum(
+        (count / total) * math.log2(count / total) for count in counts.values()
+    )
 
 
 def _percentile(ordered: Sequence[float], fraction: float) -> float:

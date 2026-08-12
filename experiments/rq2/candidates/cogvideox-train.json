@@ -1,0 +1,170 @@
+{
+  "ae": {
+    "conv_padding": 0,
+    "cp_size": 1,
+    "decoder_attention": "",
+    "decoder_conv_in": "ContextParallelCausalConv3d",
+    "decoder_conv_out": "ContextParallelCausalConv3d",
+    "decoder_gather_norm": true,
+    "decoder_mid_resnet": "ContextParallelResnetBlock3D",
+    "decoder_nonlinearity": "swish",
+    "decoder_resnet_blocks": [
+      "ContextParallelResnetBlock3D",
+      "ContextParallelResnetBlock3D",
+      "ContextParallelResnetBlock3D",
+      "ContextParallelResnetBlock3D"
+    ],
+    "decoder_spatial_upsample": [
+      "",
+      "Upsample3D",
+      "Upsample3D",
+      "Upsample3D"
+    ],
+    "decoder_temporal_upsample": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "dtype": "bf16",
+    "encoder_attention": "",
+    "encoder_conv_in": "ContextParallelCausalConv3d",
+    "encoder_conv_out": "ContextParallelCausalConv3d",
+    "encoder_gather_norm": true,
+    "encoder_mid_resnet": "ContextParallelResnetBlock3D",
+    "encoder_nonlinearity": "swish",
+    "encoder_resnet_blocks": [
+      "ContextParallelResnetBlock3D",
+      "ContextParallelResnetBlock3D",
+      "ContextParallelResnetBlock3D",
+      "ContextParallelResnetBlock3D"
+    ],
+    "encoder_spatial_downsample": [
+      "DownSample3D",
+      "DownSample3D",
+      "DownSample3D",
+      ""
+    ],
+    "encoder_temporal_downsample": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "from_pretrained": "{{LOAD_PATH}}/vae/3d-vae.pt",
+    "hidden_size_mult": [
+      1,
+      2,
+      2,
+      4
+    ],
+    "model_id": "contextparallelcasualvae",
+    "num_res_blocks": 3,
+    "use_quant_layer": false,
+    "use_tiling": false,
+    "z_channels": 16
+  },
+  "allow_internal_format": false,
+  "command_overrides": {},
+  "diffusion": {
+    "denoiser_config": {
+      "discretization_config": {
+        "shift_scale": 1.0
+      },
+      "num_idx": 1000,
+      "quantize_c_noise": false
+    },
+    "model_id": "cogvideo_diffusion",
+    "sigma_sampler_config": {
+      "discretization_config": {
+        "shift_scale": 1.0
+      },
+      "num_idx": 1000,
+      "uniform_sampling": true
+    }
+  },
+  "effective_config": {
+    "context_parallel_size": 1,
+    "data_parallel_size": 8,
+    "distribute_saved_activations": false,
+    "expert_model_parallel_size": 1,
+    "num_layers_per_virtual_pipeline_stage": null,
+    "recompute_granularity": null,
+    "recompute_method": null,
+    "recompute_num_layers": null,
+    "sequence_parallel": false,
+    "world_size": 8
+  },
+  "effective_config_sources": {
+    "context_parallel_size": "framework_default",
+    "data_parallel_size": "derived:world_size/(tp*pp*cp)",
+    "distribute_saved_activations": "framework_default",
+    "expert_model_parallel_size": "framework_default",
+    "num_layers_per_virtual_pipeline_stage": "framework_default",
+    "recompute_granularity": "framework_default",
+    "recompute_method": "framework_default",
+    "recompute_num_layers": "framework_default",
+    "sequence_parallel": "framework_default",
+    "world_size": "candidate_spec"
+  },
+  "enable_encoder_dp": false,
+  "frames": 17,
+  "load_text_features": false,
+  "load_video_features": false,
+  "predictor": {
+    "activation_fn": "gelu-approximate",
+    "attention_bias": true,
+    "caption_channels": null,
+    "concat_text_embed": true,
+    "cross_attention_dim": null,
+    "dropout": 0.0,
+    "dtype": "bf16",
+    "from_pretrained": null,
+    "head_dim": 64,
+    "in_channels": 16,
+    "input_size": [
+      7,
+      60,
+      90
+    ],
+    "interpolation_scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "model_id": "satdit",
+    "norm_elementwise_affine": true,
+    "norm_eps": "1e-05",
+    "norm_type": "qk_ln",
+    "num_embeds_ada_norm": 1000,
+    "num_heads": 48,
+    "num_layers": 42,
+    "out_channels": 16,
+    "patch_size": [
+      1,
+      2,
+      2
+    ],
+    "pipeline_num_layers": null,
+    "text_hidden_size": 4096,
+    "text_length": 226,
+    "time_embed_dim": 512,
+    "use_rope": true
+  },
+  "resolution": [
+    480,
+    720
+  ],
+  "task": "t2v",
+  "text_encoder": {
+    "dtype": "bf16",
+    "from_pretrained": "{{LOAD_PATH}}/text_encoder",
+    "hub_backend": "hf",
+    "load_in_8bit": false,
+    "low_cpu_mem_usage": false,
+    "model_id": "T5",
+    "ucg_rate": 0.1,
+    "use_attention_mask": false
+  },
+  "world_size": 8
+}

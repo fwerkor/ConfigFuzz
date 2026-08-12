@@ -71,8 +71,9 @@ python scripts/prepare_rq1_secondary_review.py \
   --packet-output experiments/rq1/secondary_review_packet.yaml \
   --template-output experiments/rq1/secondary_review_template.yaml
 
-# After an independent reviewer fills the template, compute exact agreement,
-# Cohen's kappa, and the constraints requiring joint adjudication.
+# If a second independent audit is performed, fill the template and compute
+# agreement plus the entries that require adjudication. No second audit is
+# assumed by the experiment protocol itself.
 python scripts/compare_rq1_reviews.py \
   --primary-adjudication experiments/rq1/primary_adjudication.yaml \
   --secondary-review experiments/rq1/secondary_review.completed.yaml \
@@ -81,6 +82,7 @@ python scripts/compare_rq1_reviews.py \
 # Once satisfying/violating pairs have run, add failure-stage and resource-cost metrics.
 configfuzz-experiment summarize rq1 experiments/rq1/constraint_audit.yaml \
   --runs experiments/results/rq1.jsonl \
+  --recovered-model artifacts/lmsv_active_validation.json \
   --output experiments/results/rq1-summary.json
 ```
 
@@ -88,7 +90,7 @@ configfuzz-experiment summarize rq1 experiments/rq1/constraint_audit.yaml \
 
 ## RQ2: workload binding and frozen intents
 
-`rq2/workload_candidates.source.yaml` pins candidate lm-sv model configurations and command templates for the dense Transformer, GQA/long-sequence/FlashAttention, and MoE workload families. Candidate snapshots remain unverified until each one completes an optimizer step and checkpoint save/load on the target stack.
+`rq2/workload_candidates.source.yaml` pins candidate lm-sv model configurations and command templates for Qwen2, Llama2, ChatGLM3, Mixtral, DeepSeek-V3, InternVL3, and CogVideoX. Candidate snapshots remain unverified until each one completes an optimizer step, repeated training, and checkpoint save/load on the target stack.
 
 ```bash
 # Materialize command-aware candidate baselines from the pinned lm-sv revision.
@@ -100,21 +102,23 @@ python scripts/prepare_rq2_workload_candidates.py \
 
 # Generate a larger unique candidate pool.
 python scripts/generate_rq2_intents.py \
-  --corpus corpus/lmsv/manual_constraints.yaml \
   --workloads experiments/rq2/candidate_workloads.yaml \
   --output experiments/rq2/candidate_intents.yaml
 
-# Select exactly 300 intents per primary workload and freeze the review candidate set.
+# Select exactly 150 method-independent intents per primary workload and freeze the review candidate set.
 python scripts/select_rq2_intents.py \
   --candidates experiments/rq2/candidate_intents.yaml \
   --workloads experiments/rq2/candidate_workloads.yaml \
+  --intent-pool method_independent \
   --output experiments/rq2/selected_candidate_intents.yaml \
   --frozen-output experiments/rq2/selected_candidate_intents.frozen.yaml
 ```
 
-The generator covers enum alternatives, numeric windows, repair boundaries, adjacent values, guard-enabling transitions, type-aware baseline-relative grids, and TP/PP/EP/CP topology values. It deduplicates by `(workload, parameter, target value)`. The checked-in frozen file is a review candidate only; regenerate the final frozen set after accelerator validation. All comparison methods must consume the same final frozen file.
+The generator emits two explicitly labeled pools. The primary `method_independent` pool is built only from scalar parameters exposed by the qualified baseline, generic numeric/Boolean boundary grids, and TP/PP/EP/CP topology values; recovered constraints and the legacy rule corpus do not choose its target values. The separate `constraint_challenge` pool contains relation-derived boundaries, guard transitions, and other constraint-focused stress cases. Select and freeze the primary pool for the main RQ2 comparison, and report the challenge pool separately if it is used. The checked-in frozen file is a review candidate only; regenerate the final frozen set after accelerator validation. All comparison methods consume the same final frozen file.
 
-After each workload also binds its audited dependency graph and native-validator manifest, expand every frozen intent into the five comparison cases:
+Generate the optional challenge pool with `--include-constraint-challenge --corpus corpus/lmsv/manual_constraints.yaml`; this flag never changes the method-independent intents.
+
+After each workload also binds both the pre-validation static graph and the execution-validated dependency graph, together with its native-validator manifest, expand every frozen intent into the six comparison cases:
 
 ```bash
 python scripts/plan_rq2_campaign.py \
@@ -123,7 +127,7 @@ python scripts/plan_rq2_campaign.py \
   --output experiments/rq2/campaign-plan.json
 ```
 
-The plan records the exact target assignment, preflight mode, filter result, solver status, coordinated parameters, hard/unsupported constraints, and repair scope. It verifies the frozen intent hash and rejects baseline-ID mismatches before execution.
+The plan records the exact target assignment, preflight mode, filter result, solver status, coordinated parameters, hard/unsupported constraints, repair scope, and constraint-treatment policy. `static_hard_configfuzz` hardens every static candidate and ignores validation status; normal `configfuzz` and `global_repair` hard-enforce only confirmed/environment-specific relations and use unresolved candidates as confidence-tiered soft guidance. The plan verifies the frozen intent hash and rejects baseline-ID mismatches before execution.
 
 ## RQ3: historical bug benchmark construction
 
@@ -164,7 +168,7 @@ A shortlist entry is not a benchmark bug. Admission requires a concrete configur
 
 ## Campaign records and summaries
 
-Each attempted configuration is one JSON object per line. Records include method, workload, frozen intent, seed, generation success, target-value preservation, coordinated parameters, solver cost, deepest milestone, outcome, wall time, GPU-seconds, peak memory, and diversity coverage. RQ1 records additionally identify the target constraint, satisfying/violating role, first failure, failure mode, and message quality. RQ3 records can include cumulative campaign position and buggy/fixed oracle evidence for exact first-reproducer costs.
+Each attempted configuration is one JSON object per line. Records include method, workload, frozen intent, seed, generation success, target-value preservation, coordinated parameters, exact solver modifications, affected region, active constraint IDs, constraint status before/after execution, provenance IDs, refined constraints, solver cost, deepest milestone, outcome, wall time, GPU-seconds, peak memory, stable runtime behavior IDs, and the behavior signature. RQ1 records additionally identify the target constraint, satisfying/violating role, first failure, failure mode, and message quality. RQ3 records can include cumulative campaign position, an independent root-cause ID, and buggy/fixed oracle evidence for exact first-reproducer costs.
 
 ```bash
 configfuzz-experiment validate-runs experiments/results/rq2.jsonl

@@ -33,6 +33,7 @@ def select_balanced_intents(
     workload_registry_path: str | Path,
     *,
     default_per_primary_workload: int = 300,
+    intent_pool: str = "method_independent",
 ) -> dict[str, Any]:
     candidate_file = Path(candidate_path).expanduser().resolve()
     registry_file = Path(workload_registry_path).expanduser().resolve()
@@ -51,6 +52,7 @@ def select_balanced_intents(
         MutationIntent.from_dict(_mapping(item, "mutation intent"))
         for item in raw_intents
     ]
+    intents = [item for item in intents if item.intent_pool == intent_pool]
 
     workload_records: dict[str, Mapping[str, Any]] = {}
     for item in raw_workloads:
@@ -106,12 +108,12 @@ def select_balanced_intents(
         "schema_version": 1,
         "name": "rq2-balanced-candidate-intents",
         "metadata": {
-            "status": "candidate_review_frozen_not_campaign_ready",
+            "status": "accelerator_unverified_frozen_candidate",
             "source_candidate_file": candidate_file.name,
             "source_candidate_sha256": source_sha256,
+            "intent_pool": intent_pool,
             "selection_policy": (
-                "deterministic parameter round-robin; rule-derived and topology intents "
-                "precede baseline-grid intents within each parameter"
+                "deterministic parameter round-robin within the selected intent pool"
             ),
             "workload_selection": selection_stats,
             "intent_count": len(selected),

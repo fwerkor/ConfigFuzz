@@ -1,8 +1,8 @@
 schema_version: 1
 name: ConfigFuzz three-RQ experiment protocol
 argument_chain:
-  - rq1: configuration constraints are complex, incompletely validated, and costly when violated
-  - rq2: constraint-guided coordinated mutation produces more deep, valid, and diverse executions
+  - rq1: configuration constraints must be recovered with correct scope and validated before they become hard guidance
+  - rq2: intent-preserving coordinated mutation produces more deep, valid, and diverse executions
   - rq3: deeper constraint-boundary exploration improves historical bug replay and new bug discovery
 milestone_order:
   - config_generation
@@ -26,9 +26,8 @@ outcomes:
   - unknown
 rq1:
   question: >-
-    What characteristics do MindSpeed configuration constraints exhibit, how extensively
-    are they covered by native validation, and what costs arise when uncovered constraints
-    are violated?
+    How accurately does ConfigFuzz recover properly scoped configuration constraints,
+    and how important is execution-based validation for correcting the recovered model?
   audit_dataset: rq1/constraint_audit.yaml
   required_pair_controls:
     - same workload, hardware environment, and random seed
@@ -36,6 +35,9 @@ rq1:
     - violating configuration should violate only the target hard constraint when feasible
     - satisfying configuration must reach the intended milestone
   primary_metrics:
+    - reference recall and semantic match rate
+    - static-candidate, dynamically-supported, confirmed, scope-disputed, contradicted, and remaining-candidate counts
+    - valid-counterexample and paired-confirmation counts
     - constraint category, arity, guard, scope, and software-layer distributions
     - full explicit, partial, implicit/delayed, and uncovered validation rates
     - first-failure milestone distribution
@@ -43,8 +45,26 @@ rq1:
     - crash, hang, silent-abnormal, timeout, and interpretable-message rates
 rq2:
   question: >-
-    Under identical mutation intents and budgets, can ConfigFuzz generate more deep,
-    valid, and diverse test executions while preserving the requested target value?
+    Can ConfigFuzz preserve requested mutation intents while enabling more tests to
+    reach deep and diverse distributed execution under identical budgets?
+  intent_pools:
+    method_independent:
+      role: primary comparison
+      sources:
+        - qualified baseline scalar parameter schema
+        - generic numeric and Boolean boundary grids
+        - parallel topology values
+      constraint_knowledge_used: false
+    constraint_challenge:
+      role: separately reported stress subset
+      sources:
+        - divisibility and relational boundaries
+        - guarded feature transitions
+        - cross-component and scoped constraint boundaries
+      constraint_knowledge_used: true
+  graph_inputs:
+    pre_validation_static_graph: required_for_static_hard_ablation
+    execution_validated_graph: required_for_configfuzz_and_global_repair
   methods:
     raw_mutation:
       target_assignment: preserved
@@ -61,10 +81,16 @@ rq2:
       native_validator: optional
       manual_constraint_filter: true
       coordinated_repair: false
+    static_hard_configfuzz:
+      target_assignment: fixed
+      recovered_static_constraints: all_hard
+      execution_validation_status: ignored
+      scope_refinement: ignored
+      coordinated_repair: affected_hypergraph_region
     configfuzz:
       target_assignment: fixed
       native_validator: optional
-      manual_constraint_filter: true
+      recovered_constraints: status_and_confidence_aware
       coordinated_repair: affected_hypergraph_region
     global_repair:
       target_assignment: fixed
@@ -79,11 +105,13 @@ rq2:
     - identical per-test timeout
     - identical test-count and GPU-hour budgets
   primary_metrics:
-    - deep_execution_yield_per_gpu_hour
+    - intent_preserving_deep_execution_rate
+    - intent_preserving_deep_execution_yield_per_gpu_hour
     - target_value_retention_rate
+    - generation/infeasible rate, including static-hard false exclusions
     - coordinated_parameter_count and modification_distance
     - stage reach rates and expected rejection rate
-    - constraint, boundary, guard, topology, feature-interaction, and backend-path diversity
+    - runtime behavior ID coverage, behavior-signature count and entropy, and coverage per GPU-hour
 rq3:
   question: >-
     Can ConfigFuzz replay and discover more real configuration-related framework bugs
@@ -99,6 +127,10 @@ rq3:
     development_split: older bugs may be used during implementation
     evaluation_split: newer bugs are reserved for final results
     exact_reproducer_input: forbidden
+    bug_related_target_parameter: forbidden
+    triggering_configuration: forbidden
+    patch_information: forbidden
+    minimized_reproducer: forbidden
   current_version_triage:
     - exclude known constraint violations
     - exclude ordinary resource exhaustion
@@ -124,3 +156,9 @@ recording:
     - RQ1 constraint ID, satisfying/violating role, first-failure milestone, failure mode, and message quality
     - cumulative campaign test index, wall time, and GPU-seconds for time-to-first-reproducer
     - outcome and triage evidence
+    - active recovered-constraint IDs and provenance IDs
+    - constraint status before and after execution
+    - affected hypergraph region and exact solver modifications
+    - refined or scope-disputed constraint IDs
+    - stable runtime behavior IDs and behavior signature
+    - independent historical/current root-cause ID when assigned

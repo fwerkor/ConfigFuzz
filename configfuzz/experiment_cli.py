@@ -87,6 +87,11 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="optional RQ1 JSONL satisfying/violating execution records",
     )
+    summarize.add_argument(
+        "--recovered-model",
+        type=Path,
+        help="optional RQ1 dependency-graph/active-validation artifact",
+    )
     summarize.add_argument("--bugs", type=Path)
     summarize.add_argument(
         "--bug-split",
@@ -206,6 +211,7 @@ def _run_summarize(args: argparse.Namespace) -> int:
         payload = summarize_rq1(
             load_audit_dataset(args.input),
             load_run_records(args.runs) if args.runs is not None else (),
+            recovered_model_path=args.recovered_model,
         )
     elif args.rq == "rq2":
         payload = summarize_rq2(

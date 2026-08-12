@@ -2,24 +2,23 @@ schema_version: 1
 name: rq2-mutation-intents-template
 metadata:
   status: template
-  minimum_per_workload: 300
+  minimum_per_workload: 150
+  primary_pool: method_independent
   generation_policy:
-    - parameter bounds and adjacent values
-    - legal divisibility boundaries and neighboring illegal values
-    - guard transitions from disabled to enabled
-    - alternative TP, PP, EP, and CP topology decompositions
-    - feature interactions
-    - backend, version, and capability boundaries
+    - scalar parameters exposed by a qualified baseline
+    - generic numeric and Boolean boundary mutations
+    - generic TP, PP, EP, and CP topology values
+    - constraint-derived cases kept in a separate constraint_challenge pool
   freeze_before_campaign: true
 intents:
-  - intent_id: example-hidden-size-tp-boundary
-    workload_id: dense-transformer-small
-    baseline_id: dense-transformer-small-baseline
+  - intent_id: example-hidden-size-generic-boundary
+    workload_id: qwen2-train
+    baseline_id: qwen2-train-baseline
     target_parameter: model.hidden_size
     target_value: 3073
-    intent_class: divisibility_adjacent_value
-    source_constraint_ids:
-      - lmsv.task1.hidden-size-tp-divisibility
+    intent_class: integer_adjacent_above
+    intent_pool: method_independent
+    source_constraint_ids: []
     metadata:
       example_only: true
       remove_before_final_freeze: true

@@ -90,11 +90,14 @@ def load_workloads(
 
 
 def generate_intents(
-    corpus: ConstraintCorpus,
+    corpus: ConstraintCorpus | None,
     workloads: Sequence[WorkloadSpec],
     *,
     topology_values: Sequence[int] = (1, 2, 4, 8),
+    include_constraint_challenge: bool = True,
 ) -> list[MutationIntent]:
+    if include_constraint_challenge and corpus is None:
+        raise ValueError("constraint-challenge generation requires a constraint corpus")
     intents: list[MutationIntent] = []
     for workload in workloads:
         baseline = json.loads(workload.baseline_config.read_text(encoding="utf-8"))
@@ -102,16 +105,17 @@ def generate_intents(
             raise ValueError(
                 f"workload {workload.workload_id}: baseline configuration must be an object"
             )
-        allowed_ids = set(workload.constraint_ids)
-        rules = [
-            rule for rule in corpus.rules if not allowed_ids or rule.id in allowed_ids
-        ]
         workload_intents: list[MutationIntent] = []
-        for rule in rules:
-            workload_intents.extend(_rule_intents(rule, workload, baseline))
-        workload_intents.extend(
-            _parameter_grid_intents(corpus, rules, workload, baseline)
-        )
+        if include_constraint_challenge and corpus is not None:
+            allowed_ids = set(workload.constraint_ids)
+            rules = [
+                rule
+                for rule in corpus.rules
+                if not allowed_ids or rule.id in allowed_ids
+            ]
+            for rule in rules:
+                workload_intents.extend(_rule_intents(rule, workload, baseline))
+        workload_intents.extend(_baseline_parameter_grid_intents(workload, baseline))
         workload_intents.extend(
             _topology_intents(workload, baseline, topology_values=topology_values)
         )
@@ -120,15 +124,21 @@ def generate_intents(
 
 
 def generate_intent_payload(
-    corpus_path: str | Path,
+    corpus_path: str | Path | None,
     workloads_path: str | Path,
     *,
     skip_unbound: bool = False,
     topology_values: Sequence[int] = (1, 2, 4, 8),
+    include_constraint_challenge: bool = True,
 ) -> dict[str, Any]:
-    corpus = load_corpus(corpus_path)
+    corpus = load_corpus(corpus_path) if corpus_path is not None else None
     workloads = load_workloads(workloads_path, skip_unbound=skip_unbound)
-    intents = generate_intents(corpus, workloads, topology_values=topology_values)
+    intents = generate_intents(
+        corpus,
+        workloads,
+        topology_values=topology_values,
+        include_constraint_challenge=include_constraint_challenge,
+    )
     counts: dict[str, int] = {}
     for intent in intents:
         counts[intent.workload_id] = counts.get(intent.workload_id, 0) + 1
@@ -147,20 +157,18 @@ def generate_intent_payload(
         "schema_version": 1,
         "name": "rq2-generated-mutation-intents",
         "metadata": {
-            "source_corpus": corpus.name,
-            "source_corpus_baseline": corpus.baseline,
+            "source_corpus": corpus.name if corpus is not None else None,
+            "source_corpus_baseline": corpus.baseline if corpus is not None else None,
+            "constraint_challenge_included": include_constraint_challenge,
             "workload_count": len(workloads),
             "intent_count": len(intents),
             "intents_per_workload": dict(sorted(counts.items())),
             "minimum_intents_per_workload": dict(sorted(requirements.items())),
             "generation_policy": [
-                "enumeration alternatives",
-                "numeric window boundaries",
-                "repair boundaries and adjacent values",
-                "simple guard-enabling transitions",
-                "type-aware baseline-relative boundary grids",
-                "parallel topology values",
-                "one record per unique workload, parameter, and target value",
+                "method-independent scalar parameter grids from the qualified baseline",
+                "method-independent parallel topology values",
+                "separate constraint-challenge candidates from legacy rule boundaries",
+                "one primary record per unique workload, parameter, and target value",
             ],
             "warning": (
                 "Generated intentions are candidates. Remove examples, verify workload "
@@ -243,6 +251,7 @@ def _rule_intents(
                 parameter,
                 value,
                 intent_class,
+                intent_pool="constraint_challenge",
                 source_constraint_ids=(rule.id,),
                 metadata={"rule_expression": rule.expression, **dict(metadata)},
             )
@@ -352,47 +361,31 @@ def _numeric_window_values(
     return _unique_pairs(raw)
 
 
-def _parameter_grid_intents(
-    corpus: ConstraintCorpus,
-    rules: Sequence[ManualConstraintRule],
+def _baseline_parameter_grid_intents(
     workload: WorkloadSpec,
     baseline: Mapping[str, Any],
 ) -> list[MutationIntent]:
-    del corpus  # The selected rules already encode the workload's corpus scope.
-    by_leaf: dict[str, set[str]] = {}
-    source_ids: dict[str, set[str]] = {}
-    for rule in rules:
-        parameters = list(rule.parameters)
-        if rule.repair:
-            parameters.extend(
-                str(rule.repair[key])
-                for key in ("target", "source")
-                if rule.repair.get(key)
-            )
-        for parameter in parameters:
-            leaf = parameter.rsplit(".", 1)[-1]
-            if leaf in _GRID_EXCLUDED_LEAVES:
-                continue
-            by_leaf.setdefault(leaf, set()).add(parameter)
-            source_ids.setdefault(leaf, set()).add(rule.id)
+    """Generate the primary RQ2 pool without consulting recovered constraints.
+
+    The qualified baseline is treated as the method-independent parameter schema for
+    scalar numeric/Boolean fields. Constraint-derived boundaries are emitted separately
+    by ``_rule_intents`` into the constraint-challenge pool.
+    """
 
     intents: list[MutationIntent] = []
     divisors = _active_divisors(baseline)
-    for leaf, parameters in sorted(by_leaf.items()):
-        parameter = _preferred_parameter(parameters)
-        current = _try_get(baseline, parameter)
-        if not current.found:
+    for parameter, current_value in sorted(_iter_scalar_parameters(baseline)):
+        leaf = parameter.rsplit(".", 1)[-1]
+        if leaf in _GRID_EXCLUDED_LEAVES or leaf in _TOPOLOGY_LEAVES:
             continue
-        if leaf in _TOPOLOGY_LEAVES:
-            continue
-        if _is_number(current.value):
-            values = _baseline_grid_values(current.value, divisors=divisors)
-        elif isinstance(current.value, bool):
-            values = [(not current.value, "boolean_transition")]
+        if _is_number(current_value):
+            values = _baseline_grid_values(current_value, divisors=divisors)
+        elif isinstance(current_value, bool):
+            values = [(not current_value, "boolean_transition")]
         else:
             continue
         for value, intent_class in values:
-            if value == current.value:
+            if value == current_value:
                 continue
             intents.append(
                 _make_intent(
@@ -400,15 +393,28 @@ def _parameter_grid_intents(
                     parameter,
                     value,
                     intent_class,
-                    source_constraint_ids=tuple(sorted(source_ids[leaf])),
                     metadata={
-                        "baseline_value": current.value,
+                        "baseline_value": current_value,
                         "grid_policy": "type_aware_boundary_grid_v1",
                         "parameter_leaf": leaf,
                     },
                 )
             )
     return intents
+
+
+def _iter_scalar_parameters(
+    value: Mapping[str, Any], prefix: tuple[str, ...] = ()
+) -> Iterable[tuple[str, Any]]:
+    for raw_key, item in value.items():
+        key = str(raw_key)
+        if key in {"metadata", "provenance"}:
+            continue
+        path = (*prefix, key)
+        if isinstance(item, Mapping):
+            yield from _iter_scalar_parameters(item, path)
+        elif isinstance(item, (bool, int, float)):
+            yield ".".join(path), item
 
 
 def _preferred_parameter(parameters: Iterable[str]) -> str:
@@ -732,11 +738,12 @@ def _make_intent(
     value: Any,
     intent_class: str,
     *,
+    intent_pool: str = "method_independent",
     source_constraint_ids: tuple[str, ...] = (),
     metadata: Mapping[str, Any] | None = None,
 ) -> MutationIntent:
     identity = json.dumps(
-        [workload.workload_id, parameter, value, intent_class, source_constraint_ids],
+        [workload.workload_id, parameter, value, intent_class, intent_pool, source_constraint_ids],
         ensure_ascii=False,
         sort_keys=True,
         separators=(",", ":"),
@@ -750,24 +757,23 @@ def _make_intent(
         target_parameter=parameter,
         target_value=value,
         intent_class=intent_class,
+        intent_pool=intent_pool,
         source_constraint_ids=source_constraint_ids,
         metadata={"workload_family": workload.family, **dict(metadata or {})},
     )
 
 
 def _deduplicate(intents: Sequence[MutationIntent]) -> list[MutationIntent]:
-    selected: dict[tuple[str, str], MutationIntent] = {}
+    selected: dict[tuple[str, str, str], MutationIntent] = {}
     for intent in intents:
         value_key = json.dumps(intent.target_value, ensure_ascii=False, sort_keys=True)
-        key = (intent.target_parameter, value_key)
+        key = (intent.intent_pool, intent.target_parameter, value_key)
         existing = selected.get(key)
         if existing is None:
             selected[key] = intent
             continue
         constraint_ids = tuple(
-            sorted(
-                set(existing.source_constraint_ids) | set(intent.source_constraint_ids)
-            )
+            sorted(set(existing.source_constraint_ids) | set(intent.source_constraint_ids))
         )
         alternate_classes = set(existing.metadata.get("alternate_intent_classes", ()))
         alternate_classes.update(intent.metadata.get("alternate_intent_classes", ()))
@@ -784,6 +790,7 @@ def _deduplicate(intents: Sequence[MutationIntent]) -> list[MutationIntent]:
             target_parameter=existing.target_parameter,
             target_value=existing.target_value,
             intent_class=existing.intent_class,
+            intent_pool=existing.intent_pool,
             source_constraint_ids=constraint_ids,
             metadata=metadata,
         )
