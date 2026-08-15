@@ -124,5 +124,7 @@ python scripts/run_frozen_gpu_validation.py \
 ```
 
 The runner rejects changed baselines, manifests, or static artifacts by SHA-256
-before executing a target. Preliminary active-validation files are kept
-separate from these frozen-campaign outputs.
+before executing a target. Frozen interventions are executed independently and
+runtime feedback is aggregated only after all targets finish, so confirmation
+counts do not depend on target order. Preliminary active-validation files are
+kept separate from these frozen-campaign outputs.

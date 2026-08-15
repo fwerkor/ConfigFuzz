@@ -9,8 +9,9 @@ from typing import Any, Mapping
 import yaml
 
 from configfuzz.dependencies import DependencyGraph
-from configfuzz.feedback import apply_probe_feedback
+from configfuzz.feedback import FeedbackReport, apply_probe_feedback
 from configfuzz.intervention_runner import InterventionExecutionManifest, run_intervention
+from configfuzz.probing import ProbeSample
 from configfuzz.selection import select_interventions
 
 
@@ -148,17 +149,18 @@ def run_frozen_gpu_subject(
         if actual != expected:
             raise ValueError(f"{subject} {key} mismatch: expected {expected}, got {actual}")
 
-    graph = DependencyGraph.from_dict(json.loads(artifact.read_text(encoding="utf-8")))
+    graph_payload = json.loads(artifact.read_text(encoding="utf-8"))
     manifest = InterventionExecutionManifest.from_path(manifest_path)
     baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
     rounds: list[dict[str, Any]] = []
+    round_samples: list[list[ProbeSample]] = []
     outcome_counts: Counter[str] = Counter()
     for index, target in enumerate(subject_payload.get("targets", ()), start=1):
         if not isinstance(target, Mapping) or not isinstance(target.get("intervention"), Mapping):
             raise ValueError(f"{subject} target {index} is malformed")
         samples = run_intervention({"intervention": target["intervention"]}, manifest)
+        round_samples.append(samples)
         outcome_counts.update(sample.outcome.label.value for sample in samples)
-        feedback = apply_probe_feedback(graph, baseline, samples)
         rounds.append(
             {
                 "index": index,
@@ -166,9 +168,16 @@ def run_frozen_gpu_subject(
                 "expression": str(target["expression"]),
                 "selection_rank": int(target["rank"]),
                 "samples": [sample.to_dict() for sample in samples],
-                "feedback": feedback.to_dict(),
             }
         )
+
+    graph, independent_feedback, aggregate_feedback = apply_frozen_feedback(
+        graph_payload,
+        baseline,
+        round_samples,
+    )
+    for round_payload, feedback in zip(rounds, independent_feedback, strict=True):
+        round_payload["feedback"] = feedback.to_dict()
 
     status_counts = Counter(edge.status.value for edge in graph.edges.values())
     return {
@@ -180,12 +189,37 @@ def run_frozen_gpu_subject(
             "samples": sum(len(item["samples"]) for item in rounds),
             "outcomes": dict(sorted(outcome_counts.items())),
             "edge_statuses": dict(sorted(status_counts.items())),
-            "paired_interventions": sum(item["feedback"]["paired_interventions"] for item in rounds),
+            "paired_interventions": aggregate_feedback.paired_interventions,
         },
+        "aggregate_feedback": aggregate_feedback.to_dict(),
         "rounds": rounds,
         "dependency_graph": graph.to_dict(),
     }
 
+
+
+def apply_frozen_feedback(
+    graph_payload: Mapping[str, Any],
+    baseline: Mapping[str, Any],
+    round_samples: list[list[ProbeSample]],
+) -> tuple[DependencyGraph, list[FeedbackReport], FeedbackReport]:
+    """Evaluate frozen targets without letting target order change hard constraints."""
+    independent_feedback = []
+    all_samples: list[ProbeSample] = []
+    for samples in round_samples:
+        target_graph = DependencyGraph.from_dict(graph_payload)
+        independent_feedback.append(
+            apply_probe_feedback(target_graph, baseline, samples)
+        )
+        all_samples.extend(samples)
+
+    aggregate_graph = DependencyGraph.from_dict(graph_payload)
+    aggregate_feedback = apply_probe_feedback(
+        aggregate_graph,
+        baseline,
+        all_samples,
+    )
+    return aggregate_graph, independent_feedback, aggregate_feedback
 
 def dump_frozen_gpu_targets(payload: Mapping[str, Any], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
