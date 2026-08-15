@@ -97,3 +97,32 @@ the recovered distributed backend and subgroup-size paths, while the DeepSpeed
 runner passes recovered batch-size and ZeRO bucket settings into the native
 DeepSpeed configuration object. This keeps execution feedback tied to the
 scanned framework semantics rather than to a synthetic validation shim.
+
+## Frozen cross-framework target set
+
+The formal GPU generalization campaign uses `validation_targets.frozen.yaml`.
+Targets are ranked and frozen from each versioned static graph plus its qualified
+baseline before formal execution feedback is considered. This prevents later
+runtime outcomes from changing the evaluated target set. The current frozen set
+contains 19 targets across the four GPU stacks and records hashes for every
+source artifact, baseline, and execution manifest.
+
+Regenerate and verify the frozen set with:
+
+```bash
+python scripts/freeze_gpu_validation_targets.py \
+  --output experiments/gpu/validation_targets.frozen.yaml \
+  --limit-per-subject 6 --solver-timeout-ms 3000
+```
+
+Run one framework against the exact frozen intervention plans with:
+
+```bash
+python scripts/run_frozen_gpu_validation.py \
+  experiments/gpu/validation_targets.frozen.yaml deepspeed \
+  --output artifacts/gpu/frozen-results/deepspeed.json
+```
+
+The runner rejects changed baselines, manifests, or static artifacts by SHA-256
+before executing a target. Preliminary active-validation files are kept
+separate from these frozen-campaign outputs.

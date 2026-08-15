@@ -528,6 +528,7 @@ def design_edge_intervention(
             target_satisfied=True,
             role="repaired",
             timeout_ms=timeout_ms,
+            tie_break_reference=context,
         )
     return InterventionPlan(
         intervention_id=intervention_id,
@@ -551,6 +552,7 @@ def _solve_intervention_case(
     target_satisfied: bool,
     role: str,
     timeout_ms: int,
+    tie_break_reference: Mapping[str, Any] | None = None,
 ) -> InterventionCase:
     edge = graph.edges[edge_id]
     primary = next(iter(sorted(mutable)), edge.participants[0])
@@ -654,6 +656,22 @@ def _solve_intervention_case(
         reference,
         missing,
     )
+    if tie_break_reference is not None:
+        _add_reference_objectives(
+            optimizer,
+            variables,
+            kinds,
+            mutable,
+            tie_break_reference,
+            missing,
+        )
+    _add_deterministic_objectives(
+        optimizer,
+        variables,
+        kinds,
+        mutable,
+        reference,
+    )
 
     result = optimizer.check()
     if result == z3.unsat:
@@ -754,6 +772,38 @@ def _add_reference_objectives(
         optimizer.minimize(z3.Sum(change_terms))
     if distance_terms:
         optimizer.minimize(z3.Sum(distance_terms))
+
+
+def _add_deterministic_objectives(
+    optimizer: z3.Optimize,
+    variables: Mapping[str, z3.ExprRef],
+    kinds: Mapping[str, _ValueKind],
+    names: set[str],
+    reference: Mapping[str, Any],
+) -> None:
+    """Break objective ties without changing the higher-level repair policy."""
+    for name in sorted(names):
+        if name not in reference or name not in variables or name not in kinds:
+            continue
+        variable = variables[name]
+        kind = kinds[name]
+        try:
+            original = _literal(reference[name], kind)
+        except _CompileError:
+            continue
+        optimizer.minimize(z3.If(variable != original, 1, 0))
+        if kind in {_ValueKind.INT, _ValueKind.REAL}:
+            distance = z3.If(
+                variable >= original,
+                variable - original,
+                original - variable,
+            )
+            optimizer.minimize(distance)
+            optimizer.minimize(variable)
+        elif kind is _ValueKind.STRING:
+            optimizer.minimize(z3.Length(variable))
+        elif kind is _ValueKind.BOOL:
+            optimizer.minimize(z3.If(variable, 1, 0))
 
 
 def _compile_edge_formula(

@@ -156,3 +156,24 @@ def test_intervention_timeout_must_be_positive() -> None:
 
     with pytest.raises(ValueError, match="timeout"):
         design_edge_intervention(graph, {"x": 2}, edge.id, timeout_ms=0)
+
+
+def test_enum_repair_uses_baseline_as_deterministic_tie_break() -> None:
+    graph = make_graph(
+        constraint(
+            "backend in {'nccl', 'gloo'}",
+            ("backend",),
+            kind=ConstraintKind.ENUM,
+        )
+    )
+    edge = next(iter(graph.edges.values()))
+    baseline = {"backend": "nccl"}
+
+    first = design_edge_intervention(graph, baseline, edge.id)
+    second = design_edge_intervention(graph, baseline, edge.id)
+
+    assert first.violating.status is SolveStatus.SAT
+    assert first.repaired is not None
+    assert first.repaired.assignment == {"backend": "nccl"}
+    assert second.repaired is not None
+    assert second.repaired.assignment == first.repaired.assignment

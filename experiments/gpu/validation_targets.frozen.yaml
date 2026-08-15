@@ -1,0 +1,3036 @@
+schema_version: 1
+name: gpu-cross-framework-validation-targets
+metadata:
+  selection_basis: static graph plus qualified baseline only
+  limit_per_subject: 6
+  solver_timeout_ms: 3000
+  subject_count: 4
+  target_count: 19
+subjects:
+- subject: pytorch-native
+  artifact: artifacts/frameworks/pytorch_v2.13.0.json
+  manifest: experiments/gpu/manifests/pytorch-native.json
+  baseline: experiments/gpu/baselines/pytorch-native.json
+  artifact_sha256: a4670ce5b7c4bef931985482bfce8427b428890db01c8e2532c8e67901742b1a
+  manifest_sha256: 0ae8b765f4d48aea3971010f109ad02aeab150e8f7addc034c6e3344bbacfb23
+  baseline_sha256: 219a68166cb5d9e3b98f7ceafc4de51182e91adcc761dca89ba67d02cfcadfd2
+  selection_summary:
+    considered_edges: 48
+    selected_candidates: 4
+    skipped_status: 0
+    skipped_excluded: 0
+    skipped_infeasible: 44
+    skipped_uncompetitive: 0
+    solver_timeout_ms: 3000
+  targets:
+  - rank: 1
+    edge_id: dep-26ecbd36c763dd03
+    expression: backend in ['nccl', 'gloo', 'mpi', 'hccl', 'xccl']
+    relation: enum
+    static_status: static_candidate
+    static_confidence: 0.98
+    selection_score: 2.634762
+    score_components:
+      centrality: 0.30000000000000004
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.22857142857142856
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 0.54
+      status: 3.0
+      uncertainty: 0.040000000000000036
+      unsupported: -0.4166666666666667
+    intervention:
+      intervention_id: intervention-520536c1ebae7de1ba0a
+      edge_id: dep-26ecbd36c763dd03
+      expression: backend in ['nccl', 'gloo', 'mpi', 'hccl', 'xccl']
+      primary_parameter: backend
+      mutable_parameters:
+      - backend
+      provenance:
+      - kind: static
+        source: torch/testing/_internal/distributed/_shard/sharded_tensor/__init__.py
+        line: 25
+        detail: rejecting guard
+      - kind: static
+        source: torch/testing/_internal/distributed/_shard/sharded_tensor/__init__.py
+        line: 25
+        detail: interprocedural summary instantiated at line 59
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            backend: nccl
+          changes: {}
+          hard_edges:
+          - dep-26ecbd36c763dd03
+          soft_edges:
+          - dep-86bd6fa3644fbefb
+          - dep-d4d3f44c1b57850c
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-91be4154e2206b27
+          - dep-de20292304803579
+          - dep-eebffc6dfce4606c
+          - dep-f5751d24ed12ed89
+          - dep-f643c8d12e1111aa
+          missing_context:
+          - Backend.MPI
+          - OnnxBackend.REFERENCE
+          - can_use_decode
+          - subsystem
+          probe_sample_template:
+            parameter: backend
+            value: nccl
+            assignments: {}
+            intervention_id: intervention-520536c1ebae7de1ba0a
+            intervention_edge_id: dep-26ecbd36c763dd03
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            backend: ''
+          changes:
+            backend: ''
+          hard_edges:
+          - dep-26ecbd36c763dd03
+          soft_edges:
+          - dep-86bd6fa3644fbefb
+          - dep-d4d3f44c1b57850c
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-91be4154e2206b27
+          - dep-de20292304803579
+          - dep-eebffc6dfce4606c
+          - dep-f5751d24ed12ed89
+          - dep-f643c8d12e1111aa
+          missing_context:
+          - Backend.MPI
+          - OnnxBackend.REFERENCE
+          - can_use_decode
+          - subsystem
+          probe_sample_template:
+            parameter: backend
+            value: ''
+            assignments: {}
+            intervention_id: intervention-520536c1ebae7de1ba0a
+            intervention_edge_id: dep-26ecbd36c763dd03
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            backend: nccl
+          changes:
+            backend: nccl
+          hard_edges:
+          - dep-26ecbd36c763dd03
+          soft_edges:
+          - dep-86bd6fa3644fbefb
+          - dep-d4d3f44c1b57850c
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-91be4154e2206b27
+          - dep-de20292304803579
+          - dep-eebffc6dfce4606c
+          - dep-f5751d24ed12ed89
+          - dep-f643c8d12e1111aa
+          missing_context:
+          - Backend.MPI
+          - OnnxBackend.REFERENCE
+          - can_use_decode
+          - subsystem
+          probe_sample_template:
+            parameter: backend
+            value: nccl
+            assignments: {}
+            intervention_id: intervention-520536c1ebae7de1ba0a
+            intervention_edge_id: dep-26ecbd36c763dd03
+            intervention_role: repaired
+  - rank: 2
+    edge_id: dep-54cbd80200ce84df
+    expression: group_size > 1
+    relation: range
+    static_status: static_candidate
+    static_confidence: 0.98
+    selection_score: 2.266667
+    score_components:
+      centrality: 0.4
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.4
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 0.66
+      status: 3.0
+      uncertainty: 0.040000000000000036
+      unsupported: -0.8333333333333334
+    intervention:
+      intervention_id: intervention-fee8183b41b6650cbb17
+      edge_id: dep-54cbd80200ce84df
+      expression: group_size > 1
+      primary_parameter: group_size
+      mutable_parameters:
+      - group_size
+      provenance:
+      - kind: static
+        source: torch/ao/quantization/fx/_decomposed.py
+        line: 1055
+        detail: rejecting guard
+      - kind: static
+        source: torch/ao/quantization/fx/_decomposed.py
+        line: 1114
+        detail: rejecting guard
+      - kind: static
+        source: torch/ao/quantization/fx/_decomposed.py
+        line: 1167
+        detail: rejecting guard
+      - kind: static
+        source: torch/distributed/distributed_c10d.py
+        line: 6477
+        detail: rejecting guard
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            group_size: 2
+          changes:
+            group_size: 2
+          hard_edges:
+          - dep-54cbd80200ce84df
+          - dep-990b230058d040d7
+          - dep-b3845deb278dfa2c
+          soft_edges:
+          - dep-1b047b73c45adac5
+          - dep-658ed6a87e1309c2
+          - dep-ccda39fd8c731182
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-0c56786881776059
+          - dep-0d95e4db878c9b4d
+          - dep-1f73d8f703d4e7dd
+          - dep-210bfa3f4b777a7a
+          - dep-51e8c21a35d9654d
+          - dep-5dd81f0c9714fed7
+          - dep-636626458780018b
+          - dep-7cf97fc2180b3d3e
+          - dep-88d1a91d6cdfd5e0
+          - dep-d5970baf0a06effd
+          missing_context:
+          - buffer_size
+          - excluded_ranks_set
+          - guaranteed_group_size
+          - num_tasks
+          - params
+          - rank
+          - self.num_stages
+          probe_sample_template:
+            parameter: group_size
+            value: 2
+            assignments: {}
+            intervention_id: intervention-fee8183b41b6650cbb17
+            intervention_edge_id: dep-54cbd80200ce84df
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            group_size: 1
+          changes: {}
+          hard_edges:
+          - dep-54cbd80200ce84df
+          - dep-990b230058d040d7
+          - dep-b3845deb278dfa2c
+          soft_edges:
+          - dep-1b047b73c45adac5
+          - dep-658ed6a87e1309c2
+          - dep-ccda39fd8c731182
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-0c56786881776059
+          - dep-0d95e4db878c9b4d
+          - dep-1f73d8f703d4e7dd
+          - dep-210bfa3f4b777a7a
+          - dep-51e8c21a35d9654d
+          - dep-5dd81f0c9714fed7
+          - dep-636626458780018b
+          - dep-7cf97fc2180b3d3e
+          - dep-88d1a91d6cdfd5e0
+          - dep-d5970baf0a06effd
+          missing_context:
+          - buffer_size
+          - excluded_ranks_set
+          - guaranteed_group_size
+          - num_tasks
+          - params
+          - rank
+          - self.num_stages
+          probe_sample_template:
+            parameter: group_size
+            value: 1
+            assignments: {}
+            intervention_id: intervention-fee8183b41b6650cbb17
+            intervention_edge_id: dep-54cbd80200ce84df
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            group_size: 2
+          changes:
+            group_size: 2
+          hard_edges:
+          - dep-54cbd80200ce84df
+          - dep-990b230058d040d7
+          - dep-b3845deb278dfa2c
+          soft_edges:
+          - dep-1b047b73c45adac5
+          - dep-658ed6a87e1309c2
+          - dep-ccda39fd8c731182
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-0c56786881776059
+          - dep-0d95e4db878c9b4d
+          - dep-1f73d8f703d4e7dd
+          - dep-210bfa3f4b777a7a
+          - dep-51e8c21a35d9654d
+          - dep-5dd81f0c9714fed7
+          - dep-636626458780018b
+          - dep-7cf97fc2180b3d3e
+          - dep-88d1a91d6cdfd5e0
+          - dep-d5970baf0a06effd
+          missing_context:
+          - buffer_size
+          - excluded_ranks_set
+          - guaranteed_group_size
+          - num_tasks
+          - params
+          - rank
+          - self.num_stages
+          probe_sample_template:
+            parameter: group_size
+            value: 2
+            assignments: {}
+            intervention_id: intervention-fee8183b41b6650cbb17
+            intervention_edge_id: dep-54cbd80200ce84df
+            intervention_role: repaired
+  - rank: 3
+    edge_id: dep-658ed6a87e1309c2
+    expression: group_size > 0
+    relation: range
+    static_status: static_candidate
+    static_confidence: 0.98
+    selection_score: 2.266667
+    score_components:
+      centrality: 0.4
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.4
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 0.66
+      status: 3.0
+      uncertainty: 0.040000000000000036
+      unsupported: -0.8333333333333334
+    intervention:
+      intervention_id: intervention-e53591c22946f149d155
+      edge_id: dep-658ed6a87e1309c2
+      expression: group_size > 0
+      primary_parameter: group_size
+      mutable_parameters:
+      - group_size
+      provenance:
+      - kind: static
+        source: torch/distributed/distributed_c10d.py
+        line: 6185
+        detail: rejecting guard
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            group_size: 2
+          changes:
+            group_size: 2
+          hard_edges:
+          - dep-658ed6a87e1309c2
+          - dep-990b230058d040d7
+          - dep-b3845deb278dfa2c
+          soft_edges:
+          - dep-1b047b73c45adac5
+          - dep-54cbd80200ce84df
+          - dep-ccda39fd8c731182
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-0c56786881776059
+          - dep-0d95e4db878c9b4d
+          - dep-1f73d8f703d4e7dd
+          - dep-210bfa3f4b777a7a
+          - dep-51e8c21a35d9654d
+          - dep-5dd81f0c9714fed7
+          - dep-636626458780018b
+          - dep-7cf97fc2180b3d3e
+          - dep-88d1a91d6cdfd5e0
+          - dep-d5970baf0a06effd
+          missing_context:
+          - buffer_size
+          - excluded_ranks_set
+          - guaranteed_group_size
+          - num_tasks
+          - params
+          - rank
+          - self.num_stages
+          probe_sample_template:
+            parameter: group_size
+            value: 2
+            assignments: {}
+            intervention_id: intervention-e53591c22946f149d155
+            intervention_edge_id: dep-658ed6a87e1309c2
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            group_size: -1
+          changes:
+            group_size: -1
+          hard_edges:
+          - dep-658ed6a87e1309c2
+          - dep-990b230058d040d7
+          - dep-b3845deb278dfa2c
+          soft_edges:
+          - dep-1b047b73c45adac5
+          - dep-54cbd80200ce84df
+          - dep-ccda39fd8c731182
+          violated_soft_edges:
+          - dep-54cbd80200ce84df
+          unsupported_edges:
+          - dep-0c56786881776059
+          - dep-0d95e4db878c9b4d
+          - dep-1f73d8f703d4e7dd
+          - dep-210bfa3f4b777a7a
+          - dep-51e8c21a35d9654d
+          - dep-5dd81f0c9714fed7
+          - dep-636626458780018b
+          - dep-7cf97fc2180b3d3e
+          - dep-88d1a91d6cdfd5e0
+          - dep-d5970baf0a06effd
+          missing_context:
+          - buffer_size
+          - excluded_ranks_set
+          - guaranteed_group_size
+          - num_tasks
+          - params
+          - rank
+          - self.num_stages
+          probe_sample_template:
+            parameter: group_size
+            value: -1
+            assignments: {}
+            intervention_id: intervention-e53591c22946f149d155
+            intervention_edge_id: dep-658ed6a87e1309c2
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            group_size: 2
+          changes:
+            group_size: 2
+          hard_edges:
+          - dep-658ed6a87e1309c2
+          - dep-990b230058d040d7
+          - dep-b3845deb278dfa2c
+          soft_edges:
+          - dep-1b047b73c45adac5
+          - dep-54cbd80200ce84df
+          - dep-ccda39fd8c731182
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-0c56786881776059
+          - dep-0d95e4db878c9b4d
+          - dep-1f73d8f703d4e7dd
+          - dep-210bfa3f4b777a7a
+          - dep-51e8c21a35d9654d
+          - dep-5dd81f0c9714fed7
+          - dep-636626458780018b
+          - dep-7cf97fc2180b3d3e
+          - dep-88d1a91d6cdfd5e0
+          - dep-d5970baf0a06effd
+          missing_context:
+          - buffer_size
+          - excluded_ranks_set
+          - guaranteed_group_size
+          - num_tasks
+          - params
+          - rank
+          - self.num_stages
+          probe_sample_template:
+            parameter: group_size
+            value: 2
+            assignments: {}
+            intervention_id: intervention-e53591c22946f149d155
+            intervention_edge_id: dep-658ed6a87e1309c2
+            intervention_role: repaired
+  - rank: 4
+    edge_id: dep-b3845deb278dfa2c
+    expression: world_size % group_size == 0
+    relation: environment
+    static_status: environment_specific
+    static_confidence: 0.98
+    selection_score: 1.686667
+    score_components:
+      centrality: 0.4
+      guard: 0.0
+      interaction: 0.2
+      missing_context: -0.4
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 1.08
+      status: 1.7999999999999998
+      uncertainty: 0.040000000000000036
+      unsupported: -0.8333333333333334
+    intervention:
+      intervention_id: intervention-1d498eb84b4c884a1ecf
+      edge_id: dep-b3845deb278dfa2c
+      expression: world_size % group_size == 0
+      primary_parameter: group_size
+      mutable_parameters:
+      - group_size
+      provenance:
+      - kind: static
+        source: torch/distributed/distributed_c10d.py
+        line: 6193
+        detail: rejecting guard
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            group_size: 2
+          changes:
+            group_size: 2
+          hard_edges:
+          - dep-b3845deb278dfa2c
+          - dep-990b230058d040d7
+          soft_edges:
+          - dep-1b047b73c45adac5
+          - dep-54cbd80200ce84df
+          - dep-658ed6a87e1309c2
+          - dep-ccda39fd8c731182
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-0c56786881776059
+          - dep-0d95e4db878c9b4d
+          - dep-1f73d8f703d4e7dd
+          - dep-210bfa3f4b777a7a
+          - dep-51e8c21a35d9654d
+          - dep-5dd81f0c9714fed7
+          - dep-636626458780018b
+          - dep-7cf97fc2180b3d3e
+          - dep-88d1a91d6cdfd5e0
+          - dep-d5970baf0a06effd
+          missing_context:
+          - buffer_size
+          - excluded_ranks_set
+          - guaranteed_group_size
+          - num_tasks
+          - params
+          - rank
+          - self.num_stages
+          probe_sample_template:
+            parameter: group_size
+            value: 2
+            assignments: {}
+            intervention_id: intervention-1d498eb84b4c884a1ecf
+            intervention_edge_id: dep-b3845deb278dfa2c
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            group_size: -3
+          changes:
+            group_size: -3
+          hard_edges:
+          - dep-b3845deb278dfa2c
+          - dep-990b230058d040d7
+          soft_edges:
+          - dep-1b047b73c45adac5
+          - dep-54cbd80200ce84df
+          - dep-658ed6a87e1309c2
+          - dep-ccda39fd8c731182
+          violated_soft_edges:
+          - dep-54cbd80200ce84df
+          - dep-658ed6a87e1309c2
+          unsupported_edges:
+          - dep-0c56786881776059
+          - dep-0d95e4db878c9b4d
+          - dep-1f73d8f703d4e7dd
+          - dep-210bfa3f4b777a7a
+          - dep-51e8c21a35d9654d
+          - dep-5dd81f0c9714fed7
+          - dep-636626458780018b
+          - dep-7cf97fc2180b3d3e
+          - dep-88d1a91d6cdfd5e0
+          - dep-d5970baf0a06effd
+          missing_context:
+          - buffer_size
+          - excluded_ranks_set
+          - guaranteed_group_size
+          - num_tasks
+          - params
+          - rank
+          - self.num_stages
+          probe_sample_template:
+            parameter: group_size
+            value: -3
+            assignments: {}
+            intervention_id: intervention-1d498eb84b4c884a1ecf
+            intervention_edge_id: dep-b3845deb278dfa2c
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            group_size: 2
+          changes:
+            group_size: 2
+          hard_edges:
+          - dep-b3845deb278dfa2c
+          - dep-990b230058d040d7
+          soft_edges:
+          - dep-1b047b73c45adac5
+          - dep-54cbd80200ce84df
+          - dep-658ed6a87e1309c2
+          - dep-ccda39fd8c731182
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-0c56786881776059
+          - dep-0d95e4db878c9b4d
+          - dep-1f73d8f703d4e7dd
+          - dep-210bfa3f4b777a7a
+          - dep-51e8c21a35d9654d
+          - dep-5dd81f0c9714fed7
+          - dep-636626458780018b
+          - dep-7cf97fc2180b3d3e
+          - dep-88d1a91d6cdfd5e0
+          - dep-d5970baf0a06effd
+          missing_context:
+          - buffer_size
+          - excluded_ranks_set
+          - guaranteed_group_size
+          - num_tasks
+          - params
+          - rank
+          - self.num_stages
+          probe_sample_template:
+            parameter: group_size
+            value: 2
+            assignments: {}
+            intervention_id: intervention-1d498eb84b4c884a1ecf
+            intervention_edge_id: dep-b3845deb278dfa2c
+            intervention_role: repaired
+- subject: deepspeed
+  artifact: artifacts/frameworks/deepspeed_v0.19.1.json
+  manifest: experiments/gpu/manifests/deepspeed.json
+  baseline: experiments/gpu/baselines/deepspeed.json
+  artifact_sha256: 12253ae5852942978b9455f15a689c1b2739e14b0973a91ffd4d898faea255ff
+  manifest_sha256: fbb5fb6c5243bb4097a17206af199d9efa4e22edc4762af43cfbf65aa4346554
+  baseline_sha256: ea87863f275a7c5a7b082f119f8acde3e8448e0bdcce61b93d9002829dd5869b
+  selection_summary:
+    considered_edges: 20
+    selected_candidates: 6
+    skipped_status: 0
+    skipped_excluded: 0
+    skipped_infeasible: 14
+    skipped_uncompetitive: 0
+    solver_timeout_ms: 3000
+  targets:
+  - rank: 1
+    edge_id: dep-70da5e10318e54f5
+    expression: train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size
+    relation: environment
+    static_status: environment_specific
+    static_confidence: 1.0
+    selection_score: 3.613333
+    score_components:
+      centrality: 0.2
+      guard: 0.0
+      interaction: 0.6000000000000001
+      missing_context: -0.0
+      pair_cost: -0.26666666666666666
+      provenance: 0.2
+      relation: 1.08
+      status: 1.7999999999999998
+      uncertainty: 0.0
+      unsupported: -0.0
+    intervention:
+      intervention_id: intervention-d7ec2e50065abb7912ba
+      edge_id: dep-70da5e10318e54f5
+      expression: train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size
+      primary_parameter: train_batch_size
+      mutable_parameters:
+      - gradient_accumulation_steps
+      - train_batch_size
+      - train_micro_batch_size_per_gpu
+      provenance:
+      - kind: static
+        source: deepspeed/runtime/config.py
+        line: 886
+        detail: assertion
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 1
+            train_batch_size: 4
+            train_micro_batch_size_per_gpu: 2
+          changes: {}
+          hard_edges:
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-0887015961d7c9ca
+          - dep-b957353a0fcb0fdc
+          - dep-dc97b1a59ef46820
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: train_batch_size
+            value: 4
+            assignments:
+              gradient_accumulation_steps: 1
+              train_micro_batch_size_per_gpu: 2
+            intervention_id: intervention-d7ec2e50065abb7912ba
+            intervention_edge_id: dep-70da5e10318e54f5
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 1
+            train_batch_size: 4
+            train_micro_batch_size_per_gpu: 1
+          changes:
+            train_micro_batch_size_per_gpu: 1
+          hard_edges:
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-0887015961d7c9ca
+          - dep-b957353a0fcb0fdc
+          - dep-dc97b1a59ef46820
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: train_batch_size
+            value: 4
+            assignments:
+              gradient_accumulation_steps: 1
+              train_micro_batch_size_per_gpu: 1
+            intervention_id: intervention-d7ec2e50065abb7912ba
+            intervention_edge_id: dep-70da5e10318e54f5
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 1
+            train_batch_size: 4
+            train_micro_batch_size_per_gpu: 2
+          changes:
+            train_micro_batch_size_per_gpu: 2
+          hard_edges:
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-0887015961d7c9ca
+          - dep-b957353a0fcb0fdc
+          - dep-dc97b1a59ef46820
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: train_batch_size
+            value: 4
+            assignments:
+              gradient_accumulation_steps: 1
+              train_micro_batch_size_per_gpu: 2
+            intervention_id: intervention-d7ec2e50065abb7912ba
+            intervention_edge_id: dep-70da5e10318e54f5
+            intervention_role: repaired
+  - rank: 2
+    edge_id: dep-0887015961d7c9ca
+    expression: train_micro_batch_size_per_gpu > 0
+    relation: range
+    static_status: static_candidate
+    static_confidence: 1.0
+    selection_score: 3.476667
+    score_components:
+      centrality: 0.15000000000000002
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.0
+      pair_cost: -0.5333333333333333
+      provenance: 0.2
+      relation: 0.66
+      status: 3.0
+      uncertainty: 0.0
+      unsupported: -0.0
+    intervention:
+      intervention_id: intervention-9c0d77e8f73c17240c4e
+      edge_id: dep-0887015961d7c9ca
+      expression: train_micro_batch_size_per_gpu > 0
+      primary_parameter: train_micro_batch_size_per_gpu
+      mutable_parameters:
+      - gradient_accumulation_steps
+      - train_batch_size
+      - train_micro_batch_size_per_gpu
+      provenance:
+      - kind: static
+        source: deepspeed/runtime/config.py
+        line: 882
+        detail: assertion
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 1
+            train_batch_size: 4
+            train_micro_batch_size_per_gpu: 2
+          changes: {}
+          hard_edges:
+          - dep-0887015961d7c9ca
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-b957353a0fcb0fdc
+          - dep-dc97b1a59ef46820
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: train_micro_batch_size_per_gpu
+            value: 2
+            assignments:
+              gradient_accumulation_steps: 1
+              train_batch_size: 4
+            intervention_id: intervention-9c0d77e8f73c17240c4e
+            intervention_edge_id: dep-0887015961d7c9ca
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 1
+            train_batch_size: 0
+            train_micro_batch_size_per_gpu: 0
+          changes:
+            train_batch_size: 0
+            train_micro_batch_size_per_gpu: 0
+          hard_edges:
+          - dep-0887015961d7c9ca
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-b957353a0fcb0fdc
+          - dep-dc97b1a59ef46820
+          violated_soft_edges:
+          - dep-b957353a0fcb0fdc
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: train_micro_batch_size_per_gpu
+            value: 0
+            assignments:
+              gradient_accumulation_steps: 1
+              train_batch_size: 0
+            intervention_id: intervention-9c0d77e8f73c17240c4e
+            intervention_edge_id: dep-0887015961d7c9ca
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 1
+            train_batch_size: 2
+            train_micro_batch_size_per_gpu: 1
+          changes:
+            train_batch_size: 2
+            train_micro_batch_size_per_gpu: 1
+          hard_edges:
+          - dep-0887015961d7c9ca
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-b957353a0fcb0fdc
+          - dep-dc97b1a59ef46820
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: train_micro_batch_size_per_gpu
+            value: 1
+            assignments:
+              gradient_accumulation_steps: 1
+              train_batch_size: 2
+            intervention_id: intervention-9c0d77e8f73c17240c4e
+            intervention_edge_id: dep-0887015961d7c9ca
+            intervention_role: repaired
+  - rank: 3
+    edge_id: dep-b957353a0fcb0fdc
+    expression: train_batch_size > 0
+    relation: range
+    static_status: static_candidate
+    static_confidence: 1.0
+    selection_score: 3.476667
+    score_components:
+      centrality: 0.15000000000000002
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.0
+      pair_cost: -0.5333333333333333
+      provenance: 0.2
+      relation: 0.66
+      status: 3.0
+      uncertainty: 0.0
+      unsupported: -0.0
+    intervention:
+      intervention_id: intervention-476616c7d786b63178b9
+      edge_id: dep-b957353a0fcb0fdc
+      expression: train_batch_size > 0
+      primary_parameter: train_batch_size
+      mutable_parameters:
+      - gradient_accumulation_steps
+      - train_batch_size
+      - train_micro_batch_size_per_gpu
+      provenance:
+      - kind: static
+        source: deepspeed/runtime/config.py
+        line: 880
+        detail: assertion
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 1
+            train_batch_size: 4
+            train_micro_batch_size_per_gpu: 2
+          changes: {}
+          hard_edges:
+          - dep-b957353a0fcb0fdc
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-0887015961d7c9ca
+          - dep-dc97b1a59ef46820
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: train_batch_size
+            value: 4
+            assignments:
+              gradient_accumulation_steps: 1
+              train_micro_batch_size_per_gpu: 2
+            intervention_id: intervention-476616c7d786b63178b9
+            intervention_edge_id: dep-b957353a0fcb0fdc
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 0
+            train_batch_size: 0
+            train_micro_batch_size_per_gpu: 2
+          changes:
+            gradient_accumulation_steps: 0
+            train_batch_size: 0
+          hard_edges:
+          - dep-b957353a0fcb0fdc
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-0887015961d7c9ca
+          - dep-dc97b1a59ef46820
+          violated_soft_edges:
+          - dep-dc97b1a59ef46820
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: train_batch_size
+            value: 0
+            assignments:
+              gradient_accumulation_steps: 0
+              train_micro_batch_size_per_gpu: 2
+            intervention_id: intervention-476616c7d786b63178b9
+            intervention_edge_id: dep-b957353a0fcb0fdc
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 1
+            train_batch_size: 4
+            train_micro_batch_size_per_gpu: 2
+          changes:
+            gradient_accumulation_steps: 1
+            train_batch_size: 4
+          hard_edges:
+          - dep-b957353a0fcb0fdc
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-0887015961d7c9ca
+          - dep-dc97b1a59ef46820
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: train_batch_size
+            value: 4
+            assignments:
+              gradient_accumulation_steps: 1
+              train_micro_batch_size_per_gpu: 2
+            intervention_id: intervention-476616c7d786b63178b9
+            intervention_edge_id: dep-b957353a0fcb0fdc
+            intervention_role: repaired
+  - rank: 4
+    edge_id: dep-dc97b1a59ef46820
+    expression: gradient_accumulation_steps > 0
+    relation: range
+    static_status: static_candidate
+    static_confidence: 1.0
+    selection_score: 3.476667
+    score_components:
+      centrality: 0.15000000000000002
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.0
+      pair_cost: -0.5333333333333333
+      provenance: 0.2
+      relation: 0.66
+      status: 3.0
+      uncertainty: 0.0
+      unsupported: -0.0
+    intervention:
+      intervention_id: intervention-a8a1a7a8e78c7aa63235
+      edge_id: dep-dc97b1a59ef46820
+      expression: gradient_accumulation_steps > 0
+      primary_parameter: gradient_accumulation_steps
+      mutable_parameters:
+      - gradient_accumulation_steps
+      - train_batch_size
+      - train_micro_batch_size_per_gpu
+      provenance:
+      - kind: static
+        source: deepspeed/runtime/config.py
+        line: 884
+        detail: assertion
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 1
+            train_batch_size: 4
+            train_micro_batch_size_per_gpu: 2
+          changes: {}
+          hard_edges:
+          - dep-dc97b1a59ef46820
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-0887015961d7c9ca
+          - dep-b957353a0fcb0fdc
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: gradient_accumulation_steps
+            value: 1
+            assignments:
+              train_batch_size: 4
+              train_micro_batch_size_per_gpu: 2
+            intervention_id: intervention-a8a1a7a8e78c7aa63235
+            intervention_edge_id: dep-dc97b1a59ef46820
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 0
+            train_batch_size: 0
+            train_micro_batch_size_per_gpu: 2
+          changes:
+            gradient_accumulation_steps: 0
+            train_batch_size: 0
+          hard_edges:
+          - dep-dc97b1a59ef46820
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-0887015961d7c9ca
+          - dep-b957353a0fcb0fdc
+          violated_soft_edges:
+          - dep-b957353a0fcb0fdc
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: gradient_accumulation_steps
+            value: 0
+            assignments:
+              train_batch_size: 0
+              train_micro_batch_size_per_gpu: 2
+            intervention_id: intervention-a8a1a7a8e78c7aa63235
+            intervention_edge_id: dep-dc97b1a59ef46820
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            gradient_accumulation_steps: 1
+            train_batch_size: 4
+            train_micro_batch_size_per_gpu: 2
+          changes:
+            gradient_accumulation_steps: 1
+            train_batch_size: 4
+          hard_edges:
+          - dep-dc97b1a59ef46820
+          - dep-70da5e10318e54f5
+          soft_edges:
+          - dep-0887015961d7c9ca
+          - dep-b957353a0fcb0fdc
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: gradient_accumulation_steps
+            value: 1
+            assignments:
+              train_batch_size: 4
+              train_micro_batch_size_per_gpu: 2
+            intervention_id: intervention-a8a1a7a8e78c7aa63235
+            intervention_edge_id: dep-dc97b1a59ef46820
+            intervention_role: repaired
+  - rank: 5
+    edge_id: dep-660c94ed03780170
+    expression: reduce_bucket_size >= 0
+    relation: range
+    static_status: static_candidate
+    static_confidence: 1.0
+    selection_score: 3.06
+    score_components:
+      centrality: 0.0
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.0
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 0.66
+      status: 3.0
+      uncertainty: 0.0
+      unsupported: -0.0
+    intervention:
+      intervention_id: intervention-81924839376fb8c1b1a2
+      edge_id: dep-660c94ed03780170
+      expression: reduce_bucket_size >= 0
+      primary_parameter: reduce_bucket_size
+      mutable_parameters:
+      - reduce_bucket_size
+      provenance:
+      - kind: static
+        source: deepspeed/runtime/zero/config.py
+        line: 113
+        detail: Field declaration
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            reduce_bucket_size: 500000000
+          changes: {}
+          hard_edges:
+          - dep-660c94ed03780170
+          soft_edges:
+          - dep-4a415b051195ecec
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: reduce_bucket_size
+            value: 500000000
+            assignments: {}
+            intervention_id: intervention-81924839376fb8c1b1a2
+            intervention_edge_id: dep-660c94ed03780170
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            reduce_bucket_size: -1
+          changes:
+            reduce_bucket_size: -1
+          hard_edges:
+          - dep-660c94ed03780170
+          soft_edges:
+          - dep-4a415b051195ecec
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: reduce_bucket_size
+            value: -1
+            assignments: {}
+            intervention_id: intervention-81924839376fb8c1b1a2
+            intervention_edge_id: dep-660c94ed03780170
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            reduce_bucket_size: 0
+          changes:
+            reduce_bucket_size: 0
+          hard_edges:
+          - dep-660c94ed03780170
+          soft_edges:
+          - dep-4a415b051195ecec
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: reduce_bucket_size
+            value: 0
+            assignments: {}
+            intervention_id: intervention-81924839376fb8c1b1a2
+            intervention_edge_id: dep-660c94ed03780170
+            intervention_role: repaired
+  - rank: 6
+    edge_id: dep-a37e7d3959ee0b8c
+    expression: allgather_bucket_size >= 0
+    relation: range
+    static_status: static_candidate
+    static_confidence: 1.0
+    selection_score: 2.76
+    score_components:
+      centrality: 0.0
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.1
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 0.66
+      status: 3.0
+      uncertainty: 0.0
+      unsupported: -0.2
+    intervention:
+      intervention_id: intervention-9351d22148dee308a965
+      edge_id: dep-a37e7d3959ee0b8c
+      expression: allgather_bucket_size >= 0
+      primary_parameter: allgather_bucket_size
+      mutable_parameters:
+      - allgather_bucket_size
+      provenance:
+      - kind: static
+        source: deepspeed/runtime/zero/config.py
+        line: 132
+        detail: Field declaration
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            allgather_bucket_size: 500000000
+          changes: {}
+          hard_edges:
+          - dep-a37e7d3959ee0b8c
+          soft_edges:
+          - dep-fe8b5c42fd4f1357
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-d05041904531c361
+          missing_context:
+          - self.nccl_start_alignment_factor
+          probe_sample_template:
+            parameter: allgather_bucket_size
+            value: 500000000
+            assignments: {}
+            intervention_id: intervention-9351d22148dee308a965
+            intervention_edge_id: dep-a37e7d3959ee0b8c
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            allgather_bucket_size: -1
+          changes:
+            allgather_bucket_size: -1
+          hard_edges:
+          - dep-a37e7d3959ee0b8c
+          soft_edges:
+          - dep-fe8b5c42fd4f1357
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-d05041904531c361
+          missing_context:
+          - self.nccl_start_alignment_factor
+          probe_sample_template:
+            parameter: allgather_bucket_size
+            value: -1
+            assignments: {}
+            intervention_id: intervention-9351d22148dee308a965
+            intervention_edge_id: dep-a37e7d3959ee0b8c
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            allgather_bucket_size: 0
+          changes:
+            allgather_bucket_size: 0
+          hard_edges:
+          - dep-a37e7d3959ee0b8c
+          soft_edges:
+          - dep-fe8b5c42fd4f1357
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-d05041904531c361
+          missing_context:
+          - self.nccl_start_alignment_factor
+          probe_sample_template:
+            parameter: allgather_bucket_size
+            value: 0
+            assignments: {}
+            intervention_id: intervention-9351d22148dee308a965
+            intervention_edge_id: dep-a37e7d3959ee0b8c
+            intervention_role: repaired
+- subject: transformers-accelerate
+  artifact: artifacts/frameworks/transformers_v5.9.0_accelerate_v1.14.0.json
+  manifest: experiments/gpu/manifests/transformers-accelerate.json
+  baseline: experiments/gpu/baselines/transformers-accelerate.json
+  artifact_sha256: 315c05b188170b5c78fc753dd4525a8a365fc1e46670b7567c748236af4f2a50
+  manifest_sha256: cac4c0e471d74150e96478dc7df319f24f283a1173f35c656f6db8f73ab33d4a
+  baseline_sha256: efc19cee4622353dc63b5c527751dfd165d62a7867528ee29d3724029eeb66bf
+  selection_summary:
+    considered_edges: 31
+    selected_candidates: 3
+    skipped_status: 0
+    skipped_excluded: 0
+    skipped_infeasible: 28
+    skipped_uncompetitive: 0
+    solver_timeout_ms: 3000
+  targets:
+  - rank: 1
+    edge_id: dep-39fd2282ed77229c
+    expression: mixed_precision in ['no', 'fp16', 'bf16', 'fp8']
+    relation: enum
+    static_status: static_candidate
+    static_confidence: 0.98
+    selection_score: 2.98
+    score_components:
+      centrality: 0.0
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.0
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 0.54
+      status: 3.0
+      uncertainty: 0.040000000000000036
+      unsupported: -0.0
+    intervention:
+      intervention_id: intervention-aa9823fcf58d0f7258b9
+      edge_id: dep-39fd2282ed77229c
+      expression: mixed_precision in ['no', 'fp16', 'bf16', 'fp8']
+      primary_parameter: mixed_precision
+      mutable_parameters:
+      - mixed_precision
+      provenance:
+      - kind: static
+        source: src/accelerate/commands/config/default.py
+        line: 58
+        detail: rejecting guard
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            mixed_precision: bf16
+          changes: {}
+          hard_edges:
+          - dep-39fd2282ed77229c
+          soft_edges:
+          - dep-4021dcf1fc2548c7
+          - dep-5d2bdf54140b8f5a
+          - dep-bb93e90843aba2d0
+          - dep-f4b3da09d598a8fb
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: mixed_precision
+            value: bf16
+            assignments: {}
+            intervention_id: intervention-aa9823fcf58d0f7258b9
+            intervention_edge_id: dep-39fd2282ed77229c
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            mixed_precision: ''
+          changes:
+            mixed_precision: ''
+          hard_edges:
+          - dep-39fd2282ed77229c
+          soft_edges:
+          - dep-4021dcf1fc2548c7
+          - dep-5d2bdf54140b8f5a
+          - dep-bb93e90843aba2d0
+          - dep-f4b3da09d598a8fb
+          violated_soft_edges:
+          - dep-5d2bdf54140b8f5a
+          - dep-bb93e90843aba2d0
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: mixed_precision
+            value: ''
+            assignments: {}
+            intervention_id: intervention-aa9823fcf58d0f7258b9
+            intervention_edge_id: dep-39fd2282ed77229c
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            mixed_precision: bf16
+          changes:
+            mixed_precision: bf16
+          hard_edges:
+          - dep-39fd2282ed77229c
+          soft_edges:
+          - dep-4021dcf1fc2548c7
+          - dep-5d2bdf54140b8f5a
+          - dep-bb93e90843aba2d0
+          - dep-f4b3da09d598a8fb
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: mixed_precision
+            value: bf16
+            assignments: {}
+            intervention_id: intervention-aa9823fcf58d0f7258b9
+            intervention_edge_id: dep-39fd2282ed77229c
+            intervention_role: repaired
+  - rank: 2
+    edge_id: dep-5d2bdf54140b8f5a
+    expression: mixed_precision in {"bf16", "fp16", "no"}
+    relation: enum
+    static_status: static_candidate
+    static_confidence: 1.0
+    selection_score: 2.94
+    score_components:
+      centrality: 0.0
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.0
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 0.54
+      status: 3.0
+      uncertainty: 0.0
+      unsupported: -0.0
+    intervention:
+      intervention_id: intervention-e157cadd84cd2baf33cb
+      edge_id: dep-5d2bdf54140b8f5a
+      expression: mixed_precision in {"bf16", "fp16", "no"}
+      primary_parameter: mixed_precision
+      mutable_parameters:
+      - mixed_precision
+      provenance:
+      - kind: static
+        source: src/accelerate/commands/config/default.py
+        line: 156
+        detail: argparse choices
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            mixed_precision: bf16
+          changes: {}
+          hard_edges:
+          - dep-5d2bdf54140b8f5a
+          soft_edges:
+          - dep-39fd2282ed77229c
+          - dep-4021dcf1fc2548c7
+          - dep-bb93e90843aba2d0
+          - dep-f4b3da09d598a8fb
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: mixed_precision
+            value: bf16
+            assignments: {}
+            intervention_id: intervention-e157cadd84cd2baf33cb
+            intervention_edge_id: dep-5d2bdf54140b8f5a
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            mixed_precision: fp8
+          changes:
+            mixed_precision: fp8
+          hard_edges:
+          - dep-5d2bdf54140b8f5a
+          soft_edges:
+          - dep-39fd2282ed77229c
+          - dep-4021dcf1fc2548c7
+          - dep-bb93e90843aba2d0
+          - dep-f4b3da09d598a8fb
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: mixed_precision
+            value: fp8
+            assignments: {}
+            intervention_id: intervention-e157cadd84cd2baf33cb
+            intervention_edge_id: dep-5d2bdf54140b8f5a
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            mixed_precision: bf16
+          changes:
+            mixed_precision: bf16
+          hard_edges:
+          - dep-5d2bdf54140b8f5a
+          soft_edges:
+          - dep-39fd2282ed77229c
+          - dep-4021dcf1fc2548c7
+          - dep-bb93e90843aba2d0
+          - dep-f4b3da09d598a8fb
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: mixed_precision
+            value: bf16
+            assignments: {}
+            intervention_id: intervention-e157cadd84cd2baf33cb
+            intervention_edge_id: dep-5d2bdf54140b8f5a
+            intervention_role: repaired
+  - rank: 3
+    edge_id: dep-bb93e90843aba2d0
+    expression: mixed_precision in {"bf16", "fp16", "fp8", "no"}
+    relation: enum
+    static_status: static_candidate
+    static_confidence: 1.0
+    selection_score: 2.94
+    score_components:
+      centrality: 0.0
+      guard: 0.0
+      interaction: 0.0
+      missing_context: -0.0
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 0.54
+      status: 3.0
+      uncertainty: 0.0
+      unsupported: -0.0
+    intervention:
+      intervention_id: intervention-331946e5a186c7919f26
+      edge_id: dep-bb93e90843aba2d0
+      expression: mixed_precision in {"bf16", "fp16", "fp8", "no"}
+      primary_parameter: mixed_precision
+      mutable_parameters:
+      - mixed_precision
+      provenance:
+      - kind: static
+        source: src/accelerate/commands/launch.py
+        line: 189
+        detail: argparse choices
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            mixed_precision: bf16
+          changes: {}
+          hard_edges:
+          - dep-bb93e90843aba2d0
+          soft_edges:
+          - dep-39fd2282ed77229c
+          - dep-4021dcf1fc2548c7
+          - dep-5d2bdf54140b8f5a
+          - dep-f4b3da09d598a8fb
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: mixed_precision
+            value: bf16
+            assignments: {}
+            intervention_id: intervention-331946e5a186c7919f26
+            intervention_edge_id: dep-bb93e90843aba2d0
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            mixed_precision: ''
+          changes:
+            mixed_precision: ''
+          hard_edges:
+          - dep-bb93e90843aba2d0
+          soft_edges:
+          - dep-39fd2282ed77229c
+          - dep-4021dcf1fc2548c7
+          - dep-5d2bdf54140b8f5a
+          - dep-f4b3da09d598a8fb
+          violated_soft_edges:
+          - dep-39fd2282ed77229c
+          - dep-5d2bdf54140b8f5a
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: mixed_precision
+            value: ''
+            assignments: {}
+            intervention_id: intervention-331946e5a186c7919f26
+            intervention_edge_id: dep-bb93e90843aba2d0
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            mixed_precision: bf16
+          changes:
+            mixed_precision: bf16
+          hard_edges:
+          - dep-bb93e90843aba2d0
+          soft_edges:
+          - dep-39fd2282ed77229c
+          - dep-4021dcf1fc2548c7
+          - dep-5d2bdf54140b8f5a
+          - dep-f4b3da09d598a8fb
+          violated_soft_edges: []
+          unsupported_edges: []
+          missing_context: []
+          probe_sample_template:
+            parameter: mixed_precision
+            value: bf16
+            assignments: {}
+            intervention_id: intervention-331946e5a186c7919f26
+            intervention_edge_id: dep-bb93e90843aba2d0
+            intervention_role: repaired
+- subject: megatron-core
+  artifact: artifacts/frameworks/megatron_core_v0.18.2.json
+  manifest: experiments/gpu/manifests/megatron-core.json
+  baseline: experiments/gpu/baselines/megatron-core.json
+  artifact_sha256: 753d78dfa5498028bf041f124fc89fa56fb2ac5ad7822c69f9d4b36959d857e1
+  manifest_sha256: 673fae3a108c7c2fed23b4392e019c1f3aba5cc7a748bf4a1264973df19e491e
+  baseline_sha256: a3609468df6cbaf83446b27a503358c55b5d91434d64b308ea1d5312b2c73f9b
+  selection_summary:
+    considered_edges: 139
+    selected_candidates: 6
+    skipped_status: 0
+    skipped_excluded: 0
+    skipped_infeasible: 115
+    skipped_uncompetitive: 4
+    solver_timeout_ms: 3000
+  targets:
+  - rank: 1
+    edge_id: dep-54241f191526fdae
+    expression: bf16 => not fp16
+    relation: conflicts
+    static_status: static_candidate
+    static_confidence: 0.97
+    selection_score: 4.376115
+    score_components:
+      centrality: 0.30000000000000004
+      guard: 0.5
+      interaction: 0.2
+      missing_context: -0.14
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 1.2
+      status: 3.0
+      uncertainty: 0.06000000000000005
+      unsupported: -0.14388489208633093
+    intervention:
+      intervention_id: intervention-14bb187f98c2dc643538
+      edge_id: dep-54241f191526fdae
+      expression: bf16 => not fp16
+      primary_parameter: fp16
+      mutable_parameters:
+      - bf16
+      - fp16
+      provenance:
+      - kind: static
+        source: megatron/core/transformer/transformer_config.py
+        line: 1186
+        detail: rejecting guard
+      - kind: static
+        source: megatron/training/arguments.py
+        line: 1173
+        detail: assertion
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            bf16: true
+            fp16: false
+          changes:
+            bf16: true
+          hard_edges:
+          - dep-54241f191526fdae
+          soft_edges:
+          - dep-284ba5a75541087a
+          - dep-5986aa9e78914f8c
+          - dep-bcffaa7c8426524c
+          - dep-f356b4161a92a77f
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-3054514db2f4cd8b
+          - dep-97e319adf210ee1c
+          - dep-a5a351faf75fb841
+          - dep-d2ed7bc92335453e
+          - dep-da03fd1ed2afb4f1
+          missing_context:
+          - fp32_residual_connection
+          - model_parallel.expert_model_parallel_size
+          - num_moe_experts
+          - overlap_moe_expert_parallel_comm
+          - self.grad_scaler
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: fp16
+            value: false
+            assignments:
+              bf16: true
+            intervention_id: intervention-14bb187f98c2dc643538
+            intervention_edge_id: dep-54241f191526fdae
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            bf16: true
+            fp16: true
+          changes:
+            bf16: true
+            fp16: true
+          hard_edges:
+          - dep-54241f191526fdae
+          soft_edges:
+          - dep-284ba5a75541087a
+          - dep-5986aa9e78914f8c
+          - dep-bcffaa7c8426524c
+          - dep-f356b4161a92a77f
+          violated_soft_edges:
+          - dep-5986aa9e78914f8c
+          - dep-bcffaa7c8426524c
+          unsupported_edges:
+          - dep-3054514db2f4cd8b
+          - dep-97e319adf210ee1c
+          - dep-a5a351faf75fb841
+          - dep-d2ed7bc92335453e
+          - dep-da03fd1ed2afb4f1
+          missing_context:
+          - fp32_residual_connection
+          - model_parallel.expert_model_parallel_size
+          - num_moe_experts
+          - overlap_moe_expert_parallel_comm
+          - self.grad_scaler
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: fp16
+            value: true
+            assignments:
+              bf16: true
+            intervention_id: intervention-14bb187f98c2dc643538
+            intervention_edge_id: dep-54241f191526fdae
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            bf16: true
+            fp16: false
+          changes:
+            fp16: false
+          hard_edges:
+          - dep-54241f191526fdae
+          soft_edges:
+          - dep-284ba5a75541087a
+          - dep-5986aa9e78914f8c
+          - dep-bcffaa7c8426524c
+          - dep-f356b4161a92a77f
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-3054514db2f4cd8b
+          - dep-97e319adf210ee1c
+          - dep-a5a351faf75fb841
+          - dep-d2ed7bc92335453e
+          - dep-da03fd1ed2afb4f1
+          missing_context:
+          - fp32_residual_connection
+          - model_parallel.expert_model_parallel_size
+          - num_moe_experts
+          - overlap_moe_expert_parallel_comm
+          - self.grad_scaler
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: fp16
+            value: false
+            assignments:
+              bf16: true
+            intervention_id: intervention-14bb187f98c2dc643538
+            intervention_edge_id: dep-54241f191526fdae
+            intervention_role: repaired
+  - rank: 2
+    edge_id: dep-bcffaa7c8426524c
+    expression: fp16 => not bf16
+    relation: conflicts
+    static_status: static_candidate
+    static_confidence: 0.97
+    selection_score: 4.376115
+    score_components:
+      centrality: 0.30000000000000004
+      guard: 0.5
+      interaction: 0.2
+      missing_context: -0.14
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 1.2
+      status: 3.0
+      uncertainty: 0.06000000000000005
+      unsupported: -0.14388489208633093
+    intervention:
+      intervention_id: intervention-2102cb9602773b02d038
+      edge_id: dep-bcffaa7c8426524c
+      expression: fp16 => not bf16
+      primary_parameter: bf16
+      mutable_parameters:
+      - bf16
+      - fp16
+      provenance:
+      - kind: static
+        source: megatron/core/transformer/transformer_config.py
+        line: 1186
+        detail: rejecting guard
+      - kind: static
+        source: megatron/training/arguments.py
+        line: 1164
+        detail: assertion
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            bf16: false
+            fp16: true
+          changes:
+            fp16: true
+          hard_edges:
+          - dep-bcffaa7c8426524c
+          soft_edges:
+          - dep-284ba5a75541087a
+          - dep-54241f191526fdae
+          - dep-5986aa9e78914f8c
+          - dep-f356b4161a92a77f
+          violated_soft_edges:
+          - dep-5986aa9e78914f8c
+          unsupported_edges:
+          - dep-3054514db2f4cd8b
+          - dep-97e319adf210ee1c
+          - dep-a5a351faf75fb841
+          - dep-d2ed7bc92335453e
+          - dep-da03fd1ed2afb4f1
+          missing_context:
+          - fp32_residual_connection
+          - model_parallel.expert_model_parallel_size
+          - num_moe_experts
+          - overlap_moe_expert_parallel_comm
+          - self.grad_scaler
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: bf16
+            value: false
+            assignments:
+              fp16: true
+            intervention_id: intervention-2102cb9602773b02d038
+            intervention_edge_id: dep-bcffaa7c8426524c
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            bf16: true
+            fp16: true
+          changes:
+            bf16: true
+            fp16: true
+          hard_edges:
+          - dep-bcffaa7c8426524c
+          soft_edges:
+          - dep-284ba5a75541087a
+          - dep-54241f191526fdae
+          - dep-5986aa9e78914f8c
+          - dep-f356b4161a92a77f
+          violated_soft_edges:
+          - dep-54241f191526fdae
+          - dep-5986aa9e78914f8c
+          unsupported_edges:
+          - dep-3054514db2f4cd8b
+          - dep-97e319adf210ee1c
+          - dep-a5a351faf75fb841
+          - dep-d2ed7bc92335453e
+          - dep-da03fd1ed2afb4f1
+          missing_context:
+          - fp32_residual_connection
+          - model_parallel.expert_model_parallel_size
+          - num_moe_experts
+          - overlap_moe_expert_parallel_comm
+          - self.grad_scaler
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: bf16
+            value: true
+            assignments:
+              fp16: true
+            intervention_id: intervention-2102cb9602773b02d038
+            intervention_edge_id: dep-bcffaa7c8426524c
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            bf16: false
+            fp16: true
+          changes:
+            bf16: false
+          hard_edges:
+          - dep-bcffaa7c8426524c
+          soft_edges:
+          - dep-284ba5a75541087a
+          - dep-54241f191526fdae
+          - dep-5986aa9e78914f8c
+          - dep-f356b4161a92a77f
+          violated_soft_edges:
+          - dep-5986aa9e78914f8c
+          unsupported_edges:
+          - dep-3054514db2f4cd8b
+          - dep-97e319adf210ee1c
+          - dep-a5a351faf75fb841
+          - dep-d2ed7bc92335453e
+          - dep-da03fd1ed2afb4f1
+          missing_context:
+          - fp32_residual_connection
+          - model_parallel.expert_model_parallel_size
+          - num_moe_experts
+          - overlap_moe_expert_parallel_comm
+          - self.grad_scaler
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: bf16
+            value: false
+            assignments:
+              fp16: true
+            intervention_id: intervention-2102cb9602773b02d038
+            intervention_edge_id: dep-bcffaa7c8426524c
+            intervention_role: repaired
+  - rank: 3
+    edge_id: dep-2d732812b8519cbd
+    expression: num_query_groups == num_attention_heads
+    relation: equality
+    static_status: static_candidate
+    static_confidence: 0.98
+    selection_score: 4.153669
+    score_components:
+      centrality: 0.4
+      guard: 0.0
+      interaction: 0.2
+      missing_context: -0.1
+      pair_cost: -0.4
+      provenance: 0.2
+      relation: 0.8999999999999999
+      status: 3.0
+      uncertainty: 0.040000000000000036
+      unsupported: -0.08633093525179857
+    intervention:
+      intervention_id: intervention-c5433103f77bbe7f6240
+      edge_id: dep-2d732812b8519cbd
+      expression: num_query_groups == num_attention_heads
+      primary_parameter: num_query_groups
+      mutable_parameters:
+      - num_attention_heads
+      - num_query_groups
+      provenance:
+      - kind: static
+        source: megatron/core/transformer/attention.py
+        line: 1821
+        detail: rejecting guard
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            num_attention_heads: 8
+            num_query_groups: 8
+          changes: {}
+          hard_edges:
+          - dep-2d732812b8519cbd
+          soft_edges:
+          - dep-0e5b05ce92243bec
+          - dep-39cacf993fb7357d
+          - dep-69c46f3949e2ef67
+          - dep-cb319a7900c735ab
+          - dep-cddb54456c2e43b5
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-149b36d823475290
+          - dep-9fdee8d0a83297fa
+          - dep-e2848b6814dc4797
+          missing_context:
+          - kv_channels
+          - language_model.hidden_size
+          - n_heads_in_group
+          - num_moe_experts
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: num_query_groups
+            value: 8
+            assignments:
+              num_attention_heads: 8
+            intervention_id: intervention-c5433103f77bbe7f6240
+            intervention_edge_id: dep-2d732812b8519cbd
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            num_attention_heads: 8
+            num_query_groups: 6
+          changes:
+            num_query_groups: 6
+          hard_edges:
+          - dep-2d732812b8519cbd
+          soft_edges:
+          - dep-0e5b05ce92243bec
+          - dep-39cacf993fb7357d
+          - dep-69c46f3949e2ef67
+          - dep-cb319a7900c735ab
+          - dep-cddb54456c2e43b5
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-149b36d823475290
+          - dep-9fdee8d0a83297fa
+          - dep-e2848b6814dc4797
+          missing_context:
+          - kv_channels
+          - language_model.hidden_size
+          - n_heads_in_group
+          - num_moe_experts
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: num_query_groups
+            value: 6
+            assignments:
+              num_attention_heads: 8
+            intervention_id: intervention-c5433103f77bbe7f6240
+            intervention_edge_id: dep-2d732812b8519cbd
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            num_attention_heads: 8
+            num_query_groups: 8
+          changes:
+            num_query_groups: 8
+          hard_edges:
+          - dep-2d732812b8519cbd
+          soft_edges:
+          - dep-0e5b05ce92243bec
+          - dep-39cacf993fb7357d
+          - dep-69c46f3949e2ef67
+          - dep-cb319a7900c735ab
+          - dep-cddb54456c2e43b5
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-149b36d823475290
+          - dep-9fdee8d0a83297fa
+          - dep-e2848b6814dc4797
+          missing_context:
+          - kv_channels
+          - language_model.hidden_size
+          - n_heads_in_group
+          - num_moe_experts
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: num_query_groups
+            value: 8
+            assignments:
+              num_attention_heads: 8
+            intervention_id: intervention-c5433103f77bbe7f6240
+            intervention_edge_id: dep-2d732812b8519cbd
+            intervention_role: repaired
+  - rank: 4
+    edge_id: dep-1ce2a9ae2ac16140
+    expression: num_moe_experts is not None => num_moe_experts > 0
+    relation: bound
+    static_status: static_candidate
+    static_confidence: 0.95
+    selection_score: 3.847338
+    score_components:
+      centrality: 0.4
+      guard: 0.5
+      interaction: 0.0
+      missing_context: -0.16
+      pair_cost: -0.8
+      provenance: 0.2
+      relation: 0.78
+      status: 3.0
+      uncertainty: 0.10000000000000009
+      unsupported: -0.17266187050359713
+    intervention:
+      intervention_id: intervention-850e332875aeaa6ebf1c
+      edge_id: dep-1ce2a9ae2ac16140
+      expression: num_moe_experts is not None => num_moe_experts > 0
+      primary_parameter: num_moe_experts
+      mutable_parameters:
+      - num_moe_experts
+      provenance:
+      - kind: static
+        source: megatron/core/transformer/transformer_config.py
+        line: 1389
+        detail: rejecting guard
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            num_moe_experts: 1
+          changes:
+            num_moe_experts: 1
+          hard_edges:
+          - dep-1ce2a9ae2ac16140
+          soft_edges:
+          - dep-8723215867d31a43
+          - dep-b110e71704ac5aff
+          - dep-bf2cad2ce5111c11
+          - dep-d512be374d38e0f6
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-0e7b534b9344764d
+          - dep-2d49eb2e09a8a279
+          - dep-4233945aa011aa90
+          - dep-74d937d2edd5bb04
+          - dep-d97dfde026330c9e
+          - dep-f662b7f44f5f8545
+          missing_context:
+          - ep_size
+          - inference_fuse_tp_communication
+          - model_parallel.expert_model_parallel_size
+          - moe_ffn_hidden_size
+          - moe_router_group_topk
+          - moe_router_num_groups
+          - num_moe_experts
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: num_moe_experts
+            value: 1
+            assignments: {}
+            intervention_id: intervention-850e332875aeaa6ebf1c
+            intervention_edge_id: dep-1ce2a9ae2ac16140
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            num_moe_experts: 0
+          changes:
+            num_moe_experts: 0
+          hard_edges:
+          - dep-1ce2a9ae2ac16140
+          soft_edges:
+          - dep-8723215867d31a43
+          - dep-b110e71704ac5aff
+          - dep-bf2cad2ce5111c11
+          - dep-d512be374d38e0f6
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-0e7b534b9344764d
+          - dep-2d49eb2e09a8a279
+          - dep-4233945aa011aa90
+          - dep-74d937d2edd5bb04
+          - dep-d97dfde026330c9e
+          - dep-f662b7f44f5f8545
+          missing_context:
+          - ep_size
+          - inference_fuse_tp_communication
+          - model_parallel.expert_model_parallel_size
+          - moe_ffn_hidden_size
+          - moe_router_group_topk
+          - moe_router_num_groups
+          - num_moe_experts
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: num_moe_experts
+            value: 0
+            assignments: {}
+            intervention_id: intervention-850e332875aeaa6ebf1c
+            intervention_edge_id: dep-1ce2a9ae2ac16140
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            num_moe_experts: 1
+          changes:
+            num_moe_experts: 1
+          hard_edges:
+          - dep-1ce2a9ae2ac16140
+          soft_edges:
+          - dep-8723215867d31a43
+          - dep-b110e71704ac5aff
+          - dep-bf2cad2ce5111c11
+          - dep-d512be374d38e0f6
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-0e7b534b9344764d
+          - dep-2d49eb2e09a8a279
+          - dep-4233945aa011aa90
+          - dep-74d937d2edd5bb04
+          - dep-d97dfde026330c9e
+          - dep-f662b7f44f5f8545
+          missing_context:
+          - ep_size
+          - inference_fuse_tp_communication
+          - model_parallel.expert_model_parallel_size
+          - moe_ffn_hidden_size
+          - moe_router_group_topk
+          - moe_router_num_groups
+          - num_moe_experts
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: num_moe_experts
+            value: 1
+            assignments: {}
+            intervention_id: intervention-850e332875aeaa6ebf1c
+            intervention_edge_id: dep-1ce2a9ae2ac16140
+            intervention_role: repaired
+  - rank: 5
+    edge_id: dep-73dd37cfa3f495c3
+    expression: (tensor_model_parallel_size <= 1 or expert_model_parallel_size <= 1) and sequence_parallel => expert_model_parallel_size
+      != 1 and tensor_model_parallel_size != 1
+    relation: requires
+    static_status: static_candidate
+    static_confidence: 0.95
+    selection_score: 3.746475
+    score_components:
+      centrality: 0.4
+      guard: 0.5
+      interaction: 0.4
+      missing_context: -0.64
+      pair_cost: -0.32000000000000006
+      provenance: 0.2
+      relation: 1.2
+      status: 3.0
+      uncertainty: 0.10000000000000009
+      unsupported: -1.0935251798561152
+    intervention:
+      intervention_id: intervention-9492d1004742a4ff3e17
+      edge_id: dep-73dd37cfa3f495c3
+      expression: (tensor_model_parallel_size <= 1 or expert_model_parallel_size <= 1) and sequence_parallel => expert_model_parallel_size
+        != 1 and tensor_model_parallel_size != 1
+      primary_parameter: tensor_model_parallel_size
+      mutable_parameters:
+      - context_parallel_size
+      - expert_model_parallel_size
+      - pipeline_model_parallel_size
+      - sequence_parallel
+      - tensor_model_parallel_size
+      provenance:
+      - kind: static
+        source: megatron/core/inference/text_generation_controllers/text_generation_controller.py
+        line: 2027
+        detail: rejecting guard
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            context_parallel_size: 1
+            expert_model_parallel_size: 0
+            pipeline_model_parallel_size: 1
+            sequence_parallel: true
+            tensor_model_parallel_size: 2
+          changes:
+            expert_model_parallel_size: 0
+            sequence_parallel: true
+          hard_edges:
+          - dep-73dd37cfa3f495c3
+          - dep-85d113f8dac96ae0
+          - dep-8ed1257aa5b0eaed
+          - dep-e9e70edc51d724b7
+          soft_edges:
+          - dep-3d77928b2ce18f90
+          - dep-3fc8e4ead0134626
+          - dep-48c440ca3441c305
+          - dep-58519c0a5d327465
+          - dep-69c46f3949e2ef67
+          - dep-77fd7ce216b36ffd
+          - dep-7cb33497e801ef6b
+          - dep-990b5b70d80f483c
+          - dep-ad56457c1894b438
+          - dep-b110e71704ac5aff
+          - dep-b3a91c73c367b2ea
+          - dep-c08a30a01a8b5a64
+          - dep-c23a19aff2130801
+          - dep-cb319a7900c735ab
+          - dep-d512be374d38e0f6
+          - dep-ebb50d0b2b7a38c7
+          - dep-f3ab69bed5074b14
+          violated_soft_edges:
+          - dep-b3a91c73c367b2ea
+          - dep-c23a19aff2130801
+          unsupported_edges:
+          - dep-04f494fcccb96087
+          - dep-090baf04b6fce498
+          - dep-0c6b6e6ab5dec019
+          - dep-105fe9d3503ada2a
+          - dep-141daba94907d7ee
+          - dep-1a8293d5b6bb2053
+          - dep-264a76dcf6320803
+          - dep-28327176a4cd35a3
+          - dep-332aefadb17185b2
+          - dep-3d8c9ab0864b3720
+          - dep-40958b81b298eb86
+          - dep-41db7e4868ff92c7
+          - dep-42b5485a84ac3984
+          - dep-4561a7252621b5c7
+          - dep-45fdffb89c2851d4
+          - dep-58340bf1c7268e61
+          - dep-58d7a43f15d6e43b
+          - dep-5a07d0fb2a8d1399
+          - dep-5df9cb4953366ad0
+          - dep-6b7d396503cffd67
+          - dep-70f41a350f268abb
+          - dep-7a5281b3dee4dde0
+          - dep-841752769d3d696d
+          - dep-8d5c6d2b8ff96eea
+          - dep-9281b624e188e639
+          - dep-94085b4bb5af8633
+          - dep-9842430aa87d306e
+          - dep-a614cd1908711e29
+          - dep-b2a3436bb701d3c3
+          - dep-ca4c42358e166db4
+          - dep-ce06060ba7936c80
+          - dep-dca53159185db651
+          - dep-e12060ffa4060d1f
+          - dep-ecfe8233ac95657f
+          - dep-f2cc3f1e1cbbf474
+          - dep-f873310d580d7a6e
+          - dep-fac6fd6a177d141b
+          - dep-fcf334684e11e14c
+          missing_context:
+          - account_for_embedding_in_pipeline_split
+          - account_for_loss_in_pipeline_split
+          - ckpt_format
+          - cpu_offloading
+          - defer_embedding_wgrad_compute
+          - distribute_saved_activations
+          - experimental_attention_variant
+          - expert_tensor_parallel_size
+          - export_kd_teacher_load
+          - first_last_layers_bf16
+          - fp8
+          - inference_batch_times_seqlen_threshold
+          - inference_context
+          - language_model.num_moe_experts
+          - layout
+          - linear_num_key_heads
+          - linear_num_value_heads
+          - model_parallel_size
+          - num_distributed_optimizer_instances
+          - num_experts
+          - num_layers_in_first_pipeline_stage
+          - num_layers_per_pipeline_rank
+          - num_layers_per_virtual_pipeline_stage
+          - num_moe_experts
+          - num_stages
+          - overlap_moe_expert_parallel_comm
+          - overlap_p2p_comm
+          - self.tp_size
+          - seq_length
+          - tp_comm_overlap
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: tensor_model_parallel_size
+            value: 2
+            assignments:
+              context_parallel_size: 1
+              expert_model_parallel_size: 0
+              pipeline_model_parallel_size: 1
+              sequence_parallel: true
+            intervention_id: intervention-9492d1004742a4ff3e17
+            intervention_edge_id: dep-73dd37cfa3f495c3
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            context_parallel_size: 1
+            expert_model_parallel_size: 1
+            pipeline_model_parallel_size: 1
+            sequence_parallel: true
+            tensor_model_parallel_size: 2
+          changes:
+            sequence_parallel: true
+          hard_edges:
+          - dep-73dd37cfa3f495c3
+          - dep-85d113f8dac96ae0
+          - dep-8ed1257aa5b0eaed
+          - dep-e9e70edc51d724b7
+          soft_edges:
+          - dep-3d77928b2ce18f90
+          - dep-3fc8e4ead0134626
+          - dep-48c440ca3441c305
+          - dep-58519c0a5d327465
+          - dep-69c46f3949e2ef67
+          - dep-77fd7ce216b36ffd
+          - dep-7cb33497e801ef6b
+          - dep-990b5b70d80f483c
+          - dep-ad56457c1894b438
+          - dep-b110e71704ac5aff
+          - dep-b3a91c73c367b2ea
+          - dep-c08a30a01a8b5a64
+          - dep-c23a19aff2130801
+          - dep-cb319a7900c735ab
+          - dep-d512be374d38e0f6
+          - dep-ebb50d0b2b7a38c7
+          - dep-f3ab69bed5074b14
+          violated_soft_edges:
+          - dep-7cb33497e801ef6b
+          - dep-b3a91c73c367b2ea
+          - dep-c23a19aff2130801
+          unsupported_edges:
+          - dep-04f494fcccb96087
+          - dep-090baf04b6fce498
+          - dep-0c6b6e6ab5dec019
+          - dep-105fe9d3503ada2a
+          - dep-141daba94907d7ee
+          - dep-1a8293d5b6bb2053
+          - dep-264a76dcf6320803
+          - dep-28327176a4cd35a3
+          - dep-332aefadb17185b2
+          - dep-3d8c9ab0864b3720
+          - dep-40958b81b298eb86
+          - dep-41db7e4868ff92c7
+          - dep-42b5485a84ac3984
+          - dep-4561a7252621b5c7
+          - dep-45fdffb89c2851d4
+          - dep-58340bf1c7268e61
+          - dep-58d7a43f15d6e43b
+          - dep-5a07d0fb2a8d1399
+          - dep-5df9cb4953366ad0
+          - dep-6b7d396503cffd67
+          - dep-70f41a350f268abb
+          - dep-7a5281b3dee4dde0
+          - dep-841752769d3d696d
+          - dep-8d5c6d2b8ff96eea
+          - dep-9281b624e188e639
+          - dep-94085b4bb5af8633
+          - dep-9842430aa87d306e
+          - dep-a614cd1908711e29
+          - dep-b2a3436bb701d3c3
+          - dep-ca4c42358e166db4
+          - dep-ce06060ba7936c80
+          - dep-dca53159185db651
+          - dep-e12060ffa4060d1f
+          - dep-ecfe8233ac95657f
+          - dep-f2cc3f1e1cbbf474
+          - dep-f873310d580d7a6e
+          - dep-fac6fd6a177d141b
+          - dep-fcf334684e11e14c
+          missing_context:
+          - account_for_embedding_in_pipeline_split
+          - account_for_loss_in_pipeline_split
+          - ckpt_format
+          - cpu_offloading
+          - defer_embedding_wgrad_compute
+          - distribute_saved_activations
+          - experimental_attention_variant
+          - expert_tensor_parallel_size
+          - export_kd_teacher_load
+          - first_last_layers_bf16
+          - fp8
+          - inference_batch_times_seqlen_threshold
+          - inference_context
+          - language_model.num_moe_experts
+          - layout
+          - linear_num_key_heads
+          - linear_num_value_heads
+          - model_parallel_size
+          - num_distributed_optimizer_instances
+          - num_experts
+          - num_layers_in_first_pipeline_stage
+          - num_layers_per_pipeline_rank
+          - num_layers_per_virtual_pipeline_stage
+          - num_moe_experts
+          - num_stages
+          - overlap_moe_expert_parallel_comm
+          - overlap_p2p_comm
+          - self.tp_size
+          - seq_length
+          - tp_comm_overlap
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: tensor_model_parallel_size
+            value: 2
+            assignments:
+              context_parallel_size: 1
+              expert_model_parallel_size: 1
+              pipeline_model_parallel_size: 1
+              sequence_parallel: true
+            intervention_id: intervention-9492d1004742a4ff3e17
+            intervention_edge_id: dep-73dd37cfa3f495c3
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            context_parallel_size: 1
+            expert_model_parallel_size: 0
+            pipeline_model_parallel_size: 1
+            sequence_parallel: true
+            tensor_model_parallel_size: 2
+          changes:
+            expert_model_parallel_size: 0
+          hard_edges:
+          - dep-73dd37cfa3f495c3
+          - dep-85d113f8dac96ae0
+          - dep-8ed1257aa5b0eaed
+          - dep-e9e70edc51d724b7
+          soft_edges:
+          - dep-3d77928b2ce18f90
+          - dep-3fc8e4ead0134626
+          - dep-48c440ca3441c305
+          - dep-58519c0a5d327465
+          - dep-69c46f3949e2ef67
+          - dep-77fd7ce216b36ffd
+          - dep-7cb33497e801ef6b
+          - dep-990b5b70d80f483c
+          - dep-ad56457c1894b438
+          - dep-b110e71704ac5aff
+          - dep-b3a91c73c367b2ea
+          - dep-c08a30a01a8b5a64
+          - dep-c23a19aff2130801
+          - dep-cb319a7900c735ab
+          - dep-d512be374d38e0f6
+          - dep-ebb50d0b2b7a38c7
+          - dep-f3ab69bed5074b14
+          violated_soft_edges:
+          - dep-b3a91c73c367b2ea
+          - dep-c23a19aff2130801
+          unsupported_edges:
+          - dep-04f494fcccb96087
+          - dep-090baf04b6fce498
+          - dep-0c6b6e6ab5dec019
+          - dep-105fe9d3503ada2a
+          - dep-141daba94907d7ee
+          - dep-1a8293d5b6bb2053
+          - dep-264a76dcf6320803
+          - dep-28327176a4cd35a3
+          - dep-332aefadb17185b2
+          - dep-3d8c9ab0864b3720
+          - dep-40958b81b298eb86
+          - dep-41db7e4868ff92c7
+          - dep-42b5485a84ac3984
+          - dep-4561a7252621b5c7
+          - dep-45fdffb89c2851d4
+          - dep-58340bf1c7268e61
+          - dep-58d7a43f15d6e43b
+          - dep-5a07d0fb2a8d1399
+          - dep-5df9cb4953366ad0
+          - dep-6b7d396503cffd67
+          - dep-70f41a350f268abb
+          - dep-7a5281b3dee4dde0
+          - dep-841752769d3d696d
+          - dep-8d5c6d2b8ff96eea
+          - dep-9281b624e188e639
+          - dep-94085b4bb5af8633
+          - dep-9842430aa87d306e
+          - dep-a614cd1908711e29
+          - dep-b2a3436bb701d3c3
+          - dep-ca4c42358e166db4
+          - dep-ce06060ba7936c80
+          - dep-dca53159185db651
+          - dep-e12060ffa4060d1f
+          - dep-ecfe8233ac95657f
+          - dep-f2cc3f1e1cbbf474
+          - dep-f873310d580d7a6e
+          - dep-fac6fd6a177d141b
+          - dep-fcf334684e11e14c
+          missing_context:
+          - account_for_embedding_in_pipeline_split
+          - account_for_loss_in_pipeline_split
+          - ckpt_format
+          - cpu_offloading
+          - defer_embedding_wgrad_compute
+          - distribute_saved_activations
+          - experimental_attention_variant
+          - expert_tensor_parallel_size
+          - export_kd_teacher_load
+          - first_last_layers_bf16
+          - fp8
+          - inference_batch_times_seqlen_threshold
+          - inference_context
+          - language_model.num_moe_experts
+          - layout
+          - linear_num_key_heads
+          - linear_num_value_heads
+          - model_parallel_size
+          - num_distributed_optimizer_instances
+          - num_experts
+          - num_layers_in_first_pipeline_stage
+          - num_layers_per_pipeline_rank
+          - num_layers_per_virtual_pipeline_stage
+          - num_moe_experts
+          - num_stages
+          - overlap_moe_expert_parallel_comm
+          - overlap_p2p_comm
+          - self.tp_size
+          - seq_length
+          - tp_comm_overlap
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: tensor_model_parallel_size
+            value: 2
+            assignments:
+              context_parallel_size: 1
+              expert_model_parallel_size: 0
+              pipeline_model_parallel_size: 1
+              sequence_parallel: true
+            intervention_id: intervention-9492d1004742a4ff3e17
+            intervention_edge_id: dep-73dd37cfa3f495c3
+            intervention_role: repaired
+  - rank: 6
+    edge_id: dep-7cb33497e801ef6b
+    expression: (tensor_model_parallel_size <= 1 or expert_model_parallel_size <= 1) and (expert_model_parallel_size == 1
+      or tensor_model_parallel_size == 1) => not sequence_parallel
+    relation: conflicts
+    static_status: static_candidate
+    static_confidence: 0.95
+    selection_score: 3.586475
+    score_components:
+      centrality: 0.4
+      guard: 0.5
+      interaction: 0.4
+      missing_context: -0.64
+      pair_cost: -0.48
+      provenance: 0.2
+      relation: 1.2
+      status: 3.0
+      uncertainty: 0.10000000000000009
+      unsupported: -1.0935251798561152
+    intervention:
+      intervention_id: intervention-82371441a61f4b4dda77
+      edge_id: dep-7cb33497e801ef6b
+      expression: (tensor_model_parallel_size <= 1 or expert_model_parallel_size <= 1) and (expert_model_parallel_size ==
+        1 or tensor_model_parallel_size == 1) => not sequence_parallel
+      primary_parameter: sequence_parallel
+      mutable_parameters:
+      - context_parallel_size
+      - expert_model_parallel_size
+      - pipeline_model_parallel_size
+      - sequence_parallel
+      - tensor_model_parallel_size
+      provenance:
+      - kind: static
+        source: megatron/core/inference/text_generation_controllers/text_generation_controller.py
+        line: 2027
+        detail: rejecting guard
+      cases:
+        satisfying:
+          role: satisfying
+          status: sat
+          configuration:
+            context_parallel_size: 1
+            expert_model_parallel_size: 1
+            pipeline_model_parallel_size: 2
+            sequence_parallel: false
+            tensor_model_parallel_size: 1
+          changes:
+            pipeline_model_parallel_size: 2
+            tensor_model_parallel_size: 1
+          hard_edges:
+          - dep-7cb33497e801ef6b
+          - dep-85d113f8dac96ae0
+          - dep-8ed1257aa5b0eaed
+          - dep-e9e70edc51d724b7
+          soft_edges:
+          - dep-3d77928b2ce18f90
+          - dep-3fc8e4ead0134626
+          - dep-48c440ca3441c305
+          - dep-58519c0a5d327465
+          - dep-69c46f3949e2ef67
+          - dep-73dd37cfa3f495c3
+          - dep-77fd7ce216b36ffd
+          - dep-990b5b70d80f483c
+          - dep-ad56457c1894b438
+          - dep-b110e71704ac5aff
+          - dep-b3a91c73c367b2ea
+          - dep-c08a30a01a8b5a64
+          - dep-c23a19aff2130801
+          - dep-cb319a7900c735ab
+          - dep-d512be374d38e0f6
+          - dep-ebb50d0b2b7a38c7
+          - dep-f3ab69bed5074b14
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-04f494fcccb96087
+          - dep-090baf04b6fce498
+          - dep-0c6b6e6ab5dec019
+          - dep-105fe9d3503ada2a
+          - dep-141daba94907d7ee
+          - dep-1a8293d5b6bb2053
+          - dep-264a76dcf6320803
+          - dep-28327176a4cd35a3
+          - dep-332aefadb17185b2
+          - dep-3d8c9ab0864b3720
+          - dep-40958b81b298eb86
+          - dep-41db7e4868ff92c7
+          - dep-42b5485a84ac3984
+          - dep-4561a7252621b5c7
+          - dep-45fdffb89c2851d4
+          - dep-58340bf1c7268e61
+          - dep-58d7a43f15d6e43b
+          - dep-5a07d0fb2a8d1399
+          - dep-5df9cb4953366ad0
+          - dep-6b7d396503cffd67
+          - dep-70f41a350f268abb
+          - dep-7a5281b3dee4dde0
+          - dep-841752769d3d696d
+          - dep-8d5c6d2b8ff96eea
+          - dep-9281b624e188e639
+          - dep-94085b4bb5af8633
+          - dep-9842430aa87d306e
+          - dep-a614cd1908711e29
+          - dep-b2a3436bb701d3c3
+          - dep-ca4c42358e166db4
+          - dep-ce06060ba7936c80
+          - dep-dca53159185db651
+          - dep-e12060ffa4060d1f
+          - dep-ecfe8233ac95657f
+          - dep-f2cc3f1e1cbbf474
+          - dep-f873310d580d7a6e
+          - dep-fac6fd6a177d141b
+          - dep-fcf334684e11e14c
+          missing_context:
+          - account_for_embedding_in_pipeline_split
+          - account_for_loss_in_pipeline_split
+          - ckpt_format
+          - cpu_offloading
+          - defer_embedding_wgrad_compute
+          - distribute_saved_activations
+          - experimental_attention_variant
+          - expert_tensor_parallel_size
+          - export_kd_teacher_load
+          - first_last_layers_bf16
+          - fp8
+          - inference_batch_times_seqlen_threshold
+          - inference_context
+          - language_model.num_moe_experts
+          - layout
+          - linear_num_key_heads
+          - linear_num_value_heads
+          - model_parallel_size
+          - num_distributed_optimizer_instances
+          - num_experts
+          - num_layers_in_first_pipeline_stage
+          - num_layers_per_pipeline_rank
+          - num_layers_per_virtual_pipeline_stage
+          - num_moe_experts
+          - num_stages
+          - overlap_moe_expert_parallel_comm
+          - overlap_p2p_comm
+          - self.tp_size
+          - seq_length
+          - tp_comm_overlap
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: sequence_parallel
+            value: false
+            assignments:
+              context_parallel_size: 1
+              expert_model_parallel_size: 1
+              pipeline_model_parallel_size: 2
+              tensor_model_parallel_size: 1
+            intervention_id: intervention-82371441a61f4b4dda77
+            intervention_edge_id: dep-7cb33497e801ef6b
+            intervention_role: satisfying
+        violating:
+          role: violating
+          status: sat
+          configuration:
+            context_parallel_size: 1
+            expert_model_parallel_size: 1
+            pipeline_model_parallel_size: 1
+            sequence_parallel: true
+            tensor_model_parallel_size: 2
+          changes:
+            sequence_parallel: true
+          hard_edges:
+          - dep-7cb33497e801ef6b
+          - dep-85d113f8dac96ae0
+          - dep-8ed1257aa5b0eaed
+          - dep-e9e70edc51d724b7
+          soft_edges:
+          - dep-3d77928b2ce18f90
+          - dep-3fc8e4ead0134626
+          - dep-48c440ca3441c305
+          - dep-58519c0a5d327465
+          - dep-69c46f3949e2ef67
+          - dep-73dd37cfa3f495c3
+          - dep-77fd7ce216b36ffd
+          - dep-990b5b70d80f483c
+          - dep-ad56457c1894b438
+          - dep-b110e71704ac5aff
+          - dep-b3a91c73c367b2ea
+          - dep-c08a30a01a8b5a64
+          - dep-c23a19aff2130801
+          - dep-cb319a7900c735ab
+          - dep-d512be374d38e0f6
+          - dep-ebb50d0b2b7a38c7
+          - dep-f3ab69bed5074b14
+          violated_soft_edges:
+          - dep-73dd37cfa3f495c3
+          - dep-b3a91c73c367b2ea
+          - dep-c23a19aff2130801
+          unsupported_edges:
+          - dep-04f494fcccb96087
+          - dep-090baf04b6fce498
+          - dep-0c6b6e6ab5dec019
+          - dep-105fe9d3503ada2a
+          - dep-141daba94907d7ee
+          - dep-1a8293d5b6bb2053
+          - dep-264a76dcf6320803
+          - dep-28327176a4cd35a3
+          - dep-332aefadb17185b2
+          - dep-3d8c9ab0864b3720
+          - dep-40958b81b298eb86
+          - dep-41db7e4868ff92c7
+          - dep-42b5485a84ac3984
+          - dep-4561a7252621b5c7
+          - dep-45fdffb89c2851d4
+          - dep-58340bf1c7268e61
+          - dep-58d7a43f15d6e43b
+          - dep-5a07d0fb2a8d1399
+          - dep-5df9cb4953366ad0
+          - dep-6b7d396503cffd67
+          - dep-70f41a350f268abb
+          - dep-7a5281b3dee4dde0
+          - dep-841752769d3d696d
+          - dep-8d5c6d2b8ff96eea
+          - dep-9281b624e188e639
+          - dep-94085b4bb5af8633
+          - dep-9842430aa87d306e
+          - dep-a614cd1908711e29
+          - dep-b2a3436bb701d3c3
+          - dep-ca4c42358e166db4
+          - dep-ce06060ba7936c80
+          - dep-dca53159185db651
+          - dep-e12060ffa4060d1f
+          - dep-ecfe8233ac95657f
+          - dep-f2cc3f1e1cbbf474
+          - dep-f873310d580d7a6e
+          - dep-fac6fd6a177d141b
+          - dep-fcf334684e11e14c
+          missing_context:
+          - account_for_embedding_in_pipeline_split
+          - account_for_loss_in_pipeline_split
+          - ckpt_format
+          - cpu_offloading
+          - defer_embedding_wgrad_compute
+          - distribute_saved_activations
+          - experimental_attention_variant
+          - expert_tensor_parallel_size
+          - export_kd_teacher_load
+          - first_last_layers_bf16
+          - fp8
+          - inference_batch_times_seqlen_threshold
+          - inference_context
+          - language_model.num_moe_experts
+          - layout
+          - linear_num_key_heads
+          - linear_num_value_heads
+          - model_parallel_size
+          - num_distributed_optimizer_instances
+          - num_experts
+          - num_layers_in_first_pipeline_stage
+          - num_layers_per_pipeline_rank
+          - num_layers_per_virtual_pipeline_stage
+          - num_moe_experts
+          - num_stages
+          - overlap_moe_expert_parallel_comm
+          - overlap_p2p_comm
+          - self.tp_size
+          - seq_length
+          - tp_comm_overlap
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: sequence_parallel
+            value: true
+            assignments:
+              context_parallel_size: 1
+              expert_model_parallel_size: 1
+              pipeline_model_parallel_size: 1
+              tensor_model_parallel_size: 2
+            intervention_id: intervention-82371441a61f4b4dda77
+            intervention_edge_id: dep-7cb33497e801ef6b
+            intervention_role: violating
+        repaired:
+          role: repaired
+          status: sat
+          configuration:
+            context_parallel_size: 1
+            expert_model_parallel_size: 1
+            pipeline_model_parallel_size: 2
+            sequence_parallel: false
+            tensor_model_parallel_size: 1
+          changes:
+            pipeline_model_parallel_size: 2
+            sequence_parallel: false
+            tensor_model_parallel_size: 1
+          hard_edges:
+          - dep-7cb33497e801ef6b
+          - dep-85d113f8dac96ae0
+          - dep-8ed1257aa5b0eaed
+          - dep-e9e70edc51d724b7
+          soft_edges:
+          - dep-3d77928b2ce18f90
+          - dep-3fc8e4ead0134626
+          - dep-48c440ca3441c305
+          - dep-58519c0a5d327465
+          - dep-69c46f3949e2ef67
+          - dep-73dd37cfa3f495c3
+          - dep-77fd7ce216b36ffd
+          - dep-990b5b70d80f483c
+          - dep-ad56457c1894b438
+          - dep-b110e71704ac5aff
+          - dep-b3a91c73c367b2ea
+          - dep-c08a30a01a8b5a64
+          - dep-c23a19aff2130801
+          - dep-cb319a7900c735ab
+          - dep-d512be374d38e0f6
+          - dep-ebb50d0b2b7a38c7
+          - dep-f3ab69bed5074b14
+          violated_soft_edges: []
+          unsupported_edges:
+          - dep-04f494fcccb96087
+          - dep-090baf04b6fce498
+          - dep-0c6b6e6ab5dec019
+          - dep-105fe9d3503ada2a
+          - dep-141daba94907d7ee
+          - dep-1a8293d5b6bb2053
+          - dep-264a76dcf6320803
+          - dep-28327176a4cd35a3
+          - dep-332aefadb17185b2
+          - dep-3d8c9ab0864b3720
+          - dep-40958b81b298eb86
+          - dep-41db7e4868ff92c7
+          - dep-42b5485a84ac3984
+          - dep-4561a7252621b5c7
+          - dep-45fdffb89c2851d4
+          - dep-58340bf1c7268e61
+          - dep-58d7a43f15d6e43b
+          - dep-5a07d0fb2a8d1399
+          - dep-5df9cb4953366ad0
+          - dep-6b7d396503cffd67
+          - dep-70f41a350f268abb
+          - dep-7a5281b3dee4dde0
+          - dep-841752769d3d696d
+          - dep-8d5c6d2b8ff96eea
+          - dep-9281b624e188e639
+          - dep-94085b4bb5af8633
+          - dep-9842430aa87d306e
+          - dep-a614cd1908711e29
+          - dep-b2a3436bb701d3c3
+          - dep-ca4c42358e166db4
+          - dep-ce06060ba7936c80
+          - dep-dca53159185db651
+          - dep-e12060ffa4060d1f
+          - dep-ecfe8233ac95657f
+          - dep-f2cc3f1e1cbbf474
+          - dep-f873310d580d7a6e
+          - dep-fac6fd6a177d141b
+          - dep-fcf334684e11e14c
+          missing_context:
+          - account_for_embedding_in_pipeline_split
+          - account_for_loss_in_pipeline_split
+          - ckpt_format
+          - cpu_offloading
+          - defer_embedding_wgrad_compute
+          - distribute_saved_activations
+          - experimental_attention_variant
+          - expert_tensor_parallel_size
+          - export_kd_teacher_load
+          - first_last_layers_bf16
+          - fp8
+          - inference_batch_times_seqlen_threshold
+          - inference_context
+          - language_model.num_moe_experts
+          - layout
+          - linear_num_key_heads
+          - linear_num_value_heads
+          - model_parallel_size
+          - num_distributed_optimizer_instances
+          - num_experts
+          - num_layers_in_first_pipeline_stage
+          - num_layers_per_pipeline_rank
+          - num_layers_per_virtual_pipeline_stage
+          - num_moe_experts
+          - num_stages
+          - overlap_moe_expert_parallel_comm
+          - overlap_p2p_comm
+          - self.tp_size
+          - seq_length
+          - tp_comm_overlap
+          - use_torch_fsdp2
+          - virtual_pipeline_model_parallel_size
+          probe_sample_template:
+            parameter: sequence_parallel
+            value: false
+            assignments:
+              context_parallel_size: 1
+              expert_model_parallel_size: 1
+              pipeline_model_parallel_size: 2
+              tensor_model_parallel_size: 1
+            intervention_id: intervention-82371441a61f4b4dda77
+            intervention_edge_id: dep-7cb33497e801ef6b
+            intervention_role: repaired
+frozen:
+  sha256: 38e02283e648d74d25231511802e1dedd11791713d501715e38bd702dd27016d
+  target_count: 19
