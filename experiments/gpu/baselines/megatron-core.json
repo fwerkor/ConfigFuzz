@@ -28,5 +28,7 @@
   "world_size": 2,
   "args": {
     "world_size": 2
-  }
+  },
+  "execution_stage": "training",
+  "expert_tensor_parallel_size": 1
 }

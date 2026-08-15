@@ -9,11 +9,13 @@ from configfuzz.dependencies import (
     DependencyGraph,
     DependencyRelation,
     DependencyStatus,
+    edge_scope_matches,
 )
 from configfuzz.graph_solver import (
     InterventionPlan,
     SolveStatus,
     design_edge_intervention,
+    normalize_context,
 )
 
 
@@ -79,6 +81,7 @@ class InterventionQueue:
     considered_edges: int
     skipped_status: int
     skipped_excluded: int
+    skipped_scope: int
     skipped_infeasible: int
     skipped_uncompetitive: int
     solver_timeout_ms: int
@@ -90,6 +93,7 @@ class InterventionQueue:
                 "selected_candidates": len(self.candidates),
                 "skipped_status": self.skipped_status,
                 "skipped_excluded": self.skipped_excluded,
+                "skipped_scope": self.skipped_scope,
                 "skipped_infeasible": self.skipped_infeasible,
                 "skipped_uncompetitive": self.skipped_uncompetitive,
                 "solver_timeout_ms": self.solver_timeout_ms,
@@ -114,7 +118,9 @@ def select_interventions(
     excluded = set(excluded_edge_ids)
     skipped_status = 0
     skipped_excluded = 0
+    skipped_scope = 0
     skipped_infeasible = 0
+    context = normalize_context(graph, baseline)
     eligible: list[tuple[float, DependencyEdge, dict[str, float]]] = []
     for edge in graph.edges.values():
         if edge.id in excluded:
@@ -122,6 +128,9 @@ def select_interventions(
             continue
         if edge.status not in _ELIGIBLE_STATUSES:
             skipped_status += 1
+            continue
+        if not edge_scope_matches(edge, context):
+            skipped_scope += 1
             continue
         static_components = _static_score_components(graph, edge)
         eligible.append((sum(static_components.values()), edge, static_components))
@@ -172,6 +181,7 @@ def select_interventions(
         considered_edges=len(graph.edges),
         skipped_status=skipped_status,
         skipped_excluded=skipped_excluded,
+        skipped_scope=skipped_scope,
         skipped_infeasible=skipped_infeasible,
         skipped_uncompetitive=skipped_uncompetitive,
         solver_timeout_ms=solver_timeout_ms,

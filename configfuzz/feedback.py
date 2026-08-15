@@ -6,7 +6,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, replace
 from typing import Any, Iterable, Mapping
 
-from configfuzz.dependencies import DependencyGraph, DependencyStatus
+from configfuzz.dependencies import DependencyGraph, DependencyStatus, edge_scope_matches
 from configfuzz.graph_solver import normalize_context
 from configfuzz.model import Evidence, EvidenceKind
 from configfuzz.outcomes import OutcomeLabel
@@ -249,7 +249,8 @@ def _decisive_evaluations(
     return [
         (edge, evaluation)
         for edge in edges
-        if (
+        if edge_scope_matches(edge, context)
+        and (
             (evaluation := graph.evaluate_edge(edge, context)).active is True
             and evaluation.satisfied is not None
         )

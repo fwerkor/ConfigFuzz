@@ -23,6 +23,29 @@ GPU_SUBJECTS: dict[str, str] = {
 }
 
 
+GPU_HARNESS_FILES: dict[str, tuple[str, ...]] = {
+    "pytorch-native": (
+        "experiments/gpu/launch_pytorch_native.sh",
+        "experiments/gpu/qualification/pytorch_native.py",
+        "experiments/gpu/qualification/common.py",
+    ),
+    "deepspeed": (
+        "experiments/gpu/launch_deepspeed.sh",
+        "experiments/gpu/qualification/deepspeed_runner.py",
+        "experiments/gpu/qualification/common.py",
+    ),
+    "transformers-accelerate": (
+        "experiments/gpu/launch_transformers_accelerate.sh",
+        "experiments/gpu/qualification/transformers_accelerate.py",
+        "experiments/gpu/qualification/common.py",
+    ),
+    "megatron-core": (
+        "experiments/gpu/launch_megatron_core.sh",
+        "experiments/gpu/qualification/megatron_core.py",
+        "experiments/gpu/qualification/common.py",
+    ),
+}
+
 def build_frozen_gpu_targets(
     root: Path,
     *,
@@ -72,13 +95,20 @@ def build_frozen_gpu_targets(
                 "artifact_sha256": _sha256_file(artifact),
                 "manifest_sha256": _sha256_file(manifest_path),
                 "baseline_sha256": _sha256_file(manifest.baseline_config),
+                "harness_files": [
+                    {
+                        "path": path,
+                        "sha256": _sha256_file(root / path),
+                    }
+                    for path in GPU_HARNESS_FILES[subject]
+                ],
                 "selection_summary": queue.to_dict()["summary"],
                 "targets": targets,
             }
         )
 
     payload: dict[str, Any] = {
-        "schema_version": 1,
+        "schema_version": 2,
         "name": "gpu-cross-framework-validation-targets",
         "metadata": {
             "selection_basis": "static graph plus qualified baseline only",
@@ -148,6 +178,20 @@ def run_frozen_gpu_subject(
         actual = _sha256_file(path)
         if actual != expected:
             raise ValueError(f"{subject} {key} mismatch: expected {expected}, got {actual}")
+    raw_harness_files = subject_payload.get("harness_files")
+    if not isinstance(raw_harness_files, list) or not raw_harness_files:
+        raise ValueError(f"{subject} frozen target is missing harness file hashes")
+    for item in raw_harness_files:
+        if not isinstance(item, Mapping):
+            raise ValueError(f"{subject} harness file entry is malformed")
+        harness_path = root / str(item["path"])
+        expected = str(item["sha256"])
+        actual = _sha256_file(harness_path)
+        if actual != expected:
+            raise ValueError(
+                f"{subject} harness hash mismatch for {harness_path}: "
+                f"expected {expected}, got {actual}"
+            )
 
     graph_payload = json.loads(artifact.read_text(encoding="utf-8"))
     manifest = InterventionExecutionManifest.from_path(manifest_path)

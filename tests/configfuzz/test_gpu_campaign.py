@@ -32,6 +32,12 @@ def test_gpu_targets_freeze_deterministically(tmp_path: Path) -> None:
         len(subject["targets"]) for subject in first["subjects"]
     )
     assert all(subject["targets"] for subject in first["subjects"])
+    assert all(subject["harness_files"] for subject in first["subjects"])
+    assert all(
+        item["sha256"]
+        for subject in first["subjects"]
+        for item in subject["harness_files"]
+    )
 
     output = tmp_path / "targets.yaml"
     dump_frozen_gpu_targets(first, output)

@@ -381,3 +381,27 @@ def test_graph_and_plan_cli_round_trip(tmp_path) -> None:
         "tensor_model_parallel_size": 6,
         "num_attention_heads": 36,
     }
+
+
+def test_infers_inference_stage_from_constraint_provenance() -> None:
+    item = ConstraintSet(parameter="sequence_parallel")
+    item.add(
+        Constraint(
+            expression="sequence_parallel => tensor_model_parallel_size > 1",
+            kind=ConstraintKind.CONDITIONAL,
+            parameters=("sequence_parallel", "tensor_model_parallel_size"),
+            confidence=0.95,
+            evidence=(
+                Evidence(
+                    EvidenceKind.STATIC,
+                    "megatron/core/inference/text_generation_controllers/controller.py",
+                    20,
+                ),
+            ),
+        )
+    )
+
+    graph = DependencyGraph.from_constraint_sets([item])
+
+    edge = next(iter(graph.edges.values()))
+    assert edge.scope_dict["execution_stage"] == "inference"

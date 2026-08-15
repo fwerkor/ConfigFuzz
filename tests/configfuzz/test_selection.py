@@ -166,3 +166,28 @@ def test_selection_prunes_edges_whose_upper_bound_cannot_enter_top_k() -> None:
     assert queue.candidates[0].expression == "feature_enabled => x % y == 0"
     assert queue.skipped_uncompetitive == 1
     assert queue.to_dict()["summary"]["solver_timeout_ms"] == 1000
+
+
+def test_selection_skips_edges_outside_execution_stage() -> None:
+    graph = make_graph(constraint("x > 0", ("x",)))
+    edge = next(iter(graph.edges.values()))
+    graph.edges[edge.id] = edge.__class__(
+        id=edge.id,
+        expression=edge.expression,
+        predicate=edge.predicate,
+        relation=edge.relation,
+        participants=edge.participants,
+        drivers=edge.drivers,
+        dependents=edge.dependents,
+        guard=edge.guard,
+        status=edge.status,
+        confidence=edge.confidence,
+        scope=(("execution_stage", "inference"),),
+        components=edge.components,
+        evidence=edge.evidence,
+    )
+
+    queue = select_interventions(graph, {"x": 2, "execution_stage": "training"})
+
+    assert not queue.candidates
+    assert queue.to_dict()["summary"]["skipped_scope"] == 1

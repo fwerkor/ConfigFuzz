@@ -248,3 +248,33 @@ def test_feedback_batch_is_not_counted_twice() -> None:
     assert graph.metadata["runtime_feedback"]["runs"] == 1
     edge = next(iter(graph.edges.values()))
     assert graph.metadata["runtime_feedback"]["edges"][edge.id]["evaluated"] == 1
+
+
+def test_feedback_ignores_out_of_stage_relation() -> None:
+    graph = graph_with_edges(edge_constraint("x > 0", ("x",)))
+    edge = next(iter(graph.edges.values()))
+    graph.edges[edge.id] = edge.__class__(
+        id=edge.id,
+        expression=edge.expression,
+        predicate=edge.predicate,
+        relation=edge.relation,
+        participants=edge.participants,
+        drivers=edge.drivers,
+        dependents=edge.dependents,
+        guard=edge.guard,
+        status=edge.status,
+        confidence=edge.confidence,
+        scope=(("execution_stage", "inference"),),
+        components=edge.components,
+        evidence=edge.evidence,
+    )
+
+    report = apply_probe_feedback(
+        graph,
+        {"x": 2, "execution_stage": "training"},
+        [sample("x", -1, OutcomeLabel.VALID)],
+    )
+
+    assert report.evaluated_samples == 0
+    assert report.ignored_samples == 1
+    assert graph.edges[edge.id].status is DependencyStatus.STATIC_CANDIDATE

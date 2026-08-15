@@ -29,17 +29,28 @@ def main() -> int:
     device = torch.device("cuda", local_rank)
     if not dist.is_initialized():
         dist.init_process_group(backend="nccl")
+    tensor_parallel_size = int(cfg.get("tensor_model_parallel_size", world_size))
+    pipeline_parallel_size = int(cfg.get("pipeline_model_parallel_size", 1))
+    context_parallel_size = int(cfg.get("context_parallel_size", 1))
+    expert_parallel_size = int(cfg.get("expert_model_parallel_size", 1))
+    expert_tensor_parallel_size = int(
+        cfg.get("expert_tensor_parallel_size", tensor_parallel_size)
+    )
     parallel_state.initialize_model_parallel(
-        tensor_model_parallel_size=int(cfg.get("tensor_model_parallel_size", world_size)),
-        pipeline_model_parallel_size=int(cfg.get("pipeline_model_parallel_size", 1)),
-        context_parallel_size=int(cfg.get("context_parallel_size", 1)),
-        expert_model_parallel_size=int(cfg.get("expert_model_parallel_size", 1)),
+        tensor_model_parallel_size=tensor_parallel_size,
+        pipeline_model_parallel_size=pipeline_parallel_size,
+        context_parallel_size=context_parallel_size,
+        expert_model_parallel_size=expert_parallel_size,
+        expert_tensor_parallel_size=expert_tensor_parallel_size,
     )
     model_parallel_cuda_manual_seed(int(cfg.get("seed", 2026)))
     milestone("distributed_initialization", rank=rank)
 
     use_bf16 = bool(cfg.get("bf16", False))
     use_fp16 = bool(cfg.get("fp16", False))
+    params_dtype = (
+        torch.bfloat16 if use_bf16 else torch.float16 if use_fp16 else torch.float32
+    )
     config = TransformerConfig(
         num_layers=int(cfg["num_layers"]),
         hidden_size=int(cfg["hidden_size"]),
@@ -49,8 +60,13 @@ def main() -> int:
         bf16=use_bf16,
         fp16=use_fp16,
         sequence_parallel=bool(cfg.get("sequence_parallel", False)),
-        tensor_model_parallel_size=int(cfg.get("tensor_model_parallel_size", world_size)),
-        pipeline_model_parallel_size=int(cfg.get("pipeline_model_parallel_size", 1)),
+        tensor_model_parallel_size=tensor_parallel_size,
+        pipeline_model_parallel_size=pipeline_parallel_size,
+        context_parallel_size=context_parallel_size,
+        expert_model_parallel_size=expert_parallel_size,
+        expert_tensor_parallel_size=expert_tensor_parallel_size,
+        params_dtype=params_dtype,
+        pipeline_dtype=params_dtype,
         num_moe_experts=(
             int(cfg["num_moe_experts"])
             if cfg.get("num_moe_experts") is not None

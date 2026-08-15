@@ -711,6 +711,10 @@ def _edge_from_constraint(
             if component
         )
     )
+    edge_scope = dict(scope)
+    execution_stage = _execution_stage_from_evidence(constraint.evidence)
+    if execution_stage is not None:
+        edge_scope["execution_stage"] = execution_stage
     edge_id = _edge_id(constraint.expression, constraint.kind)
     return DependencyEdge(
         id=edge_id,
@@ -723,10 +727,65 @@ def _edge_from_constraint(
         dependents=dependents,
         status=status,
         confidence=constraint.confidence,
-        scope=tuple((str(key), str(value)) for key, value in scope.items()),
+        scope=tuple((str(key), str(value)) for key, value in edge_scope.items()),
         components=components,
         evidence=constraint.evidence,
     )
+
+
+def edge_scope_matches(edge: DependencyEdge, context: Mapping[str, Any]) -> bool:
+    """Return whether all scope dimensions present in the runtime context match."""
+    for key, expected in edge.scope:
+        # Runtime configuration keys such as ``backend`` can collide with
+        # environment-scope names. Only compare scope dimensions whose runtime
+        # representation is explicitly standardized.
+        if key != "execution_stage" or key not in context:
+            continue
+        actual = context[key]
+        if actual is None:
+            continue
+        expected_values = {item.strip().lower() for item in expected.split(",") if item.strip()}
+        actual_values = {
+            item.strip().lower()
+            for item in str(actual).split(",")
+            if item.strip()
+        }
+        if not expected_values or not actual_values:
+            continue
+        if "all" in expected_values or "any" in expected_values:
+            continue
+        if expected_values.isdisjoint(actual_values):
+            return False
+    return True
+
+
+def _execution_stage_from_evidence(evidence: tuple[Evidence, ...]) -> str | None:
+    stages: set[str] = set()
+    for item in evidence:
+        source = item.source.replace("\\", "/").lower()
+        if any(
+            token in source
+            for token in (
+                "/inference/",
+                "text_generation",
+                "/generation/",
+                "generation_utils",
+            )
+        ):
+            stages.add("inference")
+        if any(
+            token in source
+            for token in (
+                "/training/",
+                "training_args",
+                "/trainer.py",
+                "/trainer_",
+            )
+        ):
+            stages.add("training")
+    if len(stages) == 1:
+        return next(iter(stages))
+    return None
 
 
 def _edge_id(expression: str, kind: ConstraintKind) -> str:

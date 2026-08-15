@@ -15,6 +15,7 @@ from configfuzz.dependencies import (
     DependencyNodeKind,
     DependencyRelation,
     DependencyStatus,
+    edge_scope_matches,
 )
 
 
@@ -298,7 +299,7 @@ def solve_graph_mutation(
     excluded: list[str] = []
     out_of_scope: list[str] = []
     for edge in sorted(graph.edges.values(), key=lambda item: item.id):
-        if not mutable.intersection(edge.participants):
+        if not mutable.intersection(edge.participants) or not edge_scope_matches(edge, context):
             out_of_scope.append(edge.id)
             continue
         if edge.status is DependencyStatus.CONTRADICTED:
@@ -478,6 +479,8 @@ def design_edge_intervention(
                 DependencyStatus.ENVIRONMENT_SPECIFIC,
             }:
                 continue
+            if not edge_scope_matches(related, context):
+                continue
             if not mutable.intersection(related.participants):
                 continue
             additions = {
@@ -609,6 +612,8 @@ def _solve_intervention_case(
 
     for current in sorted(graph.edges.values(), key=lambda item: item.id):
         if current.id == edge_id or not mutable.intersection(current.participants):
+            continue
+        if not edge_scope_matches(current, reference):
             continue
         if current.status in {
             DependencyStatus.CONTRADICTED,
@@ -799,6 +804,7 @@ def _add_deterministic_objectives(
                 original - variable,
             )
             optimizer.minimize(distance)
+            optimizer.minimize(z3.If(variable >= original, 0, 1))
             optimizer.minimize(variable)
         elif kind is _ValueKind.STRING:
             optimizer.minimize(z3.Length(variable))
