@@ -40,3 +40,12 @@ def test_gpu_subject_has_executable_recovered_edge(subject: str, artifact: str) 
 
     assert queue.candidates, f"{subject} has no executable recovered edge"
     assert manifest.cwd == ROOT.resolve()
+
+
+def test_megatron_baseline_exposes_world_size_environment_context() -> None:
+    baseline = json.loads(
+        (ROOT / "experiments" / "gpu" / "baselines" / "megatron-core.json").read_text(encoding="utf-8")
+    )
+
+    assert baseline["world_size"] == 2
+    assert baseline["args"]["world_size"] == 2

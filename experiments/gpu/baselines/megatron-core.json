@@ -24,5 +24,9 @@
   "recompute_granularity": null,
   "use_distributed_optimizer": false,
   "qualification_steps": 2,
-  "seed": 2026
+  "seed": 2026,
+  "world_size": 2,
+  "args": {
+    "world_size": 2
+  }
 }
