@@ -9,6 +9,7 @@
   "timeout_seconds": 60,
   "classification": {
     "invalid_patterns": [
+      "argument --mixed_precision: invalid choice",
       "Unknown mixed_precision mode",
       "mixed_precision.*must be one of",
       "mixed_precision.*should be one of"
@@ -30,5 +31,8 @@
     "satisfying",
     "violating",
     "repaired"
+  ],
+  "provenance_patterns": [
+    "argument --mixed_precision: invalid choice"
   ]
 }
