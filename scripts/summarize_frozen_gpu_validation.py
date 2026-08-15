@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -22,6 +23,7 @@ def main() -> int:
 
     frozen = load_frozen_gpu_targets(args.targets)
     result_payloads: dict[str, dict[str, object]] = {}
+    result_hashes: dict[str, str] = {}
     for item in frozen["subjects"]:
         subject = str(item["subject"])
         path = args.results_dir / f"{subject}.json"
@@ -29,6 +31,7 @@ def main() -> int:
         if not isinstance(payload, dict):
             raise ValueError(f"GPU result root must be an object: {path}")
         result_payloads[subject] = payload
+        result_hashes[subject] = hashlib.sha256(path.read_bytes()).hexdigest()
 
     qualification = yaml.safe_load(args.qualification.read_text(encoding="utf-8"))
     if not isinstance(qualification, dict) or not isinstance(qualification.get("hardware"), dict):
@@ -39,6 +42,7 @@ def main() -> int:
         hardware=qualification["hardware"],
         campaign_date=args.campaign_date,
         runner_revision=args.runner_revision,
+        result_hashes=result_hashes,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(

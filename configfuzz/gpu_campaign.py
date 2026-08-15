@@ -272,6 +272,7 @@ def summarize_frozen_gpu_results(
     hardware: Mapping[str, Any],
     campaign_date: str,
     runner_revision: str,
+    result_hashes: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
     """Build a deterministic cross-framework summary from frozen-campaign outputs."""
     expected_subjects = [
@@ -355,20 +356,24 @@ def summarize_frozen_gpu_results(
         aggregate_confirmed += len(confirmed)
         aggregate_scope_disputed += len(scope_disputed)
         aggregate_unresolved += len(unresolved)
-        subjects.append(
-            {
-                "subject": subject,
-                "targets": len(rounds),
-                "samples": sum(outcome_counts.values()),
-                "paired_confirmed": len(confirmed),
-                "scope_disputed": len(scope_disputed),
-                "unresolved": len(unresolved),
-                "outcomes": dict(sorted(outcome_counts.items())),
-                "confirmed_edge_ids": confirmed,
-                "scope_disputed_edge_ids": scope_disputed,
-                "targets_detail": target_detail,
-            }
-        )
+        subject_summary = {
+            "subject": subject,
+            "targets": len(rounds),
+            "samples": sum(outcome_counts.values()),
+            "paired_confirmed": len(confirmed),
+            "scope_disputed": len(scope_disputed),
+            "unresolved": len(unresolved),
+            "outcomes": dict(sorted(outcome_counts.items())),
+            "confirmed_edge_ids": confirmed,
+            "scope_disputed_edge_ids": scope_disputed,
+            "targets_detail": target_detail,
+        }
+        if result_hashes is not None and subject in result_hashes:
+            subject_summary["result_sha256"] = str(result_hashes[subject])
+        subjects.append(subject_summary)
+
+        # Aggregate accounting above is independent of optional integrity metadata.
+
 
     expected_target_count = int(frozen.get("frozen", {}).get("target_count", -1))
     if aggregate_targets != expected_target_count:

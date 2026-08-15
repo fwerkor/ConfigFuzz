@@ -152,6 +152,7 @@ def test_gpu_result_summary_is_derived_from_round_records() -> None:
         },
         campaign_date="2026-08-15",
         runner_revision="revision",
+        result_hashes={"example": "result-sha"},
     )
 
     assert summary["aggregate"] == {
@@ -164,3 +165,4 @@ def test_gpu_result_summary_is_derived_from_round_records() -> None:
     }
     assert summary["subjects"][0]["confirmed_edge_ids"] == ["edge-confirmed"]
     assert summary["subjects"][0]["scope_disputed_edge_ids"] == ["edge-disputed"]
+    assert summary["subjects"][0]["result_sha256"] == "result-sha"
