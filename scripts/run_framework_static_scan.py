@@ -208,6 +208,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     dependency_graph = DependencyGraph.from_constraint_sets(
         scanned.values(),
         scope=graph_scope,
+        configuration_parameters=parameters,
     ).to_dict()
     for framework_root in framework_roots:
         dependency_graph = _normalize_sources(dependency_graph, framework_root)

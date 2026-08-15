@@ -175,6 +175,23 @@ def test_self_environment_attribute_is_retained_as_context() -> None:
     assert graph.nodes["self.world_size"].kind is DependencyNodeKind.ENVIRONMENT
 
 
+def test_unscanned_source_symbol_is_derived_context() -> None:
+    graph = DependencyGraph.from_constraint_sets(
+        [
+            constraint_set(
+                "group_size",
+                "len(excluded_ranks_set) < group_size",
+                ConstraintKind.ENVIRONMENT,
+                ("group_size",),
+            )
+        ],
+        configuration_parameters=("group_size",),
+    )
+
+    assert graph.nodes["group_size"].kind is DependencyNodeKind.PARAMETER
+    assert graph.nodes["excluded_ranks_set"].kind is DependencyNodeKind.DERIVED
+
+
 def test_active_constraint_evaluation_respects_guard() -> None:
     graph = DependencyGraph.from_constraint_sets(
         [

@@ -221,6 +221,7 @@ class DependencyGraph:
         constraint_sets: Iterable[ConstraintSet],
         *,
         scope: Mapping[str, str] | None = None,
+        configuration_parameters: Iterable[str] | None = None,
     ) -> "DependencyGraph":
         sets = list(constraint_sets)
         constraints = [
@@ -233,6 +234,11 @@ class DependencyGraph:
             for constraint in constraints
             for name in _constraint_participants(constraint)
         }
+        explicit_configuration_parameters = (
+            {str(name) for name in configuration_parameters}
+            if configuration_parameters is not None
+            else None
+        )
         known_parameters.update(item.parameter for item in sets)
         boolean_parameters = _boolean_parameters(sets)
         graph = cls(metadata={"scope": dict(scope or {})})
@@ -252,6 +258,7 @@ class DependencyGraph:
                     boolean_parameters=boolean_parameters,
                     environment_edge=edge.relation
                     in {DependencyRelation.ENVIRONMENT, DependencyRelation.RESOURCE},
+                    configuration_parameters=explicit_configuration_parameters,
                 )
                 existing = graph.nodes.get(name)
                 if existing is None or (
@@ -301,7 +308,18 @@ class DependencyGraph:
                     if commits:
                         inferred_scope["version"] = "+".join(commits)
         inferred_scope.update(dict(scope or {}))
-        return cls.from_constraint_sets(constraint_sets, scope=inferred_scope)
+        configured_parameters: tuple[str, ...] | None = None
+        if isinstance(framework, Mapping):
+            raw_parameters = framework.get("parameters")
+            if isinstance(raw_parameters, Sequence) and not isinstance(
+                raw_parameters, (str, bytes)
+            ):
+                configured_parameters = tuple(str(item) for item in raw_parameters)
+        return cls.from_constraint_sets(
+            constraint_sets,
+            scope=inferred_scope,
+            configuration_parameters=configured_parameters,
+        )
 
     @classmethod
     def from_dict(cls, payload: Mapping[str, Any]) -> "DependencyGraph":
@@ -909,6 +927,7 @@ def _node_kind(
     *,
     boolean_parameters: set[str],
     environment_edge: bool,
+    configuration_parameters: set[str] | None,
 ) -> DependencyNodeKind:
     if _looks_environment_name(name) or (environment_edge and _looks_environment_name(name)):
         return DependencyNodeKind.ENVIRONMENT
@@ -916,6 +935,10 @@ def _node_kind(
         return DependencyNodeKind.DERIVED
     if name in boolean_parameters or _looks_feature_name(name):
         return DependencyNodeKind.FEATURE
+    if configuration_parameters is not None:
+        leaf = name.rsplit(".", 1)[-1]
+        if name not in configuration_parameters and leaf not in configuration_parameters:
+            return DependencyNodeKind.DERIVED
     return DependencyNodeKind.PARAMETER
 
 
