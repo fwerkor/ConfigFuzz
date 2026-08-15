@@ -1,0 +1,114 @@
+from __future__ import annotations
+
+import argparse
+import os
+from pathlib import Path
+
+import torch
+import torch.distributed as dist
+
+from common import load_config, milestone
+from megatron.core import parallel_state
+from megatron.core.models.gpt.gpt_layer_specs import get_gpt_layer_local_spec
+from megatron.core.models.gpt.gpt_model import GPTModel
+from megatron.core.tensor_parallel.random import model_parallel_cuda_manual_seed
+from megatron.core.transformer.transformer_config import TransformerConfig
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", required=True)
+    args = parser.parse_args()
+    cfg = load_config(args.config)
+    milestone("argument_parsing")
+
+    local_rank = int(os.environ.get("LOCAL_RANK", "0"))
+    rank = int(os.environ.get("RANK", "0"))
+    world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    torch.cuda.set_device(local_rank)
+    device = torch.device("cuda", local_rank)
+    if not dist.is_initialized():
+        dist.init_process_group(backend="nccl")
+    parallel_state.initialize_model_parallel(
+        tensor_model_parallel_size=int(cfg.get("tensor_model_parallel_size", world_size)),
+        pipeline_model_parallel_size=int(cfg.get("pipeline_model_parallel_size", 1)),
+        context_parallel_size=int(cfg.get("context_parallel_size", 1)),
+        expert_model_parallel_size=int(cfg.get("expert_model_parallel_size", 1)),
+    )
+    model_parallel_cuda_manual_seed(int(cfg.get("seed", 2026)))
+    milestone("distributed_initialization", rank=rank)
+
+    use_bf16 = bool(cfg.get("bf16", False))
+    use_fp16 = bool(cfg.get("fp16", False))
+    config = TransformerConfig(
+        num_layers=int(cfg["num_layers"]),
+        hidden_size=int(cfg["hidden_size"]),
+        ffn_hidden_size=int(cfg["ffn_hidden_size"]),
+        num_attention_heads=int(cfg["num_attention_heads"]),
+        num_query_groups=int(cfg.get("num_query_groups", cfg["num_attention_heads"])),
+        bf16=use_bf16,
+        fp16=use_fp16,
+        sequence_parallel=bool(cfg.get("sequence_parallel", False)),
+        tensor_model_parallel_size=int(cfg.get("tensor_model_parallel_size", world_size)),
+        pipeline_model_parallel_size=int(cfg.get("pipeline_model_parallel_size", 1)),
+    )
+    model = GPTModel(
+        config=config,
+        transformer_layer_spec=get_gpt_layer_local_spec(),
+        vocab_size=int(cfg["vocab_size"]),
+        max_sequence_length=int(cfg["max_position_embeddings"]),
+        parallel_output=False,
+    ).to(device)
+    milestone("model_construction", rank=rank)
+
+    optimizer = torch.optim.AdamW(model.parameters(), lr=float(cfg.get("learning_rate", 1e-3)))
+    batch_size = int(cfg["micro_batch_size"])
+    seq = int(cfg["sequence_length"])
+    vocab = int(cfg["vocab_size"])
+    steps = int(cfg.get("qualification_steps", 2))
+
+    for step in range(steps):
+        generator = torch.Generator(device=device)
+        generator.manual_seed(int(cfg.get("seed", 2026)) + rank + step * world_size)
+        tokens = torch.randint(0, vocab, (batch_size, seq + 1), generator=generator, device=device)
+        input_ids = tokens[:, :-1]
+        labels = tokens[:, 1:]
+        position_ids = torch.arange(seq, device=device).unsqueeze(0).expand(batch_size, -1)
+        attention_mask = torch.triu(
+            torch.ones((1, 1, seq, seq), dtype=torch.bool, device=device), diagonal=1
+        )
+        optimizer.zero_grad(set_to_none=True)
+        losses = model(
+            input_ids=input_ids,
+            position_ids=position_ids,
+            attention_mask=attention_mask,
+            labels=labels,
+        )
+        loss = losses.float().mean()
+        milestone("forward", rank=rank)
+        loss.backward()
+        milestone("backward", rank=rank)
+        optimizer.step()
+        milestone("optimizer_step", rank=rank)
+        if rank == 0:
+            print(f"step={step} loss={loss.item():.6f}", flush=True)
+    milestone("repeated_training", rank=rank)
+
+    checkpoint_dir = Path(cfg.get("checkpoint_dir") or "artifacts/gpu/qualification/megatron-core")
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    checkpoint = checkpoint_dir / f"rank-{rank}.pt"
+    torch.save({"model": model.state_dict(), "optimizer": optimizer.state_dict()}, checkpoint)
+    dist.barrier()
+    state = torch.load(checkpoint, map_location=device, weights_only=False)
+    model.load_state_dict(state["model"])
+    optimizer.load_state_dict(state["optimizer"])
+    milestone("checkpoint_save_load", rank=rank)
+    milestone("completed", rank=rank)
+
+    parallel_state.destroy_model_parallel()
+    dist.destroy_process_group()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

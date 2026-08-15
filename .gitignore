@@ -58,3 +58,5 @@ mm-new/test_mm_mutation_results/
 *.egg-info/
 # Generated RQ2 candidate pool (regenerate with scripts/generate_rq2_intents.py)
 experiments/rq2/candidate_intents.yaml
+# Local GPU qualification checkpoints and framework-generated checkpoint helpers.
+artifacts/gpu/qualification/

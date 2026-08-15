@@ -1,0 +1,2311 @@
+{
+  "schema_version": 1,
+  "experiment": "framework_static_scan",
+  "framework": {
+    "name": "Transformers/Accelerate",
+    "profile": "transformers-accelerate",
+    "backend": "PyTorch/CUDA",
+    "accelerator": "NVIDIA GPU",
+    "role": "high-level training and launcher integration stack",
+    "repositories": [
+      {
+        "repository": "https://github.com/huggingface/transformers.git",
+        "commit": "0a2757da521a7a49b8143d9e0c938f08747d682e",
+        "commit_date": "2026-05-20",
+        "source_subdirs": [
+          "src/transformers"
+        ]
+      },
+      {
+        "repository": "https://github.com/huggingface/accelerate.git",
+        "commit": "beb0672aa8444ea7647aee056f624effe5996346",
+        "commit_date": "2026-06-11",
+        "source_subdirs": [
+          "src/accelerate"
+        ]
+      }
+    ],
+    "source_subdirs": [
+      "src/transformers",
+      "src/accelerate"
+    ],
+    "parameters": [
+      "per_device_train_batch_size",
+      "gradient_accumulation_steps",
+      "gradient_checkpointing",
+      "fp16",
+      "bf16",
+      "tf32",
+      "torch_compile",
+      "fsdp",
+      "deepspeed",
+      "mixed_precision",
+      "dispatch_batches",
+      "split_batches",
+      "even_batches",
+      "use_seedable_sampler"
+    ]
+  },
+  "scanner": {
+    "mode": "strict",
+    "jobs": 4,
+    "elapsed_seconds": 37.141
+  },
+  "summary": {
+    "parameters": 14,
+    "parameters_with_candidates": 14,
+    "candidates": 31,
+    "kinds": {
+      "conditional": 10,
+      "enum": 3,
+      "other": 2,
+      "relation": 1,
+      "type": 15
+    },
+    "dependency_nodes": 25,
+    "dependency_edges": 31,
+    "dependency_components": 13
+  },
+  "results": [
+    {
+      "parameter": "per_device_train_batch_size",
+      "constraints": [
+        {
+          "expression": "per_device_train_batch_size: integer",
+          "kind": "type",
+          "parameters": [
+            "per_device_train_batch_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 782,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 4,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 1
+      }
+    },
+    {
+      "parameter": "gradient_accumulation_steps",
+      "constraints": [
+        {
+          "expression": "'num_steps' in grad_acc_kwargs => gradient_accumulation_steps <= 1",
+          "kind": "conditional",
+          "parameters": [
+            "gradient_accumulation_steps",
+            "grad_acc_kwargs"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/trainer.py",
+              "line": 761,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "is_layerwise => gradient_accumulation_steps == 1",
+          "kind": "conditional",
+          "parameters": [
+            "gradient_accumulation_steps",
+            "is_layerwise"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/trainer_optimizer.py",
+              "line": 165,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "gradient_accumulation_plugin is not None => gradient_accumulation_steps == 1",
+          "kind": "conditional",
+          "parameters": [
+            "gradient_accumulation_steps",
+            "gradient_accumulation_plugin"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/accelerator.py",
+              "line": 540,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "gradient_accumulation_steps: integer",
+          "kind": "type",
+          "parameters": [
+            "gradient_accumulation_steps"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 854,
+              "detail": "schema annotation"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/commands/launch.py",
+              "line": 451,
+              "detail": "argparse declaration"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/utils/dataclasses.py",
+              "line": 1164,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 16,
+          "parse_errors": [],
+          "raw_candidates": 3,
+          "filtered_candidates": 0,
+          "accepted_candidates": 3
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 4
+      }
+    },
+    {
+      "parameter": "gradient_checkpointing",
+      "constraints": [
+        {
+          "expression": "gradient_checkpointing: boolean",
+          "kind": "type",
+          "parameters": [
+            "gradient_checkpointing"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 911,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 468,
+          "parse_errors": [],
+          "raw_candidates": 1,
+          "filtered_candidates": 1,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 1
+      }
+    },
+    {
+      "parameter": "fp16",
+      "constraints": [
+        {
+          "expression": "bf16 => not fp16",
+          "kind": "conditional",
+          "parameters": [
+            "fp16",
+            "bf16"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 1740,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "fp16: boolean",
+          "kind": "type",
+          "parameters": [
+            "fp16"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 885,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 96,
+          "parse_errors": [],
+          "raw_candidates": 1,
+          "filtered_candidates": 0,
+          "accepted_candidates": 1
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 2
+      }
+    },
+    {
+      "parameter": "bf16",
+      "constraints": [
+        {
+          "expression": "fp16 => not bf16",
+          "kind": "conditional",
+          "parameters": [
+            "bf16",
+            "fp16"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 1740,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "bf16: boolean",
+          "kind": "type",
+          "parameters": [
+            "bf16"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 879,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 51,
+          "parse_errors": [],
+          "raw_candidates": 2,
+          "filtered_candidates": 1,
+          "accepted_candidates": 1
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 2
+      }
+    },
+    {
+      "parameter": "tf32",
+      "constraints": [
+        {
+          "expression": "tf32: boolean",
+          "kind": "type",
+          "parameters": [
+            "tf32"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 903,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 6,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 1
+      }
+    },
+    {
+      "parameter": "torch_compile",
+      "constraints": [
+        {
+          "expression": "torch_compile: boolean",
+          "kind": "type",
+          "parameters": [
+            "torch_compile"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 923,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 5,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 1
+      }
+    },
+    {
+      "parameter": "fsdp",
+      "constraints": [
+        {
+          "expression": "fsdp != [FSDPOption.OFFLOAD]",
+          "kind": "relation",
+          "parameters": [
+            "fsdp",
+            "FSDPOption"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 2720,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "fsdp != [FSDPOption.OFFLOAD] => FSDPOption.FULL_SHARD not in fsdp or FSDPOption.SHARD_GRAD_OP not in fsdp",
+          "kind": "conditional",
+          "parameters": [
+            "fsdp",
+            "FSDPOption"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 2725,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "min_num_params > 0 and transformer_layer_cls_to_wrap is not None => len(fsdp) <= 0",
+          "kind": "conditional",
+          "parameters": [
+            "fsdp",
+            "min_num_params",
+            "transformer_layer_cls_to_wrap"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 2764,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "fsdp: list",
+          "kind": "type",
+          "parameters": [
+            "fsdp"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 1404,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 54,
+          "parse_errors": [],
+          "raw_candidates": 3,
+          "filtered_candidates": 0,
+          "accepted_candidates": 3
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 4
+      }
+    },
+    {
+      "parameter": "deepspeed",
+      "constraints": [
+        {
+          "expression": "deepspeed: string",
+          "kind": "type",
+          "parameters": [
+            "deepspeed"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/training_args.py",
+              "line": 1421,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 60,
+          "parse_errors": [],
+          "raw_candidates": 2,
+          "filtered_candidates": 2,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 1
+      }
+    },
+    {
+      "parameter": "mixed_precision",
+      "constraints": [
+        {
+          "expression": "mixed_precision in ['no', 'fp16', 'bf16', 'fp8']",
+          "kind": "enum",
+          "parameters": [
+            "mixed_precision"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/commands/config/default.py",
+              "line": 58,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "mixed_precision: string",
+          "kind": "type",
+          "parameters": [
+            "mixed_precision"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/commands/config/config_args.py",
+              "line": 79,
+              "detail": "schema annotation"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/commands/config/default.py",
+              "line": 156,
+              "detail": "argparse declaration"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/commands/launch.py",
+              "line": 189,
+              "detail": "argparse declaration"
+            }
+          ]
+        },
+        {
+          "expression": "mixed_precision is not None",
+          "kind": "type",
+          "parameters": [
+            "mixed_precision"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/commands/config/config_args.py",
+              "line": 79,
+              "detail": "required schema field"
+            }
+          ]
+        },
+        {
+          "expression": "mixed_precision in {\"bf16\", \"fp16\", \"no\"}",
+          "kind": "enum",
+          "parameters": [
+            "mixed_precision"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/commands/config/default.py",
+              "line": 156,
+              "detail": "argparse choices"
+            }
+          ]
+        },
+        {
+          "expression": "mixed_precision in {\"bf16\", \"fp16\", \"fp8\", \"no\"}",
+          "kind": "enum",
+          "parameters": [
+            "mixed_precision"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/commands/launch.py",
+              "line": 189,
+              "detail": "argparse choices"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 23,
+          "parse_errors": [],
+          "raw_candidates": 7,
+          "filtered_candidates": 6,
+          "accepted_candidates": 1
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 4
+        },
+        "accepted_candidates": 5
+      }
+    },
+    {
+      "parameter": "dispatch_batches",
+      "constraints": [
+        {
+          "expression": "not put_on_device => not dispatch_batches",
+          "kind": "conditional",
+          "parameters": [
+            "dispatch_batches",
+            "put_on_device"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/data_loader.py",
+              "line": 1117,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "dispatch_batches: boolean",
+          "kind": "type",
+          "parameters": [
+            "dispatch_batches"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/trainer_pt_utils.py",
+              "line": 1170,
+              "detail": "schema annotation"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/utils/dataclasses.py",
+              "line": 866,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 10,
+          "parse_errors": [],
+          "raw_candidates": 1,
+          "filtered_candidates": 0,
+          "accepted_candidates": 1
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 2
+      }
+    },
+    {
+      "parameter": "split_batches",
+      "constraints": [
+        {
+          "expression": "self.batch_size is None or self.batch_size % num_processes != 0 => not split_batches",
+          "kind": "conditional",
+          "parameters": [
+            "split_batches",
+            "num_processes"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/data_loader.py",
+              "line": 160,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "batch_size > 1 and batch_size % num_processes != 0 => not split_batches",
+          "kind": "conditional",
+          "parameters": [
+            "split_batches",
+            "batch_size",
+            "num_processes"
+          ],
+          "confidence": 0.95,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/data_loader.py",
+              "line": 316,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "split_batches: boolean",
+          "kind": "type",
+          "parameters": [
+            "split_batches"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/trainer_pt_utils.py",
+              "line": 1161,
+              "detail": "schema annotation"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/utils/dataclasses.py",
+              "line": 857,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 11,
+          "parse_errors": [],
+          "raw_candidates": 2,
+          "filtered_candidates": 0,
+          "accepted_candidates": 2
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 3
+      }
+    },
+    {
+      "parameter": "even_batches",
+      "constraints": [
+        {
+          "expression": "even_batches == False",
+          "kind": "other",
+          "parameters": [
+            "even_batches"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/test_utils/scripts/test_distributed_data_loop.py",
+              "line": 208,
+              "detail": "assertion"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/test_utils/scripts/test_distributed_data_loop.py",
+              "line": 209,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "even_batches == True",
+          "kind": "other",
+          "parameters": [
+            "even_batches"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/accelerate/test_utils/scripts/test_distributed_data_loop.py",
+              "line": 210,
+              "detail": "assertion"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/test_utils/scripts/test_distributed_data_loop.py",
+              "line": 211,
+              "detail": "assertion"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/test_utils/scripts/test_distributed_data_loop.py",
+              "line": 233,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "even_batches: boolean",
+          "kind": "type",
+          "parameters": [
+            "even_batches"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/trainer_pt_utils.py",
+              "line": 1178,
+              "detail": "schema annotation"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/utils/dataclasses.py",
+              "line": 874,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 7,
+          "parse_errors": [],
+          "raw_candidates": 5,
+          "filtered_candidates": 0,
+          "accepted_candidates": 2
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 3
+      }
+    },
+    {
+      "parameter": "use_seedable_sampler",
+      "constraints": [
+        {
+          "expression": "use_seedable_sampler: boolean",
+          "kind": "type",
+          "parameters": [
+            "use_seedable_sampler"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/trainer_pt_utils.py",
+              "line": 1186,
+              "detail": "schema annotation"
+            },
+            {
+              "kind": "static",
+              "source": "src/accelerate/utils/dataclasses.py",
+              "line": 882,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 7,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 2461,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 1
+      }
+    }
+  ],
+  "dependency_graph": {
+    "schema_version": 1,
+    "metadata": {
+      "scope": {
+        "framework": "Transformers/Accelerate",
+        "source_subdir": "src/transformers,src/accelerate",
+        "framework_profile": "transformers-accelerate",
+        "backend": "PyTorch/CUDA",
+        "accelerator": "NVIDIA GPU",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+      }
+    },
+    "summary": {
+      "nodes": 25,
+      "edges": 31,
+      "connected_components": 13,
+      "node_kinds": {
+        "feature": 11,
+        "parameter": 14
+      },
+      "relations": {
+        "bound": 2,
+        "conflicts": 5,
+        "enum": 3,
+        "equality": 5,
+        "requires": 1,
+        "type": 15
+      },
+      "statuses": {
+        "static_candidate": 31
+      }
+    },
+    "nodes": [
+      {
+        "name": "FSDPOption.FULL_SHARD",
+        "kind": "parameter"
+      },
+      {
+        "name": "FSDPOption.OFFLOAD",
+        "kind": "parameter"
+      },
+      {
+        "name": "FSDPOption.SHARD_GRAD_OP",
+        "kind": "parameter"
+      },
+      {
+        "name": "batch_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "bf16",
+        "kind": "feature"
+      },
+      {
+        "name": "deepspeed",
+        "kind": "parameter"
+      },
+      {
+        "name": "dispatch_batches",
+        "kind": "feature"
+      },
+      {
+        "name": "even_batches",
+        "kind": "feature"
+      },
+      {
+        "name": "fp16",
+        "kind": "feature"
+      },
+      {
+        "name": "fsdp",
+        "kind": "parameter"
+      },
+      {
+        "name": "grad_acc_kwargs",
+        "kind": "parameter"
+      },
+      {
+        "name": "gradient_accumulation_plugin",
+        "kind": "parameter"
+      },
+      {
+        "name": "gradient_accumulation_steps",
+        "kind": "parameter"
+      },
+      {
+        "name": "gradient_checkpointing",
+        "kind": "feature"
+      },
+      {
+        "name": "is_layerwise",
+        "kind": "feature"
+      },
+      {
+        "name": "min_num_params",
+        "kind": "parameter"
+      },
+      {
+        "name": "mixed_precision",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_processes",
+        "kind": "parameter"
+      },
+      {
+        "name": "per_device_train_batch_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "put_on_device",
+        "kind": "feature"
+      },
+      {
+        "name": "split_batches",
+        "kind": "feature"
+      },
+      {
+        "name": "tf32",
+        "kind": "feature"
+      },
+      {
+        "name": "torch_compile",
+        "kind": "feature"
+      },
+      {
+        "name": "transformer_layer_cls_to_wrap",
+        "kind": "parameter"
+      },
+      {
+        "name": "use_seedable_sampler",
+        "kind": "feature"
+      }
+    ],
+    "edges": [
+      {
+        "id": "dep-02345e1e5a79550a",
+        "expression": "gradient_accumulation_plugin is not None => gradient_accumulation_steps == 1",
+        "predicate": "gradient_accumulation_steps == 1",
+        "relation": "equality",
+        "participants": [
+          "gradient_accumulation_steps",
+          "gradient_accumulation_plugin"
+        ],
+        "drivers": [
+          "gradient_accumulation_plugin"
+        ],
+        "dependents": [
+          "gradient_accumulation_steps"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/accelerator.py",
+            "line": 540,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "gradient_accumulation_plugin is not None"
+      },
+      {
+        "id": "dep-284ba5a75541087a",
+        "expression": "fp16: boolean",
+        "predicate": "fp16: boolean",
+        "relation": "type",
+        "participants": [
+          "fp16"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 885,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-28d247278626de1f",
+        "expression": "deepspeed: string",
+        "predicate": "deepspeed: string",
+        "relation": "type",
+        "participants": [
+          "deepspeed"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 1421,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-2e6e3c9659316e11",
+        "expression": "even_batches == True",
+        "predicate": "even_batches == True",
+        "relation": "equality",
+        "participants": [
+          "even_batches"
+        ],
+        "drivers": [],
+        "dependents": [
+          "even_batches"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate/test_utils/scripts"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/test_utils/scripts/test_distributed_data_loop.py",
+            "line": 210,
+            "detail": "assertion"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/test_utils/scripts/test_distributed_data_loop.py",
+            "line": 211,
+            "detail": "assertion"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/test_utils/scripts/test_distributed_data_loop.py",
+            "line": 233,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-3303fe3197ea8165",
+        "expression": "gradient_checkpointing: boolean",
+        "predicate": "gradient_checkpointing: boolean",
+        "relation": "type",
+        "participants": [
+          "gradient_checkpointing"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 911,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-39fd2282ed77229c",
+        "expression": "mixed_precision in ['no', 'fp16', 'bf16', 'fp8']",
+        "predicate": "mixed_precision in ['no', 'fp16', 'bf16', 'fp8']",
+        "relation": "enum",
+        "participants": [
+          "mixed_precision"
+        ],
+        "drivers": [],
+        "dependents": [
+          "mixed_precision"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate/commands/config"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/commands/config/default.py",
+            "line": 58,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-3dea6383252158cf",
+        "expression": "batch_size > 1 and batch_size % num_processes != 0 => not split_batches",
+        "predicate": "not split_batches",
+        "relation": "conflicts",
+        "participants": [
+          "split_batches",
+          "batch_size",
+          "num_processes"
+        ],
+        "drivers": [
+          "batch_size",
+          "num_processes"
+        ],
+        "dependents": [
+          "split_batches"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/data_loader.py",
+            "line": 316,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "batch_size > 1 and batch_size % num_processes != 0"
+      },
+      {
+        "id": "dep-3fe2c059b35d4be5",
+        "expression": "use_seedable_sampler: boolean",
+        "predicate": "use_seedable_sampler: boolean",
+        "relation": "type",
+        "participants": [
+          "use_seedable_sampler"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers",
+          "src/accelerate/utils"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/trainer_pt_utils.py",
+            "line": 1186,
+            "detail": "schema annotation"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/utils/dataclasses.py",
+            "line": 882,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-4021dcf1fc2548c7",
+        "expression": "mixed_precision is not None",
+        "predicate": "mixed_precision is not None",
+        "relation": "type",
+        "participants": [
+          "mixed_precision"
+        ],
+        "drivers": [],
+        "dependents": [
+          "mixed_precision"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate/commands/config"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/commands/config/config_args.py",
+            "line": 79,
+            "detail": "required schema field"
+          }
+        ]
+      },
+      {
+        "id": "dep-43677102bd36ed03",
+        "expression": "even_batches: boolean",
+        "predicate": "even_batches: boolean",
+        "relation": "type",
+        "participants": [
+          "even_batches"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers",
+          "src/accelerate/utils"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/trainer_pt_utils.py",
+            "line": 1178,
+            "detail": "schema annotation"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/utils/dataclasses.py",
+            "line": 874,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-47505bb49fa8cf00",
+        "expression": "even_batches == False",
+        "predicate": "even_batches == False",
+        "relation": "equality",
+        "participants": [
+          "even_batches"
+        ],
+        "drivers": [],
+        "dependents": [
+          "even_batches"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate/test_utils/scripts"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/test_utils/scripts/test_distributed_data_loop.py",
+            "line": 208,
+            "detail": "assertion"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/test_utils/scripts/test_distributed_data_loop.py",
+            "line": 209,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-4d64e419db59f828",
+        "expression": "dispatch_batches: boolean",
+        "predicate": "dispatch_batches: boolean",
+        "relation": "type",
+        "participants": [
+          "dispatch_batches"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers",
+          "src/accelerate/utils"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/trainer_pt_utils.py",
+            "line": 1170,
+            "detail": "schema annotation"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/utils/dataclasses.py",
+            "line": 866,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-4dedadc2304a1610",
+        "expression": "fsdp != [FSDPOption.OFFLOAD]",
+        "predicate": "fsdp != [FSDPOption.OFFLOAD]",
+        "relation": "equality",
+        "participants": [
+          "fsdp",
+          "FSDPOption.OFFLOAD"
+        ],
+        "drivers": [
+          "FSDPOption.OFFLOAD"
+        ],
+        "dependents": [
+          "fsdp"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 2720,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-52854ef700659de9",
+        "expression": "torch_compile: boolean",
+        "predicate": "torch_compile: boolean",
+        "relation": "type",
+        "participants": [
+          "torch_compile"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 923,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-54241f191526fdae",
+        "expression": "bf16 => not fp16",
+        "predicate": "not fp16",
+        "relation": "conflicts",
+        "participants": [
+          "fp16",
+          "bf16"
+        ],
+        "drivers": [
+          "bf16"
+        ],
+        "dependents": [
+          "fp16"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 1740,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "bf16"
+      },
+      {
+        "id": "dep-5d2bdf54140b8f5a",
+        "expression": "mixed_precision in {\"bf16\", \"fp16\", \"no\"}",
+        "predicate": "mixed_precision in {\"bf16\", \"fp16\", \"no\"}",
+        "relation": "enum",
+        "participants": [
+          "mixed_precision"
+        ],
+        "drivers": [],
+        "dependents": [
+          "mixed_precision"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate/commands/config"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/commands/config/default.py",
+            "line": 156,
+            "detail": "argparse choices"
+          }
+        ]
+      },
+      {
+        "id": "dep-704ab00c42aaf2ec",
+        "expression": "min_num_params > 0 and transformer_layer_cls_to_wrap is not None => len(fsdp) <= 0",
+        "predicate": "len(fsdp) <= 0",
+        "relation": "bound",
+        "participants": [
+          "fsdp",
+          "min_num_params",
+          "transformer_layer_cls_to_wrap"
+        ],
+        "drivers": [
+          "min_num_params",
+          "transformer_layer_cls_to_wrap"
+        ],
+        "dependents": [
+          "fsdp"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 2764,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "min_num_params > 0 and transformer_layer_cls_to_wrap is not None"
+      },
+      {
+        "id": "dep-7bdce92d1ca98e5f",
+        "expression": "not put_on_device => not dispatch_batches",
+        "predicate": "not dispatch_batches",
+        "relation": "conflicts",
+        "participants": [
+          "dispatch_batches",
+          "put_on_device"
+        ],
+        "drivers": [
+          "put_on_device"
+        ],
+        "dependents": [
+          "dispatch_batches"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/data_loader.py",
+            "line": 1117,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "not put_on_device"
+      },
+      {
+        "id": "dep-93e48ea65cee3e5e",
+        "expression": "is_layerwise => gradient_accumulation_steps == 1",
+        "predicate": "gradient_accumulation_steps == 1",
+        "relation": "equality",
+        "participants": [
+          "gradient_accumulation_steps",
+          "is_layerwise"
+        ],
+        "drivers": [
+          "is_layerwise"
+        ],
+        "dependents": [
+          "gradient_accumulation_steps"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/trainer_optimizer.py",
+            "line": 165,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "is_layerwise"
+      },
+      {
+        "id": "dep-b470cfe2413267c1",
+        "expression": "'num_steps' in grad_acc_kwargs => gradient_accumulation_steps <= 1",
+        "predicate": "gradient_accumulation_steps <= 1",
+        "relation": "bound",
+        "participants": [
+          "gradient_accumulation_steps",
+          "grad_acc_kwargs"
+        ],
+        "drivers": [
+          "grad_acc_kwargs"
+        ],
+        "dependents": [
+          "gradient_accumulation_steps"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/trainer.py",
+            "line": 761,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "'num_steps' in grad_acc_kwargs"
+      },
+      {
+        "id": "dep-b8bc7c603d3b732a",
+        "expression": "self.batch_size is None or self.batch_size % num_processes != 0 => not split_batches",
+        "predicate": "not split_batches",
+        "relation": "conflicts",
+        "participants": [
+          "split_batches",
+          "num_processes"
+        ],
+        "drivers": [
+          "num_processes"
+        ],
+        "dependents": [
+          "split_batches"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/data_loader.py",
+            "line": 160,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "self.batch_size is None or self.batch_size % num_processes != 0"
+      },
+      {
+        "id": "dep-bb93e90843aba2d0",
+        "expression": "mixed_precision in {\"bf16\", \"fp16\", \"fp8\", \"no\"}",
+        "predicate": "mixed_precision in {\"bf16\", \"fp16\", \"fp8\", \"no\"}",
+        "relation": "enum",
+        "participants": [
+          "mixed_precision"
+        ],
+        "drivers": [],
+        "dependents": [
+          "mixed_precision"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate/commands"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/commands/launch.py",
+            "line": 189,
+            "detail": "argparse choices"
+          }
+        ]
+      },
+      {
+        "id": "dep-bcffaa7c8426524c",
+        "expression": "fp16 => not bf16",
+        "predicate": "not bf16",
+        "relation": "conflicts",
+        "participants": [
+          "bf16",
+          "fp16"
+        ],
+        "drivers": [
+          "fp16"
+        ],
+        "dependents": [
+          "bf16"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 1740,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "fp16"
+      },
+      {
+        "id": "dep-bfb6992d57ef7371",
+        "expression": "gradient_accumulation_steps: integer",
+        "predicate": "gradient_accumulation_steps: integer",
+        "relation": "type",
+        "participants": [
+          "gradient_accumulation_steps"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers",
+          "src/accelerate/commands",
+          "src/accelerate/utils"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 854,
+            "detail": "schema annotation"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/commands/launch.py",
+            "line": 451,
+            "detail": "argparse declaration"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/utils/dataclasses.py",
+            "line": 1164,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-dcc4a8b1a2f17594",
+        "expression": "fsdp: list",
+        "predicate": "fsdp: list",
+        "relation": "type",
+        "participants": [
+          "fsdp"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 1404,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-dcd03d12dc226df4",
+        "expression": "fsdp != [FSDPOption.OFFLOAD] => FSDPOption.FULL_SHARD not in fsdp or FSDPOption.SHARD_GRAD_OP not in fsdp",
+        "predicate": "FSDPOption.FULL_SHARD not in fsdp or FSDPOption.SHARD_GRAD_OP not in fsdp",
+        "relation": "requires",
+        "participants": [
+          "fsdp",
+          "FSDPOption.FULL_SHARD",
+          "FSDPOption.OFFLOAD",
+          "FSDPOption.SHARD_GRAD_OP"
+        ],
+        "drivers": [
+          "FSDPOption.OFFLOAD",
+          "fsdp"
+        ],
+        "dependents": [
+          "FSDPOption.FULL_SHARD",
+          "FSDPOption.SHARD_GRAD_OP"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.95,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 2725,
+            "detail": "rejecting guard"
+          }
+        ],
+        "guard": "fsdp != [FSDPOption.OFFLOAD]"
+      },
+      {
+        "id": "dep-dcef89dafae45a80",
+        "expression": "tf32: boolean",
+        "predicate": "tf32: boolean",
+        "relation": "type",
+        "participants": [
+          "tf32"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 903,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-e4bc419b88c6f140",
+        "expression": "per_device_train_batch_size: integer",
+        "predicate": "per_device_train_batch_size: integer",
+        "relation": "type",
+        "participants": [
+          "per_device_train_batch_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 782,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-e62d39920599c2f4",
+        "expression": "split_batches: boolean",
+        "predicate": "split_batches: boolean",
+        "relation": "type",
+        "participants": [
+          "split_batches"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers",
+          "src/accelerate/utils"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/trainer_pt_utils.py",
+            "line": 1161,
+            "detail": "schema annotation"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/utils/dataclasses.py",
+            "line": 857,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-f356b4161a92a77f",
+        "expression": "bf16: boolean",
+        "predicate": "bf16: boolean",
+        "relation": "type",
+        "participants": [
+          "bf16"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/transformers"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/training_args.py",
+            "line": 879,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-f4b3da09d598a8fb",
+        "expression": "mixed_precision: string",
+        "predicate": "mixed_precision: string",
+        "relation": "type",
+        "participants": [
+          "mixed_precision"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "PyTorch/CUDA",
+          "framework": "Transformers/Accelerate",
+          "framework_profile": "transformers-accelerate",
+          "source_subdir": "src/transformers,src/accelerate",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e+beb0672aa8444ea7647aee056f624effe5996346"
+        },
+        "components": [
+          "src/accelerate/commands/config",
+          "src/accelerate/commands"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/accelerate/commands/config/config_args.py",
+            "line": 79,
+            "detail": "schema annotation"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/commands/config/default.py",
+            "line": 156,
+            "detail": "argparse declaration"
+          },
+          {
+            "kind": "static",
+            "source": "src/accelerate/commands/launch.py",
+            "line": 189,
+            "detail": "argparse declaration"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+schema_version: 1
+status: preliminary_qualification
+hardware:
+  accelerator: NVIDIA RTX A6000
+  devices_used: [4, 6]
+  device_count: 2
+  distributed_backend: NCCL
+  note: Qualification uses only currently idle devices and does not overlap other user workloads.
+
+subjects:
+  - id: pytorch-cuda
+    framework: PyTorch Native/CUDA
+    version: 2.13.0
+    revision: cf30153c4c131c8164ee7798e5022d810682e2cb
+    python: "3.11"
+    precision: bf16
+    world_size: 2
+    result: qualified
+    deepest_milestone: checkpoint_save_load
+
+  - id: deepspeed
+    framework: DeepSpeed
+    version: 0.19.1
+    revision: 510ebe58e4e4148bbf49350ad18fe291a0afb381
+    python: "3.11"
+    precision: bf16
+    world_size: 2
+    zero_stage: 1
+    result: qualified
+    deepest_milestone: checkpoint_save_load
+    note: The baseline passes a PyTorch AdamW optimizer explicitly; fused optimizer paths remain mutation targets.
+
+  - id: transformers-accelerate
+    framework: Transformers/Accelerate
+    versions:
+      transformers: 5.9.0
+      accelerate: 1.14.0
+    revisions:
+      transformers: 0a2757da521a7a49b8143d9e0c938f08747d682e
+      accelerate: beb0672aa8444ea7647aee056f624effe5996346
+    python: "3.11"
+    precision: bf16
+    world_size: 2
+    result: qualified
+    deepest_milestone: checkpoint_save_load
+
+  - id: megatron-core
+    framework: Megatron-Core
+    version: 0.18.2
+    revision: 571370c829ca768fe37244f4e2e7f28d8accc4ab
+    python: "3.12"
+    precision: fp32
+    world_size: 2
+    tensor_model_parallel_size: 2
+    result: qualified
+    deepest_milestone: checkpoint_save_load
+    observations:
+      - BF16 and FP16 with the local attention implementation currently fail in forward with a mixed-dtype matrix multiplication error; these paths are retained for scoped runtime validation rather than used as qualification baselines.

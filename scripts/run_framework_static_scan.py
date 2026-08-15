@@ -77,10 +77,28 @@ def _normalize_sources(value: Any, framework_root: Path) -> Any:
                     normalized["source"] = str(path.resolve().relative_to(framework_root))
                 except ValueError:
                     pass
+        components = normalized.get("components")
+        if isinstance(components, list):
+            normalized["components"] = [
+                _normalize_component_path(item, framework_root)
+                for item in components
+            ]
         return normalized
     if isinstance(value, list):
         return [_normalize_sources(item, framework_root) for item in value]
     return value
+
+
+def _normalize_component_path(value: Any, framework_root: Path) -> Any:
+    if not isinstance(value, str):
+        return value
+    path = Path(value)
+    if not path.is_absolute():
+        return value
+    try:
+        return str(path.resolve().relative_to(framework_root))
+    except ValueError:
+        return value
 
 
 def _resolve_source_roots(

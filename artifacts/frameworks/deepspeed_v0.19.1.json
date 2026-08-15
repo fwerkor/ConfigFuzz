@@ -1,0 +1,1686 @@
+{
+  "schema_version": 1,
+  "experiment": "framework_static_scan",
+  "framework": {
+    "name": "DeepSpeed",
+    "profile": "deepspeed",
+    "backend": "CUDA/NCCL",
+    "accelerator": "NVIDIA GPU",
+    "role": "distributed training and memory optimization stack",
+    "repositories": [
+      {
+        "repository": "https://github.com/deepspeedai/DeepSpeed.git",
+        "commit": "510ebe58e4e4148bbf49350ad18fe291a0afb381",
+        "commit_date": "2026-05-25",
+        "source_subdirs": [
+          "deepspeed"
+        ]
+      }
+    ],
+    "source_subdirs": [
+      "deepspeed"
+    ],
+    "parameters": [
+      "train_batch_size",
+      "train_micro_batch_size_per_gpu",
+      "gradient_accumulation_steps",
+      "stage",
+      "offload_optimizer",
+      "offload_param",
+      "overlap_comm",
+      "reduce_scatter",
+      "allgather_bucket_size",
+      "reduce_bucket_size",
+      "sub_group_size",
+      "sequence_parallel_size",
+      "tensor_parallel",
+      "pipeline_parallel_size",
+      "fp16",
+      "bf16"
+    ],
+    "repository": "https://github.com/deepspeedai/DeepSpeed.git",
+    "commit": "510ebe58e4e4148bbf49350ad18fe291a0afb381",
+    "commit_date": "2026-05-25",
+    "source_subdir": "deepspeed"
+  },
+  "scanner": {
+    "mode": "strict",
+    "jobs": 4,
+    "elapsed_seconds": 5.767
+  },
+  "summary": {
+    "parameters": 16,
+    "parameters_with_candidates": 11,
+    "candidates": 22,
+    "kinds": {
+      "conditional": 3,
+      "environment": 6,
+      "range": 7,
+      "relation": 1,
+      "type": 5
+    },
+    "dependency_nodes": 19,
+    "dependency_edges": 20,
+    "dependency_components": 9
+  },
+  "results": [
+    {
+      "parameter": "train_batch_size",
+      "constraints": [
+        {
+          "expression": "train_batch_size > 0",
+          "kind": "range",
+          "parameters": [
+            "train_batch_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/config.py",
+              "line": 880,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size",
+          "kind": "environment",
+          "parameters": [
+            "train_batch_size",
+            "train_micro_batch_size_per_gpu",
+            "gradient_accumulation_steps"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/config.py",
+              "line": 886,
+              "detail": "assertion"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 12,
+          "parse_errors": [],
+          "raw_candidates": 6,
+          "filtered_candidates": 4,
+          "accepted_candidates": 2
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 2
+      }
+    },
+    {
+      "parameter": "train_micro_batch_size_per_gpu",
+      "constraints": [
+        {
+          "expression": "train_micro_batch_size_per_gpu > 0",
+          "kind": "range",
+          "parameters": [
+            "train_micro_batch_size_per_gpu"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/config.py",
+              "line": 882,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size",
+          "kind": "environment",
+          "parameters": [
+            "train_micro_batch_size_per_gpu",
+            "train_batch_size",
+            "gradient_accumulation_steps"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/config.py",
+              "line": 886,
+              "detail": "assertion"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 10,
+          "parse_errors": [],
+          "raw_candidates": 4,
+          "filtered_candidates": 2,
+          "accepted_candidates": 2
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 2
+      }
+    },
+    {
+      "parameter": "gradient_accumulation_steps",
+      "constraints": [
+        {
+          "expression": "gradient_accumulation_steps > 0",
+          "kind": "range",
+          "parameters": [
+            "gradient_accumulation_steps"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/config.py",
+              "line": 884,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size",
+          "kind": "environment",
+          "parameters": [
+            "gradient_accumulation_steps",
+            "train_batch_size",
+            "train_micro_batch_size_per_gpu"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/config.py",
+              "line": 886,
+              "detail": "assertion"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 10,
+          "parse_errors": [],
+          "raw_candidates": 3,
+          "filtered_candidates": 1,
+          "accepted_candidates": 2
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 2
+      }
+    },
+    {
+      "parameter": "stage",
+      "constraints": [
+        {
+          "expression": "offload_optimizer and offload_optimizer.ratio < 1.0 => stage == ZeroStageEnum.weights",
+          "kind": "conditional",
+          "parameters": [
+            "stage",
+            "offload_optimizer",
+            "ZeroStageEnum"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/config.py",
+              "line": 392,
+              "detail": "assertion"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 49,
+          "parse_errors": [],
+          "raw_candidates": 1,
+          "filtered_candidates": 0,
+          "accepted_candidates": 1
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 1
+      }
+    },
+    {
+      "parameter": "offload_optimizer",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 13,
+          "parse_errors": [],
+          "raw_candidates": 2,
+          "filtered_candidates": 2,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "offload_param",
+      "constraints": [
+        {
+          "expression": "ds_config is not None and device == OffloadDeviceEnum.nvme => offload_param is not None",
+          "kind": "conditional",
+          "parameters": [
+            "offload_param",
+            "ds_config",
+            "device",
+            "OffloadDeviceEnum"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/partition_parameters.py",
+              "line": 1146,
+              "detail": "assertion"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 13,
+          "parse_errors": [],
+          "raw_candidates": 3,
+          "filtered_candidates": 2,
+          "accepted_candidates": 1
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 1
+      }
+    },
+    {
+      "parameter": "overlap_comm",
+      "constraints": [
+        {
+          "expression": "overlap_comm: boolean",
+          "kind": "type",
+          "parameters": [
+            "overlap_comm"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/config.py",
+              "line": 138,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 11,
+          "parse_errors": [],
+          "raw_candidates": 2,
+          "filtered_candidates": 2,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 1
+      }
+    },
+    {
+      "parameter": "reduce_scatter",
+      "constraints": [
+        {
+          "expression": "self.all2all_process_group is not None => reduce_scatter == True",
+          "kind": "conditional",
+          "parameters": [
+            "reduce_scatter"
+          ],
+          "confidence": 0.97,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/stage3.py",
+              "line": 368,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "reduce_scatter: boolean",
+          "kind": "type",
+          "parameters": [
+            "reduce_scatter"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/config.py",
+              "line": 108,
+              "detail": "schema annotation"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 13,
+          "parse_errors": [],
+          "raw_candidates": 4,
+          "filtered_candidates": 3,
+          "accepted_candidates": 1
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 1
+        },
+        "accepted_candidates": 2
+      }
+    },
+    {
+      "parameter": "allgather_bucket_size",
+      "constraints": [
+        {
+          "expression": "allgather_bucket_size % self.nccl_start_alignment_factor == 0",
+          "kind": "relation",
+          "parameters": [
+            "allgather_bucket_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/stage_1_and_2.py",
+              "line": 331,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "allgather_bucket_size: integer",
+          "kind": "type",
+          "parameters": [
+            "allgather_bucket_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/config.py",
+              "line": 132,
+              "detail": "schema annotation"
+            }
+          ]
+        },
+        {
+          "expression": "allgather_bucket_size >= 0",
+          "kind": "range",
+          "parameters": [
+            "allgather_bucket_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/config.py",
+              "line": 132,
+              "detail": "Field declaration"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 8,
+          "parse_errors": [],
+          "raw_candidates": 1,
+          "filtered_candidates": 0,
+          "accepted_candidates": 1
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 2
+        },
+        "accepted_candidates": 3
+      }
+    },
+    {
+      "parameter": "reduce_bucket_size",
+      "constraints": [
+        {
+          "expression": "reduce_bucket_size: integer",
+          "kind": "type",
+          "parameters": [
+            "reduce_bucket_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/config.py",
+              "line": 113,
+              "detail": "schema annotation"
+            }
+          ]
+        },
+        {
+          "expression": "reduce_bucket_size >= 0",
+          "kind": "range",
+          "parameters": [
+            "reduce_bucket_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/config.py",
+              "line": 113,
+              "detail": "Field declaration"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 10,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 2
+        },
+        "accepted_candidates": 2
+      }
+    },
+    {
+      "parameter": "sub_group_size",
+      "constraints": [
+        {
+          "expression": "sub_group_size: integer",
+          "kind": "type",
+          "parameters": [
+            "sub_group_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/config.py",
+              "line": 175,
+              "detail": "schema annotation"
+            }
+          ]
+        },
+        {
+          "expression": "sub_group_size >= 0",
+          "kind": "range",
+          "parameters": [
+            "sub_group_size"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/zero/config.py",
+              "line": 175,
+              "detail": "Field declaration"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 4,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 2
+        },
+        "accepted_candidates": 2
+      }
+    },
+    {
+      "parameter": "sequence_parallel_size",
+      "constraints": [
+        {
+          "expression": "dist.get_world_size() % sequence_parallel_size == 0",
+          "kind": "environment",
+          "parameters": [
+            "sequence_parallel_size",
+            "dist"
+          ],
+          "confidence": 1.0,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/compile/custom_ops/sp_dp_registry.py",
+              "line": 32,
+              "detail": "assertion"
+            }
+          ]
+        },
+        {
+          "expression": "world_size >= sequence_parallel_size",
+          "kind": "environment",
+          "parameters": [
+            "sequence_parallel_size",
+            "world_size"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+              "line": 23,
+              "detail": "rejecting guard"
+            }
+          ]
+        },
+        {
+          "expression": "sequence_parallel_size > 1",
+          "kind": "range",
+          "parameters": [
+            "sequence_parallel_size"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+              "line": 26,
+              "detail": "rejecting guard"
+            },
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+              "line": 26,
+              "detail": "interprocedural summary instantiated at line 442"
+            }
+          ]
+        },
+        {
+          "expression": "world_size % sequence_parallel_size == 0",
+          "kind": "environment",
+          "parameters": [
+            "sequence_parallel_size",
+            "world_size"
+          ],
+          "confidence": 0.98,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+              "line": 29,
+              "detail": "rejecting guard"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 9,
+          "parse_errors": [],
+          "raw_candidates": 5,
+          "filtered_candidates": 0,
+          "accepted_candidates": 4
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 4
+      }
+    },
+    {
+      "parameter": "tensor_parallel",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 24,
+          "parse_errors": [],
+          "raw_candidates": 2,
+          "filtered_candidates": 2,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "pipeline_parallel_size",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "fp16",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 101,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "bf16",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "strict",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "strict",
+          "scanned_files": 65,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 613,
+          "yaml_files": 0,
+          "json_files": 4,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    }
+  ],
+  "dependency_graph": {
+    "schema_version": 1,
+    "metadata": {
+      "scope": {
+        "framework": "DeepSpeed",
+        "source_subdir": "deepspeed",
+        "framework_profile": "deepspeed",
+        "backend": "CUDA/NCCL",
+        "accelerator": "NVIDIA GPU",
+        "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+      }
+    },
+    "summary": {
+      "nodes": 19,
+      "edges": 20,
+      "connected_components": 9,
+      "node_kinds": {
+        "environment": 1,
+        "feature": 3,
+        "parameter": 15
+      },
+      "relations": {
+        "divisibility": 1,
+        "environment": 4,
+        "equality": 3,
+        "range": 7,
+        "type": 5
+      },
+      "statuses": {
+        "environment_specific": 4,
+        "static_candidate": 16
+      }
+    },
+    "nodes": [
+      {
+        "name": "OffloadDeviceEnum.nvme",
+        "kind": "parameter"
+      },
+      {
+        "name": "ZeroStageEnum.weights",
+        "kind": "parameter"
+      },
+      {
+        "name": "allgather_bucket_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "device",
+        "kind": "parameter"
+      },
+      {
+        "name": "dist",
+        "kind": "parameter"
+      },
+      {
+        "name": "ds_config",
+        "kind": "parameter"
+      },
+      {
+        "name": "gradient_accumulation_steps",
+        "kind": "parameter"
+      },
+      {
+        "name": "offload_optimizer",
+        "kind": "feature"
+      },
+      {
+        "name": "offload_optimizer.ratio",
+        "kind": "parameter"
+      },
+      {
+        "name": "offload_param",
+        "kind": "parameter"
+      },
+      {
+        "name": "overlap_comm",
+        "kind": "feature"
+      },
+      {
+        "name": "reduce_bucket_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "reduce_scatter",
+        "kind": "feature"
+      },
+      {
+        "name": "sequence_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "stage",
+        "kind": "parameter"
+      },
+      {
+        "name": "sub_group_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "train_batch_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "train_micro_batch_size_per_gpu",
+        "kind": "parameter"
+      },
+      {
+        "name": "world_size",
+        "kind": "environment"
+      }
+    ],
+    "edges": [
+      {
+        "id": "dep-0887015961d7c9ca",
+        "expression": "train_micro_batch_size_per_gpu > 0",
+        "predicate": "train_micro_batch_size_per_gpu > 0",
+        "relation": "range",
+        "participants": [
+          "train_micro_batch_size_per_gpu"
+        ],
+        "drivers": [],
+        "dependents": [
+          "train_micro_batch_size_per_gpu"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/config.py",
+            "line": 882,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-0c306f6445b44886",
+        "expression": "ds_config is not None and device == OffloadDeviceEnum.nvme => offload_param is not None",
+        "predicate": "offload_param is not None",
+        "relation": "equality",
+        "participants": [
+          "offload_param",
+          "ds_config",
+          "device",
+          "OffloadDeviceEnum.nvme"
+        ],
+        "drivers": [
+          "OffloadDeviceEnum.nvme",
+          "device",
+          "ds_config"
+        ],
+        "dependents": [
+          "offload_param"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/partition_parameters.py",
+            "line": 1146,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "ds_config is not None and device == OffloadDeviceEnum.nvme"
+      },
+      {
+        "id": "dep-36cad266ae33f1b0",
+        "expression": "dist.get_world_size() % sequence_parallel_size == 0",
+        "predicate": "dist.get_world_size() % sequence_parallel_size == 0",
+        "relation": "environment",
+        "participants": [
+          "sequence_parallel_size",
+          "dist"
+        ],
+        "drivers": [
+          "sequence_parallel_size"
+        ],
+        "dependents": [],
+        "status": "environment_specific",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/compile/custom_ops"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/compile/custom_ops/sp_dp_registry.py",
+            "line": 32,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-379bb8a6daee0faa",
+        "expression": "reduce_scatter: boolean",
+        "predicate": "reduce_scatter: boolean",
+        "relation": "type",
+        "participants": [
+          "reduce_scatter"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 108,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-3a78a14f86fa29d3",
+        "expression": "self.all2all_process_group is not None => reduce_scatter == True",
+        "predicate": "reduce_scatter == True",
+        "relation": "equality",
+        "participants": [
+          "reduce_scatter"
+        ],
+        "drivers": [],
+        "dependents": [
+          "reduce_scatter"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/stage3.py",
+            "line": 368,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "self.all2all_process_group is not None"
+      },
+      {
+        "id": "dep-4a415b051195ecec",
+        "expression": "reduce_bucket_size: integer",
+        "predicate": "reduce_bucket_size: integer",
+        "relation": "type",
+        "participants": [
+          "reduce_bucket_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 113,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-65b7074717e4cab9",
+        "expression": "sequence_parallel_size > 1",
+        "predicate": "sequence_parallel_size > 1",
+        "relation": "range",
+        "participants": [
+          "sequence_parallel_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "sequence_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/sequence_parallel"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+            "line": 26,
+            "detail": "rejecting guard"
+          },
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+            "line": 26,
+            "detail": "interprocedural summary instantiated at line 442"
+          }
+        ]
+      },
+      {
+        "id": "dep-660c94ed03780170",
+        "expression": "reduce_bucket_size >= 0",
+        "predicate": "reduce_bucket_size >= 0",
+        "relation": "range",
+        "participants": [
+          "reduce_bucket_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "reduce_bucket_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 113,
+            "detail": "Field declaration"
+          }
+        ]
+      },
+      {
+        "id": "dep-67b3c0f8347837c7",
+        "expression": "sub_group_size: integer",
+        "predicate": "sub_group_size: integer",
+        "relation": "type",
+        "participants": [
+          "sub_group_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 175,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-70da5e10318e54f5",
+        "expression": "train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size",
+        "predicate": "train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size",
+        "relation": "environment",
+        "participants": [
+          "train_batch_size",
+          "train_micro_batch_size_per_gpu",
+          "gradient_accumulation_steps"
+        ],
+        "drivers": [
+          "gradient_accumulation_steps",
+          "train_micro_batch_size_per_gpu"
+        ],
+        "dependents": [
+          "train_batch_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/config.py",
+            "line": 886,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-77a66b9286ec9a89",
+        "expression": "overlap_comm: boolean",
+        "predicate": "overlap_comm: boolean",
+        "relation": "type",
+        "participants": [
+          "overlap_comm"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 138,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-7a5dbc6e4def1be0",
+        "expression": "world_size >= sequence_parallel_size",
+        "predicate": "world_size >= sequence_parallel_size",
+        "relation": "environment",
+        "participants": [
+          "sequence_parallel_size",
+          "world_size"
+        ],
+        "drivers": [
+          "sequence_parallel_size"
+        ],
+        "dependents": [
+          "world_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 0.98,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/sequence_parallel"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+            "line": 23,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-8cb802d9b2ecccb3",
+        "expression": "offload_optimizer and offload_optimizer.ratio < 1.0 => stage == ZeroStageEnum.weights",
+        "predicate": "stage == ZeroStageEnum.weights",
+        "relation": "equality",
+        "participants": [
+          "stage",
+          "offload_optimizer",
+          "ZeroStageEnum.weights",
+          "offload_optimizer.ratio"
+        ],
+        "drivers": [
+          "ZeroStageEnum.weights",
+          "offload_optimizer",
+          "offload_optimizer.ratio"
+        ],
+        "dependents": [
+          "stage"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 392,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "offload_optimizer and offload_optimizer.ratio < 1.0"
+      },
+      {
+        "id": "dep-9d6943a3da487629",
+        "expression": "world_size % sequence_parallel_size == 0",
+        "predicate": "world_size % sequence_parallel_size == 0",
+        "relation": "environment",
+        "participants": [
+          "sequence_parallel_size",
+          "world_size"
+        ],
+        "drivers": [
+          "sequence_parallel_size"
+        ],
+        "dependents": [
+          "world_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 0.98,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/sequence_parallel"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+            "line": 29,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-a37e7d3959ee0b8c",
+        "expression": "allgather_bucket_size >= 0",
+        "predicate": "allgather_bucket_size >= 0",
+        "relation": "range",
+        "participants": [
+          "allgather_bucket_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "allgather_bucket_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 132,
+            "detail": "Field declaration"
+          }
+        ]
+      },
+      {
+        "id": "dep-b957353a0fcb0fdc",
+        "expression": "train_batch_size > 0",
+        "predicate": "train_batch_size > 0",
+        "relation": "range",
+        "participants": [
+          "train_batch_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "train_batch_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/config.py",
+            "line": 880,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-d05041904531c361",
+        "expression": "allgather_bucket_size % self.nccl_start_alignment_factor == 0",
+        "predicate": "allgather_bucket_size % self.nccl_start_alignment_factor == 0",
+        "relation": "divisibility",
+        "participants": [
+          "allgather_bucket_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "allgather_bucket_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/stage_1_and_2.py",
+            "line": 331,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-dc97b1a59ef46820",
+        "expression": "gradient_accumulation_steps > 0",
+        "predicate": "gradient_accumulation_steps > 0",
+        "relation": "range",
+        "participants": [
+          "gradient_accumulation_steps"
+        ],
+        "drivers": [],
+        "dependents": [
+          "gradient_accumulation_steps"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/config.py",
+            "line": 884,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-ec6ed3a086bd7146",
+        "expression": "sub_group_size >= 0",
+        "predicate": "sub_group_size >= 0",
+        "relation": "range",
+        "participants": [
+          "sub_group_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "sub_group_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 175,
+            "detail": "Field declaration"
+          }
+        ]
+      },
+      {
+        "id": "dep-fe8b5c42fd4f1357",
+        "expression": "allgather_bucket_size: integer",
+        "predicate": "allgather_bucket_size: integer",
+        "relation": "type",
+        "participants": [
+          "allgather_bucket_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 132,
+            "detail": "schema annotation"
+          }
+        ]
+      }
+    ]
+  }
+}
