@@ -12,6 +12,7 @@ from megatron.core import parallel_state
 from megatron.core.models.gpt.gpt_layer_specs import get_gpt_layer_local_spec
 from megatron.core.models.gpt.gpt_model import GPTModel
 from megatron.core.tensor_parallel.random import model_parallel_cuda_manual_seed
+from megatron.core.transformer.module import Float16Module
 from megatron.core.transformer.transformer_config import TransformerConfig
 
 
@@ -80,6 +81,8 @@ def main() -> int:
         max_sequence_length=int(cfg["max_position_embeddings"]),
         parallel_output=False,
     ).to(device)
+    if use_fp16 or use_bf16:
+        model = Float16Module(config, model)
     milestone("model_construction", rank=rank)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(cfg.get("learning_rate", 1e-3)))
