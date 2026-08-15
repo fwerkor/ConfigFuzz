@@ -1,0 +1,62 @@
+schema_version: 1
+name: ConfigFuzz framework coverage
+subjects:
+  - id: pta
+    display_name: PTA
+    family: ascend_adapter
+    accelerator: Ascend NPU
+    backend: torch_npu
+    scanner_profile: null
+    execution_adapter: lmsv_task1
+    role: ascend-native PyTorch adaptation path
+
+  - id: msa
+    display_name: MSA
+    family: ascend_adapter
+    accelerator: Ascend NPU
+    backend: MindSpore/MSAdapter
+    scanner_profile: null
+    execution_adapter: lmsv_task1
+    role: PyTorch-compatible MindSpore adaptation path
+
+  - id: pytorch-cuda
+    display_name: PyTorch Native/CUDA
+    family: gpu_framework
+    accelerator: NVIDIA GPU
+    backend: CUDA/NCCL
+    scanner_profile: pytorch-cuda
+    execution_adapter: subprocess_manifest
+    role: general-purpose distributed framework
+
+  - id: deepspeed
+    display_name: DeepSpeed
+    family: gpu_framework
+    accelerator: NVIDIA GPU
+    backend: CUDA/NCCL
+    scanner_profile: deepspeed
+    execution_adapter: subprocess_manifest
+    role: distributed training and memory optimization stack
+
+  - id: megatron-core
+    display_name: Megatron-Core
+    family: gpu_framework
+    accelerator: NVIDIA GPU
+    backend: CUDA/NCCL
+    scanner_profile: megatron-core
+    execution_adapter: subprocess_manifest
+    role: large-model parallel training stack
+
+  - id: transformers-accelerate
+    display_name: Transformers/Accelerate
+    family: gpu_framework
+    accelerator: NVIDIA GPU
+    backend: PyTorch/CUDA
+    scanner_profile: transformers-accelerate
+    execution_adapter: subprocess_manifest
+    role: high-level training and launcher integration stack
+
+controls:
+  - pin every framework revision before a campaign
+  - compare mutation methods only within the same framework, workload, and hardware environment
+  - report cross-framework results separately before computing any aggregate
+  - use accelerator-seconds and accelerator-hours for hardware-neutral cost accounting

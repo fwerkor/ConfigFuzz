@@ -143,6 +143,64 @@ enum_params:
     }
 
 
+def test_extracts_pydantic_style_field_constraints(tmp_path: Path) -> None:
+    source = tmp_path / "deepspeed_config.py"
+    source.write_text(
+        """
+from pydantic import BaseModel, Field
+
+class ZeroConfig(BaseModel):
+    stage: int = Field(default=0, ge=0, le=3)
+    overlap_comm: bool = False
+""",
+        encoding="utf-8",
+    )
+
+    results = scan_declaration_paths_multi(
+        [source],
+        ["stage", "overlap_comm"],
+    )
+
+    assert expressions(results["stage"]) == {
+        "stage: integer",
+        "stage >= 0",
+        "stage <= 3",
+    }
+    assert expressions(results["overlap_comm"]) == {
+        "overlap_comm: boolean",
+    }
+
+
+def test_extracts_json_schema_declarations(tmp_path: Path) -> None:
+    schema = tmp_path / "config.schema.json"
+    schema.write_text(
+        """{
+  "type": "object",
+  "properties": {
+    "train_batch_size": {"type": "integer", "minimum": 1},
+    "mixed_precision": {"type": "string", "enum": ["no", "fp16", "bf16"]}
+  }
+}
+""",
+        encoding="utf-8",
+    )
+
+    results = scan_declaration_paths_multi(
+        [schema],
+        ["train_batch_size", "mixed_precision"],
+    )
+
+    assert expressions(results["train_batch_size"]) == {
+        "train_batch_size: integer",
+        "train_batch_size >= 1",
+    }
+    assert expressions(results["mixed_precision"]) == {
+        "mixed_precision: string",
+        'mixed_precision in {"bf16", "fp16", "no"}',
+    }
+    assert results["train_batch_size"].metadata["json_files"] == 1
+
+
 def test_combined_scan_merges_declarations_and_runtime_guards(tmp_path: Path) -> None:
     source = tmp_path / "framework.py"
     source.write_text(

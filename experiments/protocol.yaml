@@ -1,5 +1,6 @@
 schema_version: 1
 name: ConfigFuzz three-RQ experiment protocol
+framework_registry: frameworks.yaml
 argument_chain:
   - rq1: configuration constraints must be recovered with correct scope and validated before they become hard guidance
   - rq2: intent-preserving coordinated mutation produces more deep, valid, and diverse executions
@@ -41,7 +42,7 @@ rq1:
     - constraint category, arity, guard, scope, and software-layer distributions
     - full explicit, partial, implicit/delayed, and uncovered validation rates
     - first-failure milestone distribution
-    - median and P95 time-to-failure and GPU-seconds wasted
+    - median and P95 time-to-failure and accelerator-seconds wasted
     - crash, hang, silent-abnormal, timeout, and interpretable-message rates
 rq2:
   question: >-
@@ -101,17 +102,17 @@ rq2:
   minimum_random_seeds: 5
   budget_controls:
     - identical frozen mutation-intent set
-    - identical hardware and software environment
+    - identical hardware and software environment within each framework subject
     - identical per-test timeout
-    - identical test-count and GPU-hour budgets
+    - identical test-count and accelerator-hour budgets
   primary_metrics:
     - intent_preserving_deep_execution_rate
-    - intent_preserving_deep_execution_yield_per_gpu_hour
+    - intent_preserving_deep_execution_yield_per_accelerator_hour
     - target_value_retention_rate
     - generation/infeasible rate, including static-hard false exclusions
     - coordinated_parameter_count and modification_distance
     - stage reach rates and expected rejection rate
-    - runtime behavior ID coverage, behavior-signature count and entropy, and coverage per GPU-hour
+    - runtime behavior ID coverage, behavior-signature count and entropy, and coverage per accelerator-hour
 rq3:
   question: >-
     Can ConfigFuzz replay and discover more real configuration-related framework bugs
@@ -141,9 +142,9 @@ rq3:
     - seek developer confirmation
   primary_metrics:
     - historical bug replay rate
-    - tests, wall time, and GPU-hours to first reproducer
+    - tests, wall time, and accelerator-hours to first reproducer
     - independent reproducible and developer-confirmed bugs
-    - GPU-hours per confirmed bug and false-positive rate
+    - accelerator-hours per confirmed bug and false-positive rate
 recording:
   run_format: JSON Lines
   required_context:
@@ -154,7 +155,7 @@ recording:
     - method, seed, timeout, and budget
     - deepest execution milestone
     - RQ1 constraint ID, satisfying/violating role, first-failure milestone, failure mode, and message quality
-    - cumulative campaign test index, wall time, and GPU-seconds for time-to-first-reproducer
+    - cumulative campaign test index, wall time, and accelerator-seconds for time-to-first-reproducer
     - outcome and triage evidence
     - active recovered-constraint IDs and provenance IDs
     - constraint status before and after execution

@@ -151,8 +151,7 @@ Reproduce it with:
 
 ```bash
 python scripts/run_framework_static_scan.py /path/to/Megatron-LM \
-  --source-subdir megatron \
-  --name Megatron-LM \
+  --profile megatron-core \
   --parameter tensor_model_parallel_size \
   --parameter pipeline_model_parallel_size \
   --parameter hidden_size \
@@ -162,6 +161,13 @@ python scripts/run_framework_static_scan.py /path/to/Megatron-LM \
   --jobs 4 \
   --output artifacts/frameworks/megatron_lm_42460a7.json
 ```
+
+The same helper contains built-in profiles for `pytorch-cuda`, `deepspeed`,
+`megatron-core`, and `transformers-accelerate`. A profile supplies the normal
+source subtree and a seed list of configuration parameters; explicit
+`--parameter` and repeatable `--source-subdir` arguments override those
+defaults. The Transformers/Accelerate profile accepts both repositories in one
+scan so that integration-layer constraints share one framework scope.
 
 These 67 expressions are candidates, not a claimed gold set. Some apply only
 to a specific module or execution path. Scope classification and dynamic

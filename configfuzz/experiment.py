@@ -423,6 +423,16 @@ class ExperimentRunRecord:
     bug_status: BugStatus | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
+    @property
+    def accelerator_seconds(self) -> float:
+        """Hardware-neutral alias for the legacy ``gpu_seconds`` field."""
+        return self.gpu_seconds
+
+    @property
+    def campaign_accelerator_seconds(self) -> float | None:
+        """Hardware-neutral alias for the legacy cumulative GPU-time field."""
+        return self.campaign_gpu_seconds
+
     def __post_init__(self) -> None:
         if not self.run_id:
             raise ValueError("run_id must not be empty")
@@ -482,7 +492,9 @@ class ExperimentRunRecord:
             ),
             outcome=ExperimentOutcome(str(data.get("outcome", "unknown"))),
             duration_seconds=float(data.get("duration_seconds", 0.0)),
-            gpu_seconds=float(data.get("gpu_seconds", 0.0)),
+            gpu_seconds=float(
+                data.get("accelerator_seconds", data.get("gpu_seconds", 0.0))
+            ),
             peak_memory_mib=(
                 float(data["peak_memory_mib"])
                 if data.get("peak_memory_mib") is not None
@@ -521,9 +533,13 @@ class ExperimentRunRecord:
                 else None
             ),
             campaign_gpu_seconds=(
-                float(data["campaign_gpu_seconds"])
-                if data.get("campaign_gpu_seconds") is not None
-                else None
+                float(data["campaign_accelerator_seconds"])
+                if data.get("campaign_accelerator_seconds") is not None
+                else (
+                    float(data["campaign_gpu_seconds"])
+                    if data.get("campaign_gpu_seconds") is not None
+                    else None
+                )
             ),
             constraints_exercised=_string_tuple(data.get("constraints_exercised", ())),
             boundaries_exercised=_string_tuple(data.get("boundaries_exercised", ())),
@@ -602,6 +618,7 @@ class ExperimentRunRecord:
             "deepest_milestone": self.deepest_milestone.value,
             "outcome": self.outcome.value,
             "duration_seconds": self.duration_seconds,
+            "accelerator_seconds": self.accelerator_seconds,
             "gpu_seconds": self.gpu_seconds,
             "peak_memory_mib": self.peak_memory_mib,
             "timed_out": self.timed_out,
@@ -618,6 +635,7 @@ class ExperimentRunRecord:
             "error_message_interpretable": self.error_message_interpretable,
             "campaign_test_index": self.campaign_test_index,
             "campaign_elapsed_seconds": self.campaign_elapsed_seconds,
+            "campaign_accelerator_seconds": self.campaign_accelerator_seconds,
             "campaign_gpu_seconds": self.campaign_gpu_seconds,
             "constraints_exercised": list(self.constraints_exercised),
             "boundaries_exercised": list(self.boundaries_exercised),
@@ -1078,7 +1096,9 @@ def summarize_rq2(
         intent_preserving_deep = [
             item for item in deep if item.target_value_preserved is True
         ]
-        gpu_hours = sum(item.gpu_seconds for item in method_records) / 3600.0
+        accelerator_hours = (
+            sum(item.accelerator_seconds for item in method_records) / 3600.0
+        )
         modification_counts = [len(item.coordinated_parameters) for item in generated]
         modification_distances = [
             item.modification_distance
@@ -1137,14 +1157,30 @@ def summarize_rq2(
             "intent_preserving_deep_execution_rate": _ratio(
                 len(intent_preserving_deep), len(method_records)
             ),
-            "gpu_hours": gpu_hours,
+            "accelerator_hours": accelerator_hours,
+            "gpu_hours": accelerator_hours,
+            "deep_execution_yield_per_accelerator_hour": (
+                len(deep) / accelerator_hours if accelerator_hours > 0 else None
+            ),
             "deep_execution_yield_per_gpu_hour": (
-                len(deep) / gpu_hours if gpu_hours > 0 else None
+                len(deep) / accelerator_hours if accelerator_hours > 0 else None
+            ),
+            "intent_preserving_deep_execution_yield_per_accelerator_hour": (
+                len(intent_preserving_deep) / accelerator_hours
+                if accelerator_hours > 0
+                else None
             ),
             "intent_preserving_deep_execution_yield_per_gpu_hour": (
-                len(intent_preserving_deep) / gpu_hours if gpu_hours > 0 else None
+                len(intent_preserving_deep) / accelerator_hours
+                if accelerator_hours > 0
+                else None
             ),
-            "gpu_hours_per_deep_execution": (gpu_hours / len(deep) if deep else None),
+            "accelerator_hours_per_deep_execution": (
+                accelerator_hours / len(deep) if deep else None
+            ),
+            "gpu_hours_per_deep_execution": (
+                accelerator_hours / len(deep) if deep else None
+            ),
             "expected_rejection_rate": _ratio(
                 sum(
                     item.outcome is ExperimentOutcome.EXPECTED_REJECTION
@@ -1224,12 +1260,26 @@ def summarize_rq2(
                     {value for item in method_records for value in item.backend_paths}
                 ),
                 "runtime_behavior_ids": len(runtime_behavior_ids),
+                "runtime_behavior_ids_per_accelerator_hour": (
+                    len(runtime_behavior_ids) / accelerator_hours
+                    if accelerator_hours > 0
+                    else None
+                ),
                 "runtime_behavior_ids_per_gpu_hour": (
-                    len(runtime_behavior_ids) / gpu_hours if gpu_hours > 0 else None
+                    len(runtime_behavior_ids) / accelerator_hours
+                    if accelerator_hours > 0
+                    else None
                 ),
                 "behavior_signatures": len(unique_signatures),
+                "behavior_signatures_per_accelerator_hour": (
+                    len(unique_signatures) / accelerator_hours
+                    if accelerator_hours > 0
+                    else None
+                ),
                 "behavior_signatures_per_gpu_hour": (
-                    len(unique_signatures) / gpu_hours if gpu_hours > 0 else None
+                    len(unique_signatures) / accelerator_hours
+                    if accelerator_hours > 0
+                    else None
                 ),
                 "behavior_signature_entropy_bits": _entropy_bits(signatures),
             },
@@ -1473,7 +1523,9 @@ def summarize_rq3(
             and item.bug_id not in benchmark_ids
         }
         first_costs = _first_reproducer_costs(ordered_records, benchmark_ids)
-        gpu_hours = sum(item.gpu_seconds for item in ordered_records) / 3600.0
+        accelerator_hours = (
+            sum(item.accelerator_seconds for item in ordered_records) / 3600.0
+        )
         confirmed_or_replayed = replayed | confirmed_current
         methods[method.value] = {
             "run_count": len(ordered_records),
@@ -1486,8 +1538,11 @@ def summarize_rq3(
             "seconds_to_first_reproducer": _distribution(
                 [item["seconds"] for item in first_costs.values()]
             ),
+            "accelerator_hours_to_first_reproducer": _distribution(
+                [item["accelerator_seconds"] / 3600.0 for item in first_costs.values()]
+            ),
             "gpu_hours_to_first_reproducer": _distribution(
-                [item["gpu_seconds"] / 3600.0 for item in first_costs.values()]
+                [item["accelerator_seconds"] / 3600.0 for item in first_costs.values()]
             ),
             "first_reproducer_cost_by_bug": first_costs,
             "current_potential_bug_count": len(potential_bug_ids),
@@ -1501,12 +1556,21 @@ def summarize_rq3(
             "false_positive_rate": _ratio(
                 len(rejected_bug_ids), len(potential_bug_ids)
             ),
-            "gpu_hours": gpu_hours,
+            "accelerator_hours": accelerator_hours,
+            "gpu_hours": accelerator_hours,
+            "accelerator_hours_per_historical_replay": (
+                accelerator_hours / len(replayed) if replayed else None
+            ),
             "gpu_hours_per_historical_replay": (
-                gpu_hours / len(replayed) if replayed else None
+                accelerator_hours / len(replayed) if replayed else None
+            ),
+            "accelerator_hours_per_confirmed_or_replayed_bug": (
+                accelerator_hours / len(confirmed_or_replayed)
+                if confirmed_or_replayed
+                else None
             ),
             "gpu_hours_per_confirmed_or_replayed_bug": (
-                gpu_hours / len(confirmed_or_replayed)
+                accelerator_hours / len(confirmed_or_replayed)
                 if confirmed_or_replayed
                 else None
             ),
@@ -1675,8 +1739,11 @@ def _summarize_rq1_execution(
         "time_to_detection_seconds": _distribution(
             [item.duration_seconds for item in attributable]
         ),
+        "accelerator_seconds_wasted": _distribution(
+            [item.accelerator_seconds for item in attributable]
+        ),
         "gpu_seconds_wasted": _distribution(
-            [item.gpu_seconds for item in attributable]
+            [item.accelerator_seconds for item in attributable]
         ),
         "peak_memory_mib": _distribution(
             [
@@ -1716,7 +1783,12 @@ def _rq1_cost_groups(
             "time_to_detection_seconds": _distribution(
                 [item.duration_seconds for item in items]
             ),
-            "gpu_seconds_wasted": _distribution([item.gpu_seconds for item in items]),
+            "accelerator_seconds_wasted": _distribution(
+                [item.accelerator_seconds for item in items]
+            ),
+            "gpu_seconds_wasted": _distribution(
+                [item.accelerator_seconds for item in items]
+            ),
             "timeout_rate": _ratio(sum(item.timed_out for item in items), len(items)),
             "late_failure_rate": _ratio(
                 sum(
@@ -1758,10 +1830,10 @@ def _first_reproducer_costs(
 ) -> dict[str, dict[str, float | int]]:
     first: dict[str, dict[str, float | int]] = {}
     cumulative_seconds = 0.0
-    cumulative_gpu_seconds = 0.0
+    cumulative_accelerator_seconds = 0.0
     for fallback_index, record in enumerate(records, 1):
         cumulative_seconds += record.duration_seconds
-        cumulative_gpu_seconds += record.gpu_seconds
+        cumulative_accelerator_seconds += record.accelerator_seconds
         if not _is_successful_replay(record, benchmark_ids):
             continue
         bug_id = str(record.bug_id)
@@ -1774,12 +1846,13 @@ def _first_reproducer_costs(
                 if record.campaign_elapsed_seconds is not None
                 else cumulative_seconds
             ),
-            "gpu_seconds": (
-                record.campaign_gpu_seconds
-                if record.campaign_gpu_seconds is not None
-                else cumulative_gpu_seconds
+            "accelerator_seconds": (
+                record.campaign_accelerator_seconds
+                if record.campaign_accelerator_seconds is not None
+                else cumulative_accelerator_seconds
             ),
         }
+        first[bug_id]["gpu_seconds"] = first[bug_id]["accelerator_seconds"]
     return dict(sorted(first.items()))
 
 

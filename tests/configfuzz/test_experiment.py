@@ -165,6 +165,7 @@ def test_rq1_summary_reports_paired_failure_costs() -> None:
     assert execution["late_failure_rate"] == 1.0
     assert execution["interpretable_error_message_rate"] == 1.0
     assert execution["time_to_detection_seconds"]["median"] == 20.0
+    assert execution["accelerator_seconds_wasted"]["p95"] == 40.0
     assert execution["gpu_seconds_wasted"]["p95"] == 40.0
     assert execution["cost_by_constraint_category"]["structural"]["run_count"] == 1
 
@@ -372,9 +373,13 @@ def test_rq2_summary_reports_yield_retention_and_diversity() -> None:
     assert configfuzz["deep_execution_count"] == 1
     assert configfuzz["intent_preserving_deep_execution_count"] == 1
     assert configfuzz["intent_preserving_deep_execution_rate"] == 0.5
+    assert configfuzz["accelerator_hours"] == 1.0
     assert configfuzz["gpu_hours"] == 1.0
+    assert configfuzz["deep_execution_yield_per_accelerator_hour"] == 1.0
     assert configfuzz["deep_execution_yield_per_gpu_hour"] == 1.0
+    assert configfuzz["intent_preserving_deep_execution_yield_per_accelerator_hour"] == 1.0
     assert configfuzz["intent_preserving_deep_execution_yield_per_gpu_hour"] == 1.0
+    assert configfuzz["accelerator_hours_per_deep_execution"] == 1.0
     assert configfuzz["gpu_hours_per_deep_execution"] == 1.0
     assert configfuzz["target_value_retention_rate"] == 1.0
     assert configfuzz["diversity"]["constraints"] == 2
@@ -485,9 +490,11 @@ def test_rq3_replay_requires_buggy_fixed_and_root_cause_oracle() -> None:
     method = summary["methods"]["configfuzz"]
     assert method["historical_replayed_bug_count"] == 1
     assert method["bug_replay_rate"] == 1.0
+    assert method["accelerator_hours_per_historical_replay"] == 1.0
     assert method["gpu_hours_per_historical_replay"] == 1.0
     assert method["tests_to_first_reproducer"]["median"] == 2.0
     assert method["seconds_to_first_reproducer"]["median"] == 30.0
+    assert method["accelerator_hours_to_first_reproducer"]["median"] == 1.0
     assert method["gpu_hours_to_first_reproducer"]["median"] == 1.0
     assert method["first_reproducer_cost_by_bug"]["bug-1"]["tests"] == 2
     assert method["confirmed_current_bug_ids"] == ["current-confirmed"]
@@ -507,8 +514,33 @@ def test_jsonl_run_record_round_trip() -> None:
         coordinated=("tp",),
     )
 
-    restored = ExperimentRunRecord.from_dict(json.loads(json.dumps(record.to_dict())))
+    payload = json.loads(json.dumps(record.to_dict()))
+    assert payload["accelerator_seconds"] == payload["gpu_seconds"] == 0
+    restored = ExperimentRunRecord.from_dict(payload)
     assert restored == record
+
+
+def test_run_record_accepts_accelerator_time_fields() -> None:
+    payload = _run_record(
+        run_id="accelerator-time",
+        method=ExperimentMethod.CONFIGFUZZ,
+        intent_id="intent",
+        gpu_seconds=0,
+        milestone=ExecutionMilestone.FORWARD,
+        preserved=True,
+        coordinated=(),
+    ).to_dict()
+    payload.pop("gpu_seconds")
+    payload.pop("campaign_gpu_seconds")
+    payload["accelerator_seconds"] = 12.5
+    payload["campaign_accelerator_seconds"] = 25.0
+
+    record = ExperimentRunRecord.from_dict(payload)
+
+    assert record.accelerator_seconds == 12.5
+    assert record.gpu_seconds == 12.5
+    assert record.campaign_accelerator_seconds == 25.0
+    assert record.campaign_gpu_seconds == 25.0
 
 
 def _rq1_record(

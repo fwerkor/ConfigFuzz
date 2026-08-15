@@ -279,10 +279,27 @@ class DependencyGraph:
                 ("name", "framework"),
                 ("commit", "version"),
                 ("source_subdir", "source_subdir"),
+                ("profile", "framework_profile"),
+                ("backend", "backend"),
+                ("accelerator", "accelerator"),
             ):
                 value = framework.get(source_key)
                 if value is not None:
                     inferred_scope[target_key] = str(value)
+            if "source_subdir" not in inferred_scope:
+                source_subdirs = framework.get("source_subdirs")
+                if isinstance(source_subdirs, Sequence) and not isinstance(source_subdirs, (str, bytes)):
+                    inferred_scope["source_subdir"] = ",".join(str(item) for item in source_subdirs)
+            if "version" not in inferred_scope:
+                repositories = framework.get("repositories")
+                if isinstance(repositories, Sequence) and not isinstance(repositories, (str, bytes)):
+                    commits = [
+                        str(item["commit"])
+                        for item in repositories
+                        if isinstance(item, Mapping) and item.get("commit") is not None
+                    ]
+                    if commits:
+                        inferred_scope["version"] = "+".join(commits)
         inferred_scope.update(dict(scope or {}))
         return cls.from_constraint_sets(constraint_sets, scope=inferred_scope)
 

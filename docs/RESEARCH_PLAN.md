@@ -23,7 +23,7 @@ Metrics:
 - constraint category, arity, guard, scope, semantic class, and software-layer distributions;
 - full explicit, partial, implicit/delayed, and uncovered validation rates;
 - first-failure milestone distribution;
-- median and P95 time-to-failure, GPU-seconds wasted, timeout rate, and error-message quality.
+- median and P95 time-to-failure, accelerator-seconds wasted, timeout rate, and error-message quality.
 
 The reviewed manual corpus is the empirical object of study. It is not used as a self-oracle for evaluating recovery accuracy.
 
@@ -33,7 +33,7 @@ Under identical frozen mutation intents and testing budgets, can ConfigFuzz gene
 
 Metrics:
 
-- deep execution yield per GPU-hour and stage reach rates;
+- deep execution yield per accelerator-hour and stage reach rates;
 - target-value retention rate;
 - coordinated-parameter count, modification distance, and solver cost;
 - expected rejection and delayed failure rates;
@@ -48,9 +48,9 @@ Can ConfigFuzz replay and discover more real configuration-related framework bug
 Metrics:
 
 - historical bug replay rate under a buggy/fixed differential oracle;
-- tests, wall time, and GPU-hours to the first reproducer;
+- tests, wall time, and accelerator-hours to the first reproducer;
 - independent reproducible, developer-confirmed, and fixed current-version bugs;
-- GPU-hours per confirmed bug and false-positive rate.
+- accelerator-hours per confirmed bug and false-positive rate.
 
 Historical exact reproducers are reserved for final confirmation and are never supplied as search inputs. Failures are counted only after excluding expected rejection, ordinary resource exhaustion, and infrastructure faults.
 
@@ -200,7 +200,7 @@ RQ2 and RQ3 use the same core methods:
 5. **ConfigFuzz**: fix the target assignment, hard-enforce confirmed/environment-specific relations, retain unresolved candidates as confidence-tiered guidance, and coordinate the affected parameter region.
 6. **Global Repair**: use the same status-aware constraint treatment as ConfigFuzz while allowing all parameters to change, serving as the locality ablation.
 
-All methods use identical baselines, frozen intents, hardware/software environments, per-test timeouts, test-count budgets, and GPU-hour budgets. Randomized methods run at least five seeds.
+All methods use identical baselines, frozen intents, hardware/software environments, per-test timeouts, test-count budgets, and accelerator-hour budgets. Randomized methods run at least five seeds.
 
 ## 7. Initial implementation stages
 
@@ -268,8 +268,8 @@ Remaining source-review work:
 
 Remaining accelerator work:
 
-1. Execute RQ1 satisfying/violating pairs and record first failure, wall time, GPU-seconds, peak memory, timeout, and message quality.
-2. Run the six RQ2 methods under identical intent and GPU-hour budgets for at least five seeds where randomness applies.
+1. Execute RQ1 satisfying/violating pairs and record first failure, wall time, accelerator-seconds, peak memory, timeout, and message quality.
+2. Run the six RQ2 methods under identical intent and accelerator-hour budgets for at least five seeds where randomness applies.
 3. Replay the verified historical benchmark on buggy/fixed revisions.
 4. Run current-version campaigns, minimize independent failures, and seek developer confirmation.
 

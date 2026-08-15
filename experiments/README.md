@@ -7,6 +7,11 @@ The evaluation follows one argument chain:
 3. **RQ3** tests whether that additional deep execution improves historical bug replay and current-version bug discovery.
 
 `protocol.yaml` is the machine-readable source of truth for methods, milestones, outcomes, controls, and metrics.
+`frameworks.yaml` records the execution stacks and their accelerator/backend
+scope. The retained Ascend subjects are PTA and MSA; GPU coverage adds PyTorch
+Native/CUDA, DeepSpeed, Megatron-Core, and Transformers/Accelerate. Method
+comparisons remain paired within one framework/workload/environment, and
+cross-framework aggregates are reported only after per-framework results.
 
 ## Current non-accelerator results
 
@@ -168,7 +173,7 @@ A shortlist entry is not a benchmark bug. Admission requires a concrete configur
 
 ## Campaign records and summaries
 
-Each attempted configuration is one JSON object per line. Records include method, workload, frozen intent, seed, generation success, target-value preservation, coordinated parameters, exact solver modifications, affected region, active constraint IDs, constraint status before/after execution, provenance IDs, refined constraints, solver cost, deepest milestone, outcome, wall time, GPU-seconds, peak memory, stable runtime behavior IDs, and the behavior signature. RQ1 records additionally identify the target constraint, satisfying/violating role, first failure, failure mode, and message quality. RQ3 records can include cumulative campaign position, an independent root-cause ID, and buggy/fixed oracle evidence for exact first-reproducer costs.
+Each attempted configuration is one JSON object per line. Records include method, workload, frozen intent, seed, generation success, target-value preservation, coordinated parameters, exact solver modifications, affected region, active constraint IDs, constraint status before/after execution, provenance IDs, refined constraints, solver cost, deepest milestone, outcome, wall time, accelerator-seconds, peak memory, stable runtime behavior IDs, and the behavior signature. RQ1 records additionally identify the target constraint, satisfying/violating role, first failure, failure mode, and message quality. RQ3 records can include cumulative campaign position, an independent root-cause ID, and buggy/fixed oracle evidence for exact first-reproducer costs.
 
 ```bash
 configfuzz-experiment validate-runs experiments/results/rq2.jsonl

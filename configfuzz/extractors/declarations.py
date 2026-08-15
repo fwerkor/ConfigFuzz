@@ -50,7 +50,7 @@ _SCHEMA_KEYS = {
 
 
 class PythonDeclarationExtractor(ast.NodeVisitor):
-    """Extract constraints declared by argparse and dataclass-style schemas."""
+    """Extract constraints declared by argparse and Python schema classes."""
 
     def __init__(self, parameters: Iterable[str], source: str):
         self.source = source
@@ -66,7 +66,7 @@ class PythonDeclarationExtractor(ast.NodeVisitor):
             )
             for parameter in self.parameters
         }
-        self._dataclass_depth = 0
+        self._schema_class_depth = 0
 
     def visit_Call(self, node: ast.Call) -> None:
         if isinstance(node.func, ast.Attribute) and node.func.attr == "add_argument":
@@ -74,19 +74,18 @@ class PythonDeclarationExtractor(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
-        is_dataclass = any(_decorator_name(item) == "dataclass" for item in node.decorator_list)
-        if not is_dataclass:
+        if not _is_schema_class(node):
             self.generic_visit(node)
             return
-        self._dataclass_depth += 1
+        self._schema_class_depth += 1
         try:
             for statement in node.body:
                 self.visit(statement)
         finally:
-            self._dataclass_depth -= 1
+            self._schema_class_depth -= 1
 
     def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
-        if self._dataclass_depth <= 0 or not isinstance(node.target, ast.Name):
+        if self._schema_class_depth <= 0 or not isinstance(node.target, ast.Name):
             return
         parameter = self._by_leaf.get(node.target.id)
         if parameter is None:
@@ -98,10 +97,10 @@ class PythonDeclarationExtractor(ast.NodeVisitor):
                 f"{parameter}: {type_name}",
                 ConstraintKind.TYPE,
                 node.lineno,
-                "dataclass annotation",
+                "schema annotation",
             )
         if choices:
-            self._add_enum(parameter, choices, node.lineno, "dataclass Literal annotation")
+            self._add_enum(parameter, choices, node.lineno, "schema Literal annotation")
         required = node.value is None or (
             isinstance(node.value, ast.Call) and _field_call_is_required(node.value)
         )
@@ -111,7 +110,7 @@ class PythonDeclarationExtractor(ast.NodeVisitor):
                 f"{parameter} is not None",
                 ConstraintKind.TYPE,
                 node.lineno,
-                "required dataclass field",
+                "required schema field",
             )
         if isinstance(node.value, ast.Call):
             self._extract_field_call(parameter, node.value, node.lineno)
@@ -296,6 +295,7 @@ def scan_declaration_paths_multi(
                 "extractor": "declarations",
                 "python_files": 0,
                 "yaml_files": 0,
+                "json_files": 0,
                 "parse_errors": [],
             },
         )
@@ -305,6 +305,8 @@ def scan_declaration_paths_multi(
     for path in _iter_source_files(paths):
         if path.suffix == ".py":
             _scan_python_declarations(path, ordered_parameters, merged)
+        elif path.suffix == ".json":
+            _scan_json_declarations(path, ordered_parameters, merged)
         else:
             _scan_yaml_declarations(path, ordered_parameters, merged)
 
@@ -364,6 +366,31 @@ def _scan_yaml_declarations(
         merged[parameter].extend(result.constraints)
 
 
+def _scan_json_declarations(
+    path: Path,
+    parameters: list[str],
+    merged: dict[str, ConstraintSet],
+) -> None:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8", errors="replace"))
+    except (OSError, json.JSONDecodeError) as exc:
+        error = {"source": str(path), "error": str(exc)}
+        for result in merged.values():
+            result.metadata["parse_errors"].append(error)
+        return
+    if not isinstance(data, dict):
+        return
+    source = _display_path(path)
+    extractor = PythonDeclarationExtractor(parameters, source)
+    for parameter in parameters:
+        leaf = parameter.rsplit(".", 1)[-1]
+        for spec in _yaml_specs_for_parameter(data, leaf):
+            extractor._add_schema_constraints(parameter, spec, None, "JSON schema declaration")
+    for parameter, result in extractor.results.items():
+        merged[parameter].metadata["json_files"] += 1
+        merged[parameter].extend(result.constraints)
+
+
 def _yaml_specs_for_parameter(data: dict[str, Any], leaf: str) -> Iterator[dict[str, Any]]:
     stack: list[Any] = [data]
     seen: set[int] = set()
@@ -414,14 +441,14 @@ def _iter_source_files(paths: Iterable[Path]) -> Iterator[Path]:
     seen: set[Path] = set()
     for raw in paths:
         path = raw.resolve()
-        if path.is_file() and path.suffix.lower() in {".py", ".yaml", ".yml"}:
+        if path.is_file() and path.suffix.lower() in {".py", ".yaml", ".yml", ".json"}:
             if path not in seen:
                 seen.add(path)
                 yield path
             continue
         if not path.is_dir():
             continue
-        for suffix in ("*.py", "*.yaml", "*.yml"):
+        for suffix in ("*.py", "*.yaml", "*.yml", "*.json"):
             for candidate in sorted(path.rglob(suffix)):
                 if any(part in ignored for part in candidate.parts) or candidate in seen:
                     continue
@@ -488,6 +515,20 @@ def _decorator_name(node: ast.expr) -> str | None:
     if isinstance(node, ast.Call):
         node = node.func
     return _annotation_name(node)
+
+
+def _is_schema_class(node: ast.ClassDef) -> bool:
+    if any((_decorator_name(item) or "").rsplit(".", 1)[-1] == "dataclass" for item in node.decorator_list):
+        return True
+    schema_bases = {
+        "BaseModel",
+        "ConfigModel",
+        "DeepSpeedConfigModel",
+    }
+    return any(
+        (_annotation_name(base) or "").rsplit(".", 1)[-1] in schema_bases
+        for base in node.bases
+    )
 
 
 def _call_name(node: ast.expr) -> str | None:

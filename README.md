@@ -38,8 +38,11 @@ The initial repository provides:
 - a strict-by-default Python AST extractor with scoped symbolic propagation,
   conditional normalization, helper-function summaries, and false-positive filtering;
 - declaration extractors for argparse, dataclass, `Literal`, field metadata,
-  and schema-style YAML;
-- a parallel CLI for scanning Python/YAML framework trees for one or more parameters;
+  Pydantic-style `BaseModel`/`Field`, and schema-style YAML/JSON;
+- a parallel CLI for scanning Python/YAML/JSON framework trees for one or more parameters;
+- built-in static-scan profiles for PyTorch Native/CUDA, DeepSpeed,
+  Megatron-Core, and Transformers/Accelerate, alongside the existing PTA/MSA
+  execution paths;
 - an explicit dependency hypergraph with deduplicated multi-parameter edges,
   direction, scope, status, connectivity queries, and active-constraint evaluation;
 - a bounded joint-mutation planner for divisibility, alignment, equality,
@@ -127,6 +130,26 @@ python -m configfuzz scan \
 
 Strict mode is the default. Use `--broad` only for exploratory, recall-oriented
 scans whose unsupported expressions will be reviewed manually.
+
+For the four GPU framework subjects, the versioned scan helper provides
+framework-specific source roots and a default parameter seed set:
+
+```bash
+python scripts/run_framework_static_scan.py /path/to/DeepSpeed \
+  --profile deepspeed \
+  --jobs 4 \
+  --output artifacts/frameworks/deepspeed.json
+
+python scripts/run_framework_static_scan.py \
+  /path/to/transformers /path/to/accelerate \
+  --profile transformers-accelerate \
+  --jobs 4 \
+  --output artifacts/frameworks/transformers_accelerate.json
+```
+
+Passing one or more `--parameter` options overrides the profile's default
+parameter set. `--source-subdir` can likewise be repeated to override the
+profile source layout.
 
 Every scan now embeds a dependency graph. It can also be rebuilt independently:
 
