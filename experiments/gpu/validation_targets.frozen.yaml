@@ -13,7 +13,7 @@ subjects:
   baseline: experiments/gpu/baselines/pytorch-native.json
   artifact_sha256: 282a2dd5fc5e4f94906f24bdd4544062cb5ac3929c15906488570d43a88f9cbe
   manifest_sha256: 0ae8b765f4d48aea3971010f109ad02aeab150e8f7addc034c6e3344bbacfb23
-  baseline_sha256: 219a68166cb5d9e3b98f7ceafc4de51182e91adcc761dca89ba67d02cfcadfd2
+  baseline_sha256: dfe13177139e868c7cf6d901d68f3ec76ecd623f92059b53502f06262ae56aea
   harness_files:
   - path: experiments/gpu/launch_pytorch_native.sh
     sha256: bb7636b7f0d9555ad24aefd4cabb8059a5d8fd8a90f20260ac840615481bc55c
@@ -649,7 +649,7 @@ subjects:
   baseline: experiments/gpu/baselines/deepspeed.json
   artifact_sha256: d42c2920af8e180072b410f6afea0b33c77b27163cdca35a8e01a1a5903fa457
   manifest_sha256: fbb5fb6c5243bb4097a17206af199d9efa4e22edc4762af43cfbf65aa4346554
-  baseline_sha256: ea87863f275a7c5a7b082f119f8acde3e8448e0bdcce61b93d9002829dd5869b
+  baseline_sha256: f13d6c1c1b2ab10c64aa3656190a2f7ef59f67c07c82724e8cfffcbfbd4cd094
   harness_files:
   - path: experiments/gpu/launch_deepspeed.sh
     sha256: 5b4b557c827a29012b3f7e2b6ac40014d810b10f836fa91655050a627b71ae8f
@@ -1326,7 +1326,7 @@ subjects:
   baseline: experiments/gpu/baselines/transformers-accelerate.json
   artifact_sha256: 89f1ed40040478c0dfd5bf54d1232aad28d220702e30928e996e5f0c0e34de7c
   manifest_sha256: cac4c0e471d74150e96478dc7df319f24f283a1173f35c656f6db8f73ab33d4a
-  baseline_sha256: efc19cee4622353dc63b5c527751dfd165d62a7867528ee29d3724029eeb66bf
+  baseline_sha256: 321001eb90d95b0a7f000baea366897e6afa46654ebf3e545ff2dc4afdd37b0b
   harness_files:
   - path: experiments/gpu/launch_transformers_accelerate.sh
     sha256: 083a802b23b1b5400081438254684ef70c6820c6c6eda1f38e0a5e568e512549
@@ -1660,7 +1660,7 @@ subjects:
   baseline: experiments/gpu/baselines/megatron-core.json
   artifact_sha256: f618f09db0054a57657d0c4f3840a6d7864b50046c44eeb4fecd4b9b811c2c73
   manifest_sha256: 8ca9e6b6c390201d079ca00ec6bbeb5d7a67dd69e92128ffbd3b4783b7fd8ffd
-  baseline_sha256: 6752f38dc08d62823d3ccebb628731e316b9798b19e743ebba233f7217061d36
+  baseline_sha256: d29afa3c06e456d15ae94befec1bb791e6e5ed6d34db25e0c574c888ab5e7475
   harness_files:
   - path: experiments/gpu/launch_megatron_core.sh
     sha256: 66a6a59e9983a3106984790cc55dfde4d16e1247740a4dfcab48ba7b039751f6
@@ -2005,7 +2005,7 @@ subjects:
       uncertainty: 0.040000000000000036
       unsupported: -0.08633093525179857
     intervention:
-      intervention_id: intervention-c5433103f77bbe7f6240
+      intervention_id: intervention-d2e8e52d6a4e010b8c4b
       edge_id: dep-2d732812b8519cbd
       expression: num_query_groups == num_attention_heads
       primary_parameter: num_query_groups
@@ -2024,7 +2024,8 @@ subjects:
           configuration:
             num_attention_heads: 8
             num_query_groups: 8
-          changes: {}
+          changes:
+            num_query_groups: 8
           hard_edges:
           - dep-2d732812b8519cbd
           soft_edges:
@@ -2049,7 +2050,7 @@ subjects:
             value: 8
             assignments:
               num_attention_heads: 8
-            intervention_id: intervention-c5433103f77bbe7f6240
+            intervention_id: intervention-d2e8e52d6a4e010b8c4b
             intervention_edge_id: dep-2d732812b8519cbd
             intervention_role: satisfying
         violating:
@@ -2057,9 +2058,8 @@ subjects:
           status: sat
           configuration:
             num_attention_heads: 8
-            num_query_groups: 10
-          changes:
-            num_query_groups: 10
+            num_query_groups: 2
+          changes: {}
           hard_edges:
           - dep-2d732812b8519cbd
           soft_edges:
@@ -2081,10 +2081,10 @@ subjects:
           - virtual_pipeline_model_parallel_size
           probe_sample_template:
             parameter: num_query_groups
-            value: 10
+            value: 2
             assignments:
               num_attention_heads: 8
-            intervention_id: intervention-c5433103f77bbe7f6240
+            intervention_id: intervention-d2e8e52d6a4e010b8c4b
             intervention_edge_id: dep-2d732812b8519cbd
             intervention_role: violating
         repaired:
@@ -2119,7 +2119,7 @@ subjects:
             value: 8
             assignments:
               num_attention_heads: 8
-            intervention_id: intervention-c5433103f77bbe7f6240
+            intervention_id: intervention-d2e8e52d6a4e010b8c4b
             intervention_edge_id: dep-2d732812b8519cbd
             intervention_role: repaired
   - rank: 4
@@ -2777,5 +2777,5 @@ subjects:
             intervention_edge_id: dep-1f69a0ab46af7e77
             intervention_role: repaired
 frozen:
-  sha256: df3ecc3993ea580c7f865144e01ffbcbaa1e478c45b1b9c131ff4683dcaa8ef0
+  sha256: 2510d07540e27695d2041fd49efc7f246665cdb5027dfc6f494d7aa24871c011
   target_count: 19

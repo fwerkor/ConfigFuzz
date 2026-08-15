@@ -1,12 +1,12 @@
 {
   "model_family": "llama-like",
-  "vocab_size": 1024,
-  "hidden_size": 256,
+  "vocab_size": 2048,
+  "hidden_size": 512,
   "ffn_hidden_size": 1024,
-  "num_layers": 2,
+  "num_layers": 4,
   "num_attention_heads": 8,
-  "num_query_groups": 8,
-  "max_position_embeddings": 256,
+  "num_query_groups": 2,
+  "max_position_embeddings": 128,
   "sequence_length": 128,
   "micro_batch_size": 2,
   "gradient_accumulation_steps": 1,
@@ -25,5 +25,6 @@
   "reduce_bucket_size": 500000000,
   "allgather_bucket_size": 500000000,
   "overlap_comm": false,
-  "reduce_scatter": true
+  "reduce_scatter": true,
+  "model_scale_profile": "npu-reduced-26.1"
 }

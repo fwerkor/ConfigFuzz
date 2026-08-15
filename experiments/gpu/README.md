@@ -21,12 +21,17 @@ All comparisons must remain paired within one framework, workload, software
 revision, and hardware environment. GPU results are reported separately from
 the Ascend PTA/MSA campaign before any aggregate is computed.
 
-## Qualification workload
+## Qualification and campaign workloads
 
-`qualification/baseline.json` defines a small Llama-like workload used to
-exercise the complete execution lifecycle without downloading pretrained
-weights. Framework-specific runners instantiate the equivalent workload and
-emit stable milestone markers of the form
+`qualification/baseline.json` retains the small Llama-like smoke workload used
+to qualify framework integration without downloading pretrained weights. The
+framework-specific campaign baselines under `baselines/` use the same reduced
+model scale as the Ascend 26.1 runtime: 4 layers, hidden size 512, FFN size
+1024, 8 attention heads, 2 query groups, sequence length 128, and vocabulary
+size 2048. This keeps GPU and NPU execution costs and model-scale effects
+comparable while preserving framework-specific execution paths.
+
+Framework-specific runners emit stable milestone markers of the form
 `CONFIGFUZZ_MILESTONE:<milestone>`.
 
 Megatron-Core uses `baselines/megatron-core.json` with a Llama-like RMSNorm
