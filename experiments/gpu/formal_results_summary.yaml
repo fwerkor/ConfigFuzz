@@ -1,0 +1,206 @@
+schema_version: 1
+name: gpu-cross-framework-frozen-validation-summary
+campaign_date: '2026-08-15'
+runner_revision: b5559aa85e63814cc70609cca64ef7d3c0ed37ab
+frozen_targets_sha256: 38e02283e648d74d25231511802e1dedd11791713d501715e38bd702dd27016d
+frozen_target_count: 19
+protocol:
+  selection_basis: versioned static graph plus qualified baseline; no runtime outcomes used for target selection
+  feedback_application: independent per target plus order-independent aggregate feedback
+  roles:
+  - satisfying
+  - violating
+  - repaired
+hardware:
+  accelerator: NVIDIA RTX A6000
+  device_count: 2
+  distributed_backend: NCCL
+aggregate:
+  targets: 19
+  samples: 57
+  paired_confirmed: 11
+  scope_disputed: 1
+  unresolved: 7
+  outcomes:
+    infrastructure_failure: 1
+    invalid: 16
+    unknown: 12
+    valid: 28
+subjects:
+- subject: pytorch-native
+  targets: 4
+  samples: 12
+  paired_confirmed: 3
+  scope_disputed: 1
+  unresolved: 0
+  outcomes:
+    invalid: 3
+    valid: 9
+  confirmed_edge_ids:
+  - dep-26ecbd36c763dd03
+  - dep-658ed6a87e1309c2
+  - dep-b3845deb278dfa2c
+  scope_disputed_edge_ids:
+  - dep-54cbd80200ce84df
+  targets_detail:
+  - edge_id: dep-26ecbd36c763dd03
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-54cbd80200ce84df
+    status: scope_disputed
+    outcomes:
+    - valid
+    - valid
+    - valid
+  - edge_id: dep-658ed6a87e1309c2
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-b3845deb278dfa2c
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+- subject: deepspeed
+  targets: 6
+  samples: 18
+  paired_confirmed: 5
+  scope_disputed: 0
+  unresolved: 1
+  outcomes:
+    invalid: 6
+    unknown: 1
+    valid: 11
+  confirmed_edge_ids:
+  - dep-70da5e10318e54f5
+  - dep-0887015961d7c9ca
+  - dep-b957353a0fcb0fdc
+  - dep-dc97b1a59ef46820
+  - dep-a37e7d3959ee0b8c
+  scope_disputed_edge_ids: []
+  targets_detail:
+  - edge_id: dep-70da5e10318e54f5
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-0887015961d7c9ca
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-b957353a0fcb0fdc
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-dc97b1a59ef46820
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-660c94ed03780170
+    status: unresolved
+    outcomes:
+    - valid
+    - invalid
+    - unknown
+  - edge_id: dep-a37e7d3959ee0b8c
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+- subject: transformers-accelerate
+  targets: 3
+  samples: 9
+  paired_confirmed: 2
+  scope_disputed: 0
+  unresolved: 1
+  outcomes:
+    infrastructure_failure: 1
+    invalid: 2
+    valid: 6
+  confirmed_edge_ids:
+  - dep-39fd2282ed77229c
+  - dep-bb93e90843aba2d0
+  scope_disputed_edge_ids: []
+  targets_detail:
+  - edge_id: dep-39fd2282ed77229c
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-5d2bdf54140b8f5a
+    status: unresolved
+    outcomes:
+    - valid
+    - infrastructure_failure
+    - valid
+  - edge_id: dep-bb93e90843aba2d0
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+- subject: megatron-core
+  targets: 6
+  samples: 18
+  paired_confirmed: 1
+  scope_disputed: 0
+  unresolved: 5
+  outcomes:
+    invalid: 5
+    unknown: 11
+    valid: 2
+  confirmed_edge_ids:
+  - dep-2d732812b8519cbd
+  scope_disputed_edge_ids: []
+  targets_detail:
+  - edge_id: dep-54241f191526fdae
+    status: unresolved
+    outcomes:
+    - unknown
+    - unknown
+    - unknown
+  - edge_id: dep-bcffaa7c8426524c
+    status: unresolved
+    outcomes:
+    - unknown
+    - unknown
+    - unknown
+  - edge_id: dep-2d732812b8519cbd
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-1ce2a9ae2ac16140
+    status: unresolved
+    outcomes:
+    - unknown
+    - unknown
+    - unknown
+  - edge_id: dep-73dd37cfa3f495c3
+    status: unresolved
+    outcomes:
+    - unknown
+    - invalid
+    - unknown
+  - edge_id: dep-7cb33497e801ef6b
+    status: unresolved
+    outcomes:
+    - invalid
+    - invalid
+    - invalid

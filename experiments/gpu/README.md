@@ -128,3 +128,7 @@ before executing a target. Frozen interventions are executed independently and
 runtime feedback is aggregated only after all targets finish, so confirmation
 counts do not depend on target order. Preliminary active-validation files are
 kept separate from these frozen-campaign outputs.
+
+The normalized result summary for the frozen campaign is recorded in
+`formal_results_summary.yaml`; raw process logs remain outside the repository
+because they contain machine-local execution paths.
