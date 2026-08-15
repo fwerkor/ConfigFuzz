@@ -51,6 +51,11 @@ def main() -> int:
         sequence_parallel=bool(cfg.get("sequence_parallel", False)),
         tensor_model_parallel_size=int(cfg.get("tensor_model_parallel_size", world_size)),
         pipeline_model_parallel_size=int(cfg.get("pipeline_model_parallel_size", 1)),
+        num_moe_experts=(
+            int(cfg["num_moe_experts"])
+            if cfg.get("num_moe_experts") is not None
+            else None
+        ),
     )
     model = GPTModel(
         config=config,

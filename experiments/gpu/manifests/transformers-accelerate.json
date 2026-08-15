@@ -9,7 +9,7 @@
   "timeout_seconds": 60,
   "classification": {
     "invalid_patterns": [
-      "argument --mixed_precision: invalid choice",
+      "argument --mixed_precision/--mixed-precision: invalid choice",
       "Unknown mixed_precision mode",
       "mixed_precision.*must be one of",
       "mixed_precision.*should be one of"
@@ -20,7 +20,8 @@
     ],
     "infrastructure_patterns": [
       "Address already in use",
-      "NCCL.*(system error|unhandled system error|connection refused)"
+      "NCCL.*(system error|unhandled system error|connection refused)",
+      "FP8 is not available on this machine"
     ],
     "milestone_patterns": [
       "CONFIGFUZZ_MILESTONE:completed"
@@ -33,6 +34,6 @@
     "repaired"
   ],
   "provenance_patterns": [
-    "argument --mixed_precision: invalid choice"
+    "argument --mixed_precision/--mixed-precision: invalid choice"
   ]
 }
