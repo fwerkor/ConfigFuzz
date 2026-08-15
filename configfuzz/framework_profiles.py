@@ -21,6 +21,7 @@ _PROFILES: dict[str, FrameworkProfile] = {
         source_subdirs=("torch",),
         parameters=(
             "world_size",
+            "group_size",
             "backend",
             "device_id",
             "sharding_strategy",

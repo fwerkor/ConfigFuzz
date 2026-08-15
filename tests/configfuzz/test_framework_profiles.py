@@ -13,6 +13,7 @@ def test_requested_framework_profiles_are_available() -> None:
         "transformers-accelerate",
     }
     assert profiles["pytorch-cuda"].accelerator == "NVIDIA GPU"
+    assert "group_size" in profiles["pytorch-cuda"].parameters
     assert "stage" in profiles["deepspeed"].parameters
     assert "tensor_model_parallel_size" in profiles["megatron-core"].parameters
     assert "mixed_precision" in profiles["transformers-accelerate"].parameters

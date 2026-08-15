@@ -8,6 +8,11 @@
   "cwd": "../../..",
   "timeout_seconds": 60,
   "classification": {
+    "invalid_patterns": [
+      "Unknown mixed_precision mode",
+      "mixed_precision.*must be one of",
+      "mixed_precision.*should be one of"
+    ],
     "resource_patterns": [
       "CUDA out of memory",
       "OutOfMemoryError"
