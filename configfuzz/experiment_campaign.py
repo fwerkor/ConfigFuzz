@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import time
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -9,7 +10,11 @@ from typing import Any, Mapping, Sequence
 
 import yaml
 
-from configfuzz.dependencies import DependencyGraph, DependencyNodeKind
+from configfuzz.dependencies import (
+    DependencyGraph,
+    DependencyNodeKind,
+    edge_scope_matches,
+)
 from configfuzz.experiment import ExperimentMethod, MutationIntent
 from configfuzz.graph_solver import SolveStatus, normalize_context, solve_graph_mutation
 
@@ -86,7 +91,9 @@ class CampaignCase:
     violated_constraints: tuple[str, ...] = ()
     unknown_constraints: tuple[str, ...] = ()
     solver_status: str | None = None
-    solver_seconds_recorded_at_runtime: bool = True
+    solver_seconds: float = 0.0
+    solver_timeout_ms: int | None = None
+    solver_seconds_recorded_at_runtime: bool = False
     metadata: Mapping[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
@@ -107,6 +114,8 @@ class CampaignCase:
             "violated_constraints": list(self.violated_constraints),
             "unknown_constraints": list(self.unknown_constraints),
             "solver_status": self.solver_status,
+            "solver_seconds": self.solver_seconds,
+            "solver_timeout_ms": self.solver_timeout_ms,
             "solver_seconds_recorded_at_runtime": self.solver_seconds_recorded_at_runtime,
             "metadata": dict(self.metadata or {}),
         }
@@ -173,7 +182,10 @@ def plan_campaign(
         ExperimentMethod.CONFIGFUZZ,
         ExperimentMethod.GLOBAL_REPAIR,
     ),
+    solver_timeout_ms: int = 1000,
 ) -> dict[str, Any]:
+    if solver_timeout_ms <= 0:
+        raise ValueError("campaign solver timeout must be positive")
     cache: dict[
         str, tuple[Mapping[str, Any], DependencyGraph, DependencyGraph]
     ] = {}
@@ -202,7 +214,16 @@ def plan_campaign(
                 if method is ExperimentMethod.STATIC_HARD_CONFIGFUZZ
                 else graph
             )
-            cases.append(_plan_case(workload, baseline, method_graph, intent, method))
+            cases.append(
+                _plan_case(
+                    workload,
+                    baseline,
+                    method_graph,
+                    intent,
+                    method,
+                    solver_timeout_ms=solver_timeout_ms,
+                )
+            )
     method_counts: dict[str, int] = {}
     status_counts: dict[str, int] = {}
     for case in cases:
@@ -216,6 +237,7 @@ def plan_campaign(
         "method_counts": dict(sorted(method_counts.items())),
         "status_counts": dict(sorted(status_counts.items())),
         "methods": [item.value for item in methods],
+        "solver_timeout_ms": solver_timeout_ms,
         "cases": [case.to_dict() for case in cases],
     }
 
@@ -226,8 +248,11 @@ def _plan_case(
     graph: DependencyGraph,
     intent: MutationIntent,
     method: ExperimentMethod,
+    *,
+    solver_timeout_ms: int,
 ) -> CampaignCase:
-    target_assignment = ((intent.target_parameter, intent.target_value),)
+    graph_target = _resolve_graph_parameter(graph, intent.target_parameter)
+    target_assignment = ((graph_target, intent.target_value),)
     common = {
         "case_id": _case_id(intent.intent_id, method),
         "workload_id": workload.workload_id,
@@ -246,7 +271,12 @@ def _plan_case(
             coordinated_parameters=(),
             target_value_preserved=True,
             preflight="none",
-            metadata={"comparison_role": "single_parameter_mutation"},
+            metadata={
+                "comparison_role": "single_parameter_mutation",
+                "resolved_target_parameter": graph_target,
+                "baseline_value": intent.metadata.get("baseline_value"),
+                "intent_class": intent.intent_class,
+            },
         )
     if method is ExperimentMethod.NATIVE_VALIDATOR_GUIDED:
         validator_bound = workload.native_validator_manifest is not None
@@ -268,9 +298,12 @@ def _plan_case(
                 "reason": None
                 if validator_bound
                 else "native validator manifest is not bound",
+                "resolved_target_parameter": graph_target,
+                "baseline_value": intent.metadata.get("baseline_value"),
+                "intent_class": intent.intent_class,
             },
         )
-    if intent.target_parameter not in graph.nodes:
+    if graph_target not in graph.nodes:
         return CampaignCase(
             **common,
             status=CampaignCaseStatus.UNKNOWN,
@@ -279,14 +312,21 @@ def _plan_case(
             target_value_preserved=True,
             preflight="manual_constraints",
             unknown_constraints=(),
-            metadata={"reason": "target parameter absent from dependency graph"},
+            metadata={
+                "reason": "target parameter absent from dependency graph",
+                "resolved_target_parameter": graph_target,
+                "baseline_value": intent.metadata.get("baseline_value"),
+                "intent_class": intent.intent_class,
+            },
         )
     if method is ExperimentMethod.CONSTRAINT_FILTER_ONLY:
         context = normalize_context(graph, baseline)
-        context[intent.target_parameter] = intent.target_value
+        context[graph_target] = intent.target_value
         violated: list[str] = []
         unknown: list[str] = []
         for edge in sorted(graph.edges.values(), key=lambda item: item.id):
+            if not edge_scope_matches(edge, context):
+                continue
             evaluation = graph.evaluate_edge(edge, context)
             if evaluation.active is False:
                 continue
@@ -310,7 +350,12 @@ def _plan_case(
             preflight="manual_constraints",
             violated_constraints=tuple(violated),
             unknown_constraints=tuple(unknown),
-            metadata={"filter_only": True},
+            metadata={
+                "filter_only": True,
+                "resolved_target_parameter": graph_target,
+                "baseline_value": intent.metadata.get("baseline_value"),
+                "intent_class": intent.intent_class,
+            },
         )
     all_mutable = None
     if method is ExperimentMethod.GLOBAL_REPAIR:
@@ -319,15 +364,18 @@ def _plan_case(
             for name, node in graph.nodes.items()
             if node.kind in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
         )
+    solver_started = time.perf_counter()
     plan = solve_graph_mutation(
         graph,
         baseline,
-        intent.target_parameter,
+        graph_target,
         intent.target_value,
         static_as_hard=(method is ExperimentMethod.STATIC_HARD_CONFIGFUZZ),
         semantic_anchors=workload.semantic_anchors,
         mutable_parameters=all_mutable,
+        timeout_ms=solver_timeout_ms,
     )
+    solver_seconds = time.perf_counter() - solver_started
     status = {
         SolveStatus.SAT: CampaignCaseStatus.READY,
         SolveStatus.UNSAT: CampaignCaseStatus.UNSAT,
@@ -340,10 +388,10 @@ def _plan_case(
     )
     assignment_map = dict(assignments)
     target_preserved = (
-        assignment_map.get(intent.target_parameter) == intent.target_value
+        assignment_map.get(graph_target) == intent.target_value
     )
     coordinated = tuple(
-        name for name, _ in assignments if name != intent.target_parameter
+        name for name, _ in assignments if name != graph_target
     )
     return CampaignCase(
         **common,
@@ -355,6 +403,8 @@ def _plan_case(
         violated_constraints=tuple(plan.violated_soft_edges),
         unknown_constraints=tuple(plan.unsupported_edges),
         solver_status=plan.status.value,
+        solver_seconds=solver_seconds,
+        solver_timeout_ms=solver_timeout_ms,
         metadata={
             "mutable_parameters": list(plan.mutable_parameters),
             "compiled_edges": list(plan.compiled_edges),
@@ -362,6 +412,9 @@ def _plan_case(
             "out_of_scope_edges": list(plan.out_of_scope_edges),
             "missing_context": list(plan.missing_context),
             "reason": plan.reason,
+            "resolved_target_parameter": graph_target,
+            "baseline_value": intent.metadata.get("baseline_value"),
+            "intent_class": intent.intent_class,
             "repair_scope": (
                 "all_parameters"
                 if method is ExperimentMethod.GLOBAL_REPAIR
@@ -380,6 +433,19 @@ def _plan_case(
             ),
         },
     )
+
+
+def _resolve_graph_parameter(graph: DependencyGraph, parameter: str) -> str:
+    if parameter in graph.nodes:
+        return parameter
+    leaf = parameter.rsplit(".", 1)[-1]
+    if leaf in graph.nodes:
+        return leaf
+    matches = [name for name in graph.nodes if name.rsplit(".", 1)[-1] == leaf]
+    if len(matches) == 1:
+        return matches[0]
+    return parameter
+
 
 
 def _case_id(intent_id: str, method: ExperimentMethod) -> str:

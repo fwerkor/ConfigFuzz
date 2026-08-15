@@ -264,3 +264,56 @@ def test_campaign_rejects_baseline_mismatch(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="does not match"):
         plan_campaign(workloads, [intent], methods=[ExperimentMethod.RAW_MUTATION])
+
+
+def test_campaign_records_solver_timeout_and_elapsed_time(tmp_path: Path) -> None:
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(json.dumps({"x": 1}), encoding="utf-8")
+    graph = DependencyGraph(
+        nodes={"x": DependencyNode("x", DependencyNodeKind.PARAMETER)},
+        edges={},
+    )
+    graph_path = tmp_path / "graph.json"
+    graph_path.write_text(json.dumps(graph.to_dict()), encoding="utf-8")
+    workloads_path = tmp_path / "workloads.yaml"
+    workloads_path.write_text(
+        yaml.safe_dump(
+            {
+                "workloads": [
+                    {
+                        "workload_id": "w",
+                        "baseline_id": "b",
+                        "baseline_config": "baseline.json",
+                        "dependency_graph": "graph.json",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    intent = MutationIntent(
+        intent_id="x-two",
+        workload_id="w",
+        baseline_id="b",
+        target_parameter="x",
+        target_value=2,
+        intent_class="boundary",
+    )
+
+    payload = plan_campaign(
+        load_campaign_workloads(workloads_path),
+        [intent],
+        methods=[ExperimentMethod.CONFIGFUZZ],
+        solver_timeout_ms=250,
+    )
+
+    case = payload["cases"][0]
+    assert payload["solver_timeout_ms"] == 250
+    assert case["solver_timeout_ms"] == 250
+    assert case["solver_seconds"] >= 0
+    assert case["solver_seconds_recorded_at_runtime"] is False
+
+
+def test_campaign_solver_timeout_must_be_positive(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="timeout"):
+        plan_campaign({}, [], solver_timeout_ms=0)

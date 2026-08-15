@@ -190,7 +190,10 @@ def solve_graph_mutation(
     semantic_anchors: Iterable[str] = (),
     high_confidence_threshold: float = 0.8,
     mutable_parameters: Iterable[str] | None = None,
+    timeout_ms: int = 1000,
 ) -> SolverMutationPlan:
+    if timeout_ms <= 0:
+        raise ValueError("mutation solver timeout must be positive")
     if parameter not in graph.nodes:
         raise KeyError(f"unknown dependency node: {parameter}")
     if not 0.0 <= high_confidence_threshold <= 1.0:
@@ -243,6 +246,7 @@ def solve_graph_mutation(
 
     optimizer = z3.Optimize()
     optimizer.set(priority="lex")
+    optimizer.set(timeout=timeout_ms)
     missing: set[str] = set()
     try:
         optimizer.add(target == _literal(value, kinds[parameter]))

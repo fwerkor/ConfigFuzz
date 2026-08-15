@@ -21,6 +21,22 @@ def main() -> int:
     parser.add_argument("--intents", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument(
+        "--workload",
+        action="append",
+        help="plan only these workload IDs after verifying the frozen intent hash",
+    )
+    parser.add_argument(
+        "--intent",
+        action="append",
+        help="plan only these intent IDs after verifying the frozen intent hash",
+    )
+    parser.add_argument(
+        "--solver-timeout-ms",
+        type=int,
+        default=1000,
+        help="per-case Z3 timeout for solver-based methods (default: 1000)",
+    )
+    parser.add_argument(
         "--method",
         action="append",
         choices=tuple(item.value for item in ExperimentMethod),
@@ -42,7 +58,20 @@ def main() -> int:
     )
     workloads = load_campaign_workloads(args.workloads)
     intents = load_frozen_intents(args.intents)
-    payload = plan_campaign(workloads, intents, methods=methods)
+    if args.workload:
+        selected_workloads = set(args.workload)
+        intents = [item for item in intents if item.workload_id in selected_workloads]
+    if args.intent:
+        selected_intents = set(args.intent)
+        intents = [item for item in intents if item.intent_id in selected_intents]
+    if not intents:
+        parser.error("intent filters selected no frozen intents")
+    payload = plan_campaign(
+        workloads,
+        intents,
+        methods=methods,
+        solver_timeout_ms=args.solver_timeout_ms,
+    )
     write_json(args.output, payload)
     print(
         json.dumps(
@@ -52,6 +81,7 @@ def main() -> int:
                 "case_count": payload["case_count"],
                 "method_counts": payload["method_counts"],
                 "status_counts": payload["status_counts"],
+                "solver_timeout_ms": payload["solver_timeout_ms"],
             },
             ensure_ascii=False,
         )

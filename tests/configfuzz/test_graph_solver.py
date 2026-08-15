@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from configfuzz.dependencies import DependencyGraph, DependencyStatus
 from configfuzz.graph_solver import SolveStatus, normalize_context, solve_graph_mutation
 from configfuzz.model import Constraint, ConstraintKind, ConstraintSet
@@ -300,3 +302,10 @@ def test_low_confidence_preference_follows_locality_objectives() -> None:
     )
     assert relation.id in plan.low_confidence_preference_edges
     assert relation.id in plan.violated_soft_edges
+
+
+def test_mutation_solver_timeout_must_be_positive() -> None:
+    graph = make_graph(constraint("x > 0", ConstraintKind.RANGE, ("x",)))
+
+    with pytest.raises(ValueError, match="timeout"):
+        solve_graph_mutation(graph, {"x": 1}, "x", 2, timeout_ms=0)
