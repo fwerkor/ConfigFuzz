@@ -32,5 +32,7 @@
   "execution_stage": "training",
   "expert_tensor_parallel_size": 1,
   "normalization": "RMSNorm",
-  "add_bias_linear": false
+  "add_bias_linear": false,
+  "eval_global_batch_size": 4,
+  "eval_micro_batch_size": 2
 }
