@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import os
+import shutil
+import tempfile
 from pathlib import Path
 
 import deepspeed
@@ -69,7 +72,18 @@ def main() -> int:
             print(f"step={step} loss={loss.item():.6f}", flush=True)
     milestone("repeated_training", rank=rank)
 
-    checkpoint_dir = Path(cfg.get("checkpoint_dir") or "artifacts/gpu/qualification/deepspeed")
+    checkpoint_dir_value = cfg.get("checkpoint_dir")
+    if checkpoint_dir_value:
+        checkpoint_dir = Path(checkpoint_dir_value)
+        cleanup_checkpoint = False
+    else:
+        run_id = hashlib.sha256(str(Path(args.config).resolve()).encode()).hexdigest()[:16]
+        checkpoint_dir = Path(tempfile.gettempdir()) / f"configfuzz-deepspeed-{run_id}"
+        cleanup_checkpoint = True
+        if rank == 0:
+            shutil.rmtree(checkpoint_dir, ignore_errors=True)
+        if dist.is_initialized():
+            dist.barrier()
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
     engine.save_checkpoint(str(checkpoint_dir), tag="qualification")
     if dist.is_initialized():
@@ -77,6 +91,10 @@ def main() -> int:
     engine.load_checkpoint(str(checkpoint_dir), tag="qualification")
     milestone("checkpoint_save_load", rank=rank)
     milestone("completed", rank=rank)
+    if dist.is_initialized():
+        dist.barrier()
+    if cleanup_checkpoint and rank == 0:
+        shutil.rmtree(checkpoint_dir, ignore_errors=True)
     return 0
 
 

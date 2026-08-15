@@ -17,6 +17,9 @@
   "torch_compile": false,
   "qualification_steps": 2,
   "seed": 2026,
+  "self": {
+    "world_size": 2
+  },
   "train_micro_batch_size_per_gpu": 2,
   "train_batch_size": 4,
   "reduce_bucket_size": 500000000,

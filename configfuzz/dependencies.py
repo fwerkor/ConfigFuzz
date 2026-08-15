@@ -1023,7 +1023,9 @@ class _SymbolCollector(ast.NodeVisitor):
 
     def visit_Attribute(self, node: ast.Attribute) -> None:
         path = _attribute_path(node)
-        if path is not None and not path.startswith("self."):
+        if path is not None and (
+            not path.startswith("self.") or _looks_environment_name(path)
+        ):
             self.symbols.add(path)
 
     def visit_Call(self, node: ast.Call) -> None:

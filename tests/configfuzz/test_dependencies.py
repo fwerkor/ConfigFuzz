@@ -154,6 +154,27 @@ def test_environment_nodes_and_status_are_explicit() -> None:
     assert graph.nodes["args.world_size"].kind is DependencyNodeKind.ENVIRONMENT
 
 
+def test_self_environment_attribute_is_retained_as_context() -> None:
+    graph = DependencyGraph.from_constraint_sets(
+        [
+            constraint_set(
+                "train_batch_size",
+                "train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size",
+                ConstraintKind.ENVIRONMENT,
+                (
+                    "train_batch_size",
+                    "train_micro_batch_size_per_gpu",
+                    "gradient_accumulation_steps",
+                ),
+            )
+        ]
+    )
+
+    edge = next(iter(graph.edges.values()))
+    assert "self.world_size" in edge.participants
+    assert graph.nodes["self.world_size"].kind is DependencyNodeKind.ENVIRONMENT
+
+
 def test_active_constraint_evaluation_respects_guard() -> None:
     graph = DependencyGraph.from_constraint_sets(
         [

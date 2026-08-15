@@ -8,6 +8,13 @@
   "cwd": "../../..",
   "timeout_seconds": 60,
   "classification": {
+    "invalid_patterns": [
+      "Micro batch size per gpu: .* has to be greater than 0",
+      "Train batch size: .* has to be greater than 0",
+      "Gradient accumulation steps: .* has to be greater than 0",
+      "Check batch related parameters",
+      "Input should be greater than or equal to 0"
+    ],
     "resource_patterns": [
       "CUDA out of memory",
       "OutOfMemoryError"

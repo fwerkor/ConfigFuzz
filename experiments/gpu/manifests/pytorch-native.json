@@ -8,6 +8,12 @@
   "cwd": "../../..",
   "timeout_seconds": 45,
   "classification": {
+    "invalid_patterns": [
+      "Unknown backend type",
+      "must be divisible by 'group_size='",
+      "must not exceed the world size",
+      "must be positive"
+    ],
     "resource_patterns": [
       "CUDA out of memory",
       "OutOfMemoryError"
