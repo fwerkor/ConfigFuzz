@@ -55,4 +55,6 @@ subjects:
     result: qualified
     deepest_milestone: checkpoint_save_load
     observations:
-      - BF16 and FP16 with the local attention implementation currently fail in forward with a mixed-dtype matrix multiplication error; these paths are retained for scoped runtime validation rather than used as qualification baselines.
+      - FP16 and BF16 variants complete through checkpoint save/load when the native `Float16Module` path is used.
+      - The pure PyTorch norm backend rejects sequence parallelism; Transformer Engine/Apex is not installed in this qualification environment, so that path remains environment-limited.
+      - Native Megatron training-argument validation runs before model construction, including effective train/eval batch-size defaults.

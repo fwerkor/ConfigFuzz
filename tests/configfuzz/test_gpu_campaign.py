@@ -12,6 +12,7 @@ from configfuzz.gpu_campaign import (
     build_frozen_gpu_targets,
     dump_frozen_gpu_targets,
     load_frozen_gpu_targets,
+    summarize_frozen_gpu_results,
 )
 from configfuzz.dependencies import DependencyGraph, DependencyStatus
 from configfuzz.model import Constraint, ConstraintKind, ConstraintSet
@@ -99,3 +100,67 @@ def test_frozen_feedback_is_order_independent() -> None:
     assert all(report.paired_interventions == 1 for report in reverse_independent)
     assert {edge.status for edge in forward_graph.edges.values()} == {DependencyStatus.CONFIRMED}
     assert {edge.status for edge in reverse_graph.edges.values()} == {DependencyStatus.CONFIRMED}
+
+
+def test_gpu_result_summary_is_derived_from_round_records() -> None:
+    frozen = {
+        "frozen": {"sha256": "frozen-sha", "target_count": 2},
+        "subjects": [{"subject": "example"}],
+    }
+    results = {
+        "example": {
+            "subject": "example",
+            "frozen_targets_sha256": "frozen-sha",
+            "rounds": [
+                {
+                    "edge_id": "edge-confirmed",
+                    "expression": "x > 0",
+                    "feedback": {
+                        "paired_interventions": 1,
+                        "scope_disputed_edges": [],
+                    },
+                    "samples": [
+                        {"outcome": {"label": "valid"}},
+                        {"outcome": {"label": "invalid"}},
+                        {"outcome": {"label": "valid"}},
+                    ],
+                },
+                {
+                    "edge_id": "edge-disputed",
+                    "expression": "y > 0",
+                    "feedback": {
+                        "paired_interventions": 0,
+                        "scope_disputed_edges": ["edge-disputed"],
+                    },
+                    "samples": [
+                        {"outcome": {"label": "valid"}},
+                        {"outcome": {"label": "valid"}},
+                        {"outcome": {"label": "valid"}},
+                    ],
+                },
+            ],
+        }
+    }
+
+    summary = summarize_frozen_gpu_results(
+        frozen,
+        results,
+        hardware={
+            "accelerator": "GPU",
+            "device_count": 2,
+            "distributed_backend": "NCCL",
+        },
+        campaign_date="2026-08-15",
+        runner_revision="revision",
+    )
+
+    assert summary["aggregate"] == {
+        "targets": 2,
+        "samples": 6,
+        "paired_confirmed": 1,
+        "scope_disputed": 1,
+        "unresolved": 0,
+        "outcomes": {"invalid": 1, "valid": 5},
+    }
+    assert summary["subjects"][0]["confirmed_edge_ids"] == ["edge-confirmed"]
+    assert summary["subjects"][0]["scope_disputed_edge_ids"] == ["edge-disputed"]

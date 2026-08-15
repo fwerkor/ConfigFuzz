@@ -265,6 +265,160 @@ def apply_frozen_feedback(
     )
     return aggregate_graph, independent_feedback, aggregate_feedback
 
+def summarize_frozen_gpu_results(
+    frozen: Mapping[str, Any],
+    results: Mapping[str, Mapping[str, Any]],
+    *,
+    hardware: Mapping[str, Any],
+    campaign_date: str,
+    runner_revision: str,
+) -> dict[str, Any]:
+    """Build a deterministic cross-framework summary from frozen-campaign outputs."""
+    expected_subjects = [
+        str(item["subject"])
+        for item in frozen.get("subjects", ())
+        if isinstance(item, Mapping) and item.get("subject") is not None
+    ]
+    if not expected_subjects:
+        raise ValueError("frozen GPU target payload has no subjects")
+
+    subjects: list[dict[str, Any]] = []
+    aggregate_outcomes: Counter[str] = Counter()
+    aggregate_targets = 0
+    aggregate_samples = 0
+    aggregate_confirmed = 0
+    aggregate_scope_disputed = 0
+    aggregate_unresolved = 0
+    frozen_sha = str(frozen.get("frozen", {}).get("sha256", ""))
+
+    for subject in expected_subjects:
+        result = results.get(subject)
+        if not isinstance(result, Mapping):
+            raise ValueError(f"missing frozen GPU result for {subject}")
+        if str(result.get("subject")) != subject:
+            raise ValueError(f"GPU result subject mismatch for {subject}")
+        if str(result.get("frozen_targets_sha256")) != frozen_sha:
+            raise ValueError(f"GPU result frozen-target hash mismatch for {subject}")
+
+        confirmed: list[str] = []
+        scope_disputed: list[str] = []
+        unresolved: list[str] = []
+        target_detail: list[dict[str, Any]] = []
+        outcome_counts: Counter[str] = Counter()
+        rounds = result.get("rounds", ())
+        if not isinstance(rounds, list):
+            raise ValueError(f"GPU result rounds must be a list for {subject}")
+        for round_payload in rounds:
+            if not isinstance(round_payload, Mapping):
+                raise ValueError(f"GPU result round is malformed for {subject}")
+            edge_id = str(round_payload["edge_id"])
+            feedback = round_payload.get("feedback")
+            if not isinstance(feedback, Mapping):
+                raise ValueError(f"GPU result feedback is missing for {subject}:{edge_id}")
+            paired = int(feedback.get("paired_interventions", 0))
+            disputed_edges = {str(item) for item in feedback.get("scope_disputed_edges", ())}
+            if paired > 0:
+                status = "paired_confirmed"
+                confirmed.append(edge_id)
+            elif edge_id in disputed_edges:
+                status = "scope_disputed"
+                scope_disputed.append(edge_id)
+            else:
+                status = "unresolved"
+                unresolved.append(edge_id)
+
+            samples = round_payload.get("samples", ())
+            if not isinstance(samples, list):
+                raise ValueError(f"GPU result samples must be a list for {subject}:{edge_id}")
+            round_outcomes: list[str] = []
+            for sample in samples:
+                if not isinstance(sample, Mapping):
+                    raise ValueError(f"GPU result sample is malformed for {subject}:{edge_id}")
+                outcome = sample.get("outcome")
+                if not isinstance(outcome, Mapping) or outcome.get("label") is None:
+                    raise ValueError(f"GPU result sample outcome is malformed for {subject}:{edge_id}")
+                label = str(outcome["label"])
+                round_outcomes.append(label)
+                outcome_counts[label] += 1
+            target_detail.append(
+                {
+                    "edge_id": edge_id,
+                    "expression": str(round_payload["expression"]),
+                    "status": status,
+                    "outcomes": round_outcomes,
+                }
+            )
+
+        aggregate_outcomes.update(outcome_counts)
+        aggregate_targets += len(rounds)
+        aggregate_samples += sum(outcome_counts.values())
+        aggregate_confirmed += len(confirmed)
+        aggregate_scope_disputed += len(scope_disputed)
+        aggregate_unresolved += len(unresolved)
+        subjects.append(
+            {
+                "subject": subject,
+                "targets": len(rounds),
+                "samples": sum(outcome_counts.values()),
+                "paired_confirmed": len(confirmed),
+                "scope_disputed": len(scope_disputed),
+                "unresolved": len(unresolved),
+                "outcomes": dict(sorted(outcome_counts.items())),
+                "confirmed_edge_ids": confirmed,
+                "scope_disputed_edge_ids": scope_disputed,
+                "targets_detail": target_detail,
+            }
+        )
+
+    expected_target_count = int(frozen.get("frozen", {}).get("target_count", -1))
+    if aggregate_targets != expected_target_count:
+        raise ValueError(
+            f"formal GPU result target count mismatch: expected {expected_target_count}, "
+            f"got {aggregate_targets}"
+        )
+
+    return {
+        "schema_version": 2,
+        "name": "gpu-cross-framework-frozen-validation-summary",
+        "campaign_date": campaign_date,
+        "runner_revision": runner_revision,
+        "frozen_targets_sha256": frozen_sha,
+        "frozen_target_count": expected_target_count,
+        "protocol": {
+            "selection_basis": (
+                "versioned static graph plus qualified effective baseline; "
+                "no runtime outcomes used for target selection"
+            ),
+            "scope_filtering": (
+                "execution-stage scope is matched before intervention selection and feedback"
+            ),
+            "feedback_application": (
+                "independent per target plus order-independent aggregate feedback"
+            ),
+            "harness_integrity": (
+                "artifact, baseline, manifest, launch script, qualification runner, "
+                "and shared runner source are SHA-256 pinned; ConfigFuzz runner revision is recorded"
+            ),
+            "roles": ["satisfying", "violating", "repaired"],
+        },
+        "hardware": {
+            "accelerator": hardware.get("accelerator"),
+            "device_count": hardware.get("device_count"),
+            "distributed_backend": hardware.get("distributed_backend"),
+        },
+        "aggregate": {
+            "targets": aggregate_targets,
+            "samples": aggregate_samples,
+            "paired_confirmed": aggregate_confirmed,
+            "scope_disputed": aggregate_scope_disputed,
+            "unresolved": aggregate_unresolved,
+            "outcomes": dict(sorted(aggregate_outcomes.items())),
+        },
+        "subjects": subjects,
+    }
+
+
+
 def dump_frozen_gpu_targets(payload: Mapping[str, Any], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
