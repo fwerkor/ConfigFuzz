@@ -48,8 +48,7 @@
   },
   "scanner": {
     "mode": "strict",
-    "jobs": 4,
-    "elapsed_seconds": 36.97
+    "jobs": 4
   },
   "summary": {
     "parameters": 14,
@@ -1210,6 +1209,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1242,6 +1242,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1320,6 +1321,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1426,6 +1428,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1499,6 +1502,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1578,6 +1582,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1622,6 +1627,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1654,6 +1660,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1691,6 +1698,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1765,6 +1773,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1841,6 +1850,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1879,6 +1889,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -1989,6 +2000,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -2022,6 +2034,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -2068,6 +2081,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -2109,6 +2123,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -2142,6 +2157,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -2174,6 +2190,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -2206,6 +2223,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",
@@ -2245,6 +2263,7 @@
         "scope": {
           "accelerator": "NVIDIA GPU",
           "backend": "PyTorch/CUDA",
+          "execution_stage": "training",
           "framework": "Transformers/Accelerate",
           "framework_profile": "transformers-accelerate",
           "source_subdir": "src/transformers,src/accelerate",

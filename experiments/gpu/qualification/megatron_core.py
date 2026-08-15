@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import os
+import sys
 from pathlib import Path
 
 import torch
@@ -14,6 +17,65 @@ from megatron.core.models.gpt.gpt_model import GPTModel
 from megatron.core.tensor_parallel.random import model_parallel_cuda_manual_seed
 from megatron.core.transformer.module import Float16Module
 from megatron.core.transformer.transformer_config import TransformerConfig
+from megatron.training.arguments import parse_args as parse_megatron_args
+from megatron.training.arguments import validate_args as validate_megatron_args
+
+
+def _validate_native_training_args(cfg: dict[str, object]) -> None:
+    """Run Megatron's training argument validator on the effective test configuration."""
+    argv = [
+        "configfuzz-megatron-validation",
+        "--num-layers",
+        str(cfg["num_layers"]),
+        "--hidden-size",
+        str(cfg["hidden_size"]),
+        "--ffn-hidden-size",
+        str(cfg["ffn_hidden_size"]),
+        "--num-attention-heads",
+        str(cfg["num_attention_heads"]),
+        "--micro-batch-size",
+        str(cfg["micro_batch_size"]),
+        "--global-batch-size",
+        str(cfg["global_batch_size"]),
+        "--seq-length",
+        str(cfg["sequence_length"]),
+        "--max-position-embeddings",
+        str(cfg["max_position_embeddings"]),
+        "--tensor-model-parallel-size",
+        str(cfg.get("tensor_model_parallel_size", 1)),
+        "--pipeline-model-parallel-size",
+        str(cfg.get("pipeline_model_parallel_size", 1)),
+        "--context-parallel-size",
+        str(cfg.get("context_parallel_size", 1)),
+        "--expert-model-parallel-size",
+        str(cfg.get("expert_model_parallel_size", 1)),
+        "--distributed-backend",
+        "nccl",
+        "--normalization",
+        str(cfg.get("normalization", "RMSNorm")),
+    ]
+    if bool(cfg.get("sequence_parallel", False)):
+        argv.append("--sequence-parallel")
+    if bool(cfg.get("fp16", False)):
+        argv.append("--fp16")
+    if bool(cfg.get("bf16", False)):
+        argv.append("--bf16")
+    if not bool(cfg.get("add_bias_linear", False)):
+        argv.append("--disable-bias-linear")
+
+    previous_argv = sys.argv
+    try:
+        sys.argv = argv
+        with contextlib.redirect_stdout(io.StringIO()):
+            native_args = parse_megatron_args()
+            validate_megatron_args(native_args)
+    except (AssertionError, ValueError, RuntimeError) as exc:
+        raise RuntimeError(
+            f"CONFIGFUZZ_NATIVE_VALIDATION_REJECTED: {type(exc).__name__}: {exc}"
+        ) from exc
+    finally:
+        sys.argv = previous_argv
+
 
 
 def main() -> int:
@@ -22,6 +84,8 @@ def main() -> int:
     args = parser.parse_args()
     cfg = load_config(args.config)
     milestone("argument_parsing")
+    _validate_native_training_args(cfg)
+    milestone("configuration_validation")
 
     local_rank = int(os.environ.get("LOCAL_RANK", "0"))
     rank = int(os.environ.get("RANK", "0"))
@@ -68,6 +132,8 @@ def main() -> int:
         expert_tensor_parallel_size=expert_tensor_parallel_size,
         params_dtype=params_dtype,
         pipeline_dtype=params_dtype,
+        normalization=str(cfg.get("normalization", "RMSNorm")),
+        add_bias_linear=bool(cfg.get("add_bias_linear", False)),
         num_moe_experts=(
             int(cfg["num_moe_experts"])
             if cfg.get("num_moe_experts") is not None

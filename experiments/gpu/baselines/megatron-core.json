@@ -30,5 +30,7 @@
     "world_size": 2
   },
   "execution_stage": "training",
-  "expert_tensor_parallel_size": 1
+  "expert_tensor_parallel_size": 1,
+  "normalization": "RMSNorm",
+  "add_bias_linear": false
 }

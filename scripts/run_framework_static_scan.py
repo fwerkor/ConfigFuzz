@@ -158,14 +158,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     source_subdirs = tuple(args.source_subdir) or (profile.source_subdirs if profile else (".",))
     source_roots = _resolve_source_roots(framework_roots, source_subdirs)
 
-    started = perf_counter()
     scanned = scan_source_paths_multi(
         source_roots,
         parameters,
         strict=not args.broad,
         jobs=args.jobs,
     )
-    elapsed = perf_counter() - started
     results = [scanned[parameter].to_dict() for parameter in parameters]
     for framework_root in framework_roots:
         results = _normalize_sources(results, framework_root)
@@ -225,7 +223,6 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "scanner": {
             "mode": "broad" if args.broad else "strict",
             "jobs": args.jobs,
-            "elapsed_seconds": round(elapsed, 3),
         },
         "summary": {
             "parameters": len(results),
@@ -245,7 +242,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    started = perf_counter()
     payload = run(args)
+    elapsed = perf_counter() - started
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
@@ -256,7 +255,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         f"parameters={payload['summary']['parameters']} "
         f"candidates={payload['summary']['candidates']} "
         f"dependency_edges={payload['summary']['dependency_edges']} "
-        f"elapsed={payload['scanner']['elapsed_seconds']}s"
+        f"elapsed={elapsed:.3f}s"
     )
     return 0
 

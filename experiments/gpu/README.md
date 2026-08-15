@@ -29,9 +29,12 @@ weights. Framework-specific runners instantiate the equivalent workload and
 emit stable milestone markers of the form
 `CONFIGFUZZ_MILESTONE:<milestone>`.
 
-Megatron-Core uses `baselines/megatron-core.json` because its qualified local
-attention path currently uses FP32 and TP=2. Mixed-precision variants remain
-runtime test targets instead of qualification prerequisites.
+Megatron-Core uses `baselines/megatron-core.json` with a Llama-like RMSNorm
+configuration and TP=2. Its qualification runner invokes Megatron's native
+training-argument validation before model construction and uses the framework's
+`Float16Module` path for FP16/BF16 cases. The isolated Megatron environment also
+installs `requirements-megatron-validation.txt` so the native training argument
+stack can load its YAML configuration support.
 
 ## Static recovery
 

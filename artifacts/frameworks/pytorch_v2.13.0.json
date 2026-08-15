@@ -41,8 +41,7 @@
   },
   "scanner": {
     "mode": "strict",
-    "jobs": 4,
-    "elapsed_seconds": 50.499
+    "jobs": 4
   },
   "summary": {
     "parameters": 12,
