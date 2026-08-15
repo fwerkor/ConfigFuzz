@@ -21,11 +21,19 @@ def main() -> int:
     local_rank = int(os.environ.get("LOCAL_RANK", "0"))
     rank = int(os.environ.get("RANK", "0"))
     world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    backend = str(cfg.get("backend", cfg.get("distributed_backend", "nccl")))
     if world_size > 1:
-        dist.init_process_group(backend=str(cfg.get("distributed_backend", "nccl")))
+        dist.init_process_group(backend=backend)
     torch.cuda.set_device(local_rank)
     device = torch.device("cuda", local_rank)
     milestone("distributed_initialization", rank=rank)
+
+    subgroups = []
+    if world_size > 1 and cfg.get("group_size") is not None:
+        _, subgroups = dist.new_subgroups(
+            group_size=int(cfg["group_size"]),
+            backend=backend,
+        )
 
     model = TinyCausalLM(cfg)
     dtype = dtype_from_name(str(cfg.get("dtype", "bf16")))
@@ -69,6 +77,8 @@ def main() -> int:
     milestone("completed", rank=rank)
 
     if world_size > 1:
+        for subgroup in subgroups:
+            dist.destroy_process_group(subgroup)
         dist.destroy_process_group()
     return 0
 

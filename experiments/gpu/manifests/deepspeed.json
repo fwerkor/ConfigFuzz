@@ -1,0 +1,29 @@
+{
+  "baseline_config": "../baselines/deepspeed.json",
+  "command": [
+    "bash",
+    "experiments/gpu/launch_deepspeed.sh",
+    "{config}"
+  ],
+  "cwd": "../../..",
+  "timeout_seconds": 60,
+  "classification": {
+    "resource_patterns": [
+      "CUDA out of memory",
+      "OutOfMemoryError"
+    ],
+    "infrastructure_patterns": [
+      "Address already in use",
+      "NCCL.*(system error|unhandled system error|connection refused)"
+    ],
+    "milestone_patterns": [
+      "CONFIGFUZZ_MILESTONE:completed"
+    ],
+    "unexpected_failure_after_milestone_is_bug": false
+  },
+  "roles": [
+    "satisfying",
+    "violating",
+    "repaired"
+  ]
+}

@@ -28,14 +28,24 @@ def main() -> int:
     milestone("model_construction", rank=rank)
 
     ds_cfg = {
-        "train_micro_batch_size_per_gpu": int(cfg["micro_batch_size"]),
+        "train_micro_batch_size_per_gpu": int(
+            cfg.get("train_micro_batch_size_per_gpu", cfg["micro_batch_size"])
+        ),
         "gradient_accumulation_steps": int(cfg.get("gradient_accumulation_steps", 1)),
-        "zero_optimization": {"stage": int(cfg.get("zero_stage", 1))},
+        "zero_optimization": {
+            "stage": int(cfg.get("zero_stage", 1)),
+            "reduce_bucket_size": int(cfg.get("reduce_bucket_size", 500_000_000)),
+            "allgather_bucket_size": int(cfg.get("allgather_bucket_size", 500_000_000)),
+            "overlap_comm": bool(cfg.get("overlap_comm", False)),
+            "reduce_scatter": bool(cfg.get("reduce_scatter", True)),
+        },
         "bf16": {"enabled": str(cfg.get("dtype", "bf16")).lower() in {"bf16", "bfloat16"}},
         "fp16": {"enabled": str(cfg.get("dtype", "bf16")).lower() in {"fp16", "float16"}},
         "steps_per_print": 1,
         "wall_clock_breakdown": False,
     }
+    if cfg.get("train_batch_size") is not None:
+        ds_cfg["train_batch_size"] = int(cfg["train_batch_size"])
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(cfg.get("learning_rate", 1e-3)))
     engine, optimizer, _, _ = deepspeed.initialize(
         model=model,

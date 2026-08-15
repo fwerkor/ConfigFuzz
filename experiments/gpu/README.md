@@ -61,8 +61,21 @@ branch.
 
 ## Execution-guided validation
 
-The Megatron-Core manifest is the first GPU integration of the existing active
-validation loop:
+All four qualified GPU stacks are connected to the same active-validation
+loop. Each subject has a dedicated baseline, launcher, and execution manifest;
+the launchers keep machine-specific Python/source paths configurable through
+environment variables while the manifests remain repository-relative.
+
+Run one subject with the unified wrapper:
+
+```bash
+bash experiments/gpu/run_active_validation.sh pytorch-native 3
+bash experiments/gpu/run_active_validation.sh deepspeed 3
+bash experiments/gpu/run_active_validation.sh transformers-accelerate 3
+bash experiments/gpu/run_active_validation.sh megatron-core 3
+```
+
+The wrapper dispatches to the equivalent direct command, for example:
 
 ```bash
 python -m configfuzz active-validate \
@@ -77,3 +90,10 @@ violating, and repaired configurations, executes them on the qualified runtime,
 and updates only the evidence supported by the observations. Preliminary
 qualification/active-validation runs must not be mixed with the final frozen
 RQ2 campaign.
+
+The framework baselines expose only configuration fields that are actually
+consumed by the corresponding runner. In particular, the PyTorch runner drives
+the recovered distributed backend and subgroup-size paths, while the DeepSpeed
+runner passes recovered batch-size and ZeRO bucket settings into the native
+DeepSpeed configuration object. This keeps execution feedback tied to the
+scanned framework semantics rather than to a synthetic validation shim.
