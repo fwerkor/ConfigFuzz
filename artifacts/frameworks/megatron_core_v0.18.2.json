@@ -48,7 +48,7 @@
   "scanner": {
     "mode": "strict",
     "jobs": 4,
-    "elapsed_seconds": 12.833
+    "elapsed_seconds": 13.215
   },
   "summary": {
     "parameters": 18,
@@ -3645,9 +3645,10 @@
       "edges": 139,
       "connected_components": 2,
       "node_kinds": {
+        "derived": 49,
         "environment": 2,
         "feature": 30,
-        "parameter": 68
+        "parameter": 19
       },
       "relations": {
         "bound": 13,
@@ -3681,7 +3682,7 @@
       },
       {
         "name": "attention_config_dict",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "bf16",
@@ -3689,7 +3690,7 @@
       },
       {
         "name": "ckpt_format",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "context_parallel_size",
@@ -3701,19 +3702,19 @@
       },
       {
         "name": "cpu_offloading_num_layers",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "data_parallel_size",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "decoder_first_pipeline_num_layers",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "decoder_last_pipeline_num_layers",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "decrease_batch_size_if_needed",
@@ -3729,15 +3730,15 @@
       },
       {
         "name": "emb_int",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "ep_size",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "experimental_attention_variant",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "expert_model_parallel_size",
@@ -3745,7 +3746,7 @@
       },
       {
         "name": "expert_tensor_parallel_size",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "export_kd_teacher_load",
@@ -3761,7 +3762,7 @@
       },
       {
         "name": "first_stage_layers",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "force_initialize",
@@ -3789,15 +3790,15 @@
       },
       {
         "name": "hybrid_layer_pattern",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "inference_batch_times_seqlen_threshold",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "inference_context",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "inference_fuse_tp_communication",
@@ -3805,7 +3806,7 @@
       },
       {
         "name": "kv_channels",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "language_model.hidden_size",
@@ -3813,7 +3814,7 @@
       },
       {
         "name": "language_model.kv_channels",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "language_model.num_attention_heads",
@@ -3825,19 +3826,19 @@
       },
       {
         "name": "last_stage_layers",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "layout",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "linear_num_key_heads",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "linear_num_value_heads",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "micro_batch_size",
@@ -3845,7 +3846,7 @@
       },
       {
         "name": "middle_stages",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "model_parallel.expert_model_parallel_size",
@@ -3857,19 +3858,19 @@
       },
       {
         "name": "model_parallel.transformer_pipeline_model_parallel_size",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "model_parallel_size",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "moe_ffn_hidden_size",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "moe_layer_pattern",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "moe_layer_recompute",
@@ -3885,7 +3886,7 @@
       },
       {
         "name": "n_heads_in_group",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_attention_heads",
@@ -3893,19 +3894,19 @@
       },
       {
         "name": "num_dense_layers",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_distributed_optimizer_instances",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_experts",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_generated_samples_per_inference_iteration",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_layers",
@@ -3913,27 +3914,27 @@
       },
       {
         "name": "num_layers_at_end_in_bf16",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_layers_at_start_in_bf16",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_layers_in_first_pipeline_stage",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_layers_in_last_pipeline_stage",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_layers_per_pipeline_rank",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_layers_per_virtual_pipeline_stage",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_moe_experts",
@@ -3941,7 +3942,7 @@
       },
       {
         "name": "num_moe_layers",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_query_groups",
@@ -3949,15 +3950,15 @@
       },
       {
         "name": "num_stages",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "num_virtual_stages_per_pipeline_rank",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "optimizer",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "overlap_moe_expert_parallel_comm",
@@ -3981,7 +3982,7 @@
       },
       {
         "name": "pipeline_model_parallel_layout",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "pipeline_model_parallel_size",
@@ -3993,7 +3994,7 @@
       },
       {
         "name": "pp_size",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "recompute_granularity",
@@ -4001,11 +4002,11 @@
       },
       {
         "name": "recompute_method",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "recompute_num_layers",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "rl_use_sequence_packing",
@@ -4013,15 +4014,15 @@
       },
       {
         "name": "running_global_batch_size",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "segments",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "seq_length",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "sequence_parallel",
@@ -4029,7 +4030,7 @@
       },
       {
         "name": "step_batch_size_schedule",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "tensor_model_parallel_size",
@@ -4041,7 +4042,7 @@
       },
       {
         "name": "transformer_pipeline_model_parallel_size",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "use_distributed_optimizer",

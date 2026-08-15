@@ -49,7 +49,7 @@
   "scanner": {
     "mode": "strict",
     "jobs": 4,
-    "elapsed_seconds": 37.141
+    "elapsed_seconds": 36.97
   },
   "summary": {
     "parameters": 14,
@@ -1038,8 +1038,9 @@
       "edges": 31,
       "connected_components": 13,
       "node_kinds": {
+        "derived": 9,
         "feature": 11,
-        "parameter": 14
+        "parameter": 5
       },
       "relations": {
         "bound": 2,
@@ -1056,19 +1057,19 @@
     "nodes": [
       {
         "name": "FSDPOption.FULL_SHARD",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "FSDPOption.OFFLOAD",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "FSDPOption.SHARD_GRAD_OP",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "batch_size",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "bf16",
@@ -1096,11 +1097,11 @@
       },
       {
         "name": "grad_acc_kwargs",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "gradient_accumulation_plugin",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "gradient_accumulation_steps",
@@ -1116,7 +1117,7 @@
       },
       {
         "name": "min_num_params",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "mixed_precision",
@@ -1124,7 +1125,7 @@
       },
       {
         "name": "num_processes",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "per_device_train_batch_size",
@@ -1148,7 +1149,7 @@
       },
       {
         "name": "transformer_layer_cls_to_wrap",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "use_seedable_sampler",

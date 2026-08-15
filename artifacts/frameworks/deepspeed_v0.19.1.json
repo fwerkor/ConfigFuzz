@@ -46,7 +46,7 @@
   "scanner": {
     "mode": "strict",
     "jobs": 4,
-    "elapsed_seconds": 5.767
+    "elapsed_seconds": 5.8
   },
   "summary": {
     "parameters": 16,
@@ -59,7 +59,7 @@
       "relation": 1,
       "type": 5
     },
-    "dependency_nodes": 19,
+    "dependency_nodes": 20,
     "dependency_edges": 20,
     "dependency_components": 9
   },
@@ -877,13 +877,14 @@
       }
     },
     "summary": {
-      "nodes": 19,
+      "nodes": 20,
       "edges": 20,
       "connected_components": 9,
       "node_kinds": {
-        "environment": 1,
+        "derived": 6,
+        "environment": 2,
         "feature": 3,
-        "parameter": 15
+        "parameter": 9
       },
       "relations": {
         "divisibility": 1,
@@ -900,11 +901,11 @@
     "nodes": [
       {
         "name": "OffloadDeviceEnum.nvme",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "ZeroStageEnum.weights",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "allgather_bucket_size",
@@ -912,15 +913,15 @@
       },
       {
         "name": "device",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "dist",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "ds_config",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "gradient_accumulation_steps",
@@ -932,7 +933,7 @@
       },
       {
         "name": "offload_optimizer.ratio",
-        "kind": "parameter"
+        "kind": "derived"
       },
       {
         "name": "offload_param",
@@ -949,6 +950,10 @@
       {
         "name": "reduce_scatter",
         "kind": "feature"
+      },
+      {
+        "name": "self.world_size",
+        "kind": "environment"
       },
       {
         "name": "sequence_parallel_size",
@@ -1300,10 +1305,12 @@
         "participants": [
           "train_batch_size",
           "train_micro_batch_size_per_gpu",
-          "gradient_accumulation_steps"
+          "gradient_accumulation_steps",
+          "self.world_size"
         ],
         "drivers": [
           "gradient_accumulation_steps",
+          "self.world_size",
           "train_micro_batch_size_per_gpu"
         ],
         "dependents": [
