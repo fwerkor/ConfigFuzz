@@ -216,7 +216,14 @@ def _plan_score_components(
         for edge_id in case.unsupported_edges
     }
     unsupported_ratio = len(unsupported) / max(1, len(graph.edges))
+    missing_context = {
+        name
+        for case in (plan.satisfying, plan.violating)
+        for name in case.missing_context
+    }
+    missing_context_ratio = len(missing_context) / max(1, len(graph.nodes))
     return {
         "pair_cost": -0.8 * pair_cost,
-        "unsupported": -0.5 * unsupported_ratio,
+        "unsupported": -4.0 * unsupported_ratio,
+        "missing_context": -2.0 * missing_context_ratio,
     }

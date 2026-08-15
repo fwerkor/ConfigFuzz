@@ -98,6 +98,7 @@ def test_conditional_high_order_relation_exposes_score_components() -> None:
     assert components["guard"] > 0
     assert components["interaction"] > 0
     assert components["uncertainty"] == 1.0
+    assert components["missing_context"] <= 0
     assert candidate.intervention.satisfying.assignment["feature_enabled"] is True
     assert candidate.intervention.violating.assignment["feature_enabled"] is True
 
