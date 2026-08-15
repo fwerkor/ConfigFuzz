@@ -1,12 +1,15 @@
-schema_version: 1
+schema_version: 2
 name: gpu-cross-framework-frozen-validation-summary
 campaign_date: '2026-08-15'
-runner_revision: b5559aa85e63814cc70609cca64ef7d3c0ed37ab
-frozen_targets_sha256: 38e02283e648d74d25231511802e1dedd11791713d501715e38bd702dd27016d
+runner_revision: aa93182063bb21d85d90797b5603c6a7eee64444
+frozen_targets_sha256: df3ecc3993ea580c7f865144e01ffbcbaa1e478c45b1b9c131ff4683dcaa8ef0
 frozen_target_count: 19
 protocol:
-  selection_basis: versioned static graph plus qualified baseline; no runtime outcomes used for target selection
+  selection_basis: versioned static graph plus qualified effective baseline; no runtime outcomes used for target selection
+  scope_filtering: execution-stage scope is matched before intervention selection and feedback
   feedback_application: independent per target plus order-independent aggregate feedback
+  harness_integrity: artifact, baseline, manifest, launch script, qualification runner, and shared runner source are SHA-256
+    pinned; ConfigFuzz runner revision is recorded
   roles:
   - satisfying
   - violating
@@ -18,14 +21,14 @@ hardware:
 aggregate:
   targets: 19
   samples: 57
-  paired_confirmed: 11
+  paired_confirmed: 15
   scope_disputed: 1
-  unresolved: 7
+  unresolved: 3
   outcomes:
     infrastructure_failure: 1
-    invalid: 16
-    unknown: 12
-    valid: 28
+    invalid: 19
+    unknown: 1
+    valid: 36
 subjects:
 - subject: pytorch-native
   targets: 4
@@ -44,29 +47,34 @@ subjects:
   - dep-54cbd80200ce84df
   targets_detail:
   - edge_id: dep-26ecbd36c763dd03
+    expression: backend in ['nccl', 'gloo', 'mpi', 'hccl', 'xccl']
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
   - edge_id: dep-54cbd80200ce84df
+    expression: group_size > 1
     status: scope_disputed
     outcomes:
     - valid
     - valid
     - valid
   - edge_id: dep-658ed6a87e1309c2
+    expression: group_size > 0
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
   - edge_id: dep-b3845deb278dfa2c
+    expression: world_size % group_size == 0
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
+  result_sha256: bbef59fe3aa039885cfdb6989ae4cd2432b5f9ce919942749c814cf031176b69
 - subject: deepspeed
   targets: 6
   samples: 18
@@ -86,41 +94,48 @@ subjects:
   scope_disputed_edge_ids: []
   targets_detail:
   - edge_id: dep-70da5e10318e54f5
+    expression: train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
   - edge_id: dep-0887015961d7c9ca
+    expression: train_micro_batch_size_per_gpu > 0
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
   - edge_id: dep-b957353a0fcb0fdc
+    expression: train_batch_size > 0
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
   - edge_id: dep-dc97b1a59ef46820
+    expression: gradient_accumulation_steps > 0
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
   - edge_id: dep-660c94ed03780170
+    expression: reduce_bucket_size >= 0
     status: unresolved
     outcomes:
     - valid
     - invalid
     - unknown
   - edge_id: dep-a37e7d3959ee0b8c
+    expression: allgather_bucket_size >= 0
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
+  result_sha256: ed7c631696c06220306dbd3af225b3cf489469bdec80ab731ed58ad40f9eb3b0
 - subject: transformers-accelerate
   targets: 3
   samples: 9
@@ -137,70 +152,84 @@ subjects:
   scope_disputed_edge_ids: []
   targets_detail:
   - edge_id: dep-39fd2282ed77229c
+    expression: mixed_precision in ['no', 'fp16', 'bf16', 'fp8']
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
   - edge_id: dep-5d2bdf54140b8f5a
+    expression: mixed_precision in {"bf16", "fp16", "no"}
     status: unresolved
     outcomes:
     - valid
     - infrastructure_failure
     - valid
   - edge_id: dep-bb93e90843aba2d0
+    expression: mixed_precision in {"bf16", "fp16", "fp8", "no"}
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
+  result_sha256: 46429fc4762aa81eb7d03d7e106dcbc4bbeab43f467e41944258af484026a3c5
 - subject: megatron-core
   targets: 6
   samples: 18
-  paired_confirmed: 1
+  paired_confirmed: 5
   scope_disputed: 0
-  unresolved: 5
+  unresolved: 1
   outcomes:
-    invalid: 5
-    unknown: 11
-    valid: 2
+    invalid: 8
+    valid: 10
   confirmed_edge_ids:
+  - dep-54241f191526fdae
+  - dep-bcffaa7c8426524c
   - dep-2d732812b8519cbd
+  - dep-1ce2a9ae2ac16140
+  - dep-1f69a0ab46af7e77
   scope_disputed_edge_ids: []
   targets_detail:
   - edge_id: dep-54241f191526fdae
-    status: unresolved
+    expression: bf16 => not fp16
+    status: paired_confirmed
     outcomes:
-    - unknown
-    - unknown
-    - unknown
+    - valid
+    - invalid
+    - valid
   - edge_id: dep-bcffaa7c8426524c
-    status: unresolved
+    expression: fp16 => not bf16
+    status: paired_confirmed
     outcomes:
-    - unknown
-    - unknown
-    - unknown
+    - valid
+    - invalid
+    - valid
   - edge_id: dep-2d732812b8519cbd
+    expression: num_query_groups == num_attention_heads
     status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
   - edge_id: dep-1ce2a9ae2ac16140
-    status: unresolved
+    expression: num_moe_experts is not None => num_moe_experts > 0
+    status: paired_confirmed
     outcomes:
-    - unknown
-    - unknown
-    - unknown
-  - edge_id: dep-73dd37cfa3f495c3
-    status: unresolved
-    outcomes:
-    - unknown
+    - valid
     - invalid
-    - unknown
-  - edge_id: dep-7cb33497e801ef6b
+    - valid
+  - edge_id: dep-77fd7ce216b36ffd
+    expression: sequence_parallel => tensor_model_parallel_size > 1
     status: unresolved
     outcomes:
     - invalid
     - invalid
     - invalid
+  - edge_id: dep-1f69a0ab46af7e77
+    expression: global_batch_size > 0
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  result_sha256: 24738e2c04aca5d3a4daf9807ffcc9c6543edaa598041236c891ed008816f48d

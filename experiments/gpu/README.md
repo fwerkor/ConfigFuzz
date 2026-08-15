@@ -105,10 +105,12 @@ scanned framework semantics rather than to a synthetic validation shim.
 
 The formal GPU generalization campaign uses `validation_targets.frozen.yaml`.
 Targets are ranked and frozen from each versioned static graph plus its qualified
-baseline before formal execution feedback is considered. This prevents later
-runtime outcomes from changing the evaluated target set. The current frozen set
-contains 19 targets across the four GPU stacks and records hashes for every
-source artifact, baseline, and execution manifest.
+effective baseline before formal execution feedback is considered. Candidates
+with an explicit execution-stage scope that does not match the qualified workload
+are excluded before ranking. This prevents later runtime outcomes from changing
+the evaluated target set. The current frozen set contains 19 targets across the
+four GPU stacks and records hashes for each source artifact, baseline, execution
+manifest, launch script, qualification runner, and shared runner source.
 
 Regenerate and verify the frozen set with:
 
@@ -134,4 +136,9 @@ kept separate from these frozen-campaign outputs.
 
 The normalized result summary for the frozen campaign is recorded in
 `formal_results_summary.yaml`; raw process logs remain outside the repository
-because they contain machine-local execution paths.
+because they contain machine-local execution paths. The summary records the
+ConfigFuzz runner revision and SHA-256 of every raw subject result. Rebuild it
+from the raw outputs with `scripts/summarize_frozen_gpu_validation.py`. The
+current `df3ecc39...` campaign contains 19 targets and 57 executions: 15 targets
+form provenance-matched satisfying/violating/repaired evidence, one target is
+scope-disputed, and three remain unresolved under the qualified environments.
