@@ -34,6 +34,15 @@ comparable while preserving framework-specific execution paths.
 Framework-specific runners emit stable milestone markers of the form
 `CONFIGFUZZ_MILESTONE:<milestone>`.
 
+Formal RQ2 family execution uses `rq2_family_runner.py` for PyTorch Native,
+DeepSpeed, and Transformers/Accelerate, with launchers `launch_rq2_*.sh`.
+The runner instantiates the actual Qwen2, Llama, GLM, Mixtral, DeepSeek-V3,
+InternVL, or CogVideoX architecture from the canonical workload profile; it
+does not download pretrained weights. CogVideoX support is pinned in
+`requirements-rq2-models.txt`. `rq2_megatron_runner.py` uses Megatron-Core's
+native GPT/MoE execution path and is intentionally limited to the Qwen2,
+Llama2, and Mixtral workload families listed in the compatibility matrix.
+
 Megatron-Core uses `baselines/megatron-core.json` with a Llama-like RMSNorm
 configuration and TP=2. Its qualification runner invokes Megatron's native
 training-argument validation before model construction and uses the framework's
@@ -141,9 +150,9 @@ kept separate from these frozen-campaign outputs.
 
 The normalized result summary for the frozen campaign is recorded in
 `formal_results_summary.yaml`; raw process logs remain outside the repository
-because they contain machine-local execution paths. The summary records the
-ConfigFuzz runner revision and SHA-256 of every raw subject result. Rebuild it
-from the raw outputs with `scripts/summarize_frozen_gpu_validation.py`. The
-current `df3ecc39...` campaign contains 19 targets and 57 executions: 15 targets
-form provenance-matched satisfying/violating/repaired evidence, one target is
-scope-disputed, and three remain unresolved under the qualified environments.
+because they contain machine-local execution paths. The stored August 15
+summary is marked `superseded_scale_rerun_required`: its frozen-target hash
+predates the NPU-aligned 4-layer/hidden-512 campaign baselines. The same 19
+targets must therefore be rerun before those outcomes are used in the paper.
+Rebuild the normalized summary from the new raw outputs with
+`scripts/summarize_frozen_gpu_validation.py`.

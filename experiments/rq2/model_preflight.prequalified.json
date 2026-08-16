@@ -1,0 +1,59 @@
+{
+  "baseline_dir": "experiments/rq2/baselines/canonical-v1",
+  "failed": 0,
+  "failures": [],
+  "name": "rq2-accelerator-free-model-preflight",
+  "passed": 7,
+  "records": [
+    {
+      "family": "chatglm3_gqa_long_sequence",
+      "model_class": "GlmForCausalLM",
+      "parameter_count": 11017728,
+      "status": "model_forward_backward_passed",
+      "workload_id": "chatglm3-train"
+    },
+    {
+      "family": "cogvideox_video_text",
+      "model_class": "CogVideoXTransformer3DModel",
+      "parameter_count": 26550288,
+      "status": "model_forward_backward_passed",
+      "workload_id": "cogvideox-train"
+    },
+    {
+      "family": "deepseekv3_mla_moe",
+      "model_class": "DeepseekV3ForCausalLM",
+      "parameter_count": 17444096,
+      "status": "model_forward_backward_passed",
+      "workload_id": "deepseekv3-train"
+    },
+    {
+      "family": "internvl3_vision_text",
+      "model_class": "InternVLForConditionalGeneration",
+      "parameter_count": 13062400,
+      "status": "model_forward_backward_passed",
+      "workload_id": "internvl3-train"
+    },
+    {
+      "family": "llama2_dense_rope",
+      "model_class": "LlamaForCausalLM",
+      "parameter_count": 11014656,
+      "status": "model_forward_backward_passed",
+      "workload_id": "llama2-train"
+    },
+    {
+      "family": "mixtral_moe",
+      "model_class": "MixtralForCausalLM",
+      "parameter_count": 29897216,
+      "status": "model_forward_backward_passed",
+      "workload_id": "mixtral-train"
+    },
+    {
+      "family": "qwen2_dense_gqa",
+      "model_class": "Qwen2ForCausalLM",
+      "parameter_count": 11017728,
+      "status": "model_forward_backward_passed",
+      "workload_id": "qwen2-train"
+    }
+  ],
+  "schema_version": 1
+}

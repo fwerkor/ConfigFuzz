@@ -1,0 +1,215 @@
+{
+  "accelerator_gates": [
+    "Run the NPU persistent-worker A/B benchmark on an idle 910B card.",
+    "Qualify every formal framework-workload pair to checkpoint_save_load on its target accelerator and promote prepared bindings.",
+    "Promote/refreeze the 1050 intents after qualification; abort if the qualified baseline schema changes the frozen intent set.",
+    "Rerun the 19-target GPU frozen validation on the NPU-aligned 4L/512H baseline (the stored summary targets an older hash).",
+    "Execute formal RQ1 satisfying/violating pairs and collect failure-stage/cost metrics.",
+    "Execute the frozen RQ2 schedule; FILTERED/UNSAT records remain accelerator-free.",
+    "Execute the 25 logical RQ3 historical searches plus fixed-revision confirmation, then run current-version discovery under the frozen budgets."
+  ],
+  "checks": [
+    {
+      "detail": {
+        "primary_execution": "one paired execution per frozen intent and method",
+        "primary_seed": 2026,
+        "reason": "The six transformations are deterministic after intent freezing; frozen intents are the primary statistical units.",
+        "seed_sensitivity": {
+          "intent_subset_fraction": 0.2,
+          "paired_across_methods": true,
+          "report_separately": true,
+          "seed_count": 5,
+          "seeds": [
+            17,
+            42,
+            101,
+            2026,
+            4099
+          ],
+          "subset_selection": "sha256(intent_id) modulo 5 == 0"
+        }
+      },
+      "name": "rq2_replication_policy_frozen",
+      "ok": true
+    },
+    {
+      "detail": 93,
+      "name": "rq1_audit_has_93_constraints",
+      "ok": true
+    },
+    {
+      "detail": [
+        "chatglm3-train",
+        "cogvideox-train",
+        "deepseekv3-train",
+        "internvl3-train",
+        "llama2-train",
+        "mixtral-train",
+        "qwen2-train"
+      ],
+      "name": "rq2_canonical_workloads_complete",
+      "ok": true
+    },
+    {
+      "detail": {
+        "failed": 0,
+        "passed": 7
+      },
+      "name": "rq2_all_model_families_pass_cpu_forward_backward",
+      "ok": true
+    },
+    {
+      "detail": {
+        "by_workload": {
+          "chatglm3-train": 150,
+          "cogvideox-train": 150,
+          "deepseekv3-train": 150,
+          "internvl3-train": 150,
+          "llama2-train": 150,
+          "mixtral-train": 150,
+          "qwen2-train": 150
+        },
+        "count": 1050,
+        "sha256": "b4bb6a466b326c8a59887b8733327391b625b7e1945841cb0c6e16431b265d44"
+      },
+      "name": "rq2_frozen_intents_1050_balanced",
+      "ok": true
+    },
+    {
+      "detail": {
+        "formal_pairs": 38,
+        "frameworks": [
+          "deepspeed",
+          "megatron-core",
+          "msa",
+          "pta",
+          "pytorch-cuda",
+          "transformers-accelerate"
+        ]
+      },
+      "name": "rq2_framework_workload_matrix_frozen",
+      "ok": true
+    },
+    {
+      "detail": {
+        "deepspeed": [
+          "chatglm3-train",
+          "cogvideox-train",
+          "deepseekv3-train",
+          "internvl3-train",
+          "llama2-train",
+          "mixtral-train",
+          "qwen2-train"
+        ],
+        "megatron-core": [
+          "llama2-train",
+          "mixtral-train",
+          "qwen2-train"
+        ],
+        "msa": [
+          "chatglm3-train",
+          "cogvideox-train",
+          "deepseekv3-train",
+          "internvl3-train",
+          "llama2-train",
+          "mixtral-train",
+          "qwen2-train"
+        ],
+        "pta": [
+          "chatglm3-train",
+          "cogvideox-train",
+          "deepseekv3-train",
+          "internvl3-train",
+          "llama2-train",
+          "mixtral-train",
+          "qwen2-train"
+        ],
+        "pytorch-cuda": [
+          "chatglm3-train",
+          "cogvideox-train",
+          "deepseekv3-train",
+          "internvl3-train",
+          "llama2-train",
+          "mixtral-train",
+          "qwen2-train"
+        ],
+        "transformers-accelerate": [
+          "chatglm3-train",
+          "cogvideox-train",
+          "deepseekv3-train",
+          "internvl3-train",
+          "llama2-train",
+          "mixtral-train",
+          "qwen2-train"
+        ]
+      },
+      "name": "rq2_runtime_subjects_match_matrix",
+      "ok": true
+    },
+    {
+      "detail": [],
+      "name": "accelerator_launch_harnesses_present",
+      "ok": true
+    },
+    {
+      "detail": {
+        "subject_count": 6,
+        "total_record_count": 61272
+      },
+      "name": "rq2_replication_schedule_frozen",
+      "ok": true
+    },
+    {
+      "detail": {
+        "logical_root_causes": 25,
+        "source_candidates": 23
+      },
+      "name": "rq3_historical_search_cases_bound",
+      "ok": true
+    },
+    {
+      "detail": {
+        "failed_count": 0,
+        "logical_case_count": 25,
+        "ready_count": 25
+      },
+      "name": "rq3_historical_commits_and_harness_blobs_available",
+      "ok": true
+    },
+    {
+      "detail": {
+        "current_version": {
+          "per_framework_per_method_max_accelerator_hours": 24.0,
+          "per_framework_per_method_max_generated_tests": 2000,
+          "stop_rule": "stop when either budget is exhausted",
+          "triage_and_minimization_accounted_separately": true
+        },
+        "historical_replay": {
+          "confirmation_runs_excluded_from_search_budget": true,
+          "per_bug_per_method_max_accelerator_hours": 1.0,
+          "per_bug_per_method_max_generated_tests": 200,
+          "stop_rule": "first confirmed reproducer or first exhausted budget"
+        }
+      },
+      "name": "rq3_search_budgets_frozen",
+      "ok": true
+    },
+    {
+      "detail": {
+        "current_targets_sha256": "d5bae1d22a815c2e341be6caba72c33697594a0de57d8274c689237d4da21f02",
+        "rerun_required": true,
+        "stored_summary_targets_sha256": "df3ecc3993ea580c7f865144e01ffbcbaa1e478c45b1b9c131ff4683dcaa8ef0"
+      },
+      "name": "gpu_frozen_summary_requires_new_scale_rerun",
+      "ok": true
+    }
+  ],
+  "external_followups": [
+    "Complete independent secondary RQ1 source review before paper claims are finalized.",
+    "Seek developer confirmation for newly discovered RQ3 current-version bugs after reproduction/minimization."
+  ],
+  "name": "configfuzz-pre-accelerator-readiness",
+  "non_accelerator_blockers": [],
+  "schema_version": 1,
+  "status": "ready_for_accelerator"
+}

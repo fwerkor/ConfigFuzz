@@ -183,7 +183,7 @@ Bootstrap classifications are deterministic annotation aids. Native coverage and
 
 ### 5.2 RQ2 workloads and mutation intents
 
-The workload registry contains seven training subjects: Qwen2, Llama2, ChatGLM3, Mixtral, DeepSeek-V3, InternVL3, and CogVideoX. Once their stable baseline configurations are bound, the primary RQ2 intent pool is generated independently of ConfigFuzz's recovered constraints: scalar fields exposed by the qualified baseline receive generic numeric/Boolean boundary mutations, and TP/PP/EP/CP fields receive generic topology values. Relation-derived divisibility boundaries, guard transitions, and other constraint-focused cases are emitted into a separate `constraint_challenge` pool. The primary `method_independent` pool selects 150 intents per workload and is frozen with a content hash before any method runs; the challenge pool is reported separately when used.
+The workload registry contains seven training subjects: Qwen2, Llama2, ChatGLM3, Mixtral, DeepSeek-V3, InternVL3, and CogVideoX. Their canonical prequalified profiles use the same reduced scale as the Ascend 26.1 runtime (4 layers, hidden size 512, FFN size 1024, and sequence length 128) while preserving family-specific GQA, MoE, MLA, vision-language, and video-diffusion structure. The current compatibility matrix contains 38 formal framework--workload pairs; unsupported native paths are excluded instead of replaced by surrogate models. The primary RQ2 intent pool is generated independently of ConfigFuzz's recovered constraints: scalar fields exposed by the qualified baseline receive generic numeric/Boolean boundary mutations, and TP/PP/EP/CP fields receive generic topology values. Relation-derived divisibility boundaries, guard transitions, and other constraint-focused cases are emitted into a separate `constraint_challenge` pool. The primary `method_independent` pool contains 150 intents per workload (1,050 total) and is content-frozen before any method runs; the challenge pool is reported separately when used.
 
 ### 5.3 RQ3 historical bug benchmark
 
@@ -200,7 +200,7 @@ RQ2 and RQ3 use the same core methods:
 5. **ConfigFuzz**: fix the target assignment, hard-enforce confirmed/environment-specific relations, retain unresolved candidates as confidence-tiered guidance, and coordinate the affected parameter region.
 6. **Global Repair**: use the same status-aware constraint treatment as ConfigFuzz while allowing all parameters to change, serving as the locality ablation.
 
-All methods use identical baselines, frozen intents, hardware/software environments, per-test timeouts, test-count budgets, and accelerator-hour budgets. Randomized methods run at least five seeds.
+All methods use identical baselines, frozen intents, hardware/software environments, per-test timeouts, test-count budgets, and accelerator-hour budgets. The primary comparison uses seed 2026 once per frozen intent and method because all six transformations are deterministic after intent freezing. A fixed SHA-256-selected 20% intent subset is additionally repeated under five seeds (17, 42, 101, 2026, and 4099) as a separately reported execution-sensitivity analysis.
 
 ## 7. Initial implementation stages
 
@@ -247,30 +247,25 @@ fixture and manual-baseline source, not the method's inference oracle.
 
 Completed without accelerator access:
 
-- a 93-record RQ1 audit dataset with evidence-gated review fields;
+- a 93-record RQ1 audit dataset with evidence-gated review fields and a prepared persistent-worker A/B harness;
 - pinned static mining over MindSpeed-LLM, MindSpeed, and the required Megatron-LM revision;
-- a ranked per-constraint native-validation review queue;
-- deterministic RQ1, RQ2, and RQ3 metric aggregation;
-- a unified JSONL run schema that records generation, intent preservation, active constraints and provenance, constraint status changes, affected repair region, exact solver modifications, milestones, outcomes, cost, runtime behavior signatures, and bug-oracle/root-cause evidence;
-- workload and intent registries for all seven RQ2 training subjects;
-- deterministic generation and SHA-256 freezing of RQ2 mutation intentions after baselines are bound;
-- full-history mining of configuration-related fix candidates and a balanced 40-item RQ3 source-review shortlist;
-- schemas and validators for the final historical bug benchmark;
-- repository/environment fingerprinting and focused unit tests.
+- canonical reduced profiles for all seven RQ2 model families, all passing CPU model-construction and forward/backward smoke checks;
+- a 38-pair framework--workload compatibility matrix and prepared GPU/NPU runtime registries;
+- a 1,050-intent method-independent frozen set plus a deterministic primary/sensitivity replication schedule;
+- deterministic RQ1, RQ2, and RQ3 metric aggregation and a unified JSONL run schema;
+- full-history verification for 23 RQ3 source candidates, split into 25 logical root causes where commits contain multiple independent fixes;
+- blind-search RQ3 bindings that hide trigger, patch, reproducer, and confirmation-oracle information from all methods;
+- frozen RQ3 search budgets: at most 200 generated tests or 1 accelerator-hour per historical bug/method, and 2,000 tests or 24 accelerator-hours per current-version framework/method;
+- an automated pre-accelerator readiness check that distinguishes preparation blockers from accelerator gates.
 
-Remaining source-review work:
-
-1. Manually adjudicate the RQ1 native-validation candidates and record exact code evidence.
-2. Review the 23 constraints with no implementation-side static candidate for likely implicit or delayed enforcement sites.
-3. Triage the RQ3 shortlist into verified development/evaluation bugs.
-4. Bind stable dense, long-sequence/GQA/FlashAttention, and MoE baseline configurations.
-5. Regenerate and freeze the method-independent mutation-intent pool after baseline qualification; retain constraint-challenge intents as a separately reported stress subset.
+Remaining non-accelerator/external review work does not block execution: an independent secondary RQ1 source review is still required before final paper claims, and newly discovered RQ3 bugs require later developer confirmation.
 
 Remaining accelerator work:
 
-1. Execute RQ1 satisfying/violating pairs and record first failure, wall time, accelerator-seconds, peak memory, timeout, and message quality.
-2. Run the six RQ2 methods under identical intent and accelerator-hour budgets for at least five seeds where randomness applies.
-3. Replay the verified historical benchmark on buggy/fixed revisions.
-4. Run current-version campaigns, minimize independent failures, and seek developer confirmation.
+1. Benchmark the NPU persistent worker against the old per-case cold-start runner.
+2. Qualify every formal framework--workload pair through checkpoint save/load and promote the prepared bindings/frozen intents.
+3. Execute formal RQ1 satisfying/violating pairs and rerun the 19-target GPU cross-framework validation at the aligned model scale.
+4. Execute the six RQ2 methods under the frozen primary and 20% five-seed sensitivity schedules.
+5. Run the 25 logical historical RQ3 searches and fixed-revision confirmations, then run current-version campaigns and minimize independent failures.
 
 `experiments/protocol.yaml` is the authoritative machine-readable experiment specification.

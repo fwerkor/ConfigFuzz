@@ -1,0 +1,209 @@
+{
+  "failed_count": 0,
+  "logical_case_count": 25,
+  "name": "rq3-historical-source-preflight",
+  "ready_count": 25,
+  "records": [
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-8cb3c0f81a0a",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "qwen2-train",
+      "harness_status": "verified",
+      "logical_bug_id": "mindspeed-3dfc232bd297",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "verified",
+      "logical_bug_id": "mindspeed-e93cbb5f80ff",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "qwen2-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-03bb94e94855",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "verified",
+      "logical_bug_id": "mindspeed-llm-6f8618b622c7",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "chatglm3-train",
+      "harness_status": "verified",
+      "logical_bug_id": "mindspeed-c303a051fd66",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-llm-0f8a1851fe37-expert-groups",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "qwen2-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-llm-0f8a1851fe37-alibi",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-b3fb85187834",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "qwen2-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-1caf2d4413e1",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "deepseekv3-train",
+      "harness_status": "verified",
+      "logical_bug_id": "mindspeed-f33404c7a526",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "verified",
+      "logical_bug_id": "mindspeed-llm-1507e52e0818",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "qwen2-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-2dbb9c599c2a",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "qwen2-train",
+      "harness_status": "verified",
+      "logical_bug_id": "mindspeed-bdb06b9deef6",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "qwen2-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-llm-a0edb582b143",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "qwen2-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-25568bbf2423",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "qwen2-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-llm-27ac11d642e6",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "llama2-train",
+      "harness_status": "verified",
+      "logical_bug_id": "mindspeed-llm-d4feda79a795",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-befe576b2920",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-ba1e5e528ff3",
+      "ready": true,
+      "repository": "MindSpeed"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-llm-885cb967359a-dispatcher",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-llm-885cb967359a-expert-index",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-llm-22392902f00f",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "qwen2-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-llm-307ca07c7949",
+      "ready": true,
+      "repository": "MindSpeed-LLM"
+    },
+    {
+      "commit_pair_available": true,
+      "generic_workload": "mixtral-train",
+      "harness_status": "generic_search_workload",
+      "logical_bug_id": "mindspeed-5f1f4abf20ec",
+      "ready": true,
+      "repository": "MindSpeed"
+    }
+  ],
+  "schema_version": 1
+}

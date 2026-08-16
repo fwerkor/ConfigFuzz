@@ -1,0 +1,140 @@
+schema_version: 1
+name: rq2-prequalified-replication-summary
+source_intents: intents.prequalified.frozen.yaml
+source_matrix: framework_workload_matrix.yaml
+total_record_count: 61272
+subjects:
+- framework_id: deepspeed
+  supported_workloads:
+  - chatglm3-train
+  - cogvideox-train
+  - deepseekv3-train
+  - internvl3-train
+  - llama2-train
+  - mixtral-train
+  - qwen2-train
+  summary:
+    method_counts:
+      configfuzz: 1878
+      constraint_filter_only: 1878
+      global_repair: 1878
+      native_validator_guided: 1878
+      raw_mutation: 1878
+      static_hard_configfuzz: 1878
+    primary_intent_count: 1050
+    record_count: 11268
+    role_counts:
+      primary: 6300
+      seed_sensitivity: 4968
+    sensitivity_intent_count: 207
+- framework_id: megatron-core
+  supported_workloads:
+  - llama2-train
+  - mixtral-train
+  - qwen2-train
+  summary:
+    method_counts:
+      configfuzz: 822
+      constraint_filter_only: 822
+      global_repair: 822
+      native_validator_guided: 822
+      raw_mutation: 822
+      static_hard_configfuzz: 822
+    primary_intent_count: 450
+    record_count: 4932
+    role_counts:
+      primary: 2700
+      seed_sensitivity: 2232
+    sensitivity_intent_count: 93
+- framework_id: msa
+  supported_workloads:
+  - chatglm3-train
+  - cogvideox-train
+  - deepseekv3-train
+  - internvl3-train
+  - llama2-train
+  - mixtral-train
+  - qwen2-train
+  summary:
+    method_counts:
+      configfuzz: 1878
+      constraint_filter_only: 1878
+      global_repair: 1878
+      native_validator_guided: 1878
+      raw_mutation: 1878
+      static_hard_configfuzz: 1878
+    primary_intent_count: 1050
+    record_count: 11268
+    role_counts:
+      primary: 6300
+      seed_sensitivity: 4968
+    sensitivity_intent_count: 207
+- framework_id: pta
+  supported_workloads:
+  - chatglm3-train
+  - cogvideox-train
+  - deepseekv3-train
+  - internvl3-train
+  - llama2-train
+  - mixtral-train
+  - qwen2-train
+  summary:
+    method_counts:
+      configfuzz: 1878
+      constraint_filter_only: 1878
+      global_repair: 1878
+      native_validator_guided: 1878
+      raw_mutation: 1878
+      static_hard_configfuzz: 1878
+    primary_intent_count: 1050
+    record_count: 11268
+    role_counts:
+      primary: 6300
+      seed_sensitivity: 4968
+    sensitivity_intent_count: 207
+- framework_id: pytorch-cuda
+  supported_workloads:
+  - chatglm3-train
+  - cogvideox-train
+  - deepseekv3-train
+  - internvl3-train
+  - llama2-train
+  - mixtral-train
+  - qwen2-train
+  summary:
+    method_counts:
+      configfuzz: 1878
+      constraint_filter_only: 1878
+      global_repair: 1878
+      native_validator_guided: 1878
+      raw_mutation: 1878
+      static_hard_configfuzz: 1878
+    primary_intent_count: 1050
+    record_count: 11268
+    role_counts:
+      primary: 6300
+      seed_sensitivity: 4968
+    sensitivity_intent_count: 207
+- framework_id: transformers-accelerate
+  supported_workloads:
+  - chatglm3-train
+  - cogvideox-train
+  - deepseekv3-train
+  - internvl3-train
+  - llama2-train
+  - mixtral-train
+  - qwen2-train
+  summary:
+    method_counts:
+      configfuzz: 1878
+      constraint_filter_only: 1878
+      global_repair: 1878
+      native_validator_guided: 1878
+      raw_mutation: 1878
+      static_hard_configfuzz: 1878
+    primary_intent_count: 1050
+    record_count: 11268
+    role_counts:
+      primary: 6300
+      seed_sensitivity: 4968
+    sensitivity_intent_count: 207

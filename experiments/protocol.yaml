@@ -2,66 +2,64 @@ schema_version: 1
 name: ConfigFuzz three-RQ experiment protocol
 framework_registry: frameworks.yaml
 argument_chain:
-  - rq1: configuration constraints must be recovered with correct scope and validated before they become hard guidance
-  - rq2: intent-preserving coordinated mutation produces more deep, valid, and diverse executions
-  - rq3: deeper constraint-boundary exploration improves historical bug replay and new bug discovery
+- rq1: configuration constraints must be recovered with correct scope and validated before they become hard guidance
+- rq2: intent-preserving coordinated mutation produces more deep, valid, and diverse executions
+- rq3: deeper constraint-boundary exploration improves historical bug replay and new bug discovery
 milestone_order:
-  - config_generation
-  - argument_parsing
-  - config_validation
-  - model_construction
-  - process_group_initialization
-  - forward
-  - backward
-  - optimizer_step
-  - repeated_training
-  - checkpoint_save_load
-  - completed
+- config_generation
+- argument_parsing
+- config_validation
+- model_construction
+- process_group_initialization
+- forward
+- backward
+- optimizer_step
+- repeated_training
+- checkpoint_save_load
+- completed
 outcomes:
-  - valid
-  - expected_rejection
-  - resource_failure
-  - infrastructure_failure
-  - unexplained_failure
-  - potential_bug
-  - unknown
+- valid
+- expected_rejection
+- resource_failure
+- infrastructure_failure
+- unexplained_failure
+- potential_bug
+- unknown
 rq1:
-  question: >-
-    How accurately does ConfigFuzz recover properly scoped configuration constraints,
-    and how important is execution-based validation for correcting the recovered model?
+  question: How accurately does ConfigFuzz recover properly scoped configuration constraints, and how important is execution-based
+    validation for correcting the recovered model?
   audit_dataset: rq1/constraint_audit.yaml
   required_pair_controls:
-    - same workload, hardware environment, and random seed
-    - only target-constraint participants may differ
-    - violating configuration should violate only the target hard constraint when feasible
-    - satisfying configuration must reach the intended milestone
+  - same workload, hardware environment, and random seed
+  - only target-constraint participants may differ
+  - violating configuration should violate only the target hard constraint when feasible
+  - satisfying configuration must reach the intended milestone
   primary_metrics:
-    - reference recall and semantic match rate
-    - static-candidate, dynamically-supported, confirmed, scope-disputed, contradicted, and remaining-candidate counts
-    - valid-counterexample and paired-confirmation counts
-    - constraint category, arity, guard, scope, and software-layer distributions
-    - full explicit, partial, implicit/delayed, and uncovered validation rates
-    - first-failure milestone distribution
-    - median and P95 time-to-failure and accelerator-seconds wasted
-    - crash, hang, silent-abnormal, timeout, and interpretable-message rates
+  - reference recall and semantic match rate
+  - static-candidate, dynamically-supported, confirmed, scope-disputed, contradicted, and remaining-candidate counts
+  - valid-counterexample and paired-confirmation counts
+  - constraint category, arity, guard, scope, and software-layer distributions
+  - full explicit, partial, implicit/delayed, and uncovered validation rates
+  - first-failure milestone distribution
+  - median and P95 time-to-failure and accelerator-seconds wasted
+  - crash, hang, silent-abnormal, timeout, and interpretable-message rates
 rq2:
-  question: >-
-    Can ConfigFuzz preserve requested mutation intents while enabling more tests to
-    reach deep and diverse distributed execution under identical budgets?
+  question: Can ConfigFuzz preserve requested mutation intents while enabling more tests to reach deep and diverse distributed
+    execution under identical budgets?
   intent_pools:
     method_independent:
       role: primary comparison
       sources:
-        - qualified baseline scalar parameter schema
-        - generic numeric and Boolean boundary grids
-        - parallel topology values
+      - qualified baseline scalar parameter schema
+      - generic numeric and Boolean boundary grids
+      - parallel topology values
       constraint_knowledge_used: false
     constraint_challenge:
       role: separately reported stress subset
       sources:
-        - divisibility and relational boundaries
-        - guarded feature transitions
-        - cross-component and scoped constraint boundaries
+      - divisibility and relational boundaries
+      - guarded feature transitions
+      - cross-component and scoped constraint boundaries
       constraint_knowledge_used: true
   graph_inputs:
     pre_validation_static_graph: required_for_static_hard_ablation
@@ -99,31 +97,47 @@ rq2:
       manual_constraint_filter: true
       coordinated_repair: all_parameters
   target_milestone: optimizer_step
-  minimum_random_seeds: 5
   budget_controls:
-    - identical frozen mutation-intent set
-    - identical hardware and software environment within each framework subject
-    - identical per-test timeout
-    - identical test-count and accelerator-hour budgets
+  - identical frozen mutation-intent set
+  - identical primary seed within each paired framework/workload comparison
+  - identical hardware and software environment within each framework subject
+  - identical per-test timeout within each framework subject
+  - identical test-count and accelerator-hour budgets
+  - five-seed sensitivity is run on the same deterministic 20% intent subset for every method
   primary_metrics:
-    - intent_preserving_deep_execution_rate
-    - intent_preserving_deep_execution_yield_per_accelerator_hour
-    - target_value_retention_rate
-    - generation/infeasible rate, including static-hard false exclusions
-    - coordinated_parameter_count and modification_distance
-    - stage reach rates and expected rejection rate
-    - runtime behavior ID coverage, behavior-signature count and entropy, and coverage per accelerator-hour
+  - intent_preserving_deep_execution_rate
+  - intent_preserving_deep_execution_yield_per_accelerator_hour
+  - target_value_retention_rate
+  - generation/infeasible rate, including static-hard false exclusions
+  - coordinated_parameter_count and modification_distance
+  - stage reach rates and expected rejection rate
+  - runtime behavior ID coverage, behavior-signature count and entropy, and coverage per accelerator-hour
+  replication_policy:
+    primary_seed: 2026
+    primary_execution: one paired execution per frozen intent and method
+    reason: The six transformations are deterministic after intent freezing; frozen intents are the primary statistical units.
+    seed_sensitivity:
+      seed_count: 5
+      seeds:
+      - 17
+      - 42
+      - 101
+      - 2026
+      - 4099
+      intent_subset_fraction: 0.2
+      subset_selection: sha256(intent_id) modulo 5 == 0
+      paired_across_methods: true
+      report_separately: true
 rq3:
-  question: >-
-    Can ConfigFuzz replay and discover more real configuration-related framework bugs
-    at lower cost than existing configuration-testing methods?
+  question: Can ConfigFuzz replay and discover more real configuration-related framework bugs at lower cost than existing
+    configuration-testing methods?
   historical_bug_dataset: rq3/historical_bugs.yaml
   replay_oracle:
-    - same generated configuration fails on buggy commit
-    - same generated configuration passes on fixed commit
-    - failure signature and patch root cause agree
-    - failure repeats at least three times
-    - duplicate failures are grouped by independent root cause
+  - same generated configuration fails on buggy commit
+  - same generated configuration passes on fixed commit
+  - failure signature and patch root cause agree
+  - failure repeats at least three times
+  - duplicate failures are grouped by independent root cause
   benchmark_policy:
     development_split: older bugs may be used during implementation
     evaluation_split: newer bugs are reserved for final results
@@ -133,33 +147,44 @@ rq3:
     patch_information: forbidden
     minimized_reproducer: forbidden
   current_version_triage:
-    - exclude known constraint violations
-    - exclude ordinary resource exhaustion
-    - exclude infrastructure failures
-    - repeat at least three times with fixed environment and seed
-    - minimize the triggering configuration
-    - construct a differential or metamorphic control
-    - seek developer confirmation
+  - exclude known constraint violations
+  - exclude ordinary resource exhaustion
+  - exclude infrastructure failures
+  - repeat at least three times with fixed environment and seed
+  - minimize the triggering configuration
+  - construct a differential or metamorphic control
+  - seek developer confirmation
   primary_metrics:
-    - historical bug replay rate
-    - tests, wall time, and accelerator-hours to first reproducer
-    - independent reproducible and developer-confirmed bugs
-    - accelerator-hours per confirmed bug and false-positive rate
+  - historical bug replay rate
+  - tests, wall time, and accelerator-hours to first reproducer
+  - independent reproducible and developer-confirmed bugs
+  - accelerator-hours per confirmed bug and false-positive rate
+  search_budgets:
+    historical_replay:
+      per_bug_per_method_max_generated_tests: 200
+      per_bug_per_method_max_accelerator_hours: 1.0
+      stop_rule: first confirmed reproducer or first exhausted budget
+      confirmation_runs_excluded_from_search_budget: true
+    current_version:
+      per_framework_per_method_max_generated_tests: 2000
+      per_framework_per_method_max_accelerator_hours: 24.0
+      stop_rule: stop when either budget is exhausted
+      triage_and_minimization_accounted_separately: true
 recording:
   run_format: JSON Lines
   required_context:
-    - source commits
-    - environment fingerprint
-    - baseline and workload identifiers
-    - mutation-intent fingerprint
-    - method, seed, timeout, and budget
-    - deepest execution milestone
-    - RQ1 constraint ID, satisfying/violating role, first-failure milestone, failure mode, and message quality
-    - cumulative campaign test index, wall time, and accelerator-seconds for time-to-first-reproducer
-    - outcome and triage evidence
-    - active recovered-constraint IDs and provenance IDs
-    - constraint status before and after execution
-    - affected hypergraph region and exact solver modifications
-    - refined or scope-disputed constraint IDs
-    - stable runtime behavior IDs and behavior signature
-    - independent historical/current root-cause ID when assigned
+  - source commits
+  - environment fingerprint
+  - baseline and workload identifiers
+  - mutation-intent fingerprint
+  - method, seed, timeout, and budget
+  - deepest execution milestone
+  - RQ1 constraint ID, satisfying/violating role, first-failure milestone, failure mode, and message quality
+  - cumulative campaign test index, wall time, and accelerator-seconds for time-to-first-reproducer
+  - outcome and triage evidence
+  - active recovered-constraint IDs and provenance IDs
+  - constraint status before and after execution
+  - affected hypergraph region and exact solver modifications
+  - refined or scope-disputed constraint IDs
+  - stable runtime behavior IDs and behavior signature
+  - independent historical/current root-cause ID when assigned

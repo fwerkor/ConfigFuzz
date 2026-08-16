@@ -1,0 +1,55 @@
+schema_version: 1
+name: rq2-runtime-subjects-prequalified
+status: prepared_pending_accelerator_qualification
+subjects:
+  - framework_id: pytorch-cuda
+    launcher: ../gpu/launch_rq2_pytorch.sh
+    runner: ../gpu/rq2_family_runner.py
+    world_size: 2
+    timeout_seconds: 90
+    checkpoint_qualification: true
+    supported_workloads: [qwen2-train, llama2-train, chatglm3-train, mixtral-train, deepseekv3-train, internvl3-train, cogvideox-train]
+  - framework_id: deepspeed
+    launcher: ../gpu/launch_rq2_deepspeed.sh
+    runner: ../gpu/rq2_family_runner.py
+    world_size: 2
+    timeout_seconds: 120
+    checkpoint_qualification: true
+    supported_workloads: [qwen2-train, llama2-train, chatglm3-train, mixtral-train, deepseekv3-train, internvl3-train, cogvideox-train]
+  - framework_id: transformers-accelerate
+    launcher: ../gpu/launch_rq2_accelerate.sh
+    runner: ../gpu/rq2_family_runner.py
+    world_size: 2
+    timeout_seconds: 120
+    checkpoint_qualification: true
+    supported_workloads: [qwen2-train, llama2-train, chatglm3-train, mixtral-train, deepseekv3-train, internvl3-train, cogvideox-train]
+  - framework_id: megatron-core
+    launcher: ../gpu/launch_rq2_megatron.sh
+    runner: ../gpu/rq2_megatron_runner.py
+    world_size: 2
+    timeout_seconds: 90
+    checkpoint_qualification: true
+    supported_workloads: [qwen2-train, llama2-train, mixtral-train]
+  - framework_id: pta
+    execution_adapter: lmsv_task1
+    compare_mode: pta_pta
+    single_npu_text_launcher: ../runtime/qwen2_26_1_baseline.sh
+    generic_text_launcher: ../runtime/text_26_1_baseline.sh
+    persistent_worker: ../runtime/mindspeed_26_1_persistent.sh
+    world_size: 8
+    timeout_seconds: 180
+    checkpoint_qualification: true
+    multimodal_launchers:
+      internvl3-train: ../../lmsv_rec/scripts/runtime/mm_pta_internvl3.sh
+      cogvideox-train: ../../lmsv_rec/scripts/runtime/mm_pta_cogvideox.sh
+    supported_workloads: [qwen2-train, llama2-train, chatglm3-train, mixtral-train, deepseekv3-train, internvl3-train, cogvideox-train]
+  - framework_id: msa
+    execution_adapter: lmsv_task1
+    compare_mode: msa_msa
+    world_size: 8
+    timeout_seconds: 180
+    checkpoint_qualification: true
+    multimodal_launchers:
+      internvl3-train: ../../lmsv_rec/scripts/runtime/mm_msa_internvl3.sh
+      cogvideox-train: ../../lmsv_rec/scripts/runtime/mm_msa_cogvideox.sh
+    supported_workloads: [qwen2-train, llama2-train, chatglm3-train, mixtral-train, deepseekv3-train, internvl3-train, cogvideox-train]

@@ -1,0 +1,64 @@
+schema_version: 1
+name: rq2-canonical-prequalified-workloads
+metadata:
+  status: prepared_prequalified
+  required_accelerator_promotion: true
+  workload_count: 7
+  frozen_intents_per_workload: 150
+workloads:
+- workload_id: qwen2-train
+  family: qwen2_dense_gqa
+  baseline_id: qwen2-train-canonical-v1
+  baseline_config: baselines/canonical-v1/qwen2-train.json
+  metadata:
+    minimum_intents: 150
+    status: prepared_prequalified
+    model_scale_profile: npu-reduced-26.1
+- workload_id: llama2-train
+  family: llama2_dense_rope
+  baseline_id: llama2-train-canonical-v1
+  baseline_config: baselines/canonical-v1/llama2-train.json
+  metadata:
+    minimum_intents: 150
+    status: prepared_prequalified
+    model_scale_profile: npu-reduced-26.1
+- workload_id: chatglm3-train
+  family: chatglm3_gqa_long_sequence
+  baseline_id: chatglm3-train-canonical-v1
+  baseline_config: baselines/canonical-v1/chatglm3-train.json
+  metadata:
+    minimum_intents: 150
+    status: prepared_prequalified
+    model_scale_profile: npu-reduced-26.1
+- workload_id: mixtral-train
+  family: mixtral_moe
+  baseline_id: mixtral-train-canonical-v1
+  baseline_config: baselines/canonical-v1/mixtral-train.json
+  metadata:
+    minimum_intents: 150
+    status: prepared_prequalified
+    model_scale_profile: npu-reduced-26.1
+- workload_id: deepseekv3-train
+  family: deepseekv3_mla_moe
+  baseline_id: deepseekv3-train-canonical-v1
+  baseline_config: baselines/canonical-v1/deepseekv3-train.json
+  metadata:
+    minimum_intents: 150
+    status: prepared_prequalified
+    model_scale_profile: npu-reduced-26.1
+- workload_id: internvl3-train
+  family: internvl3_vision_text
+  baseline_id: internvl3-train-canonical-v1
+  baseline_config: baselines/canonical-v1/internvl3-train.json
+  metadata:
+    minimum_intents: 150
+    status: prepared_prequalified
+    model_scale_profile: npu-reduced-26.1
+- workload_id: cogvideox-train
+  family: cogvideox_video_text
+  baseline_id: cogvideox-train-canonical-v1
+  baseline_config: baselines/canonical-v1/cogvideox-train.json
+  metadata:
+    minimum_intents: 150
+    status: prepared_prequalified
+    model_scale_profile: npu-reduced-26.1

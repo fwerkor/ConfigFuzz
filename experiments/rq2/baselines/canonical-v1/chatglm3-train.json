@@ -1,0 +1,52 @@
+{
+  "baseline_id": "chatglm3-train-canonical-v1",
+  "family": "chatglm3_gqa_long_sequence",
+  "metadata": {
+    "accelerator_qualification_required": true,
+    "purpose": "formal_rq2_prequalified_baseline"
+  },
+  "model": {
+    "attention_dropout": 0.0,
+    "ffn_hidden_size": 1024,
+    "group_query_attention": true,
+    "hidden_dropout": 0.0,
+    "hidden_size": 512,
+    "make_vocab_size_divisible_by": 1,
+    "max_position_embeddings": 128,
+    "num_attention_heads": 8,
+    "num_layers": 4,
+    "num_query_groups": 2,
+    "position_embedding_type": "rope",
+    "seq_length": 128,
+    "swiglu": true,
+    "use_flash_attention": true,
+    "use_glm_rope": true,
+    "vocab_size": 2048
+  },
+  "model_scale_profile": "npu-reduced-26.1",
+  "parallel": {
+    "context_parallel_size": 1,
+    "expert_model_parallel_size": 1,
+    "num_layers_per_virtual_pipeline_stage": 0,
+    "pipeline_model_parallel_size": 1,
+    "sequence_parallel": false,
+    "tensor_model_parallel_size": 1
+  },
+  "precision": {
+    "bf16": true,
+    "fp16": false
+  },
+  "schema_version": 1,
+  "training": {
+    "distribute_saved_activations": false,
+    "global_batch_size": 4,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 0.0001,
+    "lr_decay_iters": 2,
+    "lr_warmup_iters": 0,
+    "micro_batch_size": 1,
+    "train_iters": 2,
+    "weight_decay": 0.0
+  },
+  "workload_id": "chatglm3-train"
+}

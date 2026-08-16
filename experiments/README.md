@@ -18,10 +18,10 @@ cross-framework aggregates are reported only after per-framework results.
 - The RQ1 audit contains 93 constraints: 52 unary, 27 binary, 12 ternary, one four-parameter, and one five-parameter constraint; 26 have guards.
 - Static mining over pinned MindSpeed-LLM, MindSpeed, and Megatron-LM trees extracted 733 raw native-validation candidates. After excluding test, example, and documentation evidence, 70 audited constraints have at least one implementation candidate and 46 have a candidate mentioning every participant. These are review leads, not coverage labels.
 - Primary source adjudication covers all 93 RQ1 records. For the 39 framework-legality constraints, it currently labels 13 full-explicit, 11 partial, eight implicit/delayed, and seven uncovered. This remains a primary review and requires independent confirmation before paper use.
-- RQ2 source candidates are pinned to lm-sv `e73ba3d355152a5711e2f80c1fb0d166f2ba1496`. Command-template overrides and derived parallel values are merged into an auditable `effective_config`.
-- The RQ2 generator produced 477 dense-Qwen2, 453 GQA/long-sequence ChatGLM3, and 516 Mixtral-MoE unique candidate intents. Deterministic parameter-balanced selection freezes 300 per primary workload, for a 900-intent candidate set with SHA-256 `1dd5071213f8be7cc5daac691651806eed370c33474b7ba83f3c146b07b21d5d`.
+- RQ2 now has canonical reduced profiles for Qwen2, Llama2, ChatGLM3, Mixtral, DeepSeek-V3, InternVL3, and CogVideoX. All seven pass accelerator-free architecture construction and CPU forward/backward smoke checks at the NPU-aligned 4-layer/hidden-512 scale.
+- The primary prequalified RQ2 set contains exactly 1,050 method-independent intents (150 per workload). The framework--workload matrix contains 38 formal pairs; unsupported Megatron native model families are excluded rather than replaced by surrogates.
 - Full Git history mining found 263 configuration-related fix candidates. Source review retained 23 of the balanced 40-entry shortlist for buggy/fixed execution, deferred eight, and excluded nine.
-- RQ3 replay planning identifies three harnesses present on both revisions, five fixed-side tests that can be backported as test code only, 13 candidates requiring a minimal harness, and two candidates requiring root-cause separation. No candidate is yet counted as a verified historical bug.
+- The 23 source-reviewed RQ3 commits have been checked against full Git history. Two multi-fix commits are split into independent root causes, yielding 25 blind-search logical cases; all 25 have available buggy/fixed revisions and the required confirmation-stage harness blobs. No candidate is counted as a verified historical bug until accelerator replay succeeds.
 
 ## Pinned framework sources
 
@@ -95,44 +95,29 @@ configfuzz-experiment summarize rq1 experiments/rq1/constraint_audit.yaml \
 
 ## RQ2: workload binding and frozen intents
 
-`rq2/workload_candidates.source.yaml` pins candidate lm-sv model configurations and command templates for Qwen2, Llama2, ChatGLM3, Mixtral, DeepSeek-V3, InternVL3, and CogVideoX. Candidate snapshots remain unverified until each one completes an optimizer step, repeated training, and checkpoint save/load on the target stack.
+`rq2/baselines/canonical-v1/` defines seven architecture-faithful reduced workloads at the common Ascend/GPU campaign scale (4 layers, hidden size 512, FFN size 1024, sequence length 128). Family-specific GQA, MoE, MLA, vision-language, and CogVideoX components remain active. `scripts/preflight_rq2_models.py` validates all seven without accelerator access by constructing the real framework model class and completing a small CPU forward/backward pass.
+
+`rq2/framework_workload_matrix.yaml` freezes the prepared compatibility matrix. PTA, MSA, PyTorch, DeepSpeed, and Transformers/Accelerate cover all seven workload families; Megatron-Core enters formal RQ2 only for Qwen2, Llama2, and Mixtral, producing 38 formal framework--workload pairs. Every prepared pair must still complete accelerator qualification through repeated training and checkpoint save/load before promotion.
+
+Generate the method-independent intent set from the canonical profiles and freeze exactly 150 intents per workload:
 
 ```bash
-# Materialize command-aware candidate baselines from the pinned lm-sv revision.
-python scripts/prepare_rq2_workload_candidates.py \
-  --source-spec experiments/rq2/workload_candidates.source.yaml \
-  --source-root /path/to/lm-sv \
-  --output-dir experiments/rq2/candidates \
-  --registry-output experiments/rq2/candidate_workloads.yaml
+python scripts/generate_rq2_intents.py   --workloads experiments/rq2/canonical_workloads.prequalified.yaml   --output /tmp/configfuzz-rq2-candidates.yaml
 
-# Generate a larger unique candidate pool.
-python scripts/generate_rq2_intents.py \
-  --workloads experiments/rq2/candidate_workloads.yaml \
-  --output experiments/rq2/candidate_intents.yaml
-
-# Select exactly 150 method-independent intents per primary workload and freeze the review candidate set.
-python scripts/select_rq2_intents.py \
-  --candidates experiments/rq2/candidate_intents.yaml \
-  --workloads experiments/rq2/candidate_workloads.yaml \
-  --intent-pool method_independent \
-  --output experiments/rq2/selected_candidate_intents.yaml \
-  --frozen-output experiments/rq2/selected_candidate_intents.frozen.yaml
+python scripts/select_rq2_intents.py   --candidates /tmp/configfuzz-rq2-candidates.yaml   --workloads experiments/rq2/canonical_workloads.prequalified.yaml   --intent-pool method_independent   --output /tmp/configfuzz-rq2-selected.yaml   --frozen-output experiments/rq2/intents.prequalified.frozen.yaml
 ```
 
-The generator emits two explicitly labeled pools. The primary `method_independent` pool is built only from scalar parameters exposed by the qualified baseline, generic numeric/Boolean boundary grids, and TP/PP/EP/CP topology values; recovered constraints and the legacy rule corpus do not choose its target values. The separate `constraint_challenge` pool contains relation-derived boundaries, guard transitions, and other constraint-focused stress cases. Select and freeze the primary pool for the main RQ2 comparison, and report the challenge pool separately if it is used. The checked-in frozen file is a review candidate only; regenerate the final frozen set after accelerator validation. All comparison methods consume the same final frozen file.
+The primary set contains 1,050 intents and does not use recovered constraints to choose target values. Relation-derived divisibility boundaries, guard transitions, and cross-component stress cases remain in the separately reported `constraint_challenge` pool.
 
-Generate the optional challenge pool with `--include-constraint-challenge --corpus corpus/lmsv/manual_constraints.yaml`; this flag never changes the method-independent intents.
-
-After each workload also binds both the pre-validation static graph and the execution-validated dependency graph, together with its native-validator manifest, expand every frozen intent into the six comparison cases:
+The primary statistical unit is one frozen intent. Because the six configured transformations are deterministic after intent freezing, each framework/workload/method pair uses seed 2026 once for the main comparison. A fixed SHA-256-selected 20% subset is additionally repeated with seeds 17, 42, 101, 2026, and 4099 as a separately reported execution-sensitivity analysis. Build the schedule with:
 
 ```bash
-python scripts/plan_rq2_campaign.py \
-  --workloads experiments/rq2/workloads.yaml \
-  --intents experiments/rq2/intents.frozen.yaml \
-  --output experiments/rq2/campaign-plan.json
+python scripts/build_experiment_schedule.py   --intents experiments/rq2/intents.prequalified.frozen.yaml   --matrix experiments/rq2/framework_workload_matrix.yaml   --output /tmp/configfuzz-rq2-schedule.json
 ```
 
-The plan records the exact target assignment, preflight mode, filter result, solver status, coordinated parameters, hard/unsupported constraints, repair scope, and constraint-treatment policy. `static_hard_configfuzz` hardens every static candidate and ignores validation status; normal `configfuzz` and `global_repair` hard-enforce only confirmed/environment-specific relations and use unresolved candidates as confidence-tiered soft guidance. The plan verifies the frozen intent hash and rejects baseline-ID mismatches before execution.
+The current prepared schedule contains 61,272 records across the six framework subjects. This is not an accelerator-launch count: planner-side `FILTERED` and `UNSAT` records do not launch a framework process.
+
+`rq2/runtime_subjects.prequalified.yaml` binds the prepared launchers, world sizes, timeouts, and supported workloads. Execution-validated dependency graphs remain intentionally unset in `rq2/workloads.yaml` until accelerator qualification/validation provides evidence. After qualification, promote the subject bindings, refreeze the 1,050 intents if and only if the qualified baseline schemas are unchanged, and then expand them into the six RQ2 methods with `scripts/plan_rq2_campaign.py`.
 
 ## RQ3: historical bug benchmark construction
 

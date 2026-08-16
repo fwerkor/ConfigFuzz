@@ -1,0 +1,569 @@
+schema_version: 1
+name: rq3-logical-historical-search-bindings
+status: prepared_pending_accelerator_replay
+metadata:
+  source_commit_candidates: 23
+  logical_root_causes: 25
+  method_blind_fields:
+  - root_cause_scope
+  - confirmation_oracle
+  - source_harness
+  search_budget:
+    max_generated_tests_per_bug_method: 200
+    max_accelerator_hours_per_bug_method: 1.0
+  policy: All methods receive only workload, framework, frozen generic intent space, and budget. Root-cause/trigger/oracle fields are
+    released only to the confirmation stage.
+cases:
+- logical_bug_id: mindspeed-8cb3c0f81a0a
+  source_candidate_id: mindspeed-8cb3c0f81a0a
+  repository: MindSpeed
+  buggy_commit: 94e802ceaba70054c2f23e822b97e60e36a51ea5
+  fix_commit: 8cb3c0f81a0a68c2582387c35dc8248c4681fd0f
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: pipe_experts_multi_stream => sequence_parallel
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: exception_or_deep_failure
+    patterns:
+    - pipe-experts-multi-stream can only be used with --sequence-parallel
+    fixed_expectation: fixed revision rejects the incompatible pair before training
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-3dfc232bd297
+  source_candidate_id: mindspeed-3dfc232bd297
+  repository: MindSpeed
+  buggy_commit: 53463a3fbc61b87e043b02dafc30cff7e9a6d773
+  fix_commit: 3dfc232bd297b45582c833a208ca5cfc6a0a4fe7
+  workload_id: qwen2-train
+  framework_id: pta
+  root_cause_scope: pipeline tensor shapes and process groups must use the active runtime arguments
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: exception_or_shape_mismatch
+    patterns:
+    - Pipeline parallel group of backward is not initialized
+    - AttributeError
+    - shape
+    fixed_expectation: test completes without process-group or tensor-shape failure
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness:
+    path: tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+    mode: existing_on_both_commits
+    command: pytest -q tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+    exists_on_buggy_commit: true
+    exists_on_fixed_commit: true
+    buggy_blob: 12e96e9e960f67df83bd2b1bf0c219863d424312
+    fixed_blob: 07b6ea49c457170ca4134c5647ef3b95b78aae12
+    backport_test_code_only: false
+    extraction_command: git show 3dfc232bd297b45582c833a208ca5cfc6a0a4fe7:tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+      > tests_extend_v2/system_tests/pipeline_parallel/multi_parameter_pipeline/pretrain_multi_parameter_pipeline_test.py
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-e93cbb5f80ff
+  source_candidate_id: mindspeed-e93cbb5f80ff
+  repository: MindSpeed
+  buggy_commit: d422f0f3f22ea44718858f42b587697595ed8995
+  fix_commit: e93cbb5f80ffb7f3126e89ac373cc43c156bfdda
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: MCore MoE must initialize the MC2 path with sequence-parallel configuration
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: numerical_equivalence
+    patterns:
+    - torch.allclose
+    - supplied weight
+    fixed_expectation: MC2-on output and gradients match the MC2-off reference within the test tolerance
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness:
+    path: tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+    mode: copy_fixed_test_to_buggy_checkout
+    command: pytest -q tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+    exists_on_buggy_commit: false
+    exists_on_fixed_commit: true
+    buggy_blob: null
+    fixed_blob: b66201e93cdcced974692efcb6ce43f55c318f36
+    backport_test_code_only: true
+    extraction_command: git show e93cbb5f80ffb7f3126e89ac373cc43c156bfdda:tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+      > tests_extend/unit_tests/features/mc2/test_mcore_mc2columnparallellinear.py
+    required_world_size: 8
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-03bb94e94855
+  source_candidate_id: mindspeed-03bb94e94855
+  repository: MindSpeed
+  buggy_commit: 708af43cf9d42ec729a5cbb65bf20e0106bb67bd
+  fix_commit: 03bb94e948552071b5abe66a0ec6f04f91404ed9
+  workload_id: qwen2-train
+  framework_id: pta
+  root_cause_scope: recompute_num_layers must equal num_layers/PP when per-PP-rank mode is enabled, otherwise it must equal num_layers_per_virtual_pipeline_stage
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: validation_or_schedule_failure
+    patterns:
+    - recompute_num_layers must be None or 0 when using recompute_in_bubble
+    fixed_expectation: derived recompute settings are idempotent and scheduling proceeds
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-6f8618b622c7
+  source_candidate_id: mindspeed-llm-6f8618b622c7
+  repository: MindSpeed-LLM
+  buggy_commit: cf6e25cf7959c02fa44bf4d504aac555dda74377
+  fix_commit: 6f8618b622c71bf543c312465f17370f7e06f895
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: training MoE with TP>1 and no sequence parallel enters the patched forward path
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: exception_or_forward_failure
+    patterns:
+    - During training, performance may degrade if MoE and tensor parallelism
+    - group_limited_greedy
+    fixed_expectation: the intended fixed-side behavior is observed without router/forward corruption
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness:
+    path: tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+    mode: existing_on_both_commits
+    command: bash tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+    exists_on_buggy_commit: true
+    exists_on_fixed_commit: true
+    buggy_blob: 3bc42016348a4ba05e2f4689bd4a5fcc38ceb8af
+    fixed_blob: c1f0b49db65dd62851491e9801af3f92bc04e7cd
+    backport_test_code_only: false
+    extraction_command: git show 6f8618b622c71bf543c312465f17370f7e06f895:tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+      > tests/poc/llama3_405b/pretrain_llama3_405b_32k_256die_A3.sh
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-c303a051fd66
+  source_candidate_id: mindspeed-c303a051fd66
+  repository: MindSpeed
+  buggy_commit: 1c6e0f938dd111bc1af9d735c8abd0f96d81185a
+  fix_commit: c303a051fd66c923b50f8d9d8e49ece56caabe6d
+  workload_id: chatglm3-train
+  framework_id: pta
+  root_cause_scope: Ulysses all-to-all must preserve the batch dimension when batch size exceeds one
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: numerical_equivalence
+    patterns:
+    - torch.allclose
+    - shape
+    fixed_expectation: distributed Ulysses output matches the reference for bs=2
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness:
+    path: tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+    mode: copy_fixed_test_to_buggy_checkout
+    command: pytest -q tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+    exists_on_buggy_commit: false
+    exists_on_fixed_commit: true
+    buggy_blob: null
+    fixed_blob: 1bababdb4425b3d7e83a68f9929f8a47a8828aaa
+    backport_test_code_only: true
+    extraction_command: git show c303a051fd66c923b50f8d9d8e49ece56caabe6d:tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+      > tests_extend/unit_tests/ascendspeed/core/context_parallel/test_ulysses_context_parallel.py
+    required_world_size: 8
+    required_device: Ascend910B
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-0f8a1851fe37-expert-groups
+  source_candidate_id: mindspeed-llm-0f8a1851fe37
+  repository: MindSpeed-LLM
+  buggy_commit: 6a232b8f1f97735051060c0af957ba2e74ebaecc
+  fix_commit: 0f8a1851fe373e256213a796f64ae549ee6b84a3
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: expert parallel group initialization for distributed optimizer
+  search_input_policy: trigger and patch details hidden from methods
+  confirmation_oracle:
+    patterns:
+    - Expert parallel group is not initialized
+    - optimizer
+    fixed_must_pass: true
+    buggy_repetitions: 3
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-0f8a1851fe37-alibi
+  source_candidate_id: mindspeed-llm-0f8a1851fe37
+  repository: MindSpeed-LLM
+  buggy_commit: 6a232b8f1f97735051060c0af957ba2e74ebaecc
+  fix_commit: 0f8a1851fe373e256213a796f64ae549ee6b84a3
+  workload_id: qwen2-train
+  framework_id: pta
+  root_cause_scope: ALiBi initialization/use regression
+  search_input_policy: trigger and patch details hidden from methods
+  confirmation_oracle:
+    patterns:
+    - alibi
+    - AttributeError
+    fixed_must_pass: true
+    buggy_repetitions: 3
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-b3fb85187834
+  source_candidate_id: mindspeed-b3fb85187834
+  repository: MindSpeed
+  buggy_commit: 5d85e674cbf7ffec8816ac79bcd3c0fc9359533c
+  fix_commit: b3fb8518783498ffe52bfaedecf88f5b99899b94
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: (data_parallel_size * context_parallel_size) % expert_model_parallel_size must equal 0 for the legacy order
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: parallel_group_membership
+    patterns:
+    - is not divisible by expert_model_parallel_size
+    - RuntimeError
+    fixed_expectation: valid topologies construct the expected expert/data-parallel groups
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-1caf2d4413e1
+  source_candidate_id: mindspeed-1caf2d4413e1
+  repository: MindSpeed
+  buggy_commit: 7932055d9fbca53691b6d286c95258a103be4f49
+  fix_commit: 1caf2d4413e100ce4fc5dc7620e238cb81262745
+  workload_id: qwen2-train
+  framework_id: pta
+  root_cause_scope: received dynamic sequence length must be multiplied by TP when sequence parallel is active
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: shape_mismatch
+    patterns:
+    - position_ids
+    - dynamic_seq_len
+    - shape
+    fixed_expectation: position-id and received-tensor shapes agree
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-f33404c7a526
+  source_candidate_id: mindspeed-f33404c7a526
+  repository: MindSpeed
+  buggy_commit: e47a58d0f0586a0de004ac854e996c7529030ee9
+  fix_commit: f33404c7a5263cb762c3defe69852e9c0fdecd72
+  workload_id: deepseekv3-train
+  framework_id: pta
+  root_cause_scope: TP2D without FlashAttention must use the supported Ulysses CP path
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: validation_or_attention_failure
+    patterns:
+    - tp-2d now only support
+    - shape
+    - attention
+    fixed_expectation: the fixed validator selects a supported CP algorithm and the attention workload completes
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness:
+    path: tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+    mode: existing_on_both_commits
+    command: bash tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+    exists_on_buggy_commit: true
+    exists_on_fixed_commit: true
+    buggy_blob: f94a6e3840f8797dd1d5a73726c217ac0eda6476
+    fixed_blob: 187810db71c543081495f9d645b8ed4fcc4adb1f
+    backport_test_code_only: false
+    extraction_command: git show f33404c7a5263cb762c3defe69852e9c0fdecd72:tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+      > tests_extend_v2/system_tests/feature_tests/deepseek_mla.sh
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-1507e52e0818
+  source_candidate_id: mindspeed-llm-1507e52e0818
+  repository: MindSpeed-LLM
+  buggy_commit: 58e8133311e4b7707e121c075a43d28777e094b3
+  fix_commit: 1507e52e0818bef9ce77e0622cb994774bdfcbcd
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: len(num_layer_list)=PP, sum(num_layer_list)=num_layers, and dynamic PP cannot be combined with VPP
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: validation_or_layer_placement
+    patterns:
+    - len(args.num_layer_list)
+    - Incorrect num_layer_list
+    - Dynamic pipeline model
+    fixed_expectation: valid dynamic layer placement builds the expected per-stage layer counts
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness:
+    path: tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh
+    mode: copy_fixed_test_to_buggy_checkout
+    command: bash tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh
+    exists_on_buggy_commit: false
+    exists_on_fixed_commit: true
+    buggy_blob: null
+    fixed_blob: 1944bd1a8abf43845b40085f6defdd3a84488b74
+    backport_test_code_only: true
+    extraction_command: git show 1507e52e0818bef9ce77e0622cb994774bdfcbcd:tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh > tests/st/shell_scripts/mixtral_tp1_pp4_ep2_drop_dpp.sh
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-2dbb9c599c2a
+  source_candidate_id: mindspeed-2dbb9c599c2a
+  repository: MindSpeed
+  buggy_commit: 6a0279604a120d3698ad32d139f83501a61139da
+  fix_commit: 2dbb9c599c2a6ef3a5ebcf372697e9f62e83a533
+  workload_id: qwen2-train
+  framework_id: pta
+  root_cause_scope: automated pipeline layer rebuilding is enabled only without VPP
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: schedule_or_output_mismatch
+    patterns:
+    - torch.allclose
+    - scheduling
+    fixed_expectation: layer placement and outputs match the intended automated-pipeline schedule
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-bdb06b9deef6
+  source_candidate_id: mindspeed-bdb06b9deef6
+  repository: MindSpeed
+  buggy_commit: 6d24e3b56340882fa388cfead1e4f9c9a777078d
+  fix_commit: bdb06b9deef6d4883df82b6b64835e23104c04c2
+  workload_id: qwen2-train
+  framework_id: pta
+  root_cause_scope: block recomputation must register the patched checkpointed forward path
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: numerical_equivalence
+    patterns:
+    - torch.allclose
+    fixed_expectation: forward outputs and input gradients equal the non-recompute reference
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness:
+    path: tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+    mode: copy_fixed_test_to_buggy_checkout
+    command: pytest -q tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+    exists_on_buggy_commit: false
+    exists_on_fixed_commit: true
+    buggy_blob: null
+    fixed_blob: 41f774a6d85378678f36ed53b5f96e68a7dc86fb
+    backport_test_code_only: true
+    extraction_command: git show bdb06b9deef6d4883df82b6b64835e23104c04c2:tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+      > tests_extend_v2/unit_tests/features/norm_recomputing/test_norm_recompute.py
+    required_world_size: 8
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-a0edb582b143
+  source_candidate_id: mindspeed-llm-a0edb582b143
+  repository: MindSpeed-LLM
+  buggy_commit: 3da258360721605e2ff203f5723ae0291add3f71
+  fix_commit: a0edb582b143cd2322f63f1b741fadc32cbc417b
+  workload_id: qwen2-train
+  framework_id: pta
+  root_cause_scope: the combined optimization must preserve weight.main_grad handling
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: exception
+    patterns:
+    - main_grad
+    - AttributeError
+    fixed_expectation: one optimizer step completes without missing main_grad
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-25568bbf2423
+  source_candidate_id: mindspeed-25568bbf2423
+  repository: MindSpeed
+  buggy_commit: 53c3dc787ba392890c0b1ef500e678169fc1922a
+  fix_commit: 25568bbf2423d67e129ff42470ef7ddf47f2e37a
+  workload_id: qwen2-train
+  framework_id: pta
+  root_cause_scope: TE attention must read context_parallel_algo from current global args instead of stale config
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: shape_or_strategy_mismatch
+    patterns:
+    - number of GQA groups
+    - shape
+    - context_parallel_algo
+    fixed_expectation: the selected CP strategy and GQA tensor shapes match current arguments
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-27ac11d642e6
+  source_candidate_id: mindspeed-llm-27ac11d642e6
+  repository: MindSpeed-LLM
+  buggy_commit: f31514a83ae52cdb65d25b8bf409181fd0e43a56
+  fix_commit: 27ac11d642e67458652832a5087adb4783c3a391
+  workload_id: qwen2-train
+  framework_id: pta
+  root_cause_scope: VPP-specific queue ordering must only apply to Megatron-format checkpoint saving
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: checkpoint_structure
+    patterns:
+    - conversion
+    - missing
+    - layer
+    fixed_expectation: converted checkpoint contains every layer exactly once in the expected order
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-d4feda79a795
+  source_candidate_id: mindspeed-llm-d4feda79a795
+  repository: MindSpeed-LLM
+  buggy_commit: ae409aa0098830719b7bca04c1ce741a899dc96c
+  fix_commit: d4feda79a79548753c4609e3fd9f2704649a0dd3
+  workload_id: llama2-train
+  framework_id: pta
+  root_cause_scope: swap attention counts as recomputation when validating per-PP-rank recompute settings
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: validation_or_training_failure
+    patterns:
+    - enable-recompute-layers-per-pp-rank
+    - AssertionError
+    fixed_expectation: the valid swap-attention configuration passes validation and training startup
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness:
+    path: tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh
+    mode: copy_fixed_test_to_buggy_checkout
+    command: bash tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh
+    exists_on_buggy_commit: false
+    exists_on_fixed_commit: true
+    buggy_blob: null
+    fixed_blob: bf10b806b88ad549b3cf8a659b579602227dc633
+    backport_test_code_only: true
+    extraction_command: git show d4feda79a79548753c4609e3fd9f2704649a0dd3:tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh > tests/st/shell_scripts/llama2_tp2_pp4_vpp2_swap.sh
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-befe576b2920
+  source_candidate_id: mindspeed-befe576b2920
+  repository: MindSpeed
+  buggy_commit: 9392e29163a672034be4f630ca520e463fbf8bc2
+  fix_commit: befe576b2920cc4fdd5c2186ca131201a3b9202e
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: an expert may receive zero tokens and must use the empty-input fallback during activation recomputation
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: nan_or_nonfinite
+    patterns:
+    - NaN
+    - nonfinite
+    fixed_expectation: all rank outputs, gradients, and loss remain finite
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-ba1e5e528ff3
+  source_candidate_id: mindspeed-ba1e5e528ff3
+  repository: MindSpeed
+  buggy_commit: daea717cbac5fb7b9df19e8f18f9ad5c1e7c77a7
+  fix_commit: ba1e5e528ff3810351d4226dec125033da27db07
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: historical implementation treated num_experts <= topk as invalid
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: exception
+    patterns:
+    - num_experts=2 is equal or smaller than topk=2
+    - torch.topk
+    fixed_expectation: fixed revision produces the documented early validator outcome for the selected invalid pair
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-885cb967359a-dispatcher
+  source_candidate_id: mindspeed-llm-885cb967359a
+  repository: MindSpeed-LLM
+  buggy_commit: cb248046ffad2cad7bda4d72a03060ea20dfd3a3
+  fix_commit: 885cb967359a492ead664fadf2bab6bb5100361c
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: LoRA/QLoRA MoE dispatcher compatibility
+  search_input_policy: trigger and patch details hidden from methods
+  confirmation_oracle:
+    patterns:
+    - Lora and Qlora in the moe only enable the alltoall_seq
+    - dispatch
+    fixed_must_pass: true
+    buggy_repetitions: 3
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-885cb967359a-expert-index
+  source_candidate_id: mindspeed-llm-885cb967359a
+  repository: MindSpeed-LLM
+  buggy_commit: cb248046ffad2cad7bda4d72a03060ea20dfd3a3
+  fix_commit: 885cb967359a492ead664fadf2bab6bb5100361c
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: MoE TP-extend-EP expert divisibility/indexing
+  search_input_policy: trigger and patch details hidden from methods
+  confirmation_oracle:
+    patterns:
+    - local_expert_indices
+    - divisible by the number of experts
+    fixed_must_pass: true
+    buggy_repetitions: 3
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-22392902f00f
+  source_candidate_id: mindspeed-llm-22392902f00f
+  repository: MindSpeed-LLM
+  buggy_commit: e060f047d316be35779f35d9db2e2da28e279d55
+  fix_commit: 22392902f00f14cb9b4264731afcee7c47f3e9d5
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: MC2 and grouped GEMM are unsupported together for this MoE implementation
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: exception
+    patterns:
+    - Moe Grouped Gemm is not supported with mc2 in MOE model
+    fixed_expectation: fixed revision rejects before model construction
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-llm-307ca07c7949
+  source_candidate_id: mindspeed-llm-307ca07c7949
+  repository: MindSpeed-LLM
+  buggy_commit: 57b6573a59a65c6105324e81a60b83b3421c3182
+  fix_commit: 307ca07c794919b319a9a5abc05bba5749966ba2
+  workload_id: qwen2-train
+  framework_id: pta
+  root_cause_scope: checkpoint input contains list[Tensor] and must be flattened and reconstructed
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: exception_or_checkpoint_mismatch
+    patterns:
+    - TypeError
+    - list[Tensor]
+    - CheckpointFunction
+    fixed_expectation: checkpoint forward/backward completes and reconstructed arguments preserve structure
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
+- logical_bug_id: mindspeed-5f1f4abf20ec
+  source_candidate_id: mindspeed-5f1f4abf20ec
+  repository: MindSpeed
+  buggy_commit: 6c3c4bf2dfa91e0456d8bf6aea3a55d13f499670
+  fix_commit: 5f1f4abf20ec0f0987afd00c60741b257f2801da
+  workload_id: mixtral-train
+  framework_id: pta
+  root_cause_scope: temporary expert-TP world size and rank overrides must be restored after grouped-MLP initialization
+  search_input_policy: trigger assignments, patch information, and exact reproducer hidden from methods
+  confirmation_oracle:
+    kind: initialization_or_state_leak
+    patterns:
+    - initialization
+    - tensor placement
+    - expert tensor parallel
+    fixed_expectation: weights initialize on the intended device and global expert-TP state is restored
+    buggy_repetitions: 3
+    fixed_must_pass: true
+  source_harness: null
+  status: prepared_pending_accelerator_replay
