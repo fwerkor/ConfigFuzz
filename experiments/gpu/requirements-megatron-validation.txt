@@ -1,1 +1,2 @@
 PyYAML>=6,<7
+transformer-engine[pytorch,core-cu12]==2.16.0

@@ -12,7 +12,10 @@ import torch.distributed as dist
 
 from common import load_config, milestone
 from megatron.core import parallel_state
-from megatron.core.models.gpt.gpt_layer_specs import get_gpt_layer_local_spec
+from megatron.core.models.gpt.gpt_layer_specs import (
+    get_gpt_layer_local_spec,
+    get_gpt_layer_with_transformer_engine_spec,
+)
 from megatron.core.models.gpt.gpt_model import GPTModel
 from megatron.core.tensor_parallel.random import model_parallel_cuda_manual_seed
 from megatron.core.transformer.module import Float16Module
@@ -57,6 +60,8 @@ def _validate_native_training_args(cfg: dict[str, object]) -> None:
         "nccl",
         "--normalization",
         str(cfg.get("normalization", "RMSNorm")),
+        "--transformer-impl",
+        str(cfg.get("transformer_impl", "transformer_engine")),
     ]
     if bool(cfg.get("sequence_parallel", False)):
         argv.append("--sequence-parallel")
@@ -120,8 +125,12 @@ def main() -> int:
     params_dtype = (
         torch.bfloat16 if use_bf16 else torch.float16 if use_fp16 else torch.float32
     )
+    transformer_impl = str(cfg.get("transformer_impl", "transformer_engine"))
+    if transformer_impl not in {"local", "transformer_engine"}:
+        raise ValueError(f"unsupported transformer_impl for GPU qualification: {transformer_impl}")
     config = TransformerConfig(
         num_layers=int(cfg["num_layers"]),
+        transformer_impl=transformer_impl,
         hidden_size=int(cfg["hidden_size"]),
         ffn_hidden_size=int(cfg["ffn_hidden_size"]),
         num_attention_heads=int(cfg["num_attention_heads"]),
@@ -144,9 +153,14 @@ def main() -> int:
             else None
         ),
     )
+    layer_spec = (
+        get_gpt_layer_with_transformer_engine_spec()
+        if transformer_impl == "transformer_engine"
+        else get_gpt_layer_local_spec()
+    )
     model = GPTModel(
         config=config,
-        transformer_layer_spec=get_gpt_layer_local_spec(),
+        transformer_layer_spec=layer_spec,
         vocab_size=int(cfg["vocab_size"]),
         max_sequence_length=int(cfg["max_position_embeddings"]),
         parallel_output=False,
