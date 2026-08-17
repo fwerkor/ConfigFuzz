@@ -1,0 +1,175 @@
+schema_version: 1
+name: rq2-deepspeed-promoted-workloads
+metadata:
+  status: gpu_accelerator_qualified
+  framework_id: deepspeed
+  rq1_result_sha256: ff7187387bd5099c1cd9fab44d575cb70a0ad7ae17acc8acfe40ba31f46d58b2
+  static_artifact_sha256: d42c2920af8e180072b410f6afea0b33c77b27163cdca35a8e01a1a5903fa457
+  qualification_summary_sha256: eabedead0756c18320e6629046864a609b6f35a639e91c41434b14d10d91291f
+workloads:
+- workload_id: chatglm3-train
+  family: chatglm3_gqa_long_sequence
+  status: gpu_accelerator_qualified
+  baseline_id: chatglm3-train-canonical-v1
+  baseline_config: ../../../baselines/canonical-v1/chatglm3-train.json
+  dependency_graph: graphs/chatglm3-train.validated.json
+  static_dependency_graph: graphs/chatglm3-train.static.json
+  native_validator_manifest: native_validator.json
+  semantic_anchors:
+  - target_parameter
+  - model.seq_length
+  - parallel.context_parallel_size
+  command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
+  required_paths:
+  - grouped_query_attention
+  - long_sequence
+  - flash_attention
+  - context_parallel
+  - ulysses_context_parallel
+  acceptance_milestone: checkpoint_save_load
+  binding_mode: framework_specific
+  framework_binding_registry: framework_workload_matrix.yaml
+  runtime_subject_registry: runtime_subjects.prequalified.yaml
+- workload_id: cogvideox-train
+  family: cogvideox_video_text
+  status: gpu_accelerator_qualified
+  baseline_id: cogvideox-train-canonical-v1
+  baseline_config: ../../../baselines/canonical-v1/cogvideox-train.json
+  dependency_graph: graphs/cogvideox-train.validated.json
+  static_dependency_graph: graphs/cogvideox-train.static.json
+  native_validator_manifest: native_validator.json
+  semantic_anchors:
+  - target_parameter
+  - video.frames
+  - video.sample_height
+  - video.sample_width
+  - video.text_embed_dim
+  command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
+  required_paths:
+  - video_diffusion
+  - text_encoder
+  - vae
+  - latent_shape
+  - cross_component_constraints
+  acceptance_milestone: checkpoint_save_load
+  binding_mode: framework_specific
+  framework_binding_registry: framework_workload_matrix.yaml
+  runtime_subject_registry: runtime_subjects.prequalified.yaml
+- workload_id: deepseekv3-train
+  family: deepseekv3_mla_moe
+  status: gpu_accelerator_qualified
+  baseline_id: deepseekv3-train-canonical-v1
+  baseline_config: ../../../baselines/canonical-v1/deepseekv3-train.json
+  dependency_graph: graphs/deepseekv3-train.validated.json
+  static_dependency_graph: graphs/deepseekv3-train.static.json
+  native_validator_manifest: native_validator.json
+  semantic_anchors:
+  - target_parameter
+  - moe.num_experts
+  - mla.kv_lora_rank
+  - parallel.expert_model_parallel_size
+  command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
+  required_paths:
+  - multi_latent_attention
+  - expert_parallel
+  - virtual_pipeline
+  - recomputation
+  - routed_shared_experts
+  acceptance_milestone: checkpoint_save_load
+  binding_mode: framework_specific
+  framework_binding_registry: framework_workload_matrix.yaml
+  runtime_subject_registry: runtime_subjects.prequalified.yaml
+- workload_id: internvl3-train
+  family: internvl3_vision_text
+  status: gpu_accelerator_qualified
+  baseline_id: internvl3-train-canonical-v1
+  baseline_config: ../../../baselines/canonical-v1/internvl3-train.json
+  dependency_graph: graphs/internvl3-train.validated.json
+  static_dependency_graph: graphs/internvl3-train.static.json
+  native_validator_manifest: native_validator.json
+  semantic_anchors:
+  - target_parameter
+  - multimodal.image_size
+  - model.hidden_size
+  - multimodal.vision_hidden_size
+  command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
+  required_paths:
+  - vision_encoder
+  - projector
+  - text_decoder
+  - cross_component_shape
+  - cross_component_precision
+  acceptance_milestone: checkpoint_save_load
+  binding_mode: framework_specific
+  framework_binding_registry: framework_workload_matrix.yaml
+  runtime_subject_registry: runtime_subjects.prequalified.yaml
+- workload_id: llama2-train
+  family: llama2_dense_rope
+  status: gpu_accelerator_qualified
+  baseline_id: llama2-train-canonical-v1
+  baseline_config: ../../../baselines/canonical-v1/llama2-train.json
+  dependency_graph: graphs/llama2-train.validated.json
+  static_dependency_graph: graphs/llama2-train.static.json
+  native_validator_manifest: native_validator.json
+  semantic_anchors:
+  - target_parameter
+  - model.hidden_size
+  - model.num_attention_heads
+  command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
+  required_paths:
+  - tensor_parallel
+  - pipeline_parallel
+  - rope
+  - rmsnorm
+  - fused_kernels
+  acceptance_milestone: checkpoint_save_load
+  binding_mode: framework_specific
+  framework_binding_registry: framework_workload_matrix.yaml
+  runtime_subject_registry: runtime_subjects.prequalified.yaml
+- workload_id: mixtral-train
+  family: mixtral_moe
+  status: gpu_accelerator_qualified
+  baseline_id: mixtral-train-canonical-v1
+  baseline_config: ../../../baselines/canonical-v1/mixtral-train.json
+  dependency_graph: graphs/mixtral-train.validated.json
+  static_dependency_graph: graphs/mixtral-train.static.json
+  native_validator_manifest: native_validator.json
+  semantic_anchors:
+  - target_parameter
+  - moe.num_experts
+  - moe.moe_router_topk
+  - parallel.expert_model_parallel_size
+  command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
+  required_paths:
+  - expert_parallel
+  - all_to_all_dispatch
+  - grouped_gemm
+  - flash_attention
+  acceptance_milestone: checkpoint_save_load
+  binding_mode: framework_specific
+  framework_binding_registry: framework_workload_matrix.yaml
+  runtime_subject_registry: runtime_subjects.prequalified.yaml
+- workload_id: qwen2-train
+  family: qwen2_dense_gqa
+  status: gpu_accelerator_qualified
+  baseline_id: qwen2-train-canonical-v1
+  baseline_config: ../../../baselines/canonical-v1/qwen2-train.json
+  dependency_graph: graphs/qwen2-train.validated.json
+  static_dependency_graph: graphs/qwen2-train.static.json
+  native_validator_manifest: native_validator.json
+  semantic_anchors:
+  - target_parameter
+  - model.hidden_size
+  - model.num_attention_heads
+  - model.num_query_groups
+  command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
+  required_paths:
+  - tensor_parallel
+  - pipeline_parallel
+  - grouped_query_attention
+  - flash_attention
+  - checkpoint
+  acceptance_milestone: checkpoint_save_load
+  binding_mode: framework_specific
+  framework_binding_registry: framework_workload_matrix.yaml
+  runtime_subject_registry: runtime_subjects.prequalified.yaml

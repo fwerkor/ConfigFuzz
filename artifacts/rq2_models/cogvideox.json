@@ -1,0 +1,416 @@
+{
+  "schema_version": 1,
+  "experiment": "framework_static_scan",
+  "framework": {
+    "name": "cogvideox",
+    "profile": null,
+    "backend": null,
+    "accelerator": null,
+    "role": null,
+    "repositories": [
+      {
+        "repository": "https://github.com/huggingface/diffusers.git",
+        "commit": "a3608b512ed7248499a44c61d954965ed9bdae4d",
+        "commit_date": "2026-07-03",
+        "source_subdirs": [
+          "src/diffusers/models/transformers/cogvideox_transformer_3d.py"
+        ]
+      }
+    ],
+    "source_subdirs": [
+      "src/diffusers/models/transformers/cogvideox_transformer_3d.py"
+    ],
+    "parameters": [
+      "time_embed_dim",
+      "num_attention_heads",
+      "num_layers",
+      "attention_head_dim",
+      "in_channels",
+      "out_channels",
+      "sample_width",
+      "sample_height",
+      "sample_frames",
+      "patch_size",
+      "temporal_compression_ratio",
+      "max_text_seq_length",
+      "text_embed_dim"
+    ],
+    "repository": "https://github.com/huggingface/diffusers.git",
+    "commit": "a3608b512ed7248499a44c61d954965ed9bdae4d",
+    "commit_date": "2026-07-03",
+    "source_subdir": "src/diffusers/models/transformers/cogvideox_transformer_3d.py"
+  },
+  "scanner": {
+    "mode": "broad",
+    "jobs": 4
+  },
+  "summary": {
+    "parameters": 13,
+    "parameters_with_candidates": 0,
+    "candidates": 0,
+    "kinds": {},
+    "dependency_nodes": 0,
+    "dependency_edges": 0,
+    "dependency_components": 0
+  },
+  "results": [
+    {
+      "parameter": "time_embed_dim",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "num_attention_heads",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "num_layers",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "attention_head_dim",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "in_channels",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "out_channels",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "sample_width",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "sample_height",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "sample_frames",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "patch_size",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "temporal_compression_ratio",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "max_text_seq_length",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "text_embed_dim",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 1,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 1,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    }
+  ],
+  "dependency_graph": {
+    "schema_version": 1,
+    "metadata": {
+      "scope": {
+        "framework": "cogvideox",
+        "source_subdir": "src/diffusers/models/transformers/cogvideox_transformer_3d.py",
+        "version": "a3608b512ed7248499a44c61d954965ed9bdae4d"
+      }
+    },
+    "summary": {
+      "nodes": 0,
+      "edges": 0,
+      "connected_components": 0,
+      "node_kinds": {},
+      "relations": {},
+      "statuses": {}
+    },
+    "nodes": [],
+    "edges": []
+  }
+}

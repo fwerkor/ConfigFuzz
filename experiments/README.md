@@ -115,7 +115,7 @@ The primary statistical unit is one frozen intent. Because the six configured tr
 python scripts/build_experiment_schedule.py   --intents experiments/rq2/intents.prequalified.frozen.yaml   --matrix experiments/rq2/framework_workload_matrix.yaml   --output /tmp/configfuzz-rq2-schedule.json
 ```
 
-The current prepared schedule contains 61,272 records across the six framework subjects. This is not an accelerator-launch count: planner-side `FILTERED` and `UNSAT` records do not launch a framework process.
+The current prepared schedule contains 58,560 records across the six framework subjects. This is not an accelerator-launch count: planner-side `FILTERED` and `UNSAT` records do not launch a framework process.
 
 `rq2/runtime_subjects.prequalified.yaml` binds the prepared launchers, world sizes, timeouts, and supported workloads. Execution-validated dependency graphs remain intentionally unset in `rq2/workloads.yaml` until accelerator qualification/validation provides evidence. After qualification, promote the subject bindings, refreeze the 1,050 intents if and only if the qualified baseline schemas are unchanged, and then expand them into the six RQ2 methods with `scripts/plan_rq2_campaign.py`.
 

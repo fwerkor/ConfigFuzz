@@ -1,0 +1,6042 @@
+{
+  "edges": [
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "pipeline_model_parallel_layout",
+        "pipeline_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1811,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and (num_layers_in_first_pipeline_stage is not None or num_layers_in_last_pipeline_stage is not None) => bool(model.num_layers) == bool(pipeline_parallel_size)",
+      "guard": "pipeline_model_parallel_layout is None and (num_layers_in_first_pipeline_stage is not None or num_layers_in_last_pipeline_stage is not None)",
+      "id": "dep-014e989053656a81",
+      "participants": [
+        "model.num_layers",
+        "pipeline_model_parallel_layout",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "pipeline_parallel_size"
+      ],
+      "predicate": "bool(model.num_layers) == bool(pipeline_parallel_size)",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/elastification"
+      ],
+      "confidence": 1.0,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 47,
+          "source": "megatron/elastification/flextron_elasticity_hooks.py"
+        }
+      ],
+      "expression": "0 <= emb_int <= model.hidden_size",
+      "id": "dep-03c51bec877389ef",
+      "participants": [
+        "model.hidden_size",
+        "emb_int"
+      ],
+      "predicate": "0 <= emb_int <= model.hidden_size",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "args.world_size"
+      ],
+      "drivers": [
+        "parallel.context_parallel_size",
+        "model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 68,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "args.world_size % (model_parallel_size * parallel.context_parallel_size) == 0",
+      "id": "dep-04f494fcccb96087",
+      "participants": [
+        "parallel.context_parallel_size",
+        "args.world_size",
+        "model_parallel_size"
+      ],
+      "predicate": "args.world_size % (model_parallel_size * parallel.context_parallel_size) == 0",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "linear_num_value_heads"
+      ],
+      "drivers": [
+        "parallel.context_parallel_size",
+        "experimental_attention_variant",
+        "parallel.tensor_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1251,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "experimental_attention_variant == 'gated_delta_net' => linear_num_value_heads % (parallel.tensor_model_parallel_size * parallel.context_parallel_size) == 0",
+      "guard": "experimental_attention_variant == 'gated_delta_net'",
+      "id": "dep-090baf04b6fce498",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "experimental_attention_variant",
+        "linear_num_value_heads",
+        "parallel.context_parallel_size"
+      ],
+      "predicate": "linear_num_value_heads % (parallel.tensor_model_parallel_size * parallel.context_parallel_size) == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "num_layers_at_end_in_bf16"
+      ],
+      "drivers": [
+        "first_last_layers_bf16",
+        "fp8",
+        "model.num_layers",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1279,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "fp8 and first_last_layers_bf16 => num_layers_at_end_in_bf16 <= model.num_layers // parallel.pipeline_model_parallel_size",
+      "guard": "fp8 and first_last_layers_bf16",
+      "id": "dep-0c6b6e6ab5dec019",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "fp8",
+        "first_last_layers_bf16",
+        "num_layers_at_end_in_bf16",
+        "model.num_layers"
+      ],
+      "predicate": "num_layers_at_end_in_bf16 <= model.num_layers // parallel.pipeline_model_parallel_size",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "model.num_query_groups"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 310,
+          "source": "megatron/core/transformer/attention.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1566,
+          "source": "megatron/core/transformer/attention.py"
+        },
+        {
+          "detail": "consistent_valid=3; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "model.num_query_groups is not None",
+      "id": "dep-0e5b05ce92243bec",
+      "participants": [
+        "model.num_query_groups"
+      ],
+      "predicate": "model.num_query_groups is not None",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/core/transformer/moe"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "moe.num_experts"
+      ],
+      "drivers": [
+        "model.ffn_hidden_size",
+        "moe_ffn_hidden_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 90,
+          "source": "megatron/core/transformer/moe/upcycling_utils.py"
+        }
+      ],
+      "expression": "moe.num_experts % (model.ffn_hidden_size // moe_ffn_hidden_size) == 0",
+      "id": "dep-0e7b534b9344764d",
+      "participants": [
+        "model.ffn_hidden_size",
+        "moe.num_experts",
+        "moe_ffn_hidden_size"
+      ],
+      "predicate": "moe.num_experts % (model.ffn_hidden_size // moe_ffn_hidden_size) == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "num_stages"
+      ],
+      "drivers": [
+        "pipeline_model_parallel_layout",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 924,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is not None => num_stages % parallel.pipeline_model_parallel_size == 0",
+      "guard": "pipeline_model_parallel_layout is not None",
+      "id": "dep-105fe9d3503ada2a",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "pipeline_model_parallel_layout",
+        "num_stages"
+      ],
+      "predicate": "num_stages % parallel.pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "training.global_batch_size"
+      ],
+      "drivers": [
+        "step_batch_size_schedule"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 281,
+          "source": "megatron/core/num_microbatches_calculator.py"
+        }
+      ],
+      "expression": "step_batch_size_schedule is None => training.global_batch_size is not None",
+      "guard": "step_batch_size_schedule is None",
+      "id": "dep-13a521d038379283",
+      "participants": [
+        "training.global_batch_size",
+        "step_batch_size_schedule"
+      ],
+      "predicate": "training.global_batch_size is not None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "ckpt_format"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1502,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "ckpt_format == 'torch_dcp' => parallel.pipeline_model_parallel_size <= 1",
+      "guard": "ckpt_format == 'torch_dcp'",
+      "id": "dep-141daba94907d7ee",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "ckpt_format"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size <= 1",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "model.hidden_size"
+      ],
+      "drivers": [
+        "kv_channels",
+        "model.num_attention_heads"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1283,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "kv_channels is None => model.hidden_size % model.num_attention_heads == 0",
+      "guard": "kv_channels is None",
+      "id": "dep-149b36d823475290",
+      "participants": [
+        "model.hidden_size",
+        "kv_channels",
+        "model.num_attention_heads"
+      ],
+      "predicate": "model.hidden_size % model.num_attention_heads == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [
+        "account_for_embedding_in_pipeline_split",
+        "account_for_loss_in_pipeline_split",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "pipeline_model_parallel_layout",
+        "parallel.pipeline_model_parallel_size",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1865,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is not None) => model.num_layers % parallel.pipeline_model_parallel_size == 0",
+      "guard": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is not None)",
+      "id": "dep-1a8293d5b6bb2053",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "pipeline_model_parallel_layout",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "account_for_embedding_in_pipeline_split",
+        "account_for_loss_in_pipeline_split",
+        "virtual_pipeline_model_parallel_size",
+        "model.num_layers"
+      ],
+      "predicate": "model.num_layers % parallel.pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "moe.num_experts"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1389,
+          "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=1; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "moe.num_experts is not None => moe.num_experts > 0",
+      "guard": "moe.num_experts is not None",
+      "id": "dep-1ce2a9ae2ac16140",
+      "participants": [
+        "moe.num_experts"
+      ],
+      "predicate": "moe.num_experts > 0",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "confirmed"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "training.global_batch_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 703,
+          "source": "megatron/training/arguments.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 118,
+          "source": "megatron/training/yaml_arguments.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=1; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "training.global_batch_size > 0",
+      "id": "dep-1f69a0ab46af7e77",
+      "participants": [
+        "training.global_batch_size"
+      ],
+      "predicate": "training.global_batch_size > 0",
+      "relation": "range",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "confirmed"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "overlap_p2p_comm",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 981,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "virtual_pipeline_model_parallel_size is not None and overlap_p2p_comm => parallel.pipeline_model_parallel_size > 1",
+      "guard": "virtual_pipeline_model_parallel_size is not None and overlap_p2p_comm",
+      "id": "dep-264a76dcf6320803",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "overlap_p2p_comm",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size > 1",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "parallel.sequence_parallel"
+      ],
+      "drivers": [
+        "distribute_saved_activations",
+        "training.recompute_granularity"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1577,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "training.recompute_granularity is not None and distribute_saved_activations => not parallel.sequence_parallel",
+      "guard": "training.recompute_granularity is not None and distribute_saved_activations",
+      "id": "dep-28327176a4cd35a3",
+      "participants": [
+        "parallel.sequence_parallel",
+        "distribute_saved_activations",
+        "training.recompute_granularity"
+      ],
+      "predicate": "not parallel.sequence_parallel",
+      "relation": "conflicts",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core",
+        "megatron/core/optimizer"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 101,
+          "source": "megatron/core/model_parallel_config.py"
+        },
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 174,
+          "source": "megatron/core/optimizer/optimizer_config.py"
+        },
+        {
+          "detail": "consistent_valid=4; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "precision.fp16: boolean",
+      "id": "dep-284ba5a75541087a",
+      "participants": [
+        "precision.fp16"
+      ],
+      "predicate": "precision.fp16: boolean",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "optimizer",
+        "use_distributed_optimizer",
+        "use_megatron_fsdp"
+      ],
+      "drivers": [
+        "overlap_param_gather"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1004,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "overlap_param_gather => use_distributed_optimizer or use_megatron_fsdp or optimizer == 'dist_muon'",
+      "guard": "overlap_param_gather",
+      "id": "dep-28a8cc669121af93",
+      "participants": [
+        "use_distributed_optimizer",
+        "overlap_param_gather",
+        "use_megatron_fsdp",
+        "optimizer"
+      ],
+      "predicate": "use_distributed_optimizer or use_megatron_fsdp or optimizer == 'dist_muon'",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "num_dense_layers",
+        "num_moe_layers"
+      ],
+      "drivers": [
+        "model.num_layers"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 50,
+          "source": "megatron/training/theoretical_memory_usage.py"
+        }
+      ],
+      "expression": "num_dense_layers + num_moe_layers == model.num_layers",
+      "id": "dep-2ccd41884f8256e4",
+      "participants": [
+        "model.num_layers",
+        "num_dense_layers",
+        "num_moe_layers"
+      ],
+      "predicate": "num_dense_layers + num_moe_layers == model.num_layers",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "moe.num_experts"
+      ],
+      "drivers": [
+        "inference_fuse_tp_communication"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 2553,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "inference_fuse_tp_communication => moe.num_experts is None",
+      "guard": "inference_fuse_tp_communication",
+      "id": "dep-2d49eb2e09a8a279",
+      "participants": [
+        "moe.num_experts",
+        "inference_fuse_tp_communication"
+      ],
+      "predicate": "moe.num_experts is None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.65,
+      "dependents": [
+        "model.num_query_groups"
+      ],
+      "drivers": [
+        "model.num_attention_heads"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1821,
+          "source": "megatron/core/transformer/attention.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=1; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "model.num_query_groups == model.num_attention_heads",
+      "id": "dep-2d732812b8519cbd",
+      "participants": [
+        "model.num_attention_heads",
+        "model.num_query_groups"
+      ],
+      "predicate": "model.num_query_groups == model.num_attention_heads",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "scope_disputed"
+    },
+    {
+      "components": [
+        "megatron/core/models/mimo/model"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "model.hidden_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 487,
+          "source": "megatron/core/models/mimo/model/base.py"
+        }
+      ],
+      "expression": "model.hidden_size is not None",
+      "id": "dep-2e7b5878addf9ea9",
+      "participants": [
+        "model.hidden_size"
+      ],
+      "predicate": "model.hidden_size is not None",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/optimizer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "precision.fp16"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 494,
+          "source": "megatron/core/optimizer/optimizer.py"
+        }
+      ],
+      "expression": "self.grad_scaler is None => not precision.fp16",
+      "guard": "self.grad_scaler is None",
+      "id": "dep-3054514db2f4cd8b",
+      "participants": [
+        "precision.fp16"
+      ],
+      "predicate": "not precision.fp16",
+      "relation": "conflicts",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "overlap_p2p_comm",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 985,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "virtual_pipeline_model_parallel_size is not None and (not overlap_p2p_comm) => parallel.pipeline_model_parallel_size > 2",
+      "guard": "virtual_pipeline_model_parallel_size is not None and (not overlap_p2p_comm)",
+      "id": "dep-332aefadb17185b2",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "virtual_pipeline_model_parallel_size",
+        "overlap_p2p_comm"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size > 2",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/distributed"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "use_distributed_optimizer"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 284,
+          "source": "megatron/core/distributed/distributed_data_parallel.py"
+        }
+      ],
+      "expression": "self.ddp_config.num_distributed_optimizer_instances > 1 => use_distributed_optimizer",
+      "guard": "self.ddp_config.num_distributed_optimizer_instances > 1",
+      "id": "dep-3432b2f5db0dd64a",
+      "participants": [
+        "use_distributed_optimizer"
+      ],
+      "predicate": "use_distributed_optimizer",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer/moe"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [
+        "force_initialize"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 182,
+          "source": "megatron/core/transformer/moe/moe_logging.py"
+        }
+      ],
+      "expression": "force_initialize => model.num_layers is not None",
+      "guard": "force_initialize",
+      "id": "dep-34e2f22e458bff57",
+      "participants": [
+        "model.num_layers",
+        "force_initialize"
+      ],
+      "predicate": "model.num_layers is not None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/distributed",
+        "megatron/core/optimizer",
+        "megatron/training"
+      ],
+      "confidence": 1.0,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 29,
+          "source": "megatron/core/distributed/distributed_data_parallel_config.py"
+        },
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 321,
+          "source": "megatron/core/optimizer/optimizer_config.py"
+        },
+        {
+          "detail": "argparse declaration",
+          "kind": "static",
+          "line": 2779,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "use_distributed_optimizer: boolean",
+      "id": "dep-38909c903bc3956a",
+      "participants": [
+        "use_distributed_optimizer"
+      ],
+      "predicate": "use_distributed_optimizer: boolean",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "num_layers_in_last_pipeline_stage"
+      ],
+      "drivers": [
+        "num_layers_in_first_pipeline_stage",
+        "pipeline_model_parallel_layout",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1796,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and (num_layers_in_first_pipeline_stage is not None or num_layers_in_last_pipeline_stage is not None) and (num_layers_in_last_pipeline_stage is not None) and (virtual_pipeline_model_parallel_size is not None) => num_layers_in_last_pipeline_stage % virtual_pipeline_model_parallel_size == 0",
+      "guard": "pipeline_model_parallel_layout is None and (num_layers_in_first_pipeline_stage is not None or num_layers_in_last_pipeline_stage is not None) and (num_layers_in_last_pipeline_stage is not None) and (virtual_pipeline_model_parallel_size is not None)",
+      "id": "dep-395db9ff78efdae0",
+      "participants": [
+        "virtual_pipeline_model_parallel_size",
+        "pipeline_model_parallel_layout",
+        "num_layers_in_last_pipeline_stage",
+        "num_layers_in_first_pipeline_stage"
+      ],
+      "predicate": "num_layers_in_last_pipeline_stage % virtual_pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer/heterogeneous",
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 21,
+          "source": "megatron/core/transformer/heterogeneous/heterogeneous_config.py"
+        },
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 152,
+          "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "consistent_valid=3; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "model.num_query_groups: integer",
+      "id": "dep-39cacf993fb7357d",
+      "participants": [
+        "model.num_query_groups"
+      ],
+      "predicate": "model.num_query_groups: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 20,
+          "source": "megatron/core/model_parallel_config.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "parallel.tensor_model_parallel_size: integer",
+      "id": "dep-3d77928b2ce18f90",
+      "participants": [
+        "parallel.tensor_model_parallel_size"
+      ],
+      "predicate": "parallel.tensor_model_parallel_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "num_layers_per_virtual_pipeline_stage"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 131,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "num_layers_per_virtual_pipeline_stage is not None => parallel.pipeline_model_parallel_size > 2",
+      "guard": "num_layers_per_virtual_pipeline_stage is not None",
+      "id": "dep-3d8c9ab0864b3720",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "num_layers_per_virtual_pipeline_stage"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size > 2",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "training.recompute_granularity"
+      ],
+      "drivers": [
+        "cpu_offloading"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1539,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "cpu_offloading => training.recompute_granularity is None",
+      "guard": "cpu_offloading",
+      "id": "dep-3e90777514143cd3",
+      "participants": [
+        "training.recompute_granularity",
+        "cpu_offloading"
+      ],
+      "predicate": "training.recompute_granularity is None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/export/trtllm/trtllm_weights_converter"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 78,
+          "source": "megatron/core/export/trtllm/trtllm_weights_converter/distributed_trtllm_model_weights_converter.py"
+        }
+      ],
+      "expression": "virtual_pipeline_model_parallel_size is None or virtual_pipeline_model_parallel_size == 1",
+      "id": "dep-3eb26ac021c28840",
+      "participants": [
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "predicate": "virtual_pipeline_model_parallel_size is None or virtual_pipeline_model_parallel_size == 1",
+      "relation": "other",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 72,
+          "source": "megatron/core/model_parallel_config.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "parallel.expert_model_parallel_size: integer",
+      "id": "dep-3fc8e4ead0134626",
+      "participants": [
+        "parallel.expert_model_parallel_size"
+      ],
+      "predicate": "parallel.expert_model_parallel_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "num_generated_samples_per_inference_iteration"
+      ],
+      "drivers": [
+        "training.global_batch_size",
+        "perform_rl_step"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 719,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "perform_rl_step => num_generated_samples_per_inference_iteration % training.global_batch_size == 0",
+      "guard": "perform_rl_step",
+      "id": "dep-3feae5c3009b2486",
+      "participants": [
+        "training.global_batch_size",
+        "perform_rl_step",
+        "num_generated_samples_per_inference_iteration"
+      ],
+      "predicate": "num_generated_samples_per_inference_iteration % training.global_batch_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "num_layers_per_pipeline_rank"
+      ],
+      "drivers": [
+        "parallel.pipeline_model_parallel_size",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 168,
+          "source": "megatron/core/transformer/transformer_block.py"
+        }
+      ],
+      "expression": "virtual_pipeline_model_parallel_size is not None and parallel.pipeline_model_parallel_size > 1 => num_layers_per_pipeline_rank % virtual_pipeline_model_parallel_size == 0",
+      "guard": "virtual_pipeline_model_parallel_size is not None and parallel.pipeline_model_parallel_size > 1",
+      "id": "dep-40958b81b298eb86",
+      "participants": [
+        "virtual_pipeline_model_parallel_size",
+        "parallel.pipeline_model_parallel_size",
+        "num_layers_per_pipeline_rank"
+      ],
+      "predicate": "num_layers_per_pipeline_rank % virtual_pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [
+        "account_for_embedding_in_pipeline_split",
+        "account_for_loss_in_pipeline_split",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "pipeline_model_parallel_layout",
+        "parallel.pipeline_model_parallel_size",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1852,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is None) => model.num_layers % parallel.pipeline_model_parallel_size == 0",
+      "guard": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is None)",
+      "id": "dep-41db7e4868ff92c7",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "pipeline_model_parallel_layout",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "account_for_embedding_in_pipeline_split",
+        "account_for_loss_in_pipeline_split",
+        "virtual_pipeline_model_parallel_size",
+        "model.num_layers"
+      ],
+      "predicate": "model.num_layers % parallel.pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer/moe"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "moe.num_experts"
+      ],
+      "drivers": [
+        "ep_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 185,
+          "source": "megatron/core/transformer/moe/moe_layer.py"
+        }
+      ],
+      "expression": "moe.num_experts % ep_size == 0",
+      "id": "dep-4233945aa011aa90",
+      "participants": [
+        "moe.num_experts",
+        "ep_size"
+      ],
+      "predicate": "moe.num_experts % ep_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.expert_model_parallel_size"
+      ],
+      "drivers": [
+        "use_torch_fsdp2"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1015,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "use_torch_fsdp2 => parallel.expert_model_parallel_size == 1",
+      "guard": "use_torch_fsdp2",
+      "id": "dep-42b5485a84ac3984",
+      "participants": [
+        "parallel.expert_model_parallel_size",
+        "use_torch_fsdp2"
+      ],
+      "predicate": "parallel.expert_model_parallel_size == 1",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "parallel.context_parallel_size",
+        "parallel.pipeline_model_parallel_size",
+        "parallel.tensor_model_parallel_size",
+        "world_size"
+      ],
+      "drivers": [
+        "num_distributed_optimizer_instances"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 827,
+          "source": "megatron/core/parallel_state.py"
+        }
+      ],
+      "expression": "world_size // (parallel.tensor_model_parallel_size * parallel.pipeline_model_parallel_size * parallel.context_parallel_size) * parallel.context_parallel_size % num_distributed_optimizer_instances == 0",
+      "id": "dep-4561a7252621b5c7",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "num_distributed_optimizer_instances",
+        "parallel.context_parallel_size",
+        "world_size",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "predicate": "world_size // (parallel.tensor_model_parallel_size * parallel.pipeline_model_parallel_size * parallel.context_parallel_size) * parallel.context_parallel_size % num_distributed_optimizer_instances == 0",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "inference_batch_times_seqlen_threshold"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1641,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "inference_batch_times_seqlen_threshold > -1 => parallel.pipeline_model_parallel_size > 1",
+      "guard": "inference_batch_times_seqlen_threshold > -1",
+      "id": "dep-45fdffb89c2851d4",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "inference_batch_times_seqlen_threshold"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size > 1",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 39,
+          "source": "megatron/core/model_parallel_config.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "parallel.sequence_parallel: boolean",
+      "id": "dep-48c440ca3441c305",
+      "participants": [
+        "parallel.sequence_parallel"
+      ],
+      "predicate": "parallel.sequence_parallel: boolean",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "training.recompute_granularity"
+      ],
+      "drivers": [
+        "recompute_num_layers"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1562,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "training.recompute_granularity is not None and recompute_num_layers is None => training.recompute_granularity == 'selective'",
+      "guard": "training.recompute_granularity is not None and recompute_num_layers is None",
+      "id": "dep-49d3a6cfb3608320",
+      "participants": [
+        "training.recompute_granularity",
+        "recompute_num_layers"
+      ],
+      "predicate": "training.recompute_granularity == 'selective'",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer",
+        "megatron/training"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "precision.fp16"
+      ],
+      "drivers": [
+        "precision.bf16"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1186,
+          "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1173,
+          "source": "megatron/training/arguments.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "precision.bf16 => not precision.fp16",
+      "guard": "precision.bf16",
+      "id": "dep-54241f191526fdae",
+      "participants": [
+        "precision.fp16",
+        "precision.bf16"
+      ],
+      "predicate": "not precision.fp16",
+      "relation": "conflicts",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "confirmed"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.sequence_parallel"
+      ],
+      "drivers": [
+        "tp_comm_overlap"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1387,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "tp_comm_overlap => parallel.sequence_parallel == True",
+      "guard": "tp_comm_overlap",
+      "id": "dep-58340bf1c7268e61",
+      "participants": [
+        "parallel.sequence_parallel",
+        "tp_comm_overlap"
+      ],
+      "predicate": "parallel.sequence_parallel == True",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 2494,
+          "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "parallel.pipeline_model_parallel_size > 0",
+      "id": "dep-58519c0a5d327465",
+      "participants": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size > 0",
+      "relation": "range",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "num_experts"
+      ],
+      "drivers": [
+        "parallel.expert_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1488,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "parallel.expert_model_parallel_size > 1 => num_experts % parallel.expert_model_parallel_size == 0",
+      "guard": "parallel.expert_model_parallel_size > 1",
+      "id": "dep-58d7a43f15d6e43b",
+      "participants": [
+        "parallel.expert_model_parallel_size",
+        "num_experts"
+      ],
+      "predicate": "num_experts % parallel.expert_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/optimizer"
+      ],
+      "confidence": 0.3,
+      "dependents": [
+        "precision.fp16"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 768,
+          "source": "megatron/core/optimizer/__init__.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=2; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "not precision.fp16",
+      "id": "dep-5986aa9e78914f8c",
+      "participants": [
+        "precision.fp16"
+      ],
+      "predicate": "not precision.fp16",
+      "relation": "other",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "scope_disputed"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "language_model.num_moe_experts"
+      ],
+      "drivers": [
+        "parallel.expert_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 336,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "parallel.expert_model_parallel_size > 1 => language_model.num_moe_experts % parallel.expert_model_parallel_size == 0",
+      "guard": "parallel.expert_model_parallel_size > 1",
+      "id": "dep-5a07d0fb2a8d1399",
+      "participants": [
+        "parallel.expert_model_parallel_size",
+        "language_model.num_moe_experts"
+      ],
+      "predicate": "language_model.num_moe_experts % parallel.expert_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "training.recompute_granularity"
+      ],
+      "drivers": [
+        "overlap_moe_expert_parallel_comm"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 2418,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "overlap_moe_expert_parallel_comm => training.recompute_granularity != 'full'",
+      "guard": "overlap_moe_expert_parallel_comm",
+      "id": "dep-5aaed76224dc107d",
+      "participants": [
+        "training.recompute_granularity",
+        "overlap_moe_expert_parallel_comm"
+      ],
+      "predicate": "training.recompute_granularity != 'full'",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/ssm"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.sequence_parallel"
+      ],
+      "drivers": [
+        "inference_context"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 301,
+          "source": "megatron/core/ssm/gated_delta_net.py"
+        }
+      ],
+      "expression": "inference_context is not None => not parallel.sequence_parallel",
+      "guard": "inference_context is not None",
+      "id": "dep-5df9cb4953366ad0",
+      "participants": [
+        "parallel.sequence_parallel",
+        "inference_context"
+      ],
+      "predicate": "not parallel.sequence_parallel",
+      "relation": "conflicts",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "use_distributed_optimizer"
+      ],
+      "drivers": [
+        "use_torch_fsdp2"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1017,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "use_torch_fsdp2 => not use_distributed_optimizer",
+      "guard": "use_torch_fsdp2",
+      "id": "dep-5fdcaea756599571",
+      "participants": [
+        "use_distributed_optimizer",
+        "use_torch_fsdp2"
+      ],
+      "predicate": "not use_distributed_optimizer",
+      "relation": "conflicts",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "training.micro_batch_size"
+      ],
+      "drivers": [
+        "perform_rl_step",
+        "rl_use_sequence_packing"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 562,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "perform_rl_step and rl_use_sequence_packing => training.micro_batch_size == 1",
+      "guard": "perform_rl_step and rl_use_sequence_packing",
+      "id": "dep-650946ac8d61f0ca",
+      "participants": [
+        "training.micro_batch_size",
+        "perform_rl_step",
+        "rl_use_sequence_packing"
+      ],
+      "predicate": "training.micro_batch_size == 1",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "training.recompute_granularity"
+      ],
+      "drivers": [
+        "recompute_method"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1556,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "training.recompute_granularity is not None and recompute_method is None => training.recompute_granularity == 'selective'",
+      "guard": "training.recompute_granularity is not None and recompute_method is None",
+      "id": "dep-653b6cc91d40c314",
+      "participants": [
+        "training.recompute_granularity",
+        "recompute_method"
+      ],
+      "predicate": "training.recompute_granularity == 'selective'",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "model.num_attention_heads"
+      ],
+      "drivers": [
+        "parallel.tensor_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1195,
+          "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "consistent_valid=3; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "model.num_attention_heads % parallel.tensor_model_parallel_size == 0",
+      "id": "dep-69c46f3949e2ef67",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "model.num_attention_heads"
+      ],
+      "predicate": "model.num_attention_heads % parallel.tensor_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [
+        "parallel.expert_model_parallel_size",
+        "expert_tensor_parallel_size",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 787,
+          "source": "megatron/core/parallel_state.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "world_size % (expert_tensor_parallel_size * parallel.expert_model_parallel_size * parallel.pipeline_model_parallel_size) == 0",
+      "id": "dep-6b7d396503cffd67",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "world_size",
+        "expert_tensor_parallel_size",
+        "parallel.expert_model_parallel_size"
+      ],
+      "predicate": "world_size % (expert_tensor_parallel_size * parallel.expert_model_parallel_size * parallel.pipeline_model_parallel_size) == 0",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "training.recompute_granularity"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1545,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "training.recompute_granularity is not None => training.recompute_granularity in ['full', 'selective']",
+      "guard": "training.recompute_granularity is not None",
+      "id": "dep-70c33a3563b446e6",
+      "participants": [
+        "training.recompute_granularity"
+      ],
+      "predicate": "training.recompute_granularity in ['full', 'selective']",
+      "relation": "enum",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.sequence_parallel"
+      ],
+      "drivers": [
+        "language_model.num_moe_experts",
+        "model_parallel.tensor_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 330,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "language_model.num_moe_experts is not None and model_parallel.tensor_model_parallel_size > 1 => parallel.sequence_parallel",
+      "guard": "language_model.num_moe_experts is not None and model_parallel.tensor_model_parallel_size > 1",
+      "id": "dep-70f41a350f268abb",
+      "participants": [
+        "parallel.sequence_parallel",
+        "language_model.num_moe_experts",
+        "model_parallel.tensor_model_parallel_size"
+      ],
+      "predicate": "parallel.sequence_parallel",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/inference/text_generation_controllers"
+      ],
+      "confidence": 0.95,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 2027,
+          "source": "megatron/core/inference/text_generation_controllers/text_generation_controller.py"
+        }
+      ],
+      "expression": "(parallel.tensor_model_parallel_size <= 1 or parallel.expert_model_parallel_size <= 1) and parallel.sequence_parallel => parallel.expert_model_parallel_size != 1 and parallel.tensor_model_parallel_size != 1",
+      "guard": "(parallel.tensor_model_parallel_size <= 1 or parallel.expert_model_parallel_size <= 1) and parallel.sequence_parallel",
+      "id": "dep-73dd37cfa3f495c3",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "parallel.sequence_parallel",
+        "parallel.expert_model_parallel_size"
+      ],
+      "predicate": "parallel.expert_model_parallel_size != 1 and parallel.tensor_model_parallel_size != 1",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "inference",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "moe.num_experts"
+      ],
+      "drivers": [
+        "model_parallel.expert_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 335,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "model_parallel.expert_model_parallel_size > 1 => moe.num_experts is not None",
+      "guard": "model_parallel.expert_model_parallel_size > 1",
+      "id": "dep-74d937d2edd5bb04",
+      "participants": [
+        "moe.num_experts",
+        "model_parallel.expert_model_parallel_size"
+      ],
+      "predicate": "moe.num_experts is not None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "parallel.tensor_model_parallel_size"
+      ],
+      "drivers": [
+        "parallel.sequence_parallel"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 416,
+          "source": "megatron/core/model_parallel_config.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=1; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "parallel.sequence_parallel => parallel.tensor_model_parallel_size > 1",
+      "guard": "parallel.sequence_parallel",
+      "id": "dep-77fd7ce216b36ffd",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "parallel.sequence_parallel"
+      ],
+      "predicate": "parallel.tensor_model_parallel_size > 1",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "use_torch_fsdp2"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1013,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "use_torch_fsdp2 => parallel.pipeline_model_parallel_size == 1",
+      "guard": "use_torch_fsdp2",
+      "id": "dep-7a5281b3dee4dde0",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "use_torch_fsdp2"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size == 1",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/inference/text_generation_controllers"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "parallel.sequence_parallel"
+      ],
+      "drivers": [
+        "parallel.expert_model_parallel_size",
+        "parallel.tensor_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 2027,
+          "source": "megatron/core/inference/text_generation_controllers/text_generation_controller.py"
+        }
+      ],
+      "expression": "(parallel.tensor_model_parallel_size <= 1 or parallel.expert_model_parallel_size <= 1) and (parallel.expert_model_parallel_size == 1 or parallel.tensor_model_parallel_size == 1) => not parallel.sequence_parallel",
+      "guard": "(parallel.tensor_model_parallel_size <= 1 or parallel.expert_model_parallel_size <= 1) and (parallel.expert_model_parallel_size == 1 or parallel.tensor_model_parallel_size == 1)",
+      "id": "dep-7cb33497e801ef6b",
+      "participants": [
+        "parallel.sequence_parallel",
+        "parallel.tensor_model_parallel_size",
+        "parallel.expert_model_parallel_size"
+      ],
+      "predicate": "not parallel.sequence_parallel",
+      "relation": "conflicts",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "inference",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer/heterogeneous"
+      ],
+      "confidence": 1.0,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 70,
+          "source": "megatron/core/transformer/heterogeneous/heterogeneous_config.py"
+        }
+      ],
+      "expression": "model.ffn_hidden_size: float",
+      "id": "dep-7fd4935ad08bdaa4",
+      "participants": [
+        "model.ffn_hidden_size"
+      ],
+      "predicate": "model.ffn_hidden_size: float",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core",
+        "megatron/training"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "training.micro_batch_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 325,
+          "source": "megatron/core/num_microbatches_calculator.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 691,
+          "source": "megatron/training/arguments.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 104,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "training.micro_batch_size is not None",
+      "id": "dep-829e09dd1e1faf56",
+      "participants": [
+        "training.micro_batch_size"
+      ],
+      "predicate": "training.micro_batch_size is not None",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.expert_model_parallel_size"
+      ],
+      "drivers": [
+        "overlap_moe_expert_parallel_comm"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 2410,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "overlap_moe_expert_parallel_comm => parallel.expert_model_parallel_size > 1",
+      "guard": "overlap_moe_expert_parallel_comm",
+      "id": "dep-841752769d3d696d",
+      "participants": [
+        "parallel.expert_model_parallel_size",
+        "overlap_moe_expert_parallel_comm"
+      ],
+      "predicate": "parallel.expert_model_parallel_size > 1",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [
+        "parallel.context_parallel_size",
+        "parallel.pipeline_model_parallel_size",
+        "parallel.tensor_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 735,
+          "source": "megatron/core/parallel_state.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "world_size % (parallel.tensor_model_parallel_size * parallel.pipeline_model_parallel_size * parallel.context_parallel_size) == 0",
+      "id": "dep-85d113f8dac96ae0",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "world_size",
+        "parallel.context_parallel_size",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "predicate": "world_size % (parallel.tensor_model_parallel_size * parallel.pipeline_model_parallel_size * parallel.context_parallel_size) == 0",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "megatron/training/config"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 16,
+          "source": "megatron/training/config/training_config.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "training.global_batch_size: integer",
+      "id": "dep-871c8d1370ae424f",
+      "participants": [
+        "training.global_batch_size"
+      ],
+      "predicate": "training.global_batch_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 216,
+          "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "moe.num_experts: integer",
+      "id": "dep-8723215867d31a43",
+      "participants": [
+        "moe.num_experts"
+      ],
+      "predicate": "moe.num_experts: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "training.global_batch_size"
+      ],
+      "drivers": [
+        "data_parallel_size",
+        "decrease_batch_size_if_needed",
+        "training.micro_batch_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 381,
+          "source": "megatron/core/num_microbatches_calculator.py"
+        }
+      ],
+      "expression": "not decrease_batch_size_if_needed => training.global_batch_size % (training.micro_batch_size * data_parallel_size) == 0",
+      "guard": "not decrease_batch_size_if_needed",
+      "id": "dep-8d31a090259e04c5",
+      "participants": [
+        "training.micro_batch_size",
+        "decrease_batch_size_if_needed",
+        "training.global_batch_size",
+        "data_parallel_size"
+      ],
+      "predicate": "training.global_batch_size % (training.micro_batch_size * data_parallel_size) == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "seq_length"
+      ],
+      "drivers": [
+        "parallel.context_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1287,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "seq_length is not None and parallel.context_parallel_size > 1 => seq_length % (parallel.context_parallel_size * 2) == 0",
+      "guard": "seq_length is not None and parallel.context_parallel_size > 1",
+      "id": "dep-8d5c6d2b8ff96eea",
+      "participants": [
+        "parallel.context_parallel_size",
+        "seq_length"
+      ],
+      "predicate": "seq_length % (parallel.context_parallel_size * 2) == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "args.world_size"
+      ],
+      "drivers": [
+        "parallel.context_parallel_size",
+        "parallel.pipeline_model_parallel_size",
+        "parallel.tensor_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 425,
+          "source": "megatron/training/arguments.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "args.world_size % (parallel.tensor_model_parallel_size * parallel.pipeline_model_parallel_size * parallel.context_parallel_size) == 0",
+      "id": "dep-8ed1257aa5b0eaed",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "args.world_size",
+        "parallel.context_parallel_size",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "predicate": "args.world_size % (parallel.tensor_model_parallel_size * parallel.pipeline_model_parallel_size * parallel.context_parallel_size) == 0",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "model.num_layers",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "account_for_embedding_in_pipeline_split",
+        "account_for_loss_in_pipeline_split",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "pipeline_model_parallel_layout",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1875,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is not None) => model.num_layers // parallel.pipeline_model_parallel_size % virtual_pipeline_model_parallel_size == 0",
+      "guard": "pipeline_model_parallel_layout is None and num_layers_in_first_pipeline_stage is None and (num_layers_in_last_pipeline_stage is None) and (account_for_embedding_in_pipeline_split or account_for_loss_in_pipeline_split) and (virtual_pipeline_model_parallel_size is not None)",
+      "id": "dep-9281b624e188e639",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "pipeline_model_parallel_layout",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "account_for_embedding_in_pipeline_split",
+        "account_for_loss_in_pipeline_split",
+        "virtual_pipeline_model_parallel_size",
+        "model.num_layers"
+      ],
+      "predicate": "model.num_layers // parallel.pipeline_model_parallel_size % virtual_pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "defer_embedding_wgrad_compute"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 440,
+          "source": "megatron/core/model_parallel_config.py"
+        }
+      ],
+      "expression": "defer_embedding_wgrad_compute => parallel.pipeline_model_parallel_size != 1",
+      "guard": "defer_embedding_wgrad_compute",
+      "id": "dep-94085b4bb5af8633",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "defer_embedding_wgrad_compute"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size != 1",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "precision.fp16"
+      ],
+      "drivers": [
+        "model_parallel.expert_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 338,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "model_parallel.expert_model_parallel_size > 1 => not precision.fp16",
+      "guard": "model_parallel.expert_model_parallel_size > 1",
+      "id": "dep-97e319adf210ee1c",
+      "participants": [
+        "precision.fp16",
+        "model_parallel.expert_model_parallel_size"
+      ],
+      "predicate": "not precision.fp16",
+      "relation": "conflicts",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "parallel.expert_model_parallel_size",
+        "expert_tensor_parallel_size",
+        "parallel.pipeline_model_parallel_size",
+        "world_size"
+      ],
+      "drivers": [
+        "num_distributed_optimizer_instances"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1247,
+          "source": "megatron/core/parallel_state.py"
+        }
+      ],
+      "expression": "world_size // (expert_tensor_parallel_size * parallel.expert_model_parallel_size * parallel.pipeline_model_parallel_size) % num_distributed_optimizer_instances == 0",
+      "id": "dep-9842430aa87d306e",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "num_distributed_optimizer_instances",
+        "world_size",
+        "expert_tensor_parallel_size",
+        "parallel.expert_model_parallel_size"
+      ],
+      "predicate": "world_size // (expert_tensor_parallel_size * parallel.expert_model_parallel_size * parallel.pipeline_model_parallel_size) % num_distributed_optimizer_instances == 0",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "megatron/core/datasets",
+        "megatron/core"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 76,
+          "source": "megatron/core/datasets/gpt_dataset.py"
+        },
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 45,
+          "source": "megatron/core/model_parallel_config.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "parallel.context_parallel_size: integer",
+      "id": "dep-990b5b70d80f483c",
+      "participants": [
+        "parallel.context_parallel_size"
+      ],
+      "predicate": "parallel.context_parallel_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "use_distributed_optimizer"
+      ],
+      "drivers": [
+        "overlap_param_gather_with_optimizer_step"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1046,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "overlap_param_gather_with_optimizer_step => use_distributed_optimizer",
+      "guard": "overlap_param_gather_with_optimizer_step",
+      "id": "dep-9a51edbbe0a2c763",
+      "participants": [
+        "use_distributed_optimizer",
+        "overlap_param_gather_with_optimizer_step"
+      ],
+      "predicate": "use_distributed_optimizer",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "use_distributed_optimizer"
+      ],
+      "drivers": [
+        "overlap_param_gather"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 150,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "overlap_param_gather => use_distributed_optimizer",
+      "guard": "overlap_param_gather",
+      "id": "dep-9db3054505f2186e",
+      "participants": [
+        "use_distributed_optimizer",
+        "overlap_param_gather"
+      ],
+      "predicate": "use_distributed_optimizer",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer/heterogeneous"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "model.num_attention_heads"
+      ],
+      "drivers": [
+        "attention_config_dict",
+        "n_heads_in_group"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 43,
+          "source": "megatron/core/transformer/heterogeneous/heterogeneous_config.py"
+        }
+      ],
+      "expression": "'model.num_query_groups' not in attention_config_dict and n_heads_in_group is not None => model.num_attention_heads % n_heads_in_group == 0",
+      "guard": "'model.num_query_groups' not in attention_config_dict and n_heads_in_group is not None",
+      "id": "dep-9fdee8d0a83297fa",
+      "participants": [
+        "model.num_attention_heads",
+        "attention_config_dict",
+        "n_heads_in_group"
+      ],
+      "predicate": "model.num_attention_heads % n_heads_in_group == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "model.num_layers",
+        "transformer_pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "num_layers_per_virtual_pipeline_stage",
+        "num_virtual_stages_per_pipeline_rank",
+        "pipeline_model_parallel_layout"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 951,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and (num_layers_per_virtual_pipeline_stage is not None or num_virtual_stages_per_pipeline_rank is not None) and (num_virtual_stages_per_pipeline_rank is None) => model.num_layers // transformer_pipeline_model_parallel_size % num_layers_per_virtual_pipeline_stage == 0",
+      "guard": "pipeline_model_parallel_layout is None and (num_layers_per_virtual_pipeline_stage is not None or num_virtual_stages_per_pipeline_rank is not None) and (num_virtual_stages_per_pipeline_rank is None)",
+      "id": "dep-a1179b1c2af0c006",
+      "participants": [
+        "model.num_layers",
+        "pipeline_model_parallel_layout",
+        "num_virtual_stages_per_pipeline_rank",
+        "num_layers_per_virtual_pipeline_stage",
+        "transformer_pipeline_model_parallel_size"
+      ],
+      "predicate": "model.num_layers // transformer_pipeline_model_parallel_size % num_layers_per_virtual_pipeline_stage == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "num_layers_in_first_pipeline_stage"
+      ],
+      "drivers": [
+        "num_layers_in_last_pipeline_stage",
+        "pipeline_model_parallel_layout",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1777,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and (num_layers_in_first_pipeline_stage is not None or num_layers_in_last_pipeline_stage is not None) and (num_layers_in_first_pipeline_stage is not None) and (virtual_pipeline_model_parallel_size is not None) => num_layers_in_first_pipeline_stage % virtual_pipeline_model_parallel_size == 0",
+      "guard": "pipeline_model_parallel_layout is None and (num_layers_in_first_pipeline_stage is not None or num_layers_in_last_pipeline_stage is not None) and (num_layers_in_first_pipeline_stage is not None) and (virtual_pipeline_model_parallel_size is not None)",
+      "id": "dep-a117fae8560c427c",
+      "participants": [
+        "virtual_pipeline_model_parallel_size",
+        "pipeline_model_parallel_layout",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage"
+      ],
+      "predicate": "num_layers_in_first_pipeline_stage % virtual_pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "precision.bf16",
+        "precision.fp16"
+      ],
+      "drivers": [
+        "overlap_moe_expert_parallel_comm"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 2432,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "overlap_moe_expert_parallel_comm => precision.bf16 or precision.fp16",
+      "guard": "overlap_moe_expert_parallel_comm",
+      "id": "dep-a5a351faf75fb841",
+      "participants": [
+        "precision.fp16",
+        "overlap_moe_expert_parallel_comm",
+        "precision.bf16"
+      ],
+      "predicate": "precision.bf16 or precision.fp16",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.context_parallel_size"
+      ],
+      "drivers": [
+        "experimental_attention_variant"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 2543,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "experimental_attention_variant == 'dsa' => parallel.context_parallel_size == 1",
+      "guard": "experimental_attention_variant == 'dsa'",
+      "id": "dep-a614cd1908711e29",
+      "participants": [
+        "parallel.context_parallel_size",
+        "experimental_attention_variant"
+      ],
+      "predicate": "parallel.context_parallel_size == 1",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 1.0,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 157,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "model.ffn_hidden_size: integer",
+      "id": "dep-ab59c1731af1ff0a",
+      "participants": [
+        "model.ffn_hidden_size"
+      ],
+      "predicate": "model.ffn_hidden_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "parallel.tensor_model_parallel_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 55,
+          "source": "megatron/training/vocab_utils.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "parallel.tensor_model_parallel_size > 0",
+      "id": "dep-ad56457c1894b438",
+      "participants": [
+        "parallel.tensor_model_parallel_size"
+      ],
+      "predicate": "parallel.tensor_model_parallel_size > 0",
+      "relation": "range",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 512,
+          "source": "megatron/core/transformer/attention.py"
+        }
+      ],
+      "expression": "virtual_pipeline_model_parallel_size is None",
+      "id": "dep-af9aee77c46e9d1e",
+      "participants": [
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "predicate": "virtual_pipeline_model_parallel_size is None",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "moe.num_experts"
+      ],
+      "drivers": [
+        "parallel.expert_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1326,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "parallel.expert_model_parallel_size > 1 => moe.num_experts is not None",
+      "guard": "parallel.expert_model_parallel_size > 1",
+      "id": "dep-b110e71704ac5aff",
+      "participants": [
+        "moe.num_experts",
+        "parallel.expert_model_parallel_size"
+      ],
+      "predicate": "moe.num_experts is not None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "moe_layer_pattern"
+      ],
+      "drivers": [
+        "num_experts",
+        "model.num_layers"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 593,
+          "source": "megatron/training/training.py"
+        }
+      ],
+      "expression": "num_experts is not None => len(moe_layer_pattern) == model.num_layers",
+      "guard": "num_experts is not None",
+      "id": "dep-b1651ef2b2833c76",
+      "participants": [
+        "model.num_layers",
+        "num_experts",
+        "moe_layer_pattern"
+      ],
+      "predicate": "len(moe_layer_pattern) == model.num_layers",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "num_layers_at_start_in_bf16"
+      ],
+      "drivers": [
+        "first_last_layers_bf16",
+        "fp8",
+        "model.num_layers",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1270,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "fp8 and first_last_layers_bf16 => num_layers_at_start_in_bf16 <= model.num_layers // parallel.pipeline_model_parallel_size",
+      "guard": "fp8 and first_last_layers_bf16",
+      "id": "dep-b2a3436bb701d3c3",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "fp8",
+        "first_last_layers_bf16",
+        "num_layers_at_start_in_bf16",
+        "model.num_layers"
+      ],
+      "predicate": "num_layers_at_start_in_bf16 <= model.num_layers // parallel.pipeline_model_parallel_size",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 1.0,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 132,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "model.hidden_size: integer",
+      "id": "dep-b2ceb696865e12ee",
+      "participants": [
+        "model.hidden_size"
+      ],
+      "predicate": "model.hidden_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "parallel.sequence_parallel"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 50,
+          "source": "megatron/core/transformer/torch_norm.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=2; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=1; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "not parallel.sequence_parallel",
+      "id": "dep-b3a91c73c367b2ea",
+      "participants": [
+        "parallel.sequence_parallel"
+      ],
+      "predicate": "not parallel.sequence_parallel",
+      "relation": "other",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/training/config"
+      ],
+      "confidence": 1.0,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 12,
+          "source": "megatron/training/config/training_config.py"
+        }
+      ],
+      "expression": "training.micro_batch_size: integer",
+      "id": "dep-b522cdbb4833b794",
+      "participants": [
+        "training.micro_batch_size"
+      ],
+      "predicate": "training.micro_batch_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "training.recompute_granularity"
+      ],
+      "drivers": [
+        "recompute_num_layers"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1569,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "training.recompute_granularity is not None and (training.recompute_granularity == 'selective' or recompute_num_layers is not None) and (recompute_num_layers is not None) => training.recompute_granularity != 'selective'",
+      "guard": "training.recompute_granularity is not None and (training.recompute_granularity == 'selective' or recompute_num_layers is not None) and (recompute_num_layers is not None)",
+      "id": "dep-b7147049f6684650",
+      "participants": [
+        "training.recompute_granularity",
+        "recompute_num_layers"
+      ],
+      "predicate": "training.recompute_granularity != 'selective'",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 1.0,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 64,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "model.num_layers: integer",
+      "id": "dep-b7a0b65d314c6757",
+      "participants": [
+        "model.num_layers"
+      ],
+      "predicate": "model.num_layers: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [
+        "model_parallel.transformer_pipeline_model_parallel_size",
+        "num_layers_per_virtual_pipeline_stage"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 134,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "num_layers_per_virtual_pipeline_stage is not None => model.num_layers % model_parallel.transformer_pipeline_model_parallel_size == 0",
+      "guard": "num_layers_per_virtual_pipeline_stage is not None",
+      "id": "dep-b8a8a9b1dfecec4c",
+      "participants": [
+        "model.num_layers",
+        "num_layers_per_virtual_pipeline_stage",
+        "model_parallel.transformer_pipeline_model_parallel_size"
+      ],
+      "predicate": "model.num_layers % model_parallel.transformer_pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/models/hybrid"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [
+        "first_stage_layers",
+        "last_stage_layers",
+        "pp_size",
+        "segments"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 431,
+          "source": "megatron/core/models/hybrid/hybrid_layer_allocation.py"
+        }
+      ],
+      "expression": "len(segments) == 1 and pp_size > 1 and (first_stage_layers is None) and (last_stage_layers is None) => model.num_layers % pp_size == 0",
+      "guard": "len(segments) == 1 and pp_size > 1 and (first_stage_layers is None) and (last_stage_layers is None)",
+      "id": "dep-bc0f19143a1d9cd1",
+      "participants": [
+        "model.num_layers",
+        "pp_size",
+        "first_stage_layers",
+        "last_stage_layers",
+        "segments"
+      ],
+      "predicate": "model.num_layers % pp_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer",
+        "megatron/training"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "precision.bf16"
+      ],
+      "drivers": [
+        "precision.fp16"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1186,
+          "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1164,
+          "source": "megatron/training/arguments.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "precision.fp16 => not precision.bf16",
+      "guard": "precision.fp16",
+      "id": "dep-bcffaa7c8426524c",
+      "participants": [
+        "precision.bf16",
+        "precision.fp16"
+      ],
+      "predicate": "not precision.bf16",
+      "relation": "conflicts",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "confirmed"
+    },
+    {
+      "components": [
+        "megatron/core/transformer/moe"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "moe.num_experts"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 389,
+          "source": "megatron/core/transformer/moe/token_dispatcher.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "moe.num_experts is not None",
+      "id": "dep-bf2cad2ce5111c11",
+      "participants": [
+        "moe.num_experts"
+      ],
+      "predicate": "moe.num_experts is not None",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 452,
+          "source": "megatron/core/parallel_state.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "parallel.expert_model_parallel_size == 1 or parallel.context_parallel_size == 1",
+      "id": "dep-c08a30a01a8b5a64",
+      "participants": [
+        "parallel.context_parallel_size",
+        "parallel.expert_model_parallel_size"
+      ],
+      "predicate": "parallel.expert_model_parallel_size == 1 or parallel.context_parallel_size == 1",
+      "relation": "other",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 741,
+          "source": "megatron/core/parallel_state.py"
+        }
+      ],
+      "expression": "virtual_pipeline_model_parallel_size is not None => parallel.pipeline_model_parallel_size > 1",
+      "guard": "virtual_pipeline_model_parallel_size is not None",
+      "id": "dep-c23a19aff2130801",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size > 1",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "model.hidden_size"
+      ],
+      "drivers": [
+        "language_model.kv_channels",
+        "language_model.num_attention_heads"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 246,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "language_model.kv_channels is None => model.hidden_size % language_model.num_attention_heads == 0",
+      "guard": "language_model.kv_channels is None",
+      "id": "dep-c268b3706169bfe5",
+      "participants": [
+        "model.hidden_size",
+        "language_model.kv_channels",
+        "language_model.num_attention_heads"
+      ],
+      "predicate": "model.hidden_size % language_model.num_attention_heads == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [
+        "num_layers_per_virtual_pipeline_stage",
+        "num_virtual_stages_per_pipeline_rank",
+        "pipeline_model_parallel_layout",
+        "transformer_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 947,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and (num_layers_per_virtual_pipeline_stage is not None or num_virtual_stages_per_pipeline_rank is not None) and (num_virtual_stages_per_pipeline_rank is None) => model.num_layers % transformer_pipeline_model_parallel_size == 0",
+      "guard": "pipeline_model_parallel_layout is None and (num_layers_per_virtual_pipeline_stage is not None or num_virtual_stages_per_pipeline_rank is not None) and (num_virtual_stages_per_pipeline_rank is None)",
+      "id": "dep-c43ed6e0fb8fe86b",
+      "participants": [
+        "model.num_layers",
+        "pipeline_model_parallel_layout",
+        "num_virtual_stages_per_pipeline_rank",
+        "num_layers_per_virtual_pipeline_stage",
+        "transformer_pipeline_model_parallel_size"
+      ],
+      "predicate": "model.num_layers % transformer_pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "model.num_layers",
+        "pipeline_parallel_size"
+      ],
+      "drivers": [
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "pipeline_model_parallel_layout",
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1829,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and (num_layers_in_first_pipeline_stage is not None or num_layers_in_last_pipeline_stage is not None) and pipeline_parallel_size and (virtual_pipeline_model_parallel_size is not None) => model.num_layers // pipeline_parallel_size % virtual_pipeline_model_parallel_size == 0",
+      "guard": "pipeline_model_parallel_layout is None and (num_layers_in_first_pipeline_stage is not None or num_layers_in_last_pipeline_stage is not None) and pipeline_parallel_size and (virtual_pipeline_model_parallel_size is not None)",
+      "id": "dep-c594aa36b31875d9",
+      "participants": [
+        "virtual_pipeline_model_parallel_size",
+        "pipeline_parallel_size",
+        "pipeline_model_parallel_layout",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "model.num_layers"
+      ],
+      "predicate": "model.num_layers // pipeline_parallel_size % virtual_pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "cpu_offloading_num_layers",
+        "model.num_layers"
+      ],
+      "drivers": [
+        "cpu_offloading"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1527,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "cpu_offloading => cpu_offloading_num_layers >= 0 and cpu_offloading_num_layers < model.num_layers",
+      "guard": "cpu_offloading",
+      "id": "dep-c93c6380ad921209",
+      "participants": [
+        "model.num_layers",
+        "cpu_offloading",
+        "cpu_offloading_num_layers"
+      ],
+      "predicate": "cpu_offloading_num_layers >= 0 and cpu_offloading_num_layers < model.num_layers",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/models/hybrid"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 90,
+          "source": "megatron/core/models/hybrid/hybrid_layer_allocation.py"
+        }
+      ],
+      "expression": "model.num_layers > 0",
+      "id": "dep-c9565eb4049cd1b7",
+      "participants": [
+        "model.num_layers"
+      ],
+      "predicate": "model.num_layers > 0",
+      "relation": "range",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "training.recompute_granularity"
+      ],
+      "drivers": [
+        "distribute_saved_activations"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1359,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "distribute_saved_activations => training.recompute_granularity == 'full'",
+      "guard": "distribute_saved_activations",
+      "id": "dep-c984411a95598fc1",
+      "participants": [
+        "training.recompute_granularity",
+        "distribute_saved_activations"
+      ],
+      "predicate": "training.recompute_granularity == 'full'",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "linear_num_key_heads"
+      ],
+      "drivers": [
+        "parallel.context_parallel_size",
+        "experimental_attention_variant",
+        "parallel.tensor_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1247,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "experimental_attention_variant == 'gated_delta_net' => linear_num_key_heads % (parallel.tensor_model_parallel_size * parallel.context_parallel_size) == 0",
+      "guard": "experimental_attention_variant == 'gated_delta_net'",
+      "id": "dep-ca4c42358e166db4",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "experimental_attention_variant",
+        "linear_num_key_heads",
+        "parallel.context_parallel_size"
+      ],
+      "predicate": "linear_num_key_heads % (parallel.tensor_model_parallel_size * parallel.context_parallel_size) == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1210,
+          "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "consistent_valid=3; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "model.num_query_groups % parallel.tensor_model_parallel_size == 0 or parallel.tensor_model_parallel_size % model.num_query_groups == 0",
+      "id": "dep-cb319a7900c735ab",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "model.num_query_groups"
+      ],
+      "predicate": "model.num_query_groups % parallel.tensor_model_parallel_size == 0 or parallel.tensor_model_parallel_size % model.num_query_groups == 0",
+      "relation": "other",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "training.recompute_granularity"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema Literal annotation",
+          "kind": "static",
+          "line": 472,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "training.recompute_granularity in {\"full\", \"selective\"}",
+      "id": "dep-ccf0355272f86e2f",
+      "participants": [
+        "training.recompute_granularity"
+      ],
+      "predicate": "training.recompute_granularity in {\"full\", \"selective\"}",
+      "relation": "enum",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 135,
+          "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "consistent_valid=3; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "model.num_attention_heads: integer",
+      "id": "dep-cddb54456c2e43b5",
+      "participants": [
+        "model.num_attention_heads"
+      ],
+      "predicate": "model.num_attention_heads: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.tensor_model_parallel_size"
+      ],
+      "drivers": [
+        "distribute_saved_activations"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1356,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "distribute_saved_activations => parallel.tensor_model_parallel_size > 1",
+      "guard": "distribute_saved_activations",
+      "id": "dep-ce06060ba7936c80",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "distribute_saved_activations"
+      ],
+      "predicate": "parallel.tensor_model_parallel_size > 1",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "precision.fp16"
+      ],
+      "drivers": [
+        "use_torch_fsdp2"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1025,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "use_torch_fsdp2 => not precision.fp16",
+      "guard": "use_torch_fsdp2",
+      "id": "dep-d2ed7bc92335453e",
+      "participants": [
+        "precision.fp16",
+        "use_torch_fsdp2"
+      ],
+      "predicate": "not precision.fp16",
+      "relation": "conflicts",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "parallel.expert_model_parallel_size"
+      ],
+      "drivers": [
+        "moe.num_experts"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1326,
+          "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "moe.num_experts is None => parallel.expert_model_parallel_size <= 1",
+      "guard": "moe.num_experts is None",
+      "id": "dep-d512be374d38e0f6",
+      "participants": [
+        "parallel.expert_model_parallel_size",
+        "moe.num_experts"
+      ],
+      "predicate": "parallel.expert_model_parallel_size <= 1",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "moe.num_experts"
+      ],
+      "drivers": [
+        "moe_router_group_topk",
+        "moe_router_num_groups"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 2125,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "moe_router_group_topk and moe_router_num_groups => moe.num_experts % moe_router_num_groups == 0",
+      "guard": "moe_router_group_topk and moe_router_num_groups",
+      "id": "dep-d97dfde026330c9e",
+      "participants": [
+        "moe.num_experts",
+        "moe_router_group_topk",
+        "moe_router_num_groups"
+      ],
+      "predicate": "moe.num_experts % moe_router_num_groups == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "precision.bf16",
+        "precision.fp16"
+      ],
+      "drivers": [
+        "fp32_residual_connection"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1320,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "fp32_residual_connection => precision.fp16 or precision.bf16",
+      "guard": "fp32_residual_connection",
+      "id": "dep-da03fd1ed2afb4f1",
+      "participants": [
+        "precision.fp16",
+        "fp32_residual_connection",
+        "precision.bf16"
+      ],
+      "predicate": "precision.fp16 or precision.bf16",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training",
+        "megatron/training/datasets"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "training.micro_batch_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 692,
+          "source": "megatron/training/arguments.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 146,
+          "source": "megatron/training/datasets/data_samplers.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 345,
+          "source": "megatron/training/datasets/data_samplers.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 105,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "training.micro_batch_size > 0",
+      "id": "dep-da4bc0e4641534b6",
+      "participants": [
+        "training.micro_batch_size"
+      ],
+      "predicate": "training.micro_batch_size > 0",
+      "relation": "range",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "cpu_offloading"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1534,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "cpu_offloading => parallel.pipeline_model_parallel_size <= 1",
+      "guard": "cpu_offloading",
+      "id": "dep-dca53159185db651",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "cpu_offloading"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size <= 1",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "training.recompute_granularity"
+      ],
+      "drivers": [
+        "moe_layer_recompute"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1650,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "moe_layer_recompute => training.recompute_granularity != 'full'",
+      "guard": "moe_layer_recompute",
+      "id": "dep-e0ea489f204f7405",
+      "participants": [
+        "training.recompute_granularity",
+        "moe_layer_recompute"
+      ],
+      "predicate": "training.recompute_granularity != 'full'",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "running_global_batch_size"
+      ],
+      "drivers": [
+        "data_parallel_size",
+        "decrease_batch_size_if_needed",
+        "training.micro_batch_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 372,
+          "source": "megatron/core/num_microbatches_calculator.py"
+        }
+      ],
+      "expression": "decrease_batch_size_if_needed => running_global_batch_size % (training.micro_batch_size * data_parallel_size) == 0",
+      "guard": "decrease_batch_size_if_needed",
+      "id": "dep-e0ee658d3bd13b97",
+      "participants": [
+        "training.micro_batch_size",
+        "decrease_batch_size_if_needed",
+        "running_global_batch_size",
+        "data_parallel_size"
+      ],
+      "predicate": "running_global_batch_size % (training.micro_batch_size * data_parallel_size) == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/tensor_parallel"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.sequence_parallel"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 162,
+          "source": "megatron/core/tensor_parallel/inference_layers.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 289,
+          "source": "megatron/core/tensor_parallel/inference_layers.py"
+        },
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 384,
+          "source": "megatron/core/tensor_parallel/inference_layers.py"
+        }
+      ],
+      "expression": "self.tp_size > 1 => parallel.sequence_parallel",
+      "guard": "self.tp_size > 1",
+      "id": "dep-e12060ffa4060d1f",
+      "participants": [
+        "parallel.sequence_parallel"
+      ],
+      "predicate": "parallel.sequence_parallel",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/optimizer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "use_distributed_optimizer"
+      ],
+      "drivers": [
+        "use_precision_aware_optimizer"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 428,
+          "source": "megatron/core/optimizer/optimizer_config.py"
+        }
+      ],
+      "expression": "use_precision_aware_optimizer => use_distributed_optimizer",
+      "guard": "use_precision_aware_optimizer",
+      "id": "dep-e1fe84b835969df3",
+      "participants": [
+        "use_distributed_optimizer",
+        "use_precision_aware_optimizer"
+      ],
+      "predicate": "use_distributed_optimizer",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "language_model.hidden_size"
+      ],
+      "drivers": [
+        "language_model.kv_channels",
+        "model.num_attention_heads"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 246,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "language_model.kv_channels is None => language_model.hidden_size % model.num_attention_heads == 0",
+      "guard": "language_model.kv_channels is None",
+      "id": "dep-e2848b6814dc4797",
+      "participants": [
+        "model.num_attention_heads",
+        "language_model.hidden_size",
+        "language_model.kv_channels"
+      ],
+      "predicate": "language_model.hidden_size % model.num_attention_heads == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "pipeline_model_parallel_layout",
+        "pipeline_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1819,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and (num_layers_in_first_pipeline_stage is not None or num_layers_in_last_pipeline_stage is not None) and pipeline_parallel_size => model.num_layers % pipeline_parallel_size == 0",
+      "guard": "pipeline_model_parallel_layout is None and (num_layers_in_first_pipeline_stage is not None or num_layers_in_last_pipeline_stage is not None) and pipeline_parallel_size",
+      "id": "dep-e38d565379d0cacd",
+      "participants": [
+        "model.num_layers",
+        "pipeline_parallel_size",
+        "pipeline_model_parallel_layout",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage"
+      ],
+      "predicate": "model.num_layers % pipeline_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "overlap_param_gather_with_optimizer_step"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1050,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "overlap_param_gather_with_optimizer_step => virtual_pipeline_model_parallel_size is not None",
+      "guard": "overlap_param_gather_with_optimizer_step",
+      "id": "dep-e9a57408c1aa0bcf",
+      "participants": [
+        "virtual_pipeline_model_parallel_size",
+        "overlap_param_gather_with_optimizer_step"
+      ],
+      "predicate": "virtual_pipeline_model_parallel_size is not None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "args.world_size"
+      ],
+      "drivers": [
+        "parallel.tensor_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 53,
+          "source": "megatron/training/yaml_arguments.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "args.world_size % parallel.tensor_model_parallel_size == 0",
+      "id": "dep-e9e70edc51d724b7",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "args.world_size"
+      ],
+      "predicate": "args.world_size % parallel.tensor_model_parallel_size == 0",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "parallel.context_parallel_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 57,
+          "source": "megatron/core/transformer/dot_product_attention.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "parallel.context_parallel_size == 1",
+      "id": "dep-ebb50d0b2b7a38c7",
+      "participants": [
+        "parallel.context_parallel_size"
+      ],
+      "predicate": "parallel.context_parallel_size == 1",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "parallel.tensor_model_parallel_size"
+      ],
+      "drivers": [
+        "ckpt_format"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1500,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "ckpt_format == 'torch_dcp' => parallel.tensor_model_parallel_size <= 1",
+      "guard": "ckpt_format == 'torch_dcp'",
+      "id": "dep-ecfe8233ac95657f",
+      "participants": [
+        "parallel.tensor_model_parallel_size",
+        "ckpt_format"
+      ],
+      "predicate": "parallel.tensor_model_parallel_size <= 1",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 1.0,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 31,
+          "source": "megatron/core/model_parallel_config.py"
+        }
+      ],
+      "expression": "virtual_pipeline_model_parallel_size: integer",
+      "id": "dep-ed86981140790ecb",
+      "participants": [
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "predicate": "virtual_pipeline_model_parallel_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [
+        "decoder_first_pipeline_num_layers",
+        "decoder_last_pipeline_num_layers",
+        "hybrid_layer_pattern",
+        "num_layers_per_virtual_pipeline_stage",
+        "num_virtual_stages_per_pipeline_rank",
+        "pipeline_model_parallel_layout",
+        "transformer_pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 976,
+          "source": "megatron/training/arguments.py"
+        }
+      ],
+      "expression": "pipeline_model_parallel_layout is None and num_layers_per_virtual_pipeline_stage is None and (num_virtual_stages_per_pipeline_rank is None) and (decoder_first_pipeline_num_layers is None) and (decoder_last_pipeline_num_layers is None) and (model.num_layers is not None) and (hybrid_layer_pattern is None) => model.num_layers % transformer_pipeline_model_parallel_size == 0",
+      "guard": "pipeline_model_parallel_layout is None and num_layers_per_virtual_pipeline_stage is None and (num_virtual_stages_per_pipeline_rank is None) and (decoder_first_pipeline_num_layers is None) and (decoder_last_pipeline_num_layers is None) and (model.num_layers is not None) and (hybrid_layer_pattern is None)",
+      "id": "dep-f20dc35e85279462",
+      "participants": [
+        "model.num_layers",
+        "pipeline_model_parallel_layout",
+        "num_layers_per_virtual_pipeline_stage",
+        "num_virtual_stages_per_pipeline_rank",
+        "decoder_first_pipeline_num_layers",
+        "decoder_last_pipeline_num_layers",
+        "hybrid_layer_pattern",
+        "transformer_pipeline_model_parallel_size"
+      ],
+      "predicate": "model.num_layers % transformer_pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "overlap_moe_expert_parallel_comm",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 2405,
+          "source": "megatron/core/transformer/transformer_config.py"
+        }
+      ],
+      "expression": "overlap_moe_expert_parallel_comm and parallel.pipeline_model_parallel_size > 1 => virtual_pipeline_model_parallel_size is not None",
+      "guard": "overlap_moe_expert_parallel_comm and parallel.pipeline_model_parallel_size > 1",
+      "id": "dep-f2cc3f1e1cbbf474",
+      "participants": [
+        "virtual_pipeline_model_parallel_size",
+        "overlap_moe_expert_parallel_comm",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "predicate": "virtual_pipeline_model_parallel_size is not None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core",
+        "megatron/core/optimizer"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 104,
+          "source": "megatron/core/model_parallel_config.py"
+        },
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 177,
+          "source": "megatron/core/optimizer/optimizer_config.py"
+        },
+        {
+          "detail": "consistent_valid=4; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "precision.bf16: boolean",
+      "id": "dep-f356b4161a92a77f",
+      "participants": [
+        "precision.bf16"
+      ],
+      "predicate": "precision.bf16: boolean",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "megatron/core"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 28,
+          "source": "megatron/core/model_parallel_config.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "parallel.pipeline_model_parallel_size: integer",
+      "id": "dep-f3ab69bed5074b14",
+      "participants": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "predicate": "parallel.pipeline_model_parallel_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "moe.num_experts"
+      ],
+      "drivers": [
+        "model_parallel.expert_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 336,
+          "source": "megatron/training/yaml_arguments.py"
+        }
+      ],
+      "expression": "model_parallel.expert_model_parallel_size > 1 => moe.num_experts % model_parallel.expert_model_parallel_size == 0",
+      "guard": "model_parallel.expert_model_parallel_size > 1",
+      "id": "dep-f662b7f44f5f8545",
+      "participants": [
+        "moe.num_experts",
+        "model_parallel.expert_model_parallel_size"
+      ],
+      "predicate": "moe.num_experts % model_parallel.expert_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "execution_stage": "training",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer/moe"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "model.ffn_hidden_size"
+      ],
+      "drivers": [
+        "moe_ffn_hidden_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 86,
+          "source": "megatron/core/transformer/moe/upcycling_utils.py"
+        }
+      ],
+      "expression": "model.ffn_hidden_size % moe_ffn_hidden_size == 0",
+      "id": "dep-f735ec8d4f7ffa16",
+      "participants": [
+        "model.ffn_hidden_size",
+        "moe_ffn_hidden_size"
+      ],
+      "predicate": "model.ffn_hidden_size % moe_ffn_hidden_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "layout"
+      ],
+      "drivers": [
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 40,
+          "source": "megatron/core/transformer/pipeline_parallel_layer_layout.py"
+        }
+      ],
+      "expression": "len(layout) % parallel.pipeline_model_parallel_size == 0",
+      "id": "dep-f873310d580d7a6e",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "layout"
+      ],
+      "predicate": "len(layout) % parallel.pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/transformer"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "model.num_layers"
+      ],
+      "drivers": [
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 149,
+          "source": "megatron/core/transformer/transformer_block.py"
+        }
+      ],
+      "expression": "num_layers_in_first_pipeline_stage is None and num_layers_in_last_pipeline_stage is None => model.num_layers % parallel.pipeline_model_parallel_size == 0",
+      "guard": "num_layers_in_first_pipeline_stage is None and num_layers_in_last_pipeline_stage is None",
+      "id": "dep-fac6fd6a177d141b",
+      "participants": [
+        "parallel.pipeline_model_parallel_size",
+        "num_layers_in_first_pipeline_stage",
+        "num_layers_in_last_pipeline_stage",
+        "model.num_layers"
+      ],
+      "predicate": "model.num_layers % parallel.pipeline_model_parallel_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/post_training"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "virtual_pipeline_model_parallel_size"
+      ],
+      "drivers": [
+        "export_kd_teacher_load",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 360,
+          "source": "megatron/post_training/model_builder.py"
+        }
+      ],
+      "expression": "export_kd_teacher_load and parallel.pipeline_model_parallel_size > 1 => virtual_pipeline_model_parallel_size is None",
+      "guard": "export_kd_teacher_load and parallel.pipeline_model_parallel_size > 1",
+      "id": "dep-fcf334684e11e14c",
+      "participants": [
+        "virtual_pipeline_model_parallel_size",
+        "export_kd_teacher_load",
+        "parallel.pipeline_model_parallel_size"
+      ],
+      "predicate": "virtual_pipeline_model_parallel_size is None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "megatron/core/models/hybrid"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "first_stage_layers",
+        "last_stage_layers",
+        "model.num_layers"
+      ],
+      "drivers": [
+        "middle_stages",
+        "pp_size",
+        "segments"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 408,
+          "source": "megatron/core/models/hybrid/hybrid_layer_allocation.py"
+        }
+      ],
+      "expression": "len(segments) == 1 and pp_size > 1 and (first_stage_layers is not None or last_stage_layers is not None) and (middle_stages > 0) => (model.num_layers - (first_stage_layers or 0) - (last_stage_layers or 0)) % middle_stages == 0",
+      "guard": "len(segments) == 1 and pp_size > 1 and (first_stage_layers is not None or last_stage_layers is not None) and (middle_stages > 0)",
+      "id": "dep-fefe4baee89d4310",
+      "participants": [
+        "model.num_layers",
+        "pp_size",
+        "middle_stages",
+        "segments",
+        "first_stage_layers",
+        "last_stage_layers"
+      ],
+      "predicate": "(model.num_layers - (first_stage_layers or 0) - (last_stage_layers or 0)) % middle_stages == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "Megatron-Core",
+        "framework_profile": "megatron-core",
+        "source_subdir": "megatron",
+        "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
+      },
+      "status": "static_candidate"
+    }
+  ],
+  "metadata": {
+    "framework_id": "megatron-core",
+    "validation_state": "rq1_feedback_applied",
+    "workload_id": "qwen2-train"
+  },
+  "nodes": [
+    {
+      "kind": "feature",
+      "name": "account_for_embedding_in_pipeline_split"
+    },
+    {
+      "kind": "feature",
+      "name": "account_for_loss_in_pipeline_split"
+    },
+    {
+      "kind": "environment",
+      "name": "args.world_size"
+    },
+    {
+      "kind": "derived",
+      "name": "attention_config_dict"
+    },
+    {
+      "kind": "derived",
+      "name": "ckpt_format"
+    },
+    {
+      "kind": "feature",
+      "name": "cpu_offloading"
+    },
+    {
+      "kind": "derived",
+      "name": "cpu_offloading_num_layers"
+    },
+    {
+      "kind": "derived",
+      "name": "data_parallel_size"
+    },
+    {
+      "kind": "derived",
+      "name": "decoder_first_pipeline_num_layers"
+    },
+    {
+      "kind": "derived",
+      "name": "decoder_last_pipeline_num_layers"
+    },
+    {
+      "kind": "feature",
+      "name": "decrease_batch_size_if_needed"
+    },
+    {
+      "kind": "feature",
+      "name": "defer_embedding_wgrad_compute"
+    },
+    {
+      "kind": "feature",
+      "name": "distribute_saved_activations"
+    },
+    {
+      "kind": "derived",
+      "name": "emb_int"
+    },
+    {
+      "kind": "derived",
+      "name": "ep_size"
+    },
+    {
+      "kind": "derived",
+      "name": "experimental_attention_variant"
+    },
+    {
+      "kind": "derived",
+      "name": "expert_tensor_parallel_size"
+    },
+    {
+      "kind": "feature",
+      "name": "export_kd_teacher_load"
+    },
+    {
+      "kind": "feature",
+      "name": "first_last_layers_bf16"
+    },
+    {
+      "kind": "derived",
+      "name": "first_stage_layers"
+    },
+    {
+      "kind": "feature",
+      "name": "force_initialize"
+    },
+    {
+      "kind": "feature",
+      "name": "fp32_residual_connection"
+    },
+    {
+      "kind": "feature",
+      "name": "fp8"
+    },
+    {
+      "kind": "derived",
+      "name": "hybrid_layer_pattern"
+    },
+    {
+      "kind": "derived",
+      "name": "inference_batch_times_seqlen_threshold"
+    },
+    {
+      "kind": "derived",
+      "name": "inference_context"
+    },
+    {
+      "kind": "feature",
+      "name": "inference_fuse_tp_communication"
+    },
+    {
+      "kind": "derived",
+      "name": "kv_channels"
+    },
+    {
+      "kind": "parameter",
+      "name": "language_model.hidden_size"
+    },
+    {
+      "kind": "derived",
+      "name": "language_model.kv_channels"
+    },
+    {
+      "kind": "parameter",
+      "name": "language_model.num_attention_heads"
+    },
+    {
+      "kind": "parameter",
+      "name": "language_model.num_moe_experts"
+    },
+    {
+      "kind": "derived",
+      "name": "last_stage_layers"
+    },
+    {
+      "kind": "derived",
+      "name": "layout"
+    },
+    {
+      "kind": "derived",
+      "name": "linear_num_key_heads"
+    },
+    {
+      "kind": "derived",
+      "name": "linear_num_value_heads"
+    },
+    {
+      "kind": "derived",
+      "name": "middle_stages"
+    },
+    {
+      "kind": "parameter",
+      "name": "model.ffn_hidden_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "model.hidden_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "model.num_attention_heads"
+    },
+    {
+      "kind": "parameter",
+      "name": "model.num_layers"
+    },
+    {
+      "kind": "parameter",
+      "name": "model.num_query_groups"
+    },
+    {
+      "kind": "parameter",
+      "name": "model_parallel.expert_model_parallel_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "model_parallel.tensor_model_parallel_size"
+    },
+    {
+      "kind": "derived",
+      "name": "model_parallel.transformer_pipeline_model_parallel_size"
+    },
+    {
+      "kind": "derived",
+      "name": "model_parallel_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "moe.num_experts"
+    },
+    {
+      "kind": "derived",
+      "name": "moe_ffn_hidden_size"
+    },
+    {
+      "kind": "derived",
+      "name": "moe_layer_pattern"
+    },
+    {
+      "kind": "feature",
+      "name": "moe_layer_recompute"
+    },
+    {
+      "kind": "feature",
+      "name": "moe_router_group_topk"
+    },
+    {
+      "kind": "feature",
+      "name": "moe_router_num_groups"
+    },
+    {
+      "kind": "derived",
+      "name": "n_heads_in_group"
+    },
+    {
+      "kind": "derived",
+      "name": "num_dense_layers"
+    },
+    {
+      "kind": "derived",
+      "name": "num_distributed_optimizer_instances"
+    },
+    {
+      "kind": "derived",
+      "name": "num_experts"
+    },
+    {
+      "kind": "derived",
+      "name": "num_generated_samples_per_inference_iteration"
+    },
+    {
+      "kind": "derived",
+      "name": "num_layers_at_end_in_bf16"
+    },
+    {
+      "kind": "derived",
+      "name": "num_layers_at_start_in_bf16"
+    },
+    {
+      "kind": "derived",
+      "name": "num_layers_in_first_pipeline_stage"
+    },
+    {
+      "kind": "derived",
+      "name": "num_layers_in_last_pipeline_stage"
+    },
+    {
+      "kind": "derived",
+      "name": "num_layers_per_pipeline_rank"
+    },
+    {
+      "kind": "derived",
+      "name": "num_layers_per_virtual_pipeline_stage"
+    },
+    {
+      "kind": "derived",
+      "name": "num_moe_layers"
+    },
+    {
+      "kind": "derived",
+      "name": "num_stages"
+    },
+    {
+      "kind": "derived",
+      "name": "num_virtual_stages_per_pipeline_rank"
+    },
+    {
+      "kind": "derived",
+      "name": "optimizer"
+    },
+    {
+      "kind": "feature",
+      "name": "overlap_moe_expert_parallel_comm"
+    },
+    {
+      "kind": "feature",
+      "name": "overlap_p2p_comm"
+    },
+    {
+      "kind": "feature",
+      "name": "overlap_param_gather"
+    },
+    {
+      "kind": "feature",
+      "name": "overlap_param_gather_with_optimizer_step"
+    },
+    {
+      "kind": "parameter",
+      "name": "parallel.context_parallel_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "parallel.expert_model_parallel_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "parallel.pipeline_model_parallel_size"
+    },
+    {
+      "kind": "feature",
+      "name": "parallel.sequence_parallel"
+    },
+    {
+      "kind": "parameter",
+      "name": "parallel.tensor_model_parallel_size"
+    },
+    {
+      "kind": "feature",
+      "name": "perform_rl_step"
+    },
+    {
+      "kind": "derived",
+      "name": "pipeline_model_parallel_layout"
+    },
+    {
+      "kind": "feature",
+      "name": "pipeline_parallel_size"
+    },
+    {
+      "kind": "derived",
+      "name": "pp_size"
+    },
+    {
+      "kind": "feature",
+      "name": "precision.bf16"
+    },
+    {
+      "kind": "feature",
+      "name": "precision.fp16"
+    },
+    {
+      "kind": "derived",
+      "name": "recompute_method"
+    },
+    {
+      "kind": "derived",
+      "name": "recompute_num_layers"
+    },
+    {
+      "kind": "feature",
+      "name": "rl_use_sequence_packing"
+    },
+    {
+      "kind": "derived",
+      "name": "running_global_batch_size"
+    },
+    {
+      "kind": "derived",
+      "name": "segments"
+    },
+    {
+      "kind": "derived",
+      "name": "seq_length"
+    },
+    {
+      "kind": "derived",
+      "name": "step_batch_size_schedule"
+    },
+    {
+      "kind": "feature",
+      "name": "tp_comm_overlap"
+    },
+    {
+      "kind": "parameter",
+      "name": "training.global_batch_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "training.micro_batch_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "training.recompute_granularity"
+    },
+    {
+      "kind": "derived",
+      "name": "transformer_pipeline_model_parallel_size"
+    },
+    {
+      "kind": "feature",
+      "name": "use_distributed_optimizer"
+    },
+    {
+      "kind": "feature",
+      "name": "use_megatron_fsdp"
+    },
+    {
+      "kind": "feature",
+      "name": "use_precision_aware_optimizer"
+    },
+    {
+      "kind": "feature",
+      "name": "use_torch_fsdp2"
+    },
+    {
+      "kind": "parameter",
+      "name": "virtual_pipeline_model_parallel_size"
+    },
+    {
+      "kind": "environment",
+      "name": "world_size"
+    }
+  ],
+  "schema_version": 1,
+  "summary": {
+    "connected_components": 2,
+    "edges": 139,
+    "node_kinds": {
+      "derived": 49,
+      "environment": 2,
+      "feature": 30,
+      "parameter": 19
+    },
+    "nodes": 100,
+    "relations": {
+      "bound": 13,
+      "conflicts": 9,
+      "divisibility": 35,
+      "enum": 2,
+      "environment": 7,
+      "equality": 23,
+      "other": 5,
+      "range": 5,
+      "requires": 17,
+      "type": 23
+    },
+    "statuses": {
+      "confirmed": 4,
+      "dynamically_supported": 11,
+      "environment_specific": 7,
+      "scope_disputed": 2,
+      "static_candidate": 115
+    }
+  }
+}

@@ -12,4 +12,6 @@ export CUDA_VISIBLE_DEVICES="$GPUS"
 export CUDA_DEVICE_MAX_CONNECTIONS=${CUDA_DEVICE_MAX_CONNECTIONS:-1}
 export PYTHONPATH="$MEGATRON_ROOT:$REPO_ROOT/experiments/gpu${PYTHONPATH:+:$PYTHONPATH}"
 export PYTHONUNBUFFERED=1
-exec "$PYTHON" -m torch.distributed.run --nnodes=1 --nproc-per-node="$NPROC" --master-addr=127.0.0.1 --master-port="$MASTER_PORT" "$REPO_ROOT/experiments/gpu/rq2_megatron_runner.py" --config "$1"
+EXTRA=()
+[[ ${CONFIGFUZZ_RQ2_SKIP_CHECKPOINT:-0} == 1 ]] && EXTRA+=(--skip-checkpoint)
+exec "$PYTHON" -m torch.distributed.run --nnodes=1 --nproc-per-node="$NPROC" --master-addr=127.0.0.1 --master-port="$MASTER_PORT" "$REPO_ROOT/experiments/gpu/rq2_megatron_runner.py" --config "$1" "${EXTRA[@]}"

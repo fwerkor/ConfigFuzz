@@ -64,6 +64,9 @@ def test_builds_deduplicated_divisibility_hyperedge() -> None:
     assert graph.affected_parameters("tensor_model_parallel_size") == (
         "num_attention_heads",
     )
+    assert graph.affected_hypergraph_region("num_attention_heads") == (
+        "tensor_model_parallel_size",
+    )
 
 
 def test_conditional_dependency_has_direction_and_feature_node() -> None:

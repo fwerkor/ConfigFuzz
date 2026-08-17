@@ -1,12 +1,19 @@
 from __future__ import annotations
 
 import copy
+import re
 from dataclasses import replace
 from pathlib import Path
 from typing import Any, Mapping
 
 from configfuzz.corpus import ConstraintCorpus, RuleStatus, load_corpus
-from configfuzz.dependencies import DependencyGraph, DependencyStatus
+from configfuzz.dependencies import (
+    DependencyEdge,
+    DependencyGraph,
+    DependencyNode,
+    DependencyNodeKind,
+    DependencyStatus,
+)
 from configfuzz.model import Constraint, ConstraintSet, Evidence, EvidenceKind
 
 
@@ -101,6 +108,73 @@ def materialize_effective_campaign_baseline_from_paths(
     if not isinstance(candidate, Mapping):
         raise ValueError("candidate workload root must be an object")
     return materialize_effective_campaign_baseline(candidate, load_corpus(corpus_path))
+
+
+def rename_dependency_graph_parameters(
+    graph: DependencyGraph,
+    aliases: Mapping[str, str],
+    *,
+    edge_id_prefix: str | None = None,
+    metadata: Mapping[str, Any] | None = None,
+) -> DependencyGraph:
+    """Rename source-native graph parameters into the canonical workload schema."""
+
+    normalized_aliases = {str(key): str(value) for key, value in aliases.items()}
+    nodes: dict[str, DependencyNode] = {}
+    for node in graph.nodes.values():
+        name = normalized_aliases.get(node.name, node.name)
+        existing = nodes.get(name)
+        if existing is None:
+            nodes[name] = DependencyNode(name=name, kind=node.kind)
+
+    edges: dict[str, DependencyEdge] = {}
+    for edge in graph.edges.values():
+        edge_id = f"{edge_id_prefix}:{edge.id}" if edge_id_prefix else edge.id
+        renamed = replace(
+            edge,
+            id=edge_id,
+            expression=_rename_expression(edge.expression, normalized_aliases),
+            predicate=_rename_expression(edge.predicate, normalized_aliases),
+            guard=(
+                _rename_expression(edge.guard, normalized_aliases)
+                if edge.guard is not None
+                else None
+            ),
+            participants=tuple(normalized_aliases.get(name, name) for name in edge.participants),
+            drivers=tuple(normalized_aliases.get(name, name) for name in edge.drivers),
+            dependents=tuple(normalized_aliases.get(name, name) for name in edge.dependents),
+        )
+        edges[renamed.id] = renamed
+        for name in renamed.participants:
+            nodes.setdefault(name, DependencyNode(name=name, kind=DependencyNodeKind.PARAMETER))
+
+    return DependencyGraph(
+        nodes=nodes,
+        edges=edges,
+        metadata={**graph.metadata, **dict(metadata or {})},
+    )
+
+
+def merge_dependency_graphs(
+    *graphs: DependencyGraph,
+    metadata: Mapping[str, Any] | None = None,
+) -> DependencyGraph:
+    merged = DependencyGraph(metadata=dict(metadata or {}))
+    for graph in graphs:
+        for node in graph.nodes.values():
+            merged.nodes.setdefault(node.name, node)
+        for edge in graph.edges.values():
+            merged.add_edge(edge)
+    return merged
+
+
+def _rename_expression(expression: str, aliases: Mapping[str, str]) -> str:
+    result = expression
+    for source in sorted(aliases, key=len, reverse=True):
+        target = aliases[source]
+        pattern = rf"(?<![A-Za-z0-9_.]){re.escape(source)}(?![A-Za-z0-9_])"
+        result = re.sub(pattern, target, result)
+    return result
 
 
 def _set_nested(root: dict[str, Any], path: str, value: Any) -> None:

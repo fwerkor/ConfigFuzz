@@ -306,17 +306,18 @@ def _plan_case(
     if graph_target not in graph.nodes:
         return CampaignCase(
             **common,
-            status=CampaignCaseStatus.UNKNOWN,
+            status=CampaignCaseStatus.READY,
             assignments=target_assignment,
             coordinated_parameters=(),
             target_value_preserved=True,
-            preflight="manual_constraints",
+            preflight="no_applicable_recovered_constraint",
             unknown_constraints=(),
             metadata={
-                "reason": "target parameter absent from dependency graph",
+                "reason": "target parameter absent from dependency graph; preserve the requested mutation unchanged",
                 "resolved_target_parameter": graph_target,
                 "baseline_value": intent.metadata.get("baseline_value"),
                 "intent_class": intent.intent_class,
+                "repair_scope": "empty_affected_region",
             },
         )
     if method is ExperimentMethod.CONSTRAINT_FILTER_ONLY:
@@ -324,7 +325,7 @@ def _plan_case(
         context[graph_target] = intent.target_value
         violated: list[str] = []
         unknown: list[str] = []
-        for edge in sorted(graph.edges.values(), key=lambda item: item.id):
+        for edge in sorted(graph.constraints_for(graph_target), key=lambda item: item.id):
             if not edge_scope_matches(edge, context):
                 continue
             evaluation = graph.evaluate_edge(edge, context)
@@ -365,13 +366,17 @@ def _plan_case(
             if node.kind in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
         )
     solver_started = time.perf_counter()
+    semantic_anchors = tuple(
+        graph_target if name == "target_parameter" else name
+        for name in workload.semantic_anchors
+    )
     plan = solve_graph_mutation(
         graph,
         baseline,
         graph_target,
         intent.target_value,
         static_as_hard=(method is ExperimentMethod.STATIC_HARD_CONFIGFUZZ),
-        semantic_anchors=workload.semantic_anchors,
+        semantic_anchors=semantic_anchors,
         mutable_parameters=all_mutable,
         timeout_ms=solver_timeout_ms,
     )

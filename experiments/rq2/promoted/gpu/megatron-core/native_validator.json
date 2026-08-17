@@ -1,0 +1,7 @@
+{
+  "framework_id": "megatron-core",
+  "launcher": "../../../../gpu/launch_rq2_megatron.sh",
+  "mode": "embedded_framework_runtime",
+  "qualification_milestone": "checkpoint_save_load",
+  "schema_version": 1
+}

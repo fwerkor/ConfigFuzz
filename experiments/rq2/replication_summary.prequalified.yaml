@@ -2,7 +2,7 @@ schema_version: 1
 name: rq2-prequalified-replication-summary
 source_intents: intents.prequalified.frozen.yaml
 source_matrix: framework_workload_matrix.yaml
-total_record_count: 61272
+total_record_count: 58560
 subjects:
 - framework_id: deepspeed
   supported_workloads:
@@ -15,18 +15,18 @@ subjects:
   - qwen2-train
   summary:
     method_counts:
-      configfuzz: 1878
-      constraint_filter_only: 1878
-      global_repair: 1878
-      native_validator_guided: 1878
-      raw_mutation: 1878
-      static_hard_configfuzz: 1878
+      configfuzz: 1802
+      constraint_filter_only: 1802
+      global_repair: 1802
+      native_validator_guided: 1802
+      raw_mutation: 1802
+      static_hard_configfuzz: 1802
     primary_intent_count: 1050
-    record_count: 11268
+    record_count: 10812
     role_counts:
       primary: 6300
-      seed_sensitivity: 4968
-    sensitivity_intent_count: 207
+      seed_sensitivity: 4512
+    sensitivity_intent_count: 188
 - framework_id: megatron-core
   supported_workloads:
   - llama2-train
@@ -34,18 +34,18 @@ subjects:
   - qwen2-train
   summary:
     method_counts:
-      configfuzz: 822
-      constraint_filter_only: 822
-      global_repair: 822
-      native_validator_guided: 822
-      raw_mutation: 822
-      static_hard_configfuzz: 822
+      configfuzz: 750
+      constraint_filter_only: 750
+      global_repair: 750
+      native_validator_guided: 750
+      raw_mutation: 750
+      static_hard_configfuzz: 750
     primary_intent_count: 450
-    record_count: 4932
+    record_count: 4500
     role_counts:
       primary: 2700
-      seed_sensitivity: 2232
-    sensitivity_intent_count: 93
+      seed_sensitivity: 1800
+    sensitivity_intent_count: 75
 - framework_id: msa
   supported_workloads:
   - chatglm3-train
@@ -57,18 +57,18 @@ subjects:
   - qwen2-train
   summary:
     method_counts:
-      configfuzz: 1878
-      constraint_filter_only: 1878
-      global_repair: 1878
-      native_validator_guided: 1878
-      raw_mutation: 1878
-      static_hard_configfuzz: 1878
+      configfuzz: 1802
+      constraint_filter_only: 1802
+      global_repair: 1802
+      native_validator_guided: 1802
+      raw_mutation: 1802
+      static_hard_configfuzz: 1802
     primary_intent_count: 1050
-    record_count: 11268
+    record_count: 10812
     role_counts:
       primary: 6300
-      seed_sensitivity: 4968
-    sensitivity_intent_count: 207
+      seed_sensitivity: 4512
+    sensitivity_intent_count: 188
 - framework_id: pta
   supported_workloads:
   - chatglm3-train
@@ -80,18 +80,18 @@ subjects:
   - qwen2-train
   summary:
     method_counts:
-      configfuzz: 1878
-      constraint_filter_only: 1878
-      global_repair: 1878
-      native_validator_guided: 1878
-      raw_mutation: 1878
-      static_hard_configfuzz: 1878
+      configfuzz: 1802
+      constraint_filter_only: 1802
+      global_repair: 1802
+      native_validator_guided: 1802
+      raw_mutation: 1802
+      static_hard_configfuzz: 1802
     primary_intent_count: 1050
-    record_count: 11268
+    record_count: 10812
     role_counts:
       primary: 6300
-      seed_sensitivity: 4968
-    sensitivity_intent_count: 207
+      seed_sensitivity: 4512
+    sensitivity_intent_count: 188
 - framework_id: pytorch-cuda
   supported_workloads:
   - chatglm3-train
@@ -103,18 +103,18 @@ subjects:
   - qwen2-train
   summary:
     method_counts:
-      configfuzz: 1878
-      constraint_filter_only: 1878
-      global_repair: 1878
-      native_validator_guided: 1878
-      raw_mutation: 1878
-      static_hard_configfuzz: 1878
+      configfuzz: 1802
+      constraint_filter_only: 1802
+      global_repair: 1802
+      native_validator_guided: 1802
+      raw_mutation: 1802
+      static_hard_configfuzz: 1802
     primary_intent_count: 1050
-    record_count: 11268
+    record_count: 10812
     role_counts:
       primary: 6300
-      seed_sensitivity: 4968
-    sensitivity_intent_count: 207
+      seed_sensitivity: 4512
+    sensitivity_intent_count: 188
 - framework_id: transformers-accelerate
   supported_workloads:
   - chatglm3-train
@@ -126,15 +126,15 @@ subjects:
   - qwen2-train
   summary:
     method_counts:
-      configfuzz: 1878
-      constraint_filter_only: 1878
-      global_repair: 1878
-      native_validator_guided: 1878
-      raw_mutation: 1878
-      static_hard_configfuzz: 1878
+      configfuzz: 1802
+      constraint_filter_only: 1802
+      global_repair: 1802
+      native_validator_guided: 1802
+      raw_mutation: 1802
+      static_hard_configfuzz: 1802
     primary_intent_count: 1050
-    record_count: 11268
+    record_count: 10812
     role_counts:
       primary: 6300
-      seed_sensitivity: 4968
-    sensitivity_intent_count: 207
+      seed_sensitivity: 4512
+    sensitivity_intent_count: 188

@@ -105,7 +105,8 @@ def main() -> int:
         expert_model_parallel_size=ep,
         expert_tensor_parallel_size=tp,
     )
-    model_parallel_cuda_manual_seed(2026)
+    seed = int(os.environ.get("CONFIGFUZZ_SEED", "2026"))
+    model_parallel_cuda_manual_seed(seed)
     milestone("distributed_initialization", rank)
 
     precision = profile.get("precision", {})
@@ -151,7 +152,7 @@ def main() -> int:
     vocab = int(model_cfg["vocab_size"])
     for step in range(int(profile["training"].get("train_iters", 2))):
         generator = torch.Generator(device=device)
-        generator.manual_seed(2026 + rank + step * world_size)
+        generator.manual_seed(seed + rank + step * world_size)
         tokens = torch.randint(0, vocab, (batch_size, seq + 1), generator=generator, device=device)
         input_ids, labels = tokens[:, :-1], tokens[:, 1:]
         position_ids = torch.arange(seq, device=device).unsqueeze(0).expand(batch_size, -1)

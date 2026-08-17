@@ -70,7 +70,7 @@
           "qwen2-train": 150
         },
         "count": 1050,
-        "sha256": "b4bb6a466b326c8a59887b8733327391b625b7e1945841cb0c6e16431b265d44"
+        "sha256": "e79a3458d601fe4d00dac16fec6dd59f31cf1fee4bc892721254b6c8a8c320ec"
       },
       "name": "rq2_frozen_intents_1050_balanced",
       "ok": true
@@ -154,7 +154,7 @@
     {
       "detail": {
         "subject_count": 6,
-        "total_record_count": 61272
+        "total_record_count": 58560
       },
       "name": "rq2_replication_schedule_frozen",
       "ok": true

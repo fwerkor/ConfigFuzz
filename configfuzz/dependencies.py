@@ -416,6 +416,38 @@ class DependencyGraph:
             queue.extend(sorted(adjacency.get(current, ())))
         return tuple(sorted(visited))
 
+    def affected_hypergraph_region(
+        self,
+        parameter: str,
+        *,
+        transitive: bool = True,
+    ) -> tuple[str, ...]:
+        """Return parameters connected to ``parameter`` through constraint hyperedges.
+
+        Repair is intentionally symmetric with respect to recovered relations: if a
+        requested target is the dependent side of a divisibility/equality relation,
+        its driver may still need to move to preserve the requested target value.
+        Directional ``affected_parameters`` remains available for dependency analysis.
+        """
+
+        adjacency: dict[str, set[str]] = {name: set() for name in self.nodes}
+        for edge in self.edges.values():
+            for source in edge.participants:
+                adjacency.setdefault(source, set()).update(
+                    target for target in edge.participants if target != source
+                )
+        if not transitive:
+            return tuple(sorted(adjacency.get(parameter, ())))
+        visited: set[str] = set()
+        queue = deque(sorted(adjacency.get(parameter, ())))
+        while queue:
+            current = queue.popleft()
+            if current == parameter or current in visited:
+                continue
+            visited.add(current)
+            queue.extend(sorted(adjacency.get(current, ())))
+        return tuple(sorted(visited))
+
     def connected_components(self) -> tuple[tuple[str, ...], ...]:
         adjacency: dict[str, set[str]] = {name: set() for name in self.nodes}
         for edge in self.edges.values():
@@ -498,7 +530,7 @@ class DependencyGraph:
         working = dict(baseline)
         working[parameter] = value
         proposed: dict[str, Any] = {parameter: value}
-        affected = self.affected_parameters(parameter)
+        affected = self.affected_hypergraph_region(parameter, transitive=False)
         relevant_nodes = {parameter, *affected}
         impacted = {
             edge.id: edge

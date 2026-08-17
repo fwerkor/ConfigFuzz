@@ -48,7 +48,7 @@ def test_rq2_matrix_intents_and_schedule_are_frozen() -> None:
     assert set(counts.values()) == {150}
 
     schedule = _yaml("experiments/rq2/replication_summary.prequalified.yaml")
-    assert schedule["total_record_count"] == 61272
+    assert schedule["total_record_count"] == 58560
     assert len(schedule["subjects"]) == 6
 
 

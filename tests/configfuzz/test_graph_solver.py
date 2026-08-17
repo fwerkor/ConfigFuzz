@@ -270,6 +270,71 @@ def test_high_confidence_candidate_precedes_edit_locality() -> None:
     assert relation.id not in plan.violated_soft_edges
 
 
+def test_local_solver_can_repair_driver_when_requested_target_is_dependent() -> None:
+    graph = make_graph(
+        constraint("hidden_size: integer", ConstraintKind.TYPE, ("hidden_size",)),
+        constraint("num_heads: integer", ConstraintKind.TYPE, ("num_heads",)),
+        constraint(
+            "hidden_size % num_heads == 0",
+            ConstraintKind.RELATION,
+            ("hidden_size", "num_heads"),
+            confidence=0.95,
+        ),
+    )
+
+    plan = solve_graph_mutation(
+        graph,
+        {"hidden_size": 512, "num_heads": 8},
+        "hidden_size",
+        513,
+    )
+
+    assert plan.status is SolveStatus.SAT
+    assert plan.changes["hidden_size"] == 513
+    assert plan.changes["num_heads"] in {1, 3, 9, 19, 27, 57, 171, 513}
+
+
+def test_global_solver_never_invents_mutations_for_unbound_graph_parameters() -> None:
+    graph = make_graph(
+        constraint("x: integer", ConstraintKind.TYPE, ("x",)),
+        constraint("missing: integer", ConstraintKind.TYPE, ("missing",)),
+        constraint("missing >= 0", ConstraintKind.RANGE, ("missing",)),
+    )
+
+    plan = solve_graph_mutation(
+        graph,
+        {"x": 1},
+        "x",
+        2,
+        mutable_parameters=("x", "missing"),
+    )
+
+    assert plan.status is SolveStatus.SAT
+    assert plan.changes == {"x": 2}
+    assert "missing" not in plan.mutable_parameters
+
+
+def test_local_solver_does_not_walk_unrelated_transitive_hyperedges() -> None:
+    graph = make_graph(
+        constraint("x: integer", ConstraintKind.TYPE, ("x",)),
+        constraint("y: integer", ConstraintKind.TYPE, ("y",)),
+        constraint("z: integer", ConstraintKind.TYPE, ("z",)),
+        constraint("x == y", ConstraintKind.RELATION, ("x", "y")),
+        constraint("y == z", ConstraintKind.RELATION, ("y", "z")),
+    )
+
+    plan = solve_graph_mutation(
+        graph,
+        {"x": 1, "y": 1, "z": 1},
+        "x",
+        2,
+    )
+
+    assert plan.status is SolveStatus.SAT
+    assert "y" in plan.mutable_parameters
+    assert "z" not in plan.mutable_parameters
+
+
 def test_low_confidence_preference_follows_locality_objectives() -> None:
     graph = make_graph(
         constraint("hidden_size: integer", ConstraintKind.TYPE, ("hidden_size",)),

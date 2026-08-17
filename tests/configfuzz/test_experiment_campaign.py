@@ -125,10 +125,7 @@ def test_plan_campaign_expands_all_methods_and_global_ablation(tmp_path: Path) -
     assert cases["native_validator_guided"]["preflight"] == "native_validator"
     assert cases["native_validator_guided"]["status"] == "ready"
     assert cases["constraint_filter_only"]["status"] == "filtered"
-    assert set(cases["constraint_filter_only"]["violated_constraints"]) == {
-        "xy",
-        "z-positive",
-    }
+    assert set(cases["constraint_filter_only"]["violated_constraints"]) == {"xy"}
     local = cases["configfuzz"]
     assert local["status"] == "ready"
     assert local["assignments"]["x"] == 9
@@ -190,6 +187,134 @@ def test_native_validator_case_is_unknown_without_manifest(tmp_path: Path) -> No
 
     assert case["status"] == "unknown"
     assert case["metadata"]["reason"] == "native validator manifest is not bound"
+
+
+def test_unconstrained_target_is_preserved_and_executed(tmp_path: Path) -> None:
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(json.dumps({"model": {"hidden_size": 16}}), encoding="utf-8")
+    graph = DependencyGraph(nodes={}, edges={})
+    graph_path = tmp_path / "graph.json"
+    graph_path.write_text(json.dumps(graph.to_dict()), encoding="utf-8")
+    validator_path = tmp_path / "validator.json"
+    validator_path.write_text("{}", encoding="utf-8")
+    workloads_path = tmp_path / "workloads.yaml"
+    workloads_path.write_text(
+        yaml.safe_dump(
+            {
+                "workloads": [
+                    {
+                        "workload_id": "w",
+                        "baseline_id": "b",
+                        "baseline_config": "baseline.json",
+                        "dependency_graph": "graph.json",
+                        "static_dependency_graph": "graph.json",
+                        "native_validator_manifest": "validator.json",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    intent = MutationIntent(
+        intent_id="hidden-17",
+        workload_id="w",
+        baseline_id="b",
+        target_parameter="model.hidden_size",
+        target_value=17,
+        intent_class="boundary",
+    )
+
+    payload = plan_campaign(
+        load_campaign_workloads(workloads_path),
+        [intent],
+        methods=[
+            ExperimentMethod.CONSTRAINT_FILTER_ONLY,
+            ExperimentMethod.CONFIGFUZZ,
+            ExperimentMethod.GLOBAL_REPAIR,
+        ],
+    )
+
+    for case in payload["cases"]:
+        assert case["status"] == "ready"
+        assert case["assignments"] == {"model.hidden_size": 17}
+        assert case["coordinated_parameters"] == []
+        assert case["preflight"] == "no_applicable_recovered_constraint"
+
+
+def test_target_placeholder_anchor_is_resolved_and_filter_ignores_unrelated_edges(tmp_path: Path) -> None:
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(json.dumps({"x": 8, "y": 2, "unrelated": 1}), encoding="utf-8")
+    graph = DependencyGraph(
+        nodes={
+            name: DependencyNode(name, DependencyNodeKind.PARAMETER)
+            for name in ("x", "y", "unrelated", "missing")
+        },
+        edges={
+            "xy": DependencyEdge(
+                id="xy",
+                expression="x % y == 0",
+                predicate="x % y == 0",
+                relation=DependencyRelation.DIVISIBILITY,
+                participants=("x", "y"),
+                drivers=("y",),
+                dependents=("x",),
+                status=DependencyStatus.CONFIRMED,
+            ),
+            "unrelated": DependencyEdge(
+                id="unrelated",
+                expression="unrelated < missing",
+                predicate="unrelated < missing",
+                relation=DependencyRelation.BOUND,
+                participants=("unrelated", "missing"),
+                drivers=(),
+                dependents=("unrelated",),
+                status=DependencyStatus.CONFIRMED,
+            ),
+        },
+    )
+    graph_path = tmp_path / "graph.json"
+    graph_path.write_text(json.dumps(graph.to_dict()), encoding="utf-8")
+    validator = tmp_path / "validator.json"
+    validator.write_text("{}", encoding="utf-8")
+    workloads = tmp_path / "workloads.yaml"
+    workloads.write_text(
+        yaml.safe_dump(
+            {
+                "workloads": [
+                    {
+                        "workload_id": "w",
+                        "baseline_id": "b",
+                        "baseline_config": "baseline.json",
+                        "dependency_graph": "graph.json",
+                        "static_dependency_graph": "graph.json",
+                        "native_validator_manifest": "validator.json",
+                        "semantic_anchors": ["target_parameter"],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    intent = MutationIntent(
+        intent_id="x-ten",
+        workload_id="w",
+        baseline_id="b",
+        target_parameter="x",
+        target_value=10,
+        intent_class="boundary",
+    )
+
+    payload = plan_campaign(
+        load_campaign_workloads(workloads),
+        [intent],
+        methods=[ExperimentMethod.CONSTRAINT_FILTER_ONLY, ExperimentMethod.CONFIGFUZZ],
+    )
+    cases = {case["method"]: case for case in payload["cases"]}
+
+    assert cases["constraint_filter_only"]["status"] == "ready"
+    assert cases["constraint_filter_only"]["unknown_constraints"] == []
+    assert cases["configfuzz"]["status"] == "ready"
+    assert "target_parameter" not in cases["configfuzz"]["metadata"]["missing_context"]
 
 
 def test_frozen_intent_hash_is_verified(tmp_path: Path) -> None:

@@ -10,6 +10,19 @@ workloads:
   family: qwen2_dense_gqa
   baseline_id: qwen2-train-canonical-v1
   baseline_config: baselines/canonical-v1/qwen2-train.json
+  mutation_parameters:
+  - model.ffn_hidden_size
+  - model.hidden_size
+  - model.max_position_embeddings
+  - model.num_attention_heads
+  - model.num_layers
+  - model.num_query_groups
+  - model.seq_length
+  - model.vocab_size
+  - precision.bf16
+  - precision.fp16
+  - training.learning_rate
+  - training.micro_batch_size
   metadata:
     minimum_intents: 150
     status: prepared_prequalified
@@ -18,6 +31,19 @@ workloads:
   family: llama2_dense_rope
   baseline_id: llama2-train-canonical-v1
   baseline_config: baselines/canonical-v1/llama2-train.json
+  mutation_parameters:
+  - model.ffn_hidden_size
+  - model.hidden_size
+  - model.max_position_embeddings
+  - model.num_attention_heads
+  - model.num_layers
+  - model.num_query_groups
+  - model.seq_length
+  - model.vocab_size
+  - precision.bf16
+  - precision.fp16
+  - training.learning_rate
+  - training.micro_batch_size
   metadata:
     minimum_intents: 150
     status: prepared_prequalified
@@ -26,6 +52,20 @@ workloads:
   family: chatglm3_gqa_long_sequence
   baseline_id: chatglm3-train-canonical-v1
   baseline_config: baselines/canonical-v1/chatglm3-train.json
+  mutation_parameters:
+  - model.attention_dropout
+  - model.ffn_hidden_size
+  - model.hidden_size
+  - model.max_position_embeddings
+  - model.num_attention_heads
+  - model.num_layers
+  - model.num_query_groups
+  - model.seq_length
+  - model.vocab_size
+  - precision.bf16
+  - precision.fp16
+  - training.learning_rate
+  - training.micro_batch_size
   metadata:
     minimum_intents: 150
     status: prepared_prequalified
@@ -34,6 +74,21 @@ workloads:
   family: mixtral_moe
   baseline_id: mixtral-train-canonical-v1
   baseline_config: baselines/canonical-v1/mixtral-train.json
+  mutation_parameters:
+  - model.ffn_hidden_size
+  - model.hidden_size
+  - model.max_position_embeddings
+  - model.num_attention_heads
+  - model.num_layers
+  - model.num_query_groups
+  - model.seq_length
+  - model.vocab_size
+  - moe.moe_router_topk
+  - moe.num_experts
+  - precision.bf16
+  - precision.fp16
+  - training.learning_rate
+  - training.micro_batch_size
   metadata:
     minimum_intents: 150
     status: prepared_prequalified
@@ -42,6 +97,31 @@ workloads:
   family: deepseekv3_mla_moe
   baseline_id: deepseekv3-train-canonical-v1
   baseline_config: baselines/canonical-v1/deepseekv3-train.json
+  mutation_parameters:
+  - model.attention_dropout
+  - model.ffn_hidden_size
+  - model.hidden_size
+  - model.max_position_embeddings
+  - model.num_attention_heads
+  - model.num_layers
+  - model.num_query_groups
+  - model.seq_length
+  - model.vocab_size
+  - mla.kv_lora_rank
+  - mla.q_lora_rank
+  - mla.qk_nope_head_dim
+  - mla.qk_rope_head_dim
+  - mla.v_head_dim
+  - moe.moe_intermediate_size
+  - moe.moe_router_num_groups
+  - moe.moe_router_topk
+  - moe.n_shared_experts
+  - moe.num_experts
+  - moe.topk_group
+  - precision.bf16
+  - precision.fp16
+  - training.learning_rate
+  - training.micro_batch_size
   metadata:
     minimum_intents: 150
     status: prepared_prequalified
@@ -50,6 +130,28 @@ workloads:
   family: internvl3_vision_text
   baseline_id: internvl3-train-canonical-v1
   baseline_config: baselines/canonical-v1/internvl3-train.json
+  mutation_parameters:
+  - model.ffn_hidden_size
+  - model.hidden_size
+  - model.max_position_embeddings
+  - model.num_attention_heads
+  - model.num_layers
+  - model.num_query_groups
+  - model.seq_length
+  - model.vocab_size
+  - multimodal.downsample_ratio
+  - multimodal.image_seq_length
+  - multimodal.image_size
+  - multimodal.num_channels
+  - multimodal.patch_size
+  - multimodal.vision_ffn_hidden_size
+  - multimodal.vision_hidden_size
+  - multimodal.vision_num_attention_heads
+  - multimodal.vision_num_layers
+  - precision.bf16
+  - precision.fp16
+  - training.learning_rate
+  - training.micro_batch_size
   metadata:
     minimum_intents: 150
     status: prepared_prequalified
@@ -58,6 +160,24 @@ workloads:
   family: cogvideox_video_text
   baseline_id: cogvideox-train-canonical-v1
   baseline_config: baselines/canonical-v1/cogvideox-train.json
+  mutation_parameters:
+  - model.hidden_size
+  - model.num_attention_heads
+  - model.num_layers
+  - precision.bf16
+  - precision.fp16
+  - training.learning_rate
+  - training.micro_batch_size
+  - video.attention_head_dim
+  - video.frames
+  - video.in_channels
+  - video.max_text_seq_length
+  - video.out_channels
+  - video.patch_size
+  - video.sample_height
+  - video.sample_width
+  - video.temporal_compression_ratio
+  - video.text_embed_dim
   metadata:
     minimum_intents: 150
     status: prepared_prequalified

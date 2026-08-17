@@ -128,7 +128,7 @@ def main() -> int:
     subject_summaries = schedule.get("subjects", [])
     check(
         "rq2_replication_schedule_frozen",
-        schedule.get("total_record_count") == 61272 and len(subject_summaries) == 6,
+        schedule.get("total_record_count") == 58560 and len(subject_summaries) == 6,
         {"total_record_count": schedule.get("total_record_count"), "subject_count": len(subject_summaries)},
     )
 

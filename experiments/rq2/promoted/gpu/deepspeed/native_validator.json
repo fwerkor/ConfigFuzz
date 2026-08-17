@@ -1,0 +1,7 @@
+{
+  "framework_id": "deepspeed",
+  "launcher": "../../../../gpu/launch_rq2_deepspeed.sh",
+  "mode": "embedded_framework_runtime",
+  "qualification_milestone": "checkpoint_save_load",
+  "schema_version": 1
+}

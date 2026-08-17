@@ -162,3 +162,44 @@ def test_method_independent_pool_does_not_require_constraint_corpus(tmp_path: Pa
     assert payload["intents"]
     assert all(item["intent_pool"] == "method_independent" for item in payload["intents"])
     assert all(not item["source_constraint_ids"] for item in payload["intents"])
+
+
+def test_formal_mutation_parameter_allowlist_excludes_metadata_and_unbound_fields(tmp_path: Path) -> None:
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "model": {"hidden_size": 16, "unused_size": 32},
+                "training": {"learning_rate": 1e-4},
+            }
+        ),
+        encoding="utf-8",
+    )
+    workloads = tmp_path / "workloads.yaml"
+    workloads.write_text(
+        yaml.safe_dump(
+            {
+                "workloads": [
+                    {
+                        "workload_id": "dense",
+                        "family": "dense",
+                        "baseline_id": "base",
+                        "baseline_config": "baseline.json",
+                        "mutation_parameters": [
+                            "model.hidden_size",
+                            "training.learning_rate",
+                        ],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    payload = generate_intent_payload(None, workloads, include_constraint_challenge=False)
+    parameters = {item["target_parameter"] for item in payload["intents"]}
+
+    assert parameters == {"model.hidden_size", "training.learning_rate"}
+    assert "schema_version" not in parameters
+    assert "model.unused_size" not in parameters

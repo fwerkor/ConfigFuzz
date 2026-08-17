@@ -140,9 +140,10 @@ def _run_accelerate(profile, args) -> int:
 
 def _train_steps(profile, model, optimizer, device, rank, *, backward, step=None) -> None:
     steps = int(profile["training"].get("train_iters", 2))
+    seed = int(os.environ.get("CONFIGFUZZ_SEED", "2026"))
     for index in range(steps):
         optimizer.zero_grad(set_to_none=True)
-        loss = _forward_loss(profile, model, device, rank, index)
+        loss = _forward_loss(profile, model, device, rank, index, seed)
         milestone("forward", rank)
         backward(loss)
         milestone("backward", rank)
@@ -156,21 +157,23 @@ def _train_steps(profile, model, optimizer, device, rank, *, backward, step=None
     milestone("repeated_training", rank)
 
 
-def _forward_loss(profile, model, device, rank: int, step: int) -> torch.Tensor:
+def _forward_loss(profile, model, device, rank: int, step: int, seed: int = 2026) -> torch.Tensor:
     family = str(profile["family"])
     if family == "cogvideox_video_text":
-        return _cogvideox_loss(profile, model, device, rank, step)
-    return _language_or_multimodal_loss(profile, model, device, rank, step)
+        return _cogvideox_loss(profile, model, device, rank, step, seed)
+    return _language_or_multimodal_loss(profile, model, device, rank, step, seed)
 
 
-def _language_or_multimodal_loss(profile, model, device, rank: int, step: int) -> torch.Tensor:
+def _language_or_multimodal_loss(
+    profile, model, device, rank: int, step: int, seed: int = 2026
+) -> torch.Tensor:
     training = profile["training"]
     model_cfg = profile["model"]
     batch_size = int(training["micro_batch_size"])
     seq = int(model_cfg["seq_length"])
     vocab = int(model_cfg["vocab_size"])
     generator = torch.Generator(device=device)
-    generator.manual_seed(2026 + rank + step * 997)
+    generator.manual_seed(seed + rank + step * 997)
     tokens = torch.randint(2, vocab, (batch_size, seq), generator=generator, device=device)
     labels = tokens.clone()
     kwargs = {"input_ids": tokens, "labels": labels, "use_cache": False}
@@ -198,11 +201,13 @@ def _language_or_multimodal_loss(profile, model, device, rank: int, step: int) -
     return loss
 
 
-def _cogvideox_loss(profile, model, device, rank: int, step: int) -> torch.Tensor:
+def _cogvideox_loss(
+    profile, model, device, rank: int, step: int, seed: int = 2026
+) -> torch.Tensor:
     video = profile["video"]
     batch_size = int(profile["training"]["micro_batch_size"])
     generator = torch.Generator(device=device)
-    generator.manual_seed(2026 + rank + step * 997)
+    generator.manual_seed(seed + rank + step * 997)
     hidden_states = torch.randn(
         batch_size,
         int(video["frames"]),
@@ -239,9 +244,13 @@ def _torch_distributed_context():
 
 def _dtype(profile) -> torch.dtype:
     precision = profile.get("precision", {})
-    if bool(precision.get("bf16", False)):
+    bf16 = bool(precision.get("bf16", False))
+    fp16 = bool(precision.get("fp16", False))
+    if bf16 and fp16:
+        raise ValueError("bf16 and fp16 are mutually exclusive")
+    if bf16:
         return torch.bfloat16
-    if bool(precision.get("fp16", False)):
+    if fp16:
         return torch.float16
     return torch.float32
 

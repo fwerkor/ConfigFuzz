@@ -224,8 +224,9 @@ def solve_graph_mutation(
             parameter,
             *(
                 name
-                for name in graph.affected_parameters(parameter)
+                for name in graph.affected_hypergraph_region(parameter, transitive=False)
                 if name in variables
+                and name in context
                 and graph.nodes.get(name) is not None
                 and graph.nodes[name].kind
                 in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
@@ -238,6 +239,7 @@ def solve_graph_mutation(
                 str(name)
                 for name in mutable_parameters
                 if str(name) in variables
+                and str(name) in context
                 and graph.nodes.get(str(name)) is not None
                 and graph.nodes[str(name)].kind
                 in {DependencyNodeKind.PARAMETER, DependencyNodeKind.FEATURE}
@@ -418,7 +420,10 @@ def solve_graph_mutation(
         )
     )
     changes: list[tuple[str, Any]] = []
-    order = (parameter, *graph.affected_parameters(parameter))
+    order = (
+        parameter,
+        *graph.affected_hypergraph_region(parameter, transitive=False),
+    )
     seen: set[str] = set()
     for name in order:
         if name in seen or name not in mutable or name not in variables:

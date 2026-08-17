@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "experiment": "framework_static_scan",
+  "framework": {
+    "name": "internvl3-vision",
+    "profile": null,
+    "backend": null,
+    "accelerator": null,
+    "role": null,
+    "repositories": [
+      {
+        "repository": "https://github.com/huggingface/transformers.git",
+        "commit": "0a2757da521a7a49b8143d9e0c938f08747d682e",
+        "commit_date": "2026-05-20",
+        "source_subdirs": [
+          "src/transformers/models/internvl"
+        ]
+      }
+    ],
+    "source_subdirs": [
+      "src/transformers/models/internvl"
+    ],
+    "parameters": [
+      "hidden_size",
+      "intermediate_size",
+      "num_hidden_layers",
+      "num_attention_heads",
+      "image_size",
+      "patch_size",
+      "num_channels",
+      "image_seq_length",
+      "downsample_ratio"
+    ],
+    "repository": "https://github.com/huggingface/transformers.git",
+    "commit": "0a2757da521a7a49b8143d9e0c938f08747d682e",
+    "commit_date": "2026-05-20",
+    "source_subdir": "src/transformers/models/internvl"
+  },
+  "scanner": {
+    "mode": "broad",
+    "jobs": 4
+  },
+  "summary": {
+    "parameters": 9,
+    "parameters_with_candidates": 0,
+    "candidates": 0,
+    "kinds": {},
+    "dependency_nodes": 0,
+    "dependency_edges": 0,
+    "dependency_components": 0
+  },
+  "results": [
+    {
+      "parameter": "hidden_size",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 3,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 6,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "intermediate_size",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 2,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 6,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "num_hidden_layers",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 3,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 6,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "num_attention_heads",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 2,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 6,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "image_size",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 4,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 6,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "patch_size",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 4,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 6,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "num_channels",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 3,
+          "parse_errors": [],
+          "raw_candidates": 2,
+          "filtered_candidates": 2,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 6,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "image_seq_length",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 2,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 6,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    },
+    {
+      "parameter": "downsample_ratio",
+      "constraints": [],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 3,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
+          "accepted_candidates": 0
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 6,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 0
+      }
+    }
+  ],
+  "dependency_graph": {
+    "schema_version": 1,
+    "metadata": {
+      "scope": {
+        "framework": "internvl3-vision",
+        "source_subdir": "src/transformers/models/internvl",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      }
+    },
+    "summary": {
+      "nodes": 0,
+      "edges": 0,
+      "connected_components": 0,
+      "node_kinds": {},
+      "relations": {},
+      "statuses": {}
+    },
+    "nodes": [],
+    "edges": []
+  }
+}

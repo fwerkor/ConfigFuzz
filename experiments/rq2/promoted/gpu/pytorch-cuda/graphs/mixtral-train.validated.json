@@ -1,0 +1,2166 @@
+{
+  "edges": [
+    {
+      "components": [
+        "torch/_inductor/fx_passes"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "n.args"
+      ],
+      "drivers": [
+        "group_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1407,
+          "source": "torch/_inductor/fx_passes/bucketing.py"
+        }
+      ],
+      "expression": "n.args[2] == group_size",
+      "id": "dep-0c56786881776059",
+      "participants": [
+        "group_size",
+        "n.args"
+      ],
+      "predicate": "n.args[2] == group_size",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/_decomp"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "params"
+      ],
+      "drivers": [
+        "group_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 3781,
+          "source": "torch/_decomp/decompositions.py"
+        }
+      ],
+      "expression": "len(params) % group_size == 0",
+      "id": "dep-0d95e4db878c9b4d",
+      "participants": [
+        "group_size",
+        "params"
+      ],
+      "predicate": "len(params) % group_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed/fsdp"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "device_mesh"
+      ],
+      "drivers": [
+        "process_group"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 98,
+          "source": "torch/distributed/fsdp/_init_utils.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 438",
+          "kind": "static",
+          "line": 98,
+          "source": "torch/distributed/fsdp/_init_utils.py"
+        }
+      ],
+      "expression": "process_group is not None => device_mesh is None",
+      "guard": "process_group is not None",
+      "id": "dep-107ac07a747cbd51",
+      "participants": [
+        "device_mesh",
+        "process_group"
+      ],
+      "predicate": "device_mesh is None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "device_id"
+      ],
+      "drivers": [
+        "bound"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 5908,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "device_id is not None and bound is not None => device_id == bound",
+      "guard": "device_id is not None and bound is not None",
+      "id": "dep-11774b6ca44747a1",
+      "participants": [
+        "device_id",
+        "bound"
+      ],
+      "predicate": "device_id == bound",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed/elastic/utils"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [
+        "server_port"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 49,
+          "source": "torch/distributed/elastic/utils/distributed.py"
+        }
+      ],
+      "expression": "server_port == -1 => world_size <= 1",
+      "guard": "server_port == -1",
+      "id": "dep-1381fb879e1511de",
+      "participants": [
+        "world_size",
+        "server_port"
+      ],
+      "predicate": "world_size <= 1",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/testing/_internal"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 2027,
+          "source": "torch/testing/_internal/common_distributed.py"
+        }
+      ],
+      "expression": "world_size == -2 => world_size != 0",
+      "guard": "world_size == -2",
+      "id": "dep-15ac73c09b08e702",
+      "participants": [
+        "world_size"
+      ],
+      "predicate": "world_size != 0",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "interprocedural summary instantiated at line 1037",
+          "kind": "static",
+          "line": 6268,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "[[0, 1], [world_size, 2]] is not None",
+      "id": "dep-16b371dee60c6c06",
+      "participants": [
+        "world_size"
+      ],
+      "predicate": "[[0, 1], [world_size, 2]] is not None",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "torch/_inductor/fx_passes",
+        "torch/ao/quantization"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 69,
+          "source": "torch/_inductor/fx_passes/profile_guided_estimation.py"
+        },
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 1761,
+          "source": "torch/ao/quantization/observer.py"
+        },
+        {
+          "detail": "consistent_valid=7; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "group_size: integer",
+      "id": "dep-1b047b73c45adac5",
+      "participants": [
+        "group_size"
+      ],
+      "predicate": "group_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "torch/distributed/pipelining"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "group_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 181,
+          "source": "torch/distributed/pipelining/stage.py"
+        }
+      ],
+      "expression": "group_size <= self.num_stages",
+      "id": "dep-1f73d8f703d4e7dd",
+      "participants": [
+        "group_size"
+      ],
+      "predicate": "group_size <= self.num_stages",
+      "relation": "range",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/utils/data/datapipes/iter"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "group_size"
+      ],
+      "drivers": [
+        "guaranteed_group_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 224,
+          "source": "torch/utils/data/datapipes/iter/grouping.py"
+        }
+      ],
+      "expression": "guaranteed_group_size is not None => group_size is not None",
+      "guard": "guaranteed_group_size is not None",
+      "id": "dep-210bfa3f4b777a7a",
+      "participants": [
+        "group_size",
+        "guaranteed_group_size"
+      ],
+      "predicate": "group_size is not None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/testing/_internal/distributed/_shard/sharded_tensor"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "backend"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 25,
+          "source": "torch/testing/_internal/distributed/_shard/sharded_tensor/__init__.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 59",
+          "kind": "static",
+          "line": 25,
+          "source": "torch/testing/_internal/distributed/_shard/sharded_tensor/__init__.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=1; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "backend in ['nccl', 'gloo', 'mpi', 'hccl', 'xccl']",
+      "id": "dep-26ecbd36c763dd03",
+      "participants": [
+        "backend"
+      ],
+      "predicate": "backend in ['nccl', 'gloo', 'mpi', 'hccl', 'xccl']",
+      "relation": "enum",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "confirmed"
+    },
+    {
+      "components": [
+        "torch/_inductor/codegen"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "device_id"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "interprocedural summary instantiated at line 1336",
+          "kind": "static",
+          "line": 12,
+          "source": "torch/_inductor/codegen/mps_device_op_overrides.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 1370",
+          "kind": "static",
+          "line": 12,
+          "source": "torch/_inductor/codegen/mps_device_op_overrides.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 1403",
+          "kind": "static",
+          "line": 12,
+          "source": "torch/_inductor/codegen/mps_device_op_overrides.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 1443",
+          "kind": "static",
+          "line": 12,
+          "source": "torch/_inductor/codegen/mps_device_op_overrides.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 1496",
+          "kind": "static",
+          "line": 12,
+          "source": "torch/_inductor/codegen/mps_device_op_overrides.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 1617",
+          "kind": "static",
+          "line": 12,
+          "source": "torch/_inductor/codegen/mps_device_op_overrides.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 2105",
+          "kind": "static",
+          "line": 12,
+          "source": "torch/_inductor/codegen/mps_device_op_overrides.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 2132",
+          "kind": "static",
+          "line": 12,
+          "source": "torch/_inductor/codegen/mps_device_op_overrides.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 2211",
+          "kind": "static",
+          "line": 12,
+          "source": "torch/_inductor/codegen/mps_device_op_overrides.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 2475",
+          "kind": "static",
+          "line": 12,
+          "source": "torch/_inductor/codegen/mps_device_op_overrides.py"
+        }
+      ],
+      "expression": "device_id == 0",
+      "id": "dep-2a46ac531d939c5e",
+      "participants": [
+        "device_id"
+      ],
+      "predicate": "device_id == 0",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed/checkpoint",
+        "torch/distributed/tensor/_ops"
+      ],
+      "confidence": 1.0,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 57,
+          "source": "torch/distributed/checkpoint/_async_process_executor.py"
+        },
+        {
+          "detail": "argparse declaration",
+          "kind": "static",
+          "line": 2113,
+          "source": "torch/distributed/tensor/_ops/strategy_validation.py"
+        }
+      ],
+      "expression": "world_size: integer",
+      "id": "dep-2c520c9c77b45b98",
+      "participants": [
+        "world_size"
+      ],
+      "predicate": "world_size: integer",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "interprocedural summary instantiated at line 1037",
+          "kind": "static",
+          "line": 6268,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "len([[0, 1], [world_size, 2]]) != 0",
+      "id": "dep-3025cf577281da60",
+      "participants": [
+        "world_size"
+      ],
+      "predicate": "len([[0, 1], [world_size, 2]]) != 0",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "torch/testing/_internal"
+      ],
+      "confidence": 0.98,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1898,
+          "source": "torch/testing/_internal/common_distributed.py"
+        }
+      ],
+      "expression": "0 <= rank < world_size",
+      "id": "dep-37e2ce08a7e59c92",
+      "participants": [
+        "world_size",
+        "rank"
+      ],
+      "predicate": "0 <= rank < world_size",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [
+        "store"
+      ],
+      "evidence": [
+        {
+          "detail": "interprocedural summary instantiated at line 226",
+          "kind": "static",
+          "line": 1791,
+          "source": "torch/distributed/distributed_c10d.py"
+        },
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1791,
+          "source": "torch/distributed/distributed_c10d.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 1296",
+          "kind": "static",
+          "line": 1791,
+          "source": "torch/distributed/distributed_c10d.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 1404",
+          "kind": "static",
+          "line": 1791,
+          "source": "torch/distributed/distributed_c10d.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 1868",
+          "kind": "static",
+          "line": 1791,
+          "source": "torch/distributed/distributed_c10d.py"
+        },
+        {
+          "detail": "interprocedural summary instantiated at line 33",
+          "kind": "static",
+          "line": 1791,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "store is not None => world_size > 0",
+      "guard": "store is not None",
+      "id": "dep-463f4e424bcc95c8",
+      "participants": [
+        "world_size",
+        "store"
+      ],
+      "predicate": "world_size > 0",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "excluded_ranks_set"
+      ],
+      "drivers": [
+        "group_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 6554,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "len(excluded_ranks_set) < group_size",
+      "id": "dep-51e8c21a35d9654d",
+      "participants": [
+        "group_size",
+        "excluded_ranks_set"
+      ],
+      "predicate": "len(excluded_ranks_set) < group_size",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "torch/ao/quantization/fx",
+        "torch/distributed"
+      ],
+      "confidence": 0.69,
+      "dependents": [
+        "group_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1055,
+          "source": "torch/ao/quantization/fx/_decomposed.py"
+        },
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1114,
+          "source": "torch/ao/quantization/fx/_decomposed.py"
+        },
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1167,
+          "source": "torch/ao/quantization/fx/_decomposed.py"
+        },
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 6477,
+          "source": "torch/distributed/distributed_c10d.py"
+        },
+        {
+          "detail": "consistent_valid=6; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=1; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "group_size > 1",
+      "id": "dep-54cbd80200ce84df",
+      "participants": [
+        "group_size"
+      ],
+      "predicate": "group_size > 1",
+      "relation": "range",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "scope_disputed"
+    },
+    {
+      "components": [
+        "torch/distributed/checkpoint"
+      ],
+      "confidence": 1.0,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 132,
+          "source": "torch/distributed/checkpoint/state_dict.py"
+        }
+      ],
+      "expression": "cpu_offload: boolean",
+      "id": "dep-56d1810eb907e192",
+      "participants": [
+        "cpu_offload"
+      ],
+      "predicate": "cpu_offload: boolean",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/utils/data/datapipes/iter"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "group_size"
+      ],
+      "drivers": [
+        "guaranteed_group_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 224,
+          "source": "torch/utils/data/datapipes/iter/grouping.py"
+        }
+      ],
+      "expression": "guaranteed_group_size is not None => 0 < guaranteed_group_size <= group_size",
+      "guard": "guaranteed_group_size is not None",
+      "id": "dep-5dd81f0c9714fed7",
+      "participants": [
+        "group_size",
+        "guaranteed_group_size"
+      ],
+      "predicate": "0 < guaranteed_group_size <= group_size",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.9199999999999999,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "interprocedural summary instantiated at line 1560",
+          "kind": "static",
+          "line": 1791,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "self.__class__.global_store is not None => world_size > 0",
+      "guard": "self.__class__.global_store is not None",
+      "id": "dep-5e7bf8b88e197de7",
+      "participants": [
+        "world_size"
+      ],
+      "predicate": "world_size > 0",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/nn/parallel"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "device_mesh"
+      ],
+      "drivers": [
+        "process_group"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 854,
+          "source": "torch/nn/parallel/distributed.py"
+        }
+      ],
+      "expression": "process_group => device_mesh is None",
+      "guard": "process_group",
+      "id": "dep-6159a9eed8f3e965",
+      "participants": [
+        "device_mesh",
+        "process_group"
+      ],
+      "predicate": "device_mesh is None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed/tensor/experimental/_context_parallel"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "num_tasks"
+      ],
+      "drivers": [
+        "group_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 343,
+          "source": "torch/distributed/tensor/experimental/_context_parallel/_load_balancer.py"
+        }
+      ],
+      "expression": "num_tasks % group_size == 0",
+      "id": "dep-636626458780018b",
+      "participants": [
+        "group_size",
+        "num_tasks"
+      ],
+      "predicate": "num_tasks % group_size == 0",
+      "relation": "divisibility",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/_export"
+      ],
+      "confidence": 0.9199999999999999,
+      "dependents": [
+        "device_id",
+        "stream_id"
+      ],
+      "drivers": [
+        "kind"
+      ],
+      "evidence": [
+        {
+          "detail": "interprocedural summary instantiated at line 272",
+          "kind": "static",
+          "line": 92,
+          "source": "torch/_export/non_strict_utils.py"
+        }
+      ],
+      "expression": "kind in {'kernel', 'gpu_memcpy', 'gpu_memset'} => len((device_id, stream_id)) != 0",
+      "guard": "kind in {'kernel', 'gpu_memcpy', 'gpu_memset'}",
+      "id": "dep-64363257f81f421e",
+      "participants": [
+        "device_id",
+        "kind",
+        "stream_id"
+      ],
+      "predicate": "len((device_id, stream_id)) != 0",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "group_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 6185,
+          "source": "torch/distributed/distributed_c10d.py"
+        },
+        {
+          "detail": "consistent_valid=7; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "group_size > 0",
+      "id": "dep-658ed6a87e1309c2",
+      "participants": [
+        "group_size"
+      ],
+      "predicate": "group_size > 0",
+      "relation": "range",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "confirmed"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "acc"
+      ],
+      "drivers": [
+        "device_id",
+        "device_id.type"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1814,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "device_id is not None and device_id.type != 'cpu' => acc is not None",
+      "guard": "device_id is not None and device_id.type != 'cpu'",
+      "id": "dep-6770a552490e8741",
+      "participants": [
+        "device_id",
+        "acc",
+        "device_id.type"
+      ],
+      "predicate": "acc is not None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/_dynamo/variables"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "device_mesh"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 5752,
+          "source": "torch/_dynamo/variables/higher_order_ops.py"
+        }
+      ],
+      "expression": "device_mesh is not None",
+      "id": "dep-7636b01094457183",
+      "participants": [
+        "device_mesh"
+      ],
+      "predicate": "device_mesh is not None",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed/fsdp"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "device_mesh"
+      ],
+      "drivers": [
+        "is_hybrid_strategy",
+        "policy",
+        "process_group"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 105,
+          "source": "torch/distributed/fsdp/_init_utils.py"
+        }
+      ],
+      "expression": "is_hybrid_strategy and process_group is None and (policy is None) => device_mesh is not None",
+      "guard": "is_hybrid_strategy and process_group is None and (policy is None)",
+      "id": "dep-7671aa8210f1980f",
+      "participants": [
+        "device_mesh",
+        "is_hybrid_strategy",
+        "process_group",
+        "policy"
+      ],
+      "predicate": "device_mesh is not None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/_inductor/fx_passes"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "n.args"
+      ],
+      "drivers": [
+        "group_size"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 1516,
+          "source": "torch/_inductor/fx_passes/bucketing.py"
+        }
+      ],
+      "expression": "n.args[1] == group_size",
+      "id": "dep-7cf97fc2180b3d3e",
+      "participants": [
+        "group_size",
+        "n.args"
+      ],
+      "predicate": "n.args[1] == group_size",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed/fsdp"
+      ],
+      "confidence": 0.9199999999999999,
+      "dependents": [
+        "process_group"
+      ],
+      "drivers": [
+        "device_mesh"
+      ],
+      "evidence": [
+        {
+          "detail": "interprocedural summary instantiated at line 438",
+          "kind": "static",
+          "line": 98,
+          "source": "torch/distributed/fsdp/_init_utils.py"
+        }
+      ],
+      "expression": "device_mesh is not None => process_group is None",
+      "guard": "device_mesh is not None",
+      "id": "dep-7fb2cd648bacdfef",
+      "participants": [
+        "device_mesh",
+        "process_group"
+      ],
+      "predicate": "process_group is None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/_dynamo",
+        "torch/_dynamo/repro",
+        "torch/_inductor"
+      ],
+      "confidence": 0.99,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 182,
+          "source": "torch/_dynamo/eval_frame.py"
+        },
+        {
+          "detail": "argparse declaration",
+          "kind": "static",
+          "line": 628,
+          "source": "torch/_dynamo/repro/after_dynamo.py"
+        },
+        {
+          "detail": "schema annotation",
+          "kind": "static",
+          "line": 92,
+          "source": "torch/_inductor/compiler_bisector.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "backend: string",
+      "id": "dep-86bd6fa3644fbefb",
+      "participants": [
+        "backend"
+      ],
+      "predicate": "backend: string",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.98,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 6539,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "0 <= rank < group_size",
+      "id": "dep-88d1a91d6cdfd5e0",
+      "participants": [
+        "group_size",
+        "rank"
+      ],
+      "predicate": "0 <= rank < group_size",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "torch/_inductor/kernel/flex"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "backend"
+      ],
+      "drivers": [
+        "can_use_decode"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 248,
+          "source": "torch/_inductor/kernel/flex/flex_attention.py"
+        }
+      ],
+      "expression": "not can_use_decode => backend != 'TRITON_DECODE'",
+      "guard": "not can_use_decode",
+      "id": "dep-91be4154e2206b27",
+      "participants": [
+        "backend",
+        "can_use_decode"
+      ],
+      "predicate": "backend != 'TRITON_DECODE'",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/nn/modules"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [
+        "size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 31,
+          "source": "torch/nn/modules/_functions.py"
+        }
+      ],
+      "expression": "size == 1 => world_size >= 2",
+      "guard": "size == 1",
+      "id": "dep-94ca5828692ba6a6",
+      "participants": [
+        "world_size",
+        "size"
+      ],
+      "predicate": "world_size >= 2",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [
+        "group_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 6189,
+          "source": "torch/distributed/distributed_c10d.py"
+        },
+        {
+          "detail": "consistent_valid=7; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "world_size >= group_size",
+      "id": "dep-990b230058d040d7",
+      "participants": [
+        "world_size",
+        "group_size"
+      ],
+      "predicate": "world_size >= group_size",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "environment_specific"
+    },
+    {
+      "components": [
+        "torch/distributed/checkpoint"
+      ],
+      "confidence": 1.0,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "required schema field",
+          "kind": "static",
+          "line": 57,
+          "source": "torch/distributed/checkpoint/_async_process_executor.py"
+        }
+      ],
+      "expression": "world_size is not None",
+      "id": "dep-a458c25a883fef40",
+      "participants": [
+        "world_size"
+      ],
+      "predicate": "world_size is not None",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.9199999999999999,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [
+        "fake_pg",
+        "init_pg",
+        "store"
+      ],
+      "evidence": [
+        {
+          "detail": "interprocedural summary instantiated at line 1734",
+          "kind": "static",
+          "line": 1791,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "init_pg and fake_pg and (store is not None) => world_size > 0",
+      "guard": "init_pg and fake_pg and (store is not None)",
+      "id": "dep-b0ecd39c84a11c97",
+      "participants": [
+        "world_size",
+        "init_pg",
+        "fake_pg",
+        "store"
+      ],
+      "predicate": "world_size > 0",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "world_size"
+      ],
+      "drivers": [
+        "group_size"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 6193,
+          "source": "torch/distributed/distributed_c10d.py"
+        },
+        {
+          "detail": "consistent_valid=7; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=1; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "world_size % group_size == 0",
+      "id": "dep-b3845deb278dfa2c",
+      "participants": [
+        "world_size",
+        "group_size"
+      ],
+      "predicate": "world_size % group_size == 0",
+      "relation": "environment",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "confirmed"
+    },
+    {
+      "components": [
+        "torch/distributed/fsdp"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "root_mesh"
+      ],
+      "drivers": [
+        "device_mesh"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 127,
+          "source": "torch/distributed/fsdp/_shard_utils.py"
+        }
+      ],
+      "expression": "root_mesh == device_mesh",
+      "id": "dep-b5dc6e726b022545",
+      "participants": [
+        "device_mesh",
+        "root_mesh"
+      ],
+      "predicate": "root_mesh == device_mesh",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "device_id"
+      ],
+      "drivers": [
+        "default_pg.bound_device_id"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 5966,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "device_id is not None and default_pg.bound_device_id is not None => device_id == default_pg.bound_device_id",
+      "guard": "device_id is not None and default_pg.bound_device_id is not None",
+      "id": "dep-c28150bbd3565fcc",
+      "participants": [
+        "device_id",
+        "default_pg.bound_device_id"
+      ],
+      "predicate": "device_id == default_pg.bound_device_id",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/_inductor/fx_passes",
+        "torch/_vendor/quack",
+        "torch/ao/quantization"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "group_size"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "required schema field",
+          "kind": "static",
+          "line": 69,
+          "source": "torch/_inductor/fx_passes/profile_guided_estimation.py"
+        },
+        {
+          "detail": "required schema field",
+          "kind": "static",
+          "line": 67,
+          "source": "torch/_vendor/quack/tile_scheduler.py"
+        },
+        {
+          "detail": "required schema field",
+          "kind": "static",
+          "line": 812,
+          "source": "torch/_vendor/quack/tile_scheduler.py"
+        },
+        {
+          "detail": "required schema field",
+          "kind": "static",
+          "line": 826,
+          "source": "torch/_vendor/quack/tile_scheduler.py"
+        },
+        {
+          "detail": "required schema field",
+          "kind": "static",
+          "line": 1149,
+          "source": "torch/_vendor/quack/tile_scheduler.py"
+        },
+        {
+          "detail": "required schema field",
+          "kind": "static",
+          "line": 1163,
+          "source": "torch/_vendor/quack/tile_scheduler.py"
+        },
+        {
+          "detail": "required schema field",
+          "kind": "static",
+          "line": 1761,
+          "source": "torch/ao/quantization/observer.py"
+        },
+        {
+          "detail": "consistent_valid=7; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "group_size is not None",
+      "id": "dep-ccda39fd8c731182",
+      "participants": [
+        "group_size"
+      ],
+      "predicate": "group_size is not None",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "torch/_dynamo",
+        "torch/_dynamo/repro",
+        "torch/distributed",
+        "torch/_inductor"
+      ],
+      "confidence": 0.99,
+      "dependents": [
+        "backend"
+      ],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 212,
+          "source": "torch/_dynamo/graph_id_filter.py"
+        },
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 464,
+          "source": "torch/_dynamo/repro/after_dynamo.py"
+        },
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 1514,
+          "source": "torch/distributed/distributed_c10d.py"
+        },
+        {
+          "detail": "required schema field",
+          "kind": "static",
+          "line": 92,
+          "source": "torch/_inductor/compiler_bisector.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
+        }
+      ],
+      "expression": "backend is not None",
+      "id": "dep-d4d3f44c1b57850c",
+      "participants": [
+        "backend"
+      ],
+      "predicate": "backend is not None",
+      "relation": "type",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "dynamically_supported"
+    },
+    {
+      "components": [
+        "torch/utils/data/datapipes/iter"
+      ],
+      "confidence": 0.95,
+      "dependents": [],
+      "drivers": [],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 220,
+          "source": "torch/utils/data/datapipes/iter/grouping.py"
+        }
+      ],
+      "expression": "group_size is not None and buffer_size is not None => 0 < group_size <= buffer_size",
+      "guard": "group_size is not None and buffer_size is not None",
+      "id": "dep-d5970baf0a06effd",
+      "participants": [
+        "group_size",
+        "buffer_size"
+      ],
+      "predicate": "0 < group_size <= buffer_size",
+      "relation": "bound",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/onnx/_internal/torchscript_exporter"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "backend"
+      ],
+      "drivers": [
+        "OnnxBackend.REFERENCE"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 199,
+          "source": "torch/onnx/_internal/torchscript_exporter/verification.py"
+        }
+      ],
+      "expression": "backend != OnnxBackend.REFERENCE",
+      "id": "dep-de20292304803579",
+      "participants": [
+        "backend",
+        "OnnxBackend.REFERENCE"
+      ],
+      "predicate": "backend != OnnxBackend.REFERENCE",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed/tensor/parallel"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "parent_mesh"
+      ],
+      "drivers": [
+        "device_mesh"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 311,
+          "source": "torch/distributed/tensor/parallel/fsdp.py"
+        }
+      ],
+      "expression": "parent_mesh == device_mesh",
+      "id": "dep-eb01c5f7f5717ac6",
+      "participants": [
+        "device_mesh",
+        "parent_mesh"
+      ],
+      "predicate": "parent_mesh == device_mesh",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/distributed"
+      ],
+      "confidence": 0.95,
+      "dependents": [
+        "backend"
+      ],
+      "drivers": [
+        "Backend.MPI",
+        "use_local_synchronization"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 5988,
+          "source": "torch/distributed/distributed_c10d.py"
+        }
+      ],
+      "expression": "use_local_synchronization => backend != Backend.MPI",
+      "guard": "use_local_synchronization",
+      "id": "dep-eebffc6dfce4606c",
+      "participants": [
+        "backend",
+        "use_local_synchronization",
+        "Backend.MPI"
+      ],
+      "predicate": "backend != Backend.MPI",
+      "relation": "requires",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/testing/_internal/distributed/_tensor"
+      ],
+      "confidence": 0.98,
+      "dependents": [
+        "backend"
+      ],
+      "drivers": [
+        "curr_backend"
+      ],
+      "evidence": [
+        {
+          "detail": "rejecting guard",
+          "kind": "static",
+          "line": 809,
+          "source": "torch/testing/_internal/distributed/_tensor/common_dtensor.py"
+        }
+      ],
+      "expression": "backend in ['nccl', 'gloo', 'mpi', f'cpu:gloo,{self.device_type}:{curr_backend}', 'cpu:gloo,cuda:ncclx', 'cuda:ncclx', 'hccl', 'xccl', 'fake', 'cpu:gloo,xpu:xccl']",
+      "id": "dep-f5751d24ed12ed89",
+      "participants": [
+        "backend",
+        "curr_backend"
+      ],
+      "predicate": "backend in ['nccl', 'gloo', 'mpi', f'cpu:gloo,{self.device_type}:{curr_backend}', 'cpu:gloo,cuda:ncclx', 'cuda:ncclx', 'hccl', 'xccl', 'fake', 'cpu:gloo,xpu:xccl']",
+      "relation": "enum",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "torch/_inductor"
+      ],
+      "confidence": 0.97,
+      "dependents": [
+        "backend"
+      ],
+      "drivers": [
+        "subsystem"
+      ],
+      "evidence": [
+        {
+          "detail": "assertion",
+          "kind": "static",
+          "line": 761,
+          "source": "torch/_inductor/compiler_bisector.py"
+        }
+      ],
+      "expression": "subsystem => backend is not None",
+      "guard": "subsystem",
+      "id": "dep-f643c8d12e1111aa",
+      "participants": [
+        "backend",
+        "subsystem"
+      ],
+      "predicate": "backend is not None",
+      "relation": "equality",
+      "scope": {
+        "accelerator": "NVIDIA GPU",
+        "backend": "CUDA/NCCL",
+        "framework": "PyTorch Native/CUDA",
+        "framework_profile": "pytorch-cuda",
+        "source_subdir": "torch",
+        "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
+      },
+      "status": "static_candidate"
+    }
+  ],
+  "metadata": {
+    "framework_id": "pytorch-cuda",
+    "validation_state": "rq1_feedback_applied",
+    "workload_id": "mixtral-train"
+  },
+  "nodes": [
+    {
+      "kind": "derived",
+      "name": "Backend.MPI"
+    },
+    {
+      "kind": "derived",
+      "name": "OnnxBackend.REFERENCE"
+    },
+    {
+      "kind": "derived",
+      "name": "acc"
+    },
+    {
+      "kind": "parameter",
+      "name": "backend"
+    },
+    {
+      "kind": "derived",
+      "name": "bound"
+    },
+    {
+      "kind": "derived",
+      "name": "buffer_size"
+    },
+    {
+      "kind": "feature",
+      "name": "can_use_decode"
+    },
+    {
+      "kind": "feature",
+      "name": "cpu_offload"
+    },
+    {
+      "kind": "derived",
+      "name": "curr_backend"
+    },
+    {
+      "kind": "derived",
+      "name": "default_pg.bound_device_id"
+    },
+    {
+      "kind": "parameter",
+      "name": "device_id"
+    },
+    {
+      "kind": "derived",
+      "name": "device_id.type"
+    },
+    {
+      "kind": "parameter",
+      "name": "device_mesh"
+    },
+    {
+      "kind": "derived",
+      "name": "excluded_ranks_set"
+    },
+    {
+      "kind": "feature",
+      "name": "fake_pg"
+    },
+    {
+      "kind": "parameter",
+      "name": "group_size"
+    },
+    {
+      "kind": "derived",
+      "name": "guaranteed_group_size"
+    },
+    {
+      "kind": "feature",
+      "name": "init_pg"
+    },
+    {
+      "kind": "feature",
+      "name": "is_hybrid_strategy"
+    },
+    {
+      "kind": "derived",
+      "name": "kind"
+    },
+    {
+      "kind": "derived",
+      "name": "n.args"
+    },
+    {
+      "kind": "derived",
+      "name": "num_tasks"
+    },
+    {
+      "kind": "derived",
+      "name": "params"
+    },
+    {
+      "kind": "derived",
+      "name": "parent_mesh"
+    },
+    {
+      "kind": "derived",
+      "name": "policy"
+    },
+    {
+      "kind": "feature",
+      "name": "process_group"
+    },
+    {
+      "kind": "environment",
+      "name": "rank"
+    },
+    {
+      "kind": "derived",
+      "name": "root_mesh"
+    },
+    {
+      "kind": "derived",
+      "name": "server_port"
+    },
+    {
+      "kind": "derived",
+      "name": "size"
+    },
+    {
+      "kind": "derived",
+      "name": "store"
+    },
+    {
+      "kind": "derived",
+      "name": "stream_id"
+    },
+    {
+      "kind": "feature",
+      "name": "subsystem"
+    },
+    {
+      "kind": "feature",
+      "name": "use_local_synchronization"
+    },
+    {
+      "kind": "environment",
+      "name": "world_size"
+    }
+  ],
+  "schema_version": 1,
+  "summary": {
+    "connected_components": 5,
+    "edges": 48,
+    "node_kinds": {
+      "derived": 21,
+      "environment": 2,
+      "feature": 8,
+      "parameter": 4
+    },
+    "nodes": 35,
+    "relations": {
+      "bound": 7,
+      "divisibility": 2,
+      "enum": 2,
+      "environment": 7,
+      "equality": 18,
+      "range": 3,
+      "requires": 1,
+      "type": 8
+    },
+    "statuses": {
+      "confirmed": 3,
+      "dynamically_supported": 4,
+      "environment_specific": 6,
+      "scope_disputed": 1,
+      "static_candidate": 34
+    }
+  }
+}

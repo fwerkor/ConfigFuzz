@@ -23,6 +23,7 @@ _TOPOLOGY_LEAVES = (
 )
 
 _GRID_EXCLUDED_LEAVES = {
+    "schema_version",
     "world_size",
     "LMSV_FLASH_ATTN_MAX_SEQ_LENGTH",
     "LMSV_MAX_GLOBAL_BATCH_SIZE_EXCLUSIVE",
@@ -38,6 +39,7 @@ class WorkloadSpec:
     family: str
     constraint_ids: tuple[str, ...] = ()
     topology_parameters: tuple[str, ...] = _TOPOLOGY_LEAVES
+    mutation_parameters: tuple[str, ...] = ()
     metadata: Mapping[str, Any] | None = None
 
     @classmethod
@@ -62,6 +64,9 @@ class WorkloadSpec:
             constraint_ids=tuple(str(item) for item in data.get("constraint_ids", ())),
             topology_parameters=tuple(
                 str(item) for item in data.get("topology_parameters", _TOPOLOGY_LEAVES)
+            ),
+            mutation_parameters=tuple(
+                str(item) for item in data.get("mutation_parameters", ())
             ),
             metadata=dict(data.get("metadata", {})),
         )
@@ -374,7 +379,10 @@ def _baseline_parameter_grid_intents(
 
     intents: list[MutationIntent] = []
     divisors = _active_divisors(baseline)
+    allowed = set(workload.mutation_parameters)
     for parameter, current_value in sorted(_iter_scalar_parameters(baseline)):
+        if allowed and parameter not in allowed:
+            continue
         leaf = parameter.rsplit(".", 1)[-1]
         if leaf in _GRID_EXCLUDED_LEAVES or leaf in _TOPOLOGY_LEAVES:
             continue
@@ -576,7 +584,10 @@ def _topology_intents(
         else None
     )
     intents: list[MutationIntent] = []
+    allowed = set(workload.mutation_parameters)
     for parameter in workload.topology_parameters:
+        if allowed and parameter not in allowed:
+            continue
         current = _try_get(baseline, parameter)
         if not current.found:
             continue
