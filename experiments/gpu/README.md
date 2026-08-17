@@ -1,11 +1,11 @@
 # GPU Framework Evaluation
 
-This directory contains the GPU-side qualification harness used before the
-cross-framework ConfigFuzz campaign. Qualification is deliberately separate
-from the frozen RQ2 comparison: a framework--workload pair must first reach
-argument parsing, distributed initialization, model construction, forward,
-backward, optimizer step, repeated training, and checkpoint save/load without a
-mutation.
+This directory contains the GPU-side qualification and execution harnesses for
+the RQ1 cross-framework relation-validation campaign and the formal RQ2 method
+comparison. Qualification precedes either campaign: a framework--workload pair
+must first reach argument parsing, distributed initialization, model
+construction, forward, backward, optimizer step, repeated training, and
+checkpoint save/load without a mutation.
 
 ## Pinned subjects
 
@@ -105,8 +105,9 @@ python -m configfuzz active-validate \
 Each round selects an executable recovered edge, constructs satisfying,
 violating, and repaired configurations, executes them on the qualified runtime,
 and updates only the evidence supported by the observations. Preliminary
-qualification/active-validation runs must not be mixed with the final frozen
-RQ2 campaign.
+qualification/active-validation runs are kept separate from both the final
+frozen RQ1 relation-validation campaign and the formal RQ2 method-comparison
+campaign.
 
 The framework baselines expose only configuration fields that are actually
 consumed by the corresponding runner. In particular, the PyTorch runner drives
@@ -148,11 +149,11 @@ runtime feedback is aggregated only after all targets finish, so confirmation
 counts do not depend on target order. Preliminary active-validation files are
 kept separate from these frozen-campaign outputs.
 
-The normalized result summary for the frozen campaign is recorded in
+The normalized result summary for the frozen RQ1 campaign is recorded in
 `formal_results_summary.yaml`; raw process logs remain outside the repository
-because they contain machine-local execution paths. The stored August 15
-summary is marked `superseded_scale_rerun_required`: its frozen-target hash
-predates the NPU-aligned 4-layer/hidden-512 campaign baselines. The same 19
-targets must therefore be rerun before those outcomes are used in the paper.
-Rebuild the normalized summary from the new raw outputs with
+because they contain machine-local execution paths. The final August 17 campaign
+uses the NPU-aligned 4-layer/hidden-512 baselines and the frozen target set with
+internal hash `2510d075...`. Across 19 targets and 57 satisfying/violating/repaired
+executions, 14 targets are paired-confirmed, two are scope-disputed, and three
+remain unresolved. Rebuild the normalized summary from the raw outputs with
 `scripts/summarize_frozen_gpu_validation.py`.

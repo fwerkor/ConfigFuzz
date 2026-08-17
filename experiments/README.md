@@ -2,7 +2,7 @@
 
 The evaluation follows one argument chain:
 
-1. **RQ1** establishes that configuration constraints are complex, incompletely validated, and costly when violated.
+1. **RQ1** evaluates whether ConfigFuzz recovers properly scoped cross-layer configuration relations and whether execution evidence corrects incomplete or overly broad static candidates.
 2. **RQ2** tests whether constraint-guided coordinated mutation converts the same frozen mutation intents into more deep, valid, and diverse executions.
 3. **RQ3** tests whether that additional deep execution improves historical bug replay and current-version bug discovery.
 
@@ -22,6 +22,10 @@ cross-framework aggregates are reported only after per-framework results.
 - The primary prequalified RQ2 set contains exactly 1,050 method-independent intents (150 per workload). The framework--workload matrix contains 38 formal pairs; unsupported Megatron native model families are excluded rather than replaced by surrogates.
 - Full Git history mining found 263 configuration-related fix candidates. Source review retained 23 of the balanced 40-entry shortlist for buggy/fixed execution, deferred eight, and excluded nine.
 - The 23 source-reviewed RQ3 commits have been checked against full Git history. Two multi-fix commits are split into independent root causes, yielding 25 blind-search logical cases; all 25 have available buggy/fixed revisions and the required confirmation-stage harness blobs. No candidate is counted as a verified historical bug until accelerator replay succeeds.
+
+## Completed accelerator results
+
+- The final GPU RQ1 relation-validation campaign was rerun on August 17 using the NPU-aligned 4-layer/hidden-512 baselines. Across PyTorch Native, DeepSpeed, Transformers/Accelerate, and Megatron-Core, the frozen set contains 19 relation targets and 57 satisfying/violating/repaired executions. Fourteen targets are paired-confirmed, two are scope-disputed by valid counterexamples, and three remain unresolved because the formal evidence is confounded or incomplete. The normalized result is pinned in `gpu/formal_results_summary.yaml`.
 
 ## Pinned framework sources
 

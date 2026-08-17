@@ -158,24 +158,43 @@ def main() -> int:
         budgets,
     )
 
-    frozen_gpu = ROOT / "experiments/gpu/validation_targets.frozen.yaml"
-    old_summary = load_yaml(ROOT / "experiments/gpu/formal_results_summary.yaml")
-    current_hash = hashlib.sha256(frozen_gpu.read_bytes()).hexdigest()
-    old_hash = str(old_summary.get("frozen_targets_sha256", ""))
+    frozen_gpu = load_yaml(ROOT / "experiments/gpu/validation_targets.frozen.yaml")
+    gpu_summary = load_yaml(ROOT / "experiments/gpu/formal_results_summary.yaml")
+    current_hash = str(frozen_gpu.get("frozen", {}).get("sha256", ""))
+    stored_hash = str(gpu_summary.get("frozen_targets_sha256", ""))
+    gpu_aggregate = gpu_summary.get("aggregate", {})
+    gpu_summary_complete = (
+        current_hash == stored_hash
+        and gpu_summary.get("campaign_date") == "2026-08-17"
+        and gpu_summary.get("frozen_target_count") == 19
+        and gpu_aggregate.get("targets") == 19
+        and gpu_aggregate.get("samples") == 57
+        and gpu_aggregate.get("paired_confirmed") == 14
+        and gpu_aggregate.get("scope_disputed") == 2
+        and gpu_aggregate.get("unresolved") == 3
+    )
+    check(
+        "gpu_rq1_frozen_summary_matches_targets",
+        gpu_summary_complete,
+        {
+            "campaign_date": gpu_summary.get("campaign_date"),
+            "current_targets_sha256": current_hash,
+            "stored_summary_targets_sha256": stored_hash,
+            "targets": gpu_aggregate.get("targets"),
+            "samples": gpu_aggregate.get("samples"),
+            "paired_confirmed": gpu_aggregate.get("paired_confirmed"),
+            "scope_disputed": gpu_aggregate.get("scope_disputed"),
+            "unresolved": gpu_aggregate.get("unresolved"),
+        },
+    )
     accelerator_gates = [
         "Run the NPU persistent-worker A/B benchmark on an idle 910B card.",
         "Qualify every formal framework-workload pair to checkpoint_save_load on its target accelerator and promote prepared bindings.",
         "Promote/refreeze the 1050 intents after qualification; abort if the qualified baseline schema changes the frozen intent set.",
-        "Rerun the 19-target GPU frozen validation on the NPU-aligned 4L/512H baseline (the stored summary targets an older hash).",
-        "Execute formal RQ1 satisfying/violating pairs and collect failure-stage/cost metrics.",
+        "Execute formal Ascend RQ1 satisfying/violating pairs and collect failure-stage/cost metrics.",
         "Execute the frozen RQ2 schedule; FILTERED/UNSAT records remain accelerator-free.",
         "Execute the 25 logical RQ3 historical searches plus fixed-revision confirmation, then run current-version discovery under the frozen budgets.",
     ]
-    checks.append({
-        "name": "gpu_frozen_summary_requires_new_scale_rerun",
-        "ok": True,
-        "detail": {"current_targets_sha256": current_hash, "stored_summary_targets_sha256": old_hash, "rerun_required": current_hash != old_hash},
-    })
 
     report = {
         "schema_version": 1,

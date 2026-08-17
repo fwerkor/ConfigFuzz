@@ -1,9 +1,8 @@
-status: superseded_scale_rerun_required
 schema_version: 2
 name: gpu-cross-framework-frozen-validation-summary
-campaign_date: '2026-08-15'
-runner_revision: aa93182063bb21d85d90797b5603c6a7eee64444
-frozen_targets_sha256: df3ecc3993ea580c7f865144e01ffbcbaa1e478c45b1b9c131ff4683dcaa8ef0
+campaign_date: '2026-08-17'
+runner_revision: ab77a52c304c3594841b9f0a318c30cd402d6ccd
+frozen_targets_sha256: 2510d07540e27695d2041fd49efc7f246665cdb5027dfc6f494d7aa24871c011
 frozen_target_count: 19
 protocol:
   selection_basis: versioned static graph plus qualified effective baseline; no runtime outcomes used for target selection
@@ -22,14 +21,14 @@ hardware:
 aggregate:
   targets: 19
   samples: 57
-  paired_confirmed: 15
-  scope_disputed: 1
+  paired_confirmed: 14
+  scope_disputed: 2
   unresolved: 3
   outcomes:
     infrastructure_failure: 1
-    invalid: 19
+    invalid: 18
     unknown: 1
-    valid: 36
+    valid: 37
 subjects:
 - subject: pytorch-native
   targets: 4
@@ -75,7 +74,7 @@ subjects:
     - valid
     - invalid
     - valid
-  result_sha256: bbef59fe3aa039885cfdb6989ae4cd2432b5f9ce919942749c814cf031176b69
+  result_sha256: 750611c27e690dee2540fbbd7f4a171bae04a0fa59b2dbeec617bb5323d6e8f1
 - subject: deepspeed
   targets: 6
   samples: 18
@@ -136,7 +135,7 @@ subjects:
     - valid
     - invalid
     - valid
-  result_sha256: ed7c631696c06220306dbd3af225b3cf489469bdec80ab731ed58ad40f9eb3b0
+  result_sha256: ff7187387bd5099c1cd9fab44d575cb70a0ad7ae17acc8acfe40ba31f46d58b2
 - subject: transformers-accelerate
   targets: 3
   samples: 9
@@ -173,23 +172,23 @@ subjects:
     - valid
     - invalid
     - valid
-  result_sha256: 46429fc4762aa81eb7d03d7e106dcbc4bbeab43f467e41944258af484026a3c5
+  result_sha256: 2fea1a2b37438a51c346f4aebdeb9b50880445ce075f86839842a3f969580dcb
 - subject: megatron-core
   targets: 6
   samples: 18
-  paired_confirmed: 5
-  scope_disputed: 0
+  paired_confirmed: 4
+  scope_disputed: 1
   unresolved: 1
   outcomes:
-    invalid: 8
-    valid: 10
+    invalid: 7
+    valid: 11
   confirmed_edge_ids:
   - dep-54241f191526fdae
   - dep-bcffaa7c8426524c
-  - dep-2d732812b8519cbd
   - dep-1ce2a9ae2ac16140
   - dep-1f69a0ab46af7e77
-  scope_disputed_edge_ids: []
+  scope_disputed_edge_ids:
+  - dep-2d732812b8519cbd
   targets_detail:
   - edge_id: dep-54241f191526fdae
     expression: bf16 => not fp16
@@ -207,10 +206,10 @@ subjects:
     - valid
   - edge_id: dep-2d732812b8519cbd
     expression: num_query_groups == num_attention_heads
-    status: paired_confirmed
+    status: scope_disputed
     outcomes:
     - valid
-    - invalid
+    - valid
     - valid
   - edge_id: dep-1ce2a9ae2ac16140
     expression: num_moe_experts is not None => num_moe_experts > 0
@@ -233,4 +232,4 @@ subjects:
     - valid
     - invalid
     - valid
-  result_sha256: 24738e2c04aca5d3a4daf9807ffcc9c6543edaa598041236c891ed008816f48d
+  result_sha256: cd2e348f05d69bd2cce7d253d23f83592a11461334207957c25a7de1db44bd05

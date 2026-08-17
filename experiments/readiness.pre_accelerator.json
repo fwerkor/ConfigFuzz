@@ -3,8 +3,7 @@
     "Run the NPU persistent-worker A/B benchmark on an idle 910B card.",
     "Qualify every formal framework-workload pair to checkpoint_save_load on its target accelerator and promote prepared bindings.",
     "Promote/refreeze the 1050 intents after qualification; abort if the qualified baseline schema changes the frozen intent set.",
-    "Rerun the 19-target GPU frozen validation on the NPU-aligned 4L/512H baseline (the stored summary targets an older hash).",
-    "Execute formal RQ1 satisfying/violating pairs and collect failure-stage/cost metrics.",
+    "Execute formal Ascend RQ1 satisfying/violating pairs and collect failure-stage/cost metrics.",
     "Execute the frozen RQ2 schedule; FILTERED/UNSAT records remain accelerator-free.",
     "Execute the 25 logical RQ3 historical searches plus fixed-revision confirmation, then run current-version discovery under the frozen budgets."
   ],
@@ -196,11 +195,16 @@
     },
     {
       "detail": {
-        "current_targets_sha256": "d5bae1d22a815c2e341be6caba72c33697594a0de57d8274c689237d4da21f02",
-        "rerun_required": true,
-        "stored_summary_targets_sha256": "df3ecc3993ea580c7f865144e01ffbcbaa1e478c45b1b9c131ff4683dcaa8ef0"
+        "campaign_date": "2026-08-17",
+        "current_targets_sha256": "2510d07540e27695d2041fd49efc7f246665cdb5027dfc6f494d7aa24871c011",
+        "paired_confirmed": 14,
+        "samples": 57,
+        "scope_disputed": 2,
+        "stored_summary_targets_sha256": "2510d07540e27695d2041fd49efc7f246665cdb5027dfc6f494d7aa24871c011",
+        "targets": 19,
+        "unresolved": 3
       },
-      "name": "gpu_frozen_summary_requires_new_scale_rerun",
+      "name": "gpu_rq1_frozen_summary_matches_targets",
       "ok": true
     }
   ],
