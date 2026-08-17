@@ -15,6 +15,18 @@ MASTER_PORT=${CONFIGFUZZ_MASTER_PORT:-29656}
 NPROC=${CONFIGFUZZ_NPROC_PER_NODE:-2}
 
 export PYTHONPATH="$MEGATRON_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+SITE_PACKAGES=$("$PYTHON" - <<'PY'
+import site
+paths = site.getsitepackages()
+print(paths[0] if paths else "")
+PY
+)
+if [[ -n "$SITE_PACKAGES" && -d "$SITE_PACKAGES/nvidia" ]]; then
+  NVIDIA_LIB_PATH=$(find "$SITE_PACKAGES/nvidia" -mindepth 2 -maxdepth 2 -type d -name lib -print 2>/dev/null | paste -sd: -)
+  if [[ -n "$NVIDIA_LIB_PATH" ]]; then
+    export LD_LIBRARY_PATH="$NVIDIA_LIB_PATH${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+  fi
+fi
 export CUDA_VISIBLE_DEVICES="$GPUS"
 export CUDA_DEVICE_MAX_CONNECTIONS=${CUDA_DEVICE_MAX_CONNECTIONS:-1}
 export PYTHONUNBUFFERED=1

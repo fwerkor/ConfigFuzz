@@ -16,6 +16,10 @@ PY
 )
 CUDNN_ROOT="$SITE_PACKAGES/nvidia/cudnn"
 NCCL_ROOT="$SITE_PACKAGES/nvidia/nccl"
+NVIDIA_LIB_PATH=$(
+  find "$SITE_PACKAGES/nvidia" -mindepth 2 -maxdepth 2 -type d -name lib -print 2>/dev/null \
+    | paste -sd: -
+)
 
 for path in "$CUDNN_ROOT/include/cudnn.h" "$NCCL_ROOT/include/nccl.h"; do
   if [[ ! -f "$path" ]]; then
@@ -40,8 +44,8 @@ fi
 export PATH="$(dirname "$PYTHON"):$PATH"
 export MAX_JOBS=${MAX_JOBS:-8}
 export CPATH="$CUDNN_ROOT/include:$NCCL_ROOT/include${CPATH:+:$CPATH}"
-export LIBRARY_PATH="$CUDNN_ROOT/lib:$NCCL_ROOT/lib${LIBRARY_PATH:+:$LIBRARY_PATH}"
-export LD_LIBRARY_PATH="$CUDNN_ROOT/lib:$NCCL_ROOT/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export LIBRARY_PATH="$NVIDIA_LIB_PATH${LIBRARY_PATH:+:$LIBRARY_PATH}"
+export LD_LIBRARY_PATH="$NVIDIA_LIB_PATH${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 export CUDA_HOME
 
 "$PYTHON" -m pip install --no-build-isolation \
