@@ -101,7 +101,7 @@ configfuzz-experiment summarize rq1 experiments/rq1/constraint_audit.yaml \
 
 `rq2/baselines/canonical-v1/` defines seven architecture-faithful reduced workloads at the common Ascend/GPU campaign scale (4 layers, hidden size 512, FFN size 1024, sequence length 128). Family-specific GQA, MoE, MLA, vision-language, and CogVideoX components remain active. `scripts/preflight_rq2_models.py` validates all seven without accelerator access by constructing the real framework model class and completing a small CPU forward/backward pass.
 
-`rq2/framework_workload_matrix.yaml` freezes the prepared compatibility matrix. PTA, MSA, PyTorch, DeepSpeed, and Transformers/Accelerate cover all seven workload families; Megatron-Core enters formal RQ2 only for Qwen2, Llama2, and Mixtral, producing 38 formal framework--workload pairs. Every prepared pair must still complete accelerator qualification through repeated training and checkpoint save/load before promotion.
+`rq2/framework_workload_matrix.yaml` freezes the compatibility matrix. PTA, MSA, PyTorch, DeepSpeed, and Transformers/Accelerate cover all seven workload families; Megatron-Core enters formal RQ2 only for Qwen2, Llama2, and Mixtral, producing 38 formal framework--workload pairs. All 24 GPU pairs have completed accelerator qualification and are promoted under `rq2/promoted/gpu/`; the 14 PTA/MSA pairs remain pending Ascend qualification.
 
 Generate the method-independent intent set from the canonical profiles and freeze exactly 150 intents per workload:
 
@@ -121,7 +121,7 @@ python scripts/build_experiment_schedule.py   --intents experiments/rq2/intents.
 
 The current prepared schedule contains 58,560 records across the six framework subjects. This is not an accelerator-launch count: planner-side `FILTERED` and `UNSAT` records do not launch a framework process.
 
-`rq2/runtime_subjects.prequalified.yaml` binds the prepared launchers, world sizes, timeouts, and supported workloads. Execution-validated dependency graphs remain intentionally unset in `rq2/workloads.yaml` until accelerator qualification/validation provides evidence. After qualification, promote the subject bindings, refreeze the 1,050 intents if and only if the qualified baseline schemas are unchanged, and then expand them into the six RQ2 methods with `scripts/plan_rq2_campaign.py`.
+`rq2/runtime_subjects.prequalified.yaml` retains the common prepared launchers, world sizes, timeouts, and supported workloads. The qualified GPU bindings, per-workload static/validated graphs, and native-validator settings are pinned under `rq2/promoted/gpu/` and are ready for formal RQ2 execution. PTA/MSA remain on the prequalified bindings until their accelerator qualification completes. If qualification changes a baseline schema, the 1,050 method-independent intents must be refrozen before the corresponding formal schedule is generated.
 
 ## RQ3: historical bug benchmark construction
 

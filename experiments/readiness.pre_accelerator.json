@@ -1,8 +1,8 @@
 {
   "accelerator_gates": [
     "Run the NPU persistent-worker A/B benchmark on an idle 910B card.",
-    "Qualify every formal framework-workload pair to checkpoint_save_load on its target accelerator and promote prepared bindings.",
-    "Promote/refreeze the 1050 intents after qualification; abort if the qualified baseline schema changes the frozen intent set.",
+    "Qualify the remaining 14 Ascend PTA/MSA framework-workload pairs to checkpoint_save_load and promote their bindings.",
+    "Refreeze the 1050 intents only if remaining Ascend qualification changes a qualified baseline schema.",
     "Execute formal Ascend RQ1 satisfying/violating pairs and collect failure-stage/cost metrics.",
     "Execute the frozen RQ2 schedule; FILTERED/UNSAT records remain accelerator-free.",
     "Execute the 25 logical RQ3 historical searches plus fixed-revision confirmation, then run current-version discovery under the frozen budgets."
