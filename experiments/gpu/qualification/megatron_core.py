@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+from dataclasses import replace
 import io
 import os
 import sys
@@ -12,6 +13,7 @@ import torch.distributed as dist
 
 from common import load_config, milestone
 from megatron.core import parallel_state
+from megatron.core.extensions.transformer_engine import TENorm
 from megatron.core.models.gpt.gpt_layer_specs import (
     get_gpt_layer_local_spec,
     get_gpt_layer_with_transformer_engine_spec,
@@ -125,9 +127,14 @@ def main() -> int:
     params_dtype = (
         torch.bfloat16 if use_bf16 else torch.float16 if use_fp16 else torch.float32
     )
-    transformer_impl = str(cfg.get("transformer_impl", "transformer_engine"))
+    transformer_impl = str(cfg.get("transformer_impl", "local"))
+    normalization_impl = str(cfg.get("normalization_impl", "local"))
     if transformer_impl not in {"local", "transformer_engine"}:
         raise ValueError(f"unsupported transformer_impl for GPU qualification: {transformer_impl}")
+    if normalization_impl not in {"local", "transformer_engine"}:
+        raise ValueError(
+            f"unsupported normalization_impl for GPU qualification: {normalization_impl}"
+        )
     config = TransformerConfig(
         num_layers=int(cfg["num_layers"]),
         transformer_impl=transformer_impl,
@@ -153,11 +160,23 @@ def main() -> int:
             else None
         ),
     )
-    layer_spec = (
-        get_gpt_layer_with_transformer_engine_spec()
-        if transformer_impl == "transformer_engine"
-        else get_gpt_layer_local_spec()
-    )
+    if transformer_impl == "transformer_engine":
+        layer_spec = get_gpt_layer_with_transformer_engine_spec()
+    else:
+        local_spec = get_gpt_layer_local_spec(
+            normalization=str(cfg.get("normalization", "RMSNorm"))
+        )
+        if normalization_impl == "transformer_engine":
+            layer_spec = replace(
+                local_spec,
+                submodules=replace(
+                    local_spec.submodules,
+                    input_layernorm=TENorm,
+                    pre_mlp_layernorm=TENorm,
+                ),
+            )
+        else:
+            layer_spec = local_spec
     model = GPTModel(
         config=config,
         transformer_layer_spec=layer_spec,

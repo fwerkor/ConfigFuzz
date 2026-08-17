@@ -44,15 +44,16 @@ native GPT/MoE execution path and is intentionally limited to the Qwen2,
 Llama2, and Mixtral workload families listed in the compatibility matrix.
 
 Megatron-Core uses `baselines/megatron-core.json` with a Llama-like RMSNorm
-configuration and TP=2. The baseline explicitly selects Megatron's Transformer
-Engine implementation so sequence-parallel configurations are exercised through
-a backend that supports their normalization path. Its qualification runner
-invokes Megatron's native training-argument validation before model construction
-and uses the framework's `Float16Module` path for FP16/BF16 cases. The isolated
-Megatron environment installs `requirements-megatron-validation.txt`; on a
-non-root CUDA host, `scripts/install_megatron_validation_te.sh` builds the pinned
-Transformer Engine extension using the cuDNN and NCCL headers already shipped in
-the environment's PyTorch CUDA dependencies.
+configuration and TP=2. The qualification path keeps Megatron's local attention
+and tensor-parallel linear modules, while selecting Transformer Engine only for
+the normalization modules required by sequence parallelism. This avoids changing
+unrelated attention behavior when validating a sequence-parallel relation. The
+runner invokes Megatron's native training-argument validation before model
+construction and uses the framework's `Float16Module` path for FP16/BF16 cases.
+The isolated Megatron environment installs `requirements-megatron-validation.txt`;
+on a non-root CUDA host, `scripts/install_megatron_validation_te.sh` builds the
+pinned Transformer Engine extension using the CUDA dependency headers already
+shipped in the environment's PyTorch packages.
 
 ## Static recovery
 

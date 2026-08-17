@@ -36,5 +36,6 @@
   "eval_global_batch_size": 4,
   "eval_micro_batch_size": 2,
   "model_scale_profile": "npu-reduced-26.1",
-  "transformer_impl": "transformer_engine"
+  "transformer_impl": "local",
+  "normalization_impl": "transformer_engine"
 }
