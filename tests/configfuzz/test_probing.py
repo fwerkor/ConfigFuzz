@@ -40,3 +40,22 @@ def test_manifest_execution_preserves_bug_trigger():
     assert labels[1] is OutcomeLabel.VALID
     assert labels[3] is OutcomeLabel.INVALID
     assert labels[16] is OutcomeLabel.POTENTIAL_BUG
+
+
+def test_execute_command_replaces_non_utf8_output(tmp_path: Path) -> None:
+    from configfuzz.probing import execute_command
+
+    observation = execute_command(
+        (
+            sys.executable,
+            "-c",
+            "import os; os.write(1, b\"ok\\xff\"); os.write(2, b\"err\\x8a\")",
+        ),
+        cwd=tmp_path,
+        env={},
+        timeout_seconds=5.0,
+    )
+
+    assert observation.returncode == 0
+    assert observation.stdout == "ok\ufffd"
+    assert observation.stderr == "err\ufffd"
