@@ -196,13 +196,13 @@
     {
       "detail": {
         "campaign_date": "2026-08-17",
-        "current_targets_sha256": "2510d07540e27695d2041fd49efc7f246665cdb5027dfc6f494d7aa24871c011",
-        "paired_confirmed": 14,
+        "current_targets_sha256": "e20cb9cfbe8cfe5855e065d2455780fb5fd707540be60393d612bdc902921a8e",
+        "paired_confirmed": 15,
         "samples": 57,
         "scope_disputed": 2,
-        "stored_summary_targets_sha256": "2510d07540e27695d2041fd49efc7f246665cdb5027dfc6f494d7aa24871c011",
+        "stored_summary_targets_sha256": "e20cb9cfbe8cfe5855e065d2455780fb5fd707540be60393d612bdc902921a8e",
         "targets": 19,
-        "unresolved": 3
+        "unresolved": 2
       },
       "name": "gpu_rq1_frozen_summary_matches_targets",
       "ok": true

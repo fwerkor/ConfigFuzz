@@ -158,7 +158,20 @@ The normalized result summary for the frozen RQ1 campaign is recorded in
 `formal_results_summary.yaml`; raw process logs remain outside the repository
 because they contain machine-local execution paths. The final August 17 campaign
 uses the NPU-aligned 4-layer/hidden-512 baselines and the frozen target set with
-internal hash `2510d075...`. Across 19 targets and 57 satisfying/violating/repaired
-executions, 14 targets are paired-confirmed, two are scope-disputed, and three
-remain unresolved. Rebuild the normalized summary from the raw outputs with
-`scripts/summarize_frozen_gpu_validation.py`.
+internal hash `e20cb9cf...`. Across 19 targets and 57 satisfying/violating/repaired
+executions, 15 targets are paired-confirmed, two are scope-disputed, and two
+remain unresolved. The corrected Megatron-Core harness preserves local attention
+and tensor-parallel linear modules and uses Transformer Engine only for
+normalization; under this harness, `sequence_parallel => tensor_model_parallel_size > 1`
+produces a valid/invalid/valid paired result without changing the frozen target
+membership. The compact resolution record is stored in
+`diagnostics/megatron_sequence_parallel_resolution.yaml`. DeepSpeed's
+`reduce_bucket_size >= 0` remains unresolved: `-1` is
+rejected by native range validation, but the admitted boundary value `0` passes
+configuration validation and then reproducibly reaches ZeRO execution before
+raising `ZeroDivisionError`. Three independent reruns reproduce that boundary
+failure; the compact record is stored in
+`diagnostics/deepspeed_reduce_bucket_zero.yaml`. Transformers/Accelerate's
+remaining unresolved target is environment-limited because the selected FP8
+intervention is unavailable on the qualified A6000 stack. Rebuild the normalized
+summary from the raw outputs with `scripts/summarize_frozen_gpu_validation.py`.

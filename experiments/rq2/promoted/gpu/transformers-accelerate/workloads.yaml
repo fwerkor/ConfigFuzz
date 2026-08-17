@@ -3,7 +3,7 @@ name: rq2-transformers-accelerate-promoted-workloads
 metadata:
   status: gpu_accelerator_qualified
   framework_id: transformers-accelerate
-  rq1_result_sha256: 2fea1a2b37438a51c346f4aebdeb9b50880445ce075f86839842a3f969580dcb
+  rq1_result_sha256: 35827af425fc4014c8485958e2e4cbddc6453662c42c8d67781b21920bbae8d0
   static_artifact_sha256: 89f1ed40040478c0dfd5bf54d1232aad28d220702e30928e996e5f0c0e34de7c
   qualification_summary_sha256: 8398af528dee81607028c139eb9319343084c313d004ecd49f934bb639668ef8
 workloads:

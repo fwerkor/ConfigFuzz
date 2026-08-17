@@ -3,7 +3,7 @@ name: rq2-megatron-core-promoted-workloads
 metadata:
   status: gpu_accelerator_qualified
   framework_id: megatron-core
-  rq1_result_sha256: cd2e348f05d69bd2cce7d253d23f83592a11461334207957c25a7de1db44bd05
+  rq1_result_sha256: dba17d9f4e4b07f047997083d3c8c01839aca67abb1bf6426c479171d63d25d0
   static_artifact_sha256: f618f09db0054a57657d0c4f3840a6d7864b50046c44eeb4fecd4b9b811c2c73
   qualification_summary_sha256: fce77a226555b6c6ff9d9b4a8427f707b4a71d665ab016fdf994d17e676adf60
 workloads:

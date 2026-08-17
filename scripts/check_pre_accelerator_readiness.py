@@ -169,9 +169,9 @@ def main() -> int:
         and gpu_summary.get("frozen_target_count") == 19
         and gpu_aggregate.get("targets") == 19
         and gpu_aggregate.get("samples") == 57
-        and gpu_aggregate.get("paired_confirmed") == 14
+        and gpu_aggregate.get("paired_confirmed") == 15
         and gpu_aggregate.get("scope_disputed") == 2
-        and gpu_aggregate.get("unresolved") == 3
+        and gpu_aggregate.get("unresolved") == 2
     )
     check(
         "gpu_rq1_frozen_summary_matches_targets",

@@ -1,0 +1,33 @@
+schema_version: 1
+name: deepspeed-reduce-bucket-zero-diagnostic
+campaign_date: '2026-08-17'
+runner_revision: 44fc744
+frozen_targets_sha256: e20cb9cfbe8cfe5855e065d2455780fb5fd707540be60393d612bdc902921a8e
+subject: deepspeed
+edge_id: dep-660c94ed03780170
+expression: reduce_bucket_size >= 0
+classification: unresolved
+formal_triplet:
+  satisfying:
+    value: 500000000
+    outcome: valid
+  violating:
+    value: -1
+    outcome: invalid
+    evidence: native range validation rejects values below zero
+  repaired:
+    value: 0
+    outcome: unknown
+    evidence: configuration validation accepts zero, then ZeRO execution raises ZeroDivisionError
+reproduction:
+  independent_runs: 3
+  reproduced_runs: 3
+  error_type: ZeroDivisionError
+  error_message: float floor division by zero
+  implementation_site: deepspeed/runtime/zero/stage_1_and_2.py:1097
+  operation: percent_of_bucket_size = (100.0 * elem_count) // self.reduce_bucket_size
+interpretation: >-
+  The admitted boundary is a reproducible implementation-defect signal, but the
+  relation remains unresolved for RQ1 because paired confirmation requires the
+  repaired configuration to complete the target execution milestone.
+raw_record: formal-results/rq1-gpu-final-20260817-v3/diagnostics/deepspeed-reduce-bucket-zero

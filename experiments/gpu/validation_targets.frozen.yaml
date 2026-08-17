@@ -1660,12 +1660,12 @@ subjects:
   baseline: experiments/gpu/baselines/megatron-core.json
   artifact_sha256: f618f09db0054a57657d0c4f3840a6d7864b50046c44eeb4fecd4b9b811c2c73
   manifest_sha256: 8ca9e6b6c390201d079ca00ec6bbeb5d7a67dd69e92128ffbd3b4783b7fd8ffd
-  baseline_sha256: d29afa3c06e456d15ae94befec1bb791e6e5ed6d34db25e0c574c888ab5e7475
+  baseline_sha256: 018b3a9120f145075adcf4a96970f777c5eb036c566a8df5b7f269adfea7f719
   harness_files:
   - path: experiments/gpu/launch_megatron_core.sh
-    sha256: 66a6a59e9983a3106984790cc55dfde4d16e1247740a4dfcab48ba7b039751f6
+    sha256: a772b81a0db12670a65b893dd277eadb4416aac7ad91a61f220d29280d3d0013
   - path: experiments/gpu/qualification/megatron_core.py
-    sha256: d25583dc65e4ce28053ecc95621092a153f4bb5b8591d5709711e77ef229c569
+    sha256: f69f40dab75f214438cc02916028cc4ebb45d41f407fbac77ed520514122fee3
   - path: experiments/gpu/qualification/common.py
     sha256: 62c6b798d3c94308d00954ae15471136308e96d83f17641d27271b8dc62e93ce
   selection_summary:
@@ -2777,5 +2777,5 @@ subjects:
             intervention_edge_id: dep-1f69a0ab46af7e77
             intervention_role: repaired
 frozen:
-  sha256: 2510d07540e27695d2041fd49efc7f246665cdb5027dfc6f494d7aa24871c011
+  sha256: e20cb9cfbe8cfe5855e065d2455780fb5fd707540be60393d612bdc902921a8e
   target_count: 19

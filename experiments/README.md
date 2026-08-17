@@ -25,7 +25,7 @@ cross-framework aggregates are reported only after per-framework results.
 
 ## Completed accelerator results
 
-- The final GPU RQ1 relation-validation campaign was rerun on August 17 using the NPU-aligned 4-layer/hidden-512 baselines. Across PyTorch Native, DeepSpeed, Transformers/Accelerate, and Megatron-Core, the frozen set contains 19 relation targets and 57 satisfying/violating/repaired executions. Fourteen targets are paired-confirmed, two are scope-disputed by valid counterexamples, and three remain unresolved because the formal evidence is confounded or incomplete. The normalized result is pinned in `gpu/formal_results_summary.yaml`.
+- The final GPU RQ1 relation-validation campaign was rerun on August 17 using the NPU-aligned 4-layer/hidden-512 baselines. Across PyTorch Native, DeepSpeed, Transformers/Accelerate, and Megatron-Core, the frozen set contains 19 relation targets and 57 satisfying/violating/repaired executions. Fifteen targets are paired-confirmed, two are scope-disputed by valid counterexamples, and two remain unresolved. Megatron-Core has no unresolved target after rerunning sequence parallelism with a compatible normalization path; DeepSpeed retains the reproducible `reduce_bucket_size=0` execution defect as unresolved because its repaired case does not complete. The normalized result is pinned in `gpu/formal_results_summary.yaml`.
 
 ## Pinned framework sources
 

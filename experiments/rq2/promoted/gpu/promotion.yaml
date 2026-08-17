@@ -13,8 +13,8 @@ subjects:
   - llama2-train
   - mixtral-train
   - qwen2-train
-  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817/pytorch-native.json
-  rq1_result_sha256: 750611c27e690dee2540fbbd7f4a171bae04a0fa59b2dbeec617bb5323d6e8f1
+  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817-v3/pytorch-native.json
+  rq1_result_sha256: 32a9c6bcf1cb08ddabdfbdac492afd583e483290863b1ad51ac88b754797b7b3
   static_artifact: ../../../../artifacts/frameworks/pytorch_v2.13.0.json
   static_artifact_sha256: 282a2dd5fc5e4f94906f24bdd4544062cb5ac3929c15906488570d43a88f9cbe
   qualification_dir: ../../../../formal-results/accelerator-qualification/pytorch-cuda-20260817-093015
@@ -100,8 +100,8 @@ subjects:
   - llama2-train
   - mixtral-train
   - qwen2-train
-  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817/deepspeed.json
-  rq1_result_sha256: ff7187387bd5099c1cd9fab44d575cb70a0ad7ae17acc8acfe40ba31f46d58b2
+  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817-v3/deepspeed.json
+  rq1_result_sha256: 51cd5aa28ef6ff40660575babb1014906645f936e402678754988603f4dfce1d
   static_artifact: ../../../../artifacts/frameworks/deepspeed_v0.19.1.json
   static_artifact_sha256: d42c2920af8e180072b410f6afea0b33c77b27163cdca35a8e01a1a5903fa457
   qualification_dir: ../../../../formal-results/accelerator-qualification/deepspeed-20260817-093305
@@ -187,8 +187,8 @@ subjects:
   - llama2-train
   - mixtral-train
   - qwen2-train
-  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817/transformers-accelerate.json
-  rq1_result_sha256: 2fea1a2b37438a51c346f4aebdeb9b50880445ce075f86839842a3f969580dcb
+  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817-v3/transformers-accelerate.json
+  rq1_result_sha256: 35827af425fc4014c8485958e2e4cbddc6453662c42c8d67781b21920bbae8d0
   static_artifact: ../../../../artifacts/frameworks/transformers_v5.9.0_accelerate_v1.14.0.json
   static_artifact_sha256: 89f1ed40040478c0dfd5bf54d1232aad28d220702e30928e996e5f0c0e34de7c
   qualification_dir: ../../../../formal-results/accelerator-qualification/transformers-accelerate-20260817-095036
@@ -270,8 +270,8 @@ subjects:
   - llama2-train
   - mixtral-train
   - qwen2-train
-  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817/megatron-core.json
-  rq1_result_sha256: cd2e348f05d69bd2cce7d253d23f83592a11461334207957c25a7de1db44bd05
+  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817-v3/megatron-core.json
+  rq1_result_sha256: dba17d9f4e4b07f047997083d3c8c01839aca67abb1bf6426c479171d63d25d0
   static_artifact: ../../../../artifacts/frameworks/megatron_core_v0.18.2.json
   static_artifact_sha256: f618f09db0054a57657d0c4f3840a6d7864b50046c44eeb4fecd4b9b811c2c73
   qualification_dir: ../../../../formal-results/accelerator-qualification/megatron-core-20260817-095512
@@ -294,16 +294,16 @@ subjects:
     validated_edges: 139
     model_stack_edges: 0
     static_graph_sha256: a9b6bbaaff0e469a8e3112c2d2d7ccd15f8bc5828b74b24b98d7faec62918454
-    validated_graph_sha256: 606a03c82ee75b45b7765f39e02cb52a7fb8fc7bc93989ea8fa6c5ffc22e7884
+    validated_graph_sha256: 463e644a47ff4988bad9ed200faa151675ed04f312efed14f1fe8e5ea6cd3e07
   - workload_id: mixtral-train
     static_edges: 139
     validated_edges: 139
     model_stack_edges: 0
     static_graph_sha256: 53409d634b4ad036ae9c72a558b60b19290e3acceca41f9ece76a596db00ce24
-    validated_graph_sha256: 728797ffbd365c0bbcba329defca1c551a6a191a24c4ae5ad0d39882831ebd97
+    validated_graph_sha256: 308b222d8e12eb6a89863f152426d01ea8c0aefa83ea1055ea942a95d94a3f74
   - workload_id: qwen2-train
     static_edges: 139
     validated_edges: 139
     model_stack_edges: 0
     static_graph_sha256: ac3d9f89cceaa7efc010fc85cab76db8521e5be152ac685439e89dac344be529
-    validated_graph_sha256: 7f94e5fd2b1b9136064e5534c1a492f17225d9ec0f9920a5557121f45ec0c551
+    validated_graph_sha256: 75d4e48fa0000d42debd82a0d02461a3995e40a0e6805401bdf17fb17b874547

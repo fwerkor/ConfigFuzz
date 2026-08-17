@@ -3,7 +3,7 @@ name: rq2-deepspeed-promoted-workloads
 metadata:
   status: gpu_accelerator_qualified
   framework_id: deepspeed
-  rq1_result_sha256: ff7187387bd5099c1cd9fab44d575cb70a0ad7ae17acc8acfe40ba31f46d58b2
+  rq1_result_sha256: 51cd5aa28ef6ff40660575babb1014906645f936e402678754988603f4dfce1d
   static_artifact_sha256: d42c2920af8e180072b410f6afea0b33c77b27163cdca35a8e01a1a5903fa457
   qualification_summary_sha256: eabedead0756c18320e6629046864a609b6f35a639e91c41434b14d10d91291f
 workloads:

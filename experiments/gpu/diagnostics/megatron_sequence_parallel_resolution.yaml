@@ -1,0 +1,41 @@
+schema_version: 1
+name: megatron-sequence-parallel-resolution
+campaign_date: '2026-08-17'
+runner_revision: 44fc744
+frozen_targets_sha256: e20cb9cfbe8cfe5855e065d2455780fb5fd707540be60393d612bdc902921a8e
+subject: megatron-core
+edge_id: dep-77fd7ce216b36ffd
+expression: sequence_parallel => tensor_model_parallel_size > 1
+previous_classification: unresolved
+classification: paired_confirmed
+previous_confound: >-
+  The earlier qualification path used a Torch normalization implementation that
+  independently rejected sequence parallelism, so the target relation could not
+  be isolated.
+harness_correction: >-
+  Preserve Megatron-Core's local attention and tensor-parallel linear modules and
+  use Transformer Engine only for normalization, which supports the exercised
+  sequence-parallel path without changing the frozen intervention membership.
+formal_triplet:
+  satisfying:
+    tensor_model_parallel_size: 2
+    sequence_parallel: true
+    outcome: valid
+    evidence: completed through checkpoint save/load and the final milestone
+  violating:
+    tensor_model_parallel_size: 1
+    sequence_parallel: true
+    outcome: invalid
+    evidence: "ValueError: Cannot use sequence parallelism without tensor parallelism"
+    provenance_matched: true
+  repaired:
+    tensor_model_parallel_size: 2
+    sequence_parallel: true
+    outcome: valid
+    evidence: completed through checkpoint save/load and the final milestone
+result_sha256: dba17d9f4e4b07f047997083d3c8c01839aca67abb1bf6426c479171d63d25d0
+interpretation: >-
+  The corrected execution isolates the recovered relation and supplies the
+  valid/invalid/valid paired evidence required for paired confirmation. Megatron-Core
+  therefore has no unresolved RQ1 target in the final GPU campaign.
+raw_record: formal-results/rq1-gpu-final-20260817-v3/megatron-core.json
