@@ -1,0 +1,37 @@
+{
+  "analysis_revision": "714e5dbde0616dc04f798a35c60a21c7bfeedbce",
+  "behavior_policy": "executed-path-v1",
+  "date": "2026-08-19",
+  "final_infrastructure_failure_records": 0,
+  "framework_local_intents": 720,
+  "interpretation": "ConfigFuzz improves deep execution on the instrumented subset but does not expand the observed executed-path behavior-ID or behavior-signature set relative to Raw Mutation.",
+  "method_records": 4320,
+  "name": "ConfigFuzz RQ2 GPU runtime-diversity subset",
+  "primary_comparison": {
+    "configfuzz_behavior_ids": 26,
+    "configfuzz_behavior_signatures": 39,
+    "configfuzz_entropy_bits": 4.589417581988534,
+    "configfuzz_ipde_count": 544,
+    "configfuzz_ipde_rate": 0.7555555555555555,
+    "configfuzz_signatures_per_accelerator_hour": 14.546124395945927,
+    "paired": {
+      "both_deep": 520,
+      "configfuzz_only": 24,
+      "neither": 176,
+      "raw_only": 0
+    },
+    "raw_behavior_ids": 26,
+    "raw_behavior_signatures": 39,
+    "raw_entropy_bits": 4.654375577269049,
+    "raw_ipde_count": 520,
+    "raw_ipde_rate": 0.7222222222222222,
+    "raw_signatures_per_accelerator_hour": 14.504329359401636
+  },
+  "runner_revision": "9a57741979405515802f6accfc22789da6b6b9cd",
+  "runtime_instrumentation": "runtime-events-v1",
+  "schema_version": 1,
+  "seed": 2026,
+  "subset_policy": "lowest SHA-256 20% of frozen intents independently within each workload",
+  "transient_infrastructure_reruns": 8,
+  "unique_runtime_configurations": 844
+}

@@ -1,0 +1,217 @@
+{
+  "case_count": 5,
+  "cases": [
+    {
+      "assignments": {
+        "training.micro_batch_size": 5
+      },
+      "baseline_id": "cogvideox-train-canonical-v1",
+      "case_id": "cogvideox-train-micro-batch-size-integer_adjacent_above-b610e2386e85-raw_mutation-00160b0b1c7a",
+      "coordinated_parameters": [],
+      "intent_id": "cogvideox-train-micro-batch-size-integer_adjacent_above-b610e2386e85",
+      "intent_pool": "method_independent",
+      "metadata": {
+        "baseline_value": 1,
+        "comparison_role": "single_parameter_mutation",
+        "intent_class": "integer_adjacent_above",
+        "resolved_target_parameter": "training.micro_batch_size"
+      },
+      "method": "raw_mutation",
+      "preflight": "none",
+      "solver_seconds": 0.0,
+      "solver_seconds_recorded_at_runtime": false,
+      "solver_status": null,
+      "solver_timeout_ms": null,
+      "status": "ready",
+      "target_parameter": "training.micro_batch_size",
+      "target_value": 5,
+      "target_value_preserved": true,
+      "unknown_constraints": [],
+      "violated_constraints": [],
+      "workload_id": "cogvideox-train"
+    },
+    {
+      "assignments": {
+        "video.out_channels": 3
+      },
+      "baseline_id": "cogvideox-train-canonical-v1",
+      "case_id": "cogvideox-train-out-channels-integer_adjacent_below-cb5bb7dbe75b-raw_mutation-6b3e89025af8",
+      "coordinated_parameters": [],
+      "intent_id": "cogvideox-train-out-channels-integer_adjacent_below-cb5bb7dbe75b",
+      "intent_pool": "method_independent",
+      "metadata": {
+        "baseline_value": 4,
+        "comparison_role": "single_parameter_mutation",
+        "intent_class": "integer_adjacent_below",
+        "resolved_target_parameter": "video.out_channels"
+      },
+      "method": "raw_mutation",
+      "preflight": "none",
+      "solver_seconds": 0.0,
+      "solver_seconds_recorded_at_runtime": false,
+      "solver_status": null,
+      "solver_timeout_ms": null,
+      "status": "ready",
+      "target_parameter": "video.out_channels",
+      "target_value": 3,
+      "target_value_preserved": true,
+      "unknown_constraints": [],
+      "violated_constraints": [],
+      "workload_id": "cogvideox-train"
+    },
+    {
+      "assignments": {
+        "model.ffn_hidden_size": 1026
+      },
+      "baseline_id": "mixtral-train-canonical-v1",
+      "case_id": "mixtral-train-ffn-hidden-size-integer_adjacent_above-4979f408efe6-raw_mutation-83ce3f78ceae",
+      "coordinated_parameters": [],
+      "intent_id": "mixtral-train-ffn-hidden-size-integer_adjacent_above-4979f408efe6",
+      "intent_pool": "method_independent",
+      "metadata": {
+        "baseline_value": 1024,
+        "comparison_role": "single_parameter_mutation",
+        "intent_class": "integer_adjacent_above",
+        "resolved_target_parameter": "model.ffn_hidden_size"
+      },
+      "method": "raw_mutation",
+      "preflight": "none",
+      "solver_seconds": 0.0,
+      "solver_seconds_recorded_at_runtime": false,
+      "solver_status": null,
+      "solver_timeout_ms": null,
+      "status": "ready",
+      "target_parameter": "model.ffn_hidden_size",
+      "target_value": 1026,
+      "target_value_preserved": true,
+      "unknown_constraints": [],
+      "violated_constraints": [],
+      "workload_id": "mixtral-train"
+    },
+    {
+      "assignments": {
+        "model.hidden_size": 516
+      },
+      "baseline_id": "mixtral-train-canonical-v1",
+      "case_id": "mixtral-train-hidden-size-integer_adjacent_above-3bfd70c88252-raw_mutation-33ebbebf0dc7",
+      "coordinated_parameters": [],
+      "intent_id": "mixtral-train-hidden-size-integer_adjacent_above-3bfd70c88252",
+      "intent_pool": "method_independent",
+      "metadata": {
+        "baseline_value": 512,
+        "comparison_role": "single_parameter_mutation",
+        "intent_class": "integer_adjacent_above",
+        "resolved_target_parameter": "model.hidden_size"
+      },
+      "method": "raw_mutation",
+      "preflight": "none",
+      "solver_seconds": 0.0,
+      "solver_seconds_recorded_at_runtime": false,
+      "solver_status": null,
+      "solver_timeout_ms": null,
+      "status": "ready",
+      "target_parameter": "model.hidden_size",
+      "target_value": 516,
+      "target_value_preserved": true,
+      "unknown_constraints": [],
+      "violated_constraints": [],
+      "workload_id": "mixtral-train"
+    },
+    {
+      "assignments": {
+        "model.seq_length": 127
+      },
+      "baseline_id": "qwen2-train-canonical-v1",
+      "case_id": "qwen2-train-seq-length-integer_adjacent_below-2ebd5b8df16a-raw_mutation-425a95c529b7",
+      "coordinated_parameters": [],
+      "intent_id": "qwen2-train-seq-length-integer_adjacent_below-2ebd5b8df16a",
+      "intent_pool": "method_independent",
+      "metadata": {
+        "baseline_value": 128,
+        "comparison_role": "single_parameter_mutation",
+        "intent_class": "integer_adjacent_below",
+        "resolved_target_parameter": "model.seq_length"
+      },
+      "method": "raw_mutation",
+      "preflight": "none",
+      "solver_seconds": 0.0,
+      "solver_seconds_recorded_at_runtime": false,
+      "solver_status": null,
+      "solver_timeout_ms": null,
+      "status": "ready",
+      "target_parameter": "model.seq_length",
+      "target_value": 127,
+      "target_value_preserved": true,
+      "unknown_constraints": [],
+      "violated_constraints": [],
+      "workload_id": "qwen2-train"
+    }
+  ],
+  "intent_count": 209,
+  "metadata": {
+    "runtime_diversity_subset": {
+      "fraction": 0.2,
+      "selection": "lowest SHA-256(intent_id) within each workload",
+      "workloads": {
+        "chatglm3-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "cogvideox-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "deepseekv3-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "internvl3-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "llama2-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "mixtral-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "qwen2-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        }
+      }
+    }
+  },
+  "method_counts": {
+    "configfuzz": 11,
+    "global_repair": 1,
+    "raw_mutation": 209,
+    "static_hard_configfuzz": 22
+  },
+  "methods": [
+    "raw_mutation",
+    "native_validator_guided",
+    "constraint_filter_only",
+    "static_hard_configfuzz",
+    "configfuzz",
+    "global_repair"
+  ],
+  "name": "configfuzz-rq2-campaign-plan",
+  "runtime_context": {
+    "args": {
+      "world_size": 2
+    },
+    "world_size": 2
+  },
+  "schema_version": 1,
+  "selective_runtime_reuse": {
+    "source_plan_sha256": "0f5af1c4a0da3370c5479cec90fb9ace841804c818f505ee07ec0836fccb737b",
+    "unique_missing_runtime_configurations": 243
+  },
+  "solver_timeout_ms": 1000,
+  "status_counts": {
+    "ready": 243
+  }
+}

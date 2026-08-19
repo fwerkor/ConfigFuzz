@@ -1,0 +1,64 @@
+{
+  "assembled_cases": 1260,
+  "complete": true,
+  "framework_id": "deepspeed",
+  "harness_equivalence": {
+    "9a57741979405515802f6accfc22789da6b6b9cd": true
+  },
+  "launcher": "/home/yanzhou/cyh/configfuzz-gpu/ConfigFuzz-diversity/experiments/gpu/launch_rq2_deepspeed.sh",
+  "launcher_sha256": "7dfea5b8f214eacacc64dd791bc9817b802d30474ab1ea21752d2b5dd65adaf8",
+  "missing_method_counts": {},
+  "missing_plan": "formal-results/rq2-runtime-diversity-20260819/final/deepspeed.missing.json",
+  "name": "rq2-selective-runtime-reuse",
+  "output": "formal-results/rq2-runtime-diversity-20260819/final/deepspeed.jsonl",
+  "plan": "formal-results/rq2-runtime-diversity-20260819/subset/deepspeed.json",
+  "plan_sha256": "0f5af1c4a0da3370c5479cec90fb9ace841804c818f505ee07ec0836fccb737b",
+  "planned_cases": 1260,
+  "planner_statuses": {
+    "filtered": 35,
+    "ready": 1189,
+    "unknown": 14,
+    "unsat": 22
+  },
+  "provenance": {
+    "framework_id": "deepspeed",
+    "launcher_sha256": "7dfea5b8f214eacacc64dd791bc9817b802d30474ab1ea21752d2b5dd65adaf8",
+    "plan_sha256": "0f5af1c4a0da3370c5479cec90fb9ace841804c818f505ee07ec0836fccb737b",
+    "runner_revision": "9a57741979405515802f6accfc22789da6b6b9cd",
+    "runtime_instrumentation": "runtime-events-v1",
+    "workload_registry_sha256": "74841ed5f4b772f2ceea277c55603bb80c800e4277ae78929292787d47cedd02"
+  },
+  "rejected_source_records": {
+    "formal-results/rq2-runtime-diversity-20260819/fresh/deepspeed.jsonl": 5
+  },
+  "reuse_source_methods": {
+    "configfuzz": 22,
+    "global_repair": 1,
+    "raw_mutation": 1129,
+    "static_hard_configfuzz": 37
+  },
+  "runtime_reused_cases": 1189,
+  "schema_version": 1,
+  "source_record_counts": {
+    "formal-results/rq2-runtime-diversity-20260819/fresh/deepspeed.jsonl": 238,
+    "formal-results/rq2-runtime-diversity-20260819/fresh/infra-rerun-deepspeed.jsonl": 5,
+    "formal-results/rq2-runtime-diversity-20260819/fresh/smoke-deepspeed.jsonl": 1
+  },
+  "sources": [
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/deepspeed.jsonl",
+      "sha256": "56c90610d5fa3dbf5786b8f6bd4caffe6e40062a084662df4d5f9d0d42cccfe0"
+    },
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/smoke-deepspeed.jsonl",
+      "sha256": "7a23ec8e749ea6b6ed7c11d5820704c8ccb5aef7f7d89d9f82ce51633bb09e98"
+    },
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/infra-rerun-deepspeed.jsonl",
+      "sha256": "6a84ab37fae0d96067ed06e28f5952c6718018ac87cf0621a82cb89b99b8d4ae"
+    }
+  ],
+  "unique_missing_runtime_configurations": 0,
+  "workload_registry": "experiments/rq2/promoted/gpu/deepspeed/workloads.yaml",
+  "workload_registry_sha256": "74841ed5f4b772f2ceea277c55603bb80c800e4277ae78929292787d47cedd02"
+}

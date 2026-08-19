@@ -1,0 +1,64 @@
+{
+  "assembled_cases": 1260,
+  "complete": true,
+  "framework_id": "transformers-accelerate",
+  "harness_equivalence": {
+    "9a57741979405515802f6accfc22789da6b6b9cd": true
+  },
+  "launcher": "/home/yanzhou/cyh/configfuzz-gpu/ConfigFuzz-diversity/experiments/gpu/launch_rq2_accelerate.sh",
+  "launcher_sha256": "9057ad511526f637224cc3b4f9fd97e0fbf8fe5c86b1470400acf3702e84c9d3",
+  "missing_method_counts": {},
+  "missing_plan": "formal-results/rq2-runtime-diversity-20260819/final/transformers-accelerate.missing.json",
+  "name": "rq2-selective-runtime-reuse",
+  "output": "formal-results/rq2-runtime-diversity-20260819/final/transformers-accelerate.jsonl",
+  "plan": "formal-results/rq2-runtime-diversity-20260819/subset/transformers-accelerate.json",
+  "plan_sha256": "aa585fecbbe3ce10c1e6af6f993a0eb160df4f6e94725883dc5d5033e2d250b3",
+  "planned_cases": 1260,
+  "planner_statuses": {
+    "filtered": 31,
+    "ready": 1217,
+    "unknown": 2,
+    "unsat": 10
+  },
+  "provenance": {
+    "framework_id": "transformers-accelerate",
+    "launcher_sha256": "9057ad511526f637224cc3b4f9fd97e0fbf8fe5c86b1470400acf3702e84c9d3",
+    "plan_sha256": "aa585fecbbe3ce10c1e6af6f993a0eb160df4f6e94725883dc5d5033e2d250b3",
+    "runner_revision": "9a57741979405515802f6accfc22789da6b6b9cd",
+    "runtime_instrumentation": "runtime-events-v1",
+    "workload_registry_sha256": "59ea871649097495ef3687e2082feacd2a5b27e06d6fa968d41f7d583a69612c"
+  },
+  "rejected_source_records": {
+    "formal-results/rq2-runtime-diversity-20260819/fresh/transformers-accelerate.jsonl": 1
+  },
+  "reuse_source_methods": {
+    "configfuzz": 21,
+    "global_repair": 2,
+    "raw_mutation": 1157,
+    "static_hard_configfuzz": 37
+  },
+  "runtime_reused_cases": 1217,
+  "schema_version": 1,
+  "source_record_counts": {
+    "formal-results/rq2-runtime-diversity-20260819/fresh/infra-rerun-transformers-accelerate.jsonl": 1,
+    "formal-results/rq2-runtime-diversity-20260819/fresh/smoke-accelerate.jsonl": 1,
+    "formal-results/rq2-runtime-diversity-20260819/fresh/transformers-accelerate.jsonl": 243
+  },
+  "sources": [
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/transformers-accelerate.jsonl",
+      "sha256": "b3f6a4a689b16fe50ef8c03db0520c5a0bdcfec1d604b8cea0b2d8245d484a87"
+    },
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/smoke-accelerate.jsonl",
+      "sha256": "523ed12c64e54cccec99d2606771ffdfe58721316a6a6eb01b40a6c71f877585"
+    },
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/infra-rerun-transformers-accelerate.jsonl",
+      "sha256": "8aae5fef3c01b39ce2da07a0d3d89749b5c1968b0285753533d258633a8d3a24"
+    }
+  ],
+  "unique_missing_runtime_configurations": 0,
+  "workload_registry": "experiments/rq2/promoted/gpu/transformers-accelerate/workloads.yaml",
+  "workload_registry_sha256": "59ea871649097495ef3687e2082feacd2a5b27e06d6fa968d41f7d583a69612c"
+}

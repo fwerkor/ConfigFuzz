@@ -1,0 +1,1455 @@
+{
+  "schema_version": 3,
+  "name": "rq2-gpu-final-primary-seed",
+  "seed": 2026,
+  "target_milestone": "optimizer_step",
+  "total_records": 4320,
+  "frameworks": {
+    "pytorch-cuda": {
+      "intent_count": 210,
+      "record_count": 1260,
+      "methods": {
+        "raw_mutation": {
+          "run_count": 210,
+          "generated_count": 210,
+          "generation_rate": 1.0,
+          "ipde_count": 157,
+          "ipde_rate": 0.7476190476190476,
+          "deep_execution_count": 157,
+          "deep_execution_rate": 0.7476190476190476,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 2666.1049670090433,
+          "ipde_per_accelerator_hour": 211.99465399671297,
+          "diversity": {
+            "instrumented_execution_count": 210,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 4,
+            "runtime_behavior_ids": 18,
+            "runtime_behavior_ids_per_accelerator_hour": 24.305119566502125,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 16.20341304433475,
+            "behavior_signature_entropy_bits": 2.945211555064298
+          },
+          "outcome_counts": {
+            "expected_rejection": 23,
+            "unexplained_failure": 30,
+            "valid": 157
+          }
+        },
+        "native_validator_guided": {
+          "run_count": 210,
+          "generated_count": 210,
+          "generation_rate": 1.0,
+          "ipde_count": 157,
+          "ipde_rate": 0.7476190476190476,
+          "deep_execution_count": 157,
+          "deep_execution_rate": 0.7476190476190476,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 2666.1049670090433,
+          "ipde_per_accelerator_hour": 211.99465399671297,
+          "diversity": {
+            "instrumented_execution_count": 210,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 4,
+            "runtime_behavior_ids": 18,
+            "runtime_behavior_ids_per_accelerator_hour": 24.305119566502125,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 16.20341304433475,
+            "behavior_signature_entropy_bits": 2.945211555064298
+          },
+          "outcome_counts": {
+            "expected_rejection": 23,
+            "unexplained_failure": 30,
+            "valid": 157
+          }
+        },
+        "constraint_filter_only": {
+          "run_count": 210,
+          "generated_count": 177,
+          "generation_rate": 0.8428571428571429,
+          "ipde_count": 152,
+          "ipde_rate": 0.7238095238095238,
+          "deep_execution_count": 152,
+          "deep_execution_rate": 0.7238095238095238,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 2276.0814649334643,
+          "ipde_per_accelerator_hour": 240.4131875024939,
+          "diversity": {
+            "instrumented_execution_count": 177,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 4,
+            "runtime_behavior_ids": 18,
+            "runtime_behavior_ids_per_accelerator_hour": 28.469982730558492,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 18.979988487038995,
+            "behavior_signature_entropy_bits": 2.8027078269233976
+          },
+          "outcome_counts": {
+            "expected_rejection": 44,
+            "unexplained_failure": 12,
+            "unknown": 2,
+            "valid": 152
+          }
+        },
+        "static_hard_configfuzz": {
+          "run_count": 210,
+          "generated_count": 200,
+          "generation_rate": 0.9523809523809523,
+          "ipde_count": 163,
+          "ipde_rate": 0.7761904761904762,
+          "deep_execution_count": 163,
+          "deep_execution_rate": 0.7761904761904762,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 23,
+          "accelerator_seconds": 2579.3259104150347,
+          "ipde_per_accelerator_hour": 227.50130087499454,
+          "diversity": {
+            "instrumented_execution_count": 200,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 4,
+            "runtime_behavior_ids": 18,
+            "runtime_behavior_ids_per_accelerator_hour": 25.12284304141044,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 16.748562027606962,
+            "behavior_signature_entropy_bits": 2.866584243405352
+          },
+          "outcome_counts": {
+            "expected_rejection": 25,
+            "unexplained_failure": 22,
+            "valid": 163
+          }
+        },
+        "configfuzz": {
+          "run_count": 210,
+          "generated_count": 210,
+          "generation_rate": 1.0,
+          "ipde_count": 165,
+          "ipde_rate": 0.7857142857142857,
+          "deep_execution_count": 165,
+          "deep_execution_rate": 0.7857142857142857,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 18,
+          "accelerator_seconds": 2680.914927948499,
+          "ipde_per_accelerator_hour": 221.56615034947907,
+          "diversity": {
+            "instrumented_execution_count": 210,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 4,
+            "runtime_behavior_ids": 18,
+            "runtime_behavior_ids_per_accelerator_hour": 24.17085276539772,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 16.11390184359848,
+            "behavior_signature_entropy_bits": 2.8925695751642118
+          },
+          "outcome_counts": {
+            "expected_rejection": 19,
+            "unexplained_failure": 26,
+            "valid": 165
+          }
+        },
+        "global_repair": {
+          "run_count": 210,
+          "generated_count": 210,
+          "generation_rate": 1.0,
+          "ipde_count": 165,
+          "ipde_rate": 0.7857142857142857,
+          "deep_execution_count": 165,
+          "deep_execution_rate": 0.7857142857142857,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 19,
+          "accelerator_seconds": 2681.079380870331,
+          "ipde_per_accelerator_hour": 221.5525598526575,
+          "diversity": {
+            "instrumented_execution_count": 210,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 4,
+            "runtime_behavior_ids": 18,
+            "runtime_behavior_ids_per_accelerator_hour": 24.169370165744457,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 16.112913443829637,
+            "behavior_signature_entropy_bits": 2.8925695751642118
+          },
+          "outcome_counts": {
+            "expected_rejection": 19,
+            "unexplained_failure": 26,
+            "valid": 165
+          }
+        }
+      }
+    },
+    "deepspeed": {
+      "intent_count": 210,
+      "record_count": 1260,
+      "methods": {
+        "raw_mutation": {
+          "run_count": 210,
+          "generated_count": 210,
+          "generation_rate": 1.0,
+          "ipde_count": 156,
+          "ipde_rate": 0.7428571428571429,
+          "deep_execution_count": 156,
+          "deep_execution_rate": 0.7428571428571429,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 3131.120498523116,
+          "ipde_per_accelerator_hour": 179.36071136990574,
+          "diversity": {
+            "instrumented_execution_count": 188,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 5,
+            "runtime_behavior_ids": 19,
+            "runtime_behavior_ids_per_accelerator_hour": 21.845214846334674,
+            "behavior_signatures": 11,
+            "behavior_signatures_per_accelerator_hour": 12.64722964787797,
+            "behavior_signature_entropy_bits": 2.795806990224327
+          },
+          "outcome_counts": {
+            "expected_rejection": 27,
+            "unexplained_failure": 27,
+            "valid": 156
+          }
+        },
+        "native_validator_guided": {
+          "run_count": 210,
+          "generated_count": 210,
+          "generation_rate": 1.0,
+          "ipde_count": 156,
+          "ipde_rate": 0.7428571428571429,
+          "deep_execution_count": 156,
+          "deep_execution_rate": 0.7428571428571429,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 3131.120498523116,
+          "ipde_per_accelerator_hour": 179.36071136990574,
+          "diversity": {
+            "instrumented_execution_count": 188,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 5,
+            "runtime_behavior_ids": 19,
+            "runtime_behavior_ids_per_accelerator_hour": 21.845214846334674,
+            "behavior_signatures": 11,
+            "behavior_signatures_per_accelerator_hour": 12.64722964787797,
+            "behavior_signature_entropy_bits": 2.795806990224327
+          },
+          "outcome_counts": {
+            "expected_rejection": 27,
+            "unexplained_failure": 27,
+            "valid": 156
+          }
+        },
+        "constraint_filter_only": {
+          "run_count": 210,
+          "generated_count": 161,
+          "generation_rate": 0.7666666666666667,
+          "ipde_count": 139,
+          "ipde_rate": 0.6619047619047619,
+          "deep_execution_count": 139,
+          "deep_execution_rate": 0.6619047619047619,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 2443.2520908017177,
+          "ipde_per_accelerator_hour": 204.8089928517368,
+          "diversity": {
+            "instrumented_execution_count": 152,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 5,
+            "runtime_behavior_ids": 19,
+            "runtime_behavior_ids_per_accelerator_hour": 27.99547384304316,
+            "behavior_signatures": 11,
+            "behavior_signatures_per_accelerator_hour": 16.20790590913025,
+            "behavior_signature_entropy_bits": 2.641330523468016
+          },
+          "outcome_counts": {
+            "expected_rejection": 48,
+            "unexplained_failure": 9,
+            "unknown": 14,
+            "valid": 139
+          }
+        },
+        "static_hard_configfuzz": {
+          "run_count": 210,
+          "generated_count": 196,
+          "generation_rate": 0.9333333333333333,
+          "ipde_count": 162,
+          "ipde_rate": 0.7714285714285715,
+          "deep_execution_count": 162,
+          "deep_execution_rate": 0.7714285714285715,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 23,
+          "accelerator_seconds": 2967.7262769495137,
+          "ipde_per_accelerator_hour": 196.51408033474823,
+          "diversity": {
+            "instrumented_execution_count": 186,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 5,
+            "runtime_behavior_ids": 19,
+            "runtime_behavior_ids_per_accelerator_hour": 23.04794769358158,
+            "behavior_signatures": 11,
+            "behavior_signatures_per_accelerator_hour": 13.343548664705127,
+            "behavior_signature_entropy_bits": 2.702567419434616
+          },
+          "outcome_counts": {
+            "expected_rejection": 29,
+            "unexplained_failure": 19,
+            "valid": 162
+          }
+        },
+        "configfuzz": {
+          "run_count": 210,
+          "generated_count": 206,
+          "generation_rate": 0.9809523809523809,
+          "ipde_count": 164,
+          "ipde_rate": 0.780952380952381,
+          "deep_execution_count": 164,
+          "deep_execution_rate": 0.780952380952381,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 18,
+          "accelerator_seconds": 3091.8581046306062,
+          "ipde_per_accelerator_hour": 190.95313562927458,
+          "diversity": {
+            "instrumented_execution_count": 188,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 5,
+            "runtime_behavior_ids": 19,
+            "runtime_behavior_ids_per_accelerator_hour": 22.12261937168425,
+            "behavior_signatures": 11,
+            "behavior_signatures_per_accelerator_hour": 12.807832267817197,
+            "behavior_signature_entropy_bits": 2.6889168541968402
+          },
+          "outcome_counts": {
+            "expected_rejection": 23,
+            "unexplained_failure": 23,
+            "valid": 164
+          }
+        },
+        "global_repair": {
+          "run_count": 210,
+          "generated_count": 206,
+          "generation_rate": 0.9809523809523809,
+          "ipde_count": 164,
+          "ipde_rate": 0.780952380952381,
+          "deep_execution_count": 164,
+          "deep_execution_rate": 0.780952380952381,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 19,
+          "accelerator_seconds": 3091.8648171382956,
+          "ipde_per_accelerator_hour": 190.95272106574512,
+          "diversity": {
+            "instrumented_execution_count": 188,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 5,
+            "runtime_behavior_ids": 19,
+            "runtime_behavior_ids_per_accelerator_hour": 22.122571342982667,
+            "behavior_signatures": 11,
+            "behavior_signatures_per_accelerator_hour": 12.807804461726807,
+            "behavior_signature_entropy_bits": 2.6889168541968402
+          },
+          "outcome_counts": {
+            "expected_rejection": 23,
+            "unexplained_failure": 23,
+            "valid": 164
+          }
+        }
+      }
+    },
+    "transformers-accelerate": {
+      "intent_count": 210,
+      "record_count": 1260,
+      "methods": {
+        "raw_mutation": {
+          "run_count": 210,
+          "generated_count": 210,
+          "generation_rate": 1.0,
+          "ipde_count": 160,
+          "ipde_rate": 0.7619047619047619,
+          "deep_execution_count": 160,
+          "deep_execution_rate": 0.7619047619047619,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 2789.779384077061,
+          "ipde_per_accelerator_hour": 206.4679391092989,
+          "diversity": {
+            "instrumented_execution_count": 210,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 6,
+            "runtime_behavior_ids": 20,
+            "runtime_behavior_ids_per_accelerator_hour": 25.808492388662362,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 15.485095433197419,
+            "behavior_signature_entropy_bits": 2.9195277354737725
+          },
+          "outcome_counts": {
+            "expected_rejection": 20,
+            "unexplained_failure": 30,
+            "valid": 160
+          }
+        },
+        "native_validator_guided": {
+          "run_count": 210,
+          "generated_count": 210,
+          "generation_rate": 1.0,
+          "ipde_count": 160,
+          "ipde_rate": 0.7619047619047619,
+          "deep_execution_count": 160,
+          "deep_execution_rate": 0.7619047619047619,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 2789.779384077061,
+          "ipde_per_accelerator_hour": 206.4679391092989,
+          "diversity": {
+            "instrumented_execution_count": 210,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 6,
+            "runtime_behavior_ids": 20,
+            "runtime_behavior_ids_per_accelerator_hour": 25.808492388662362,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 15.485095433197419,
+            "behavior_signature_entropy_bits": 2.9195277354737725
+          },
+          "outcome_counts": {
+            "expected_rejection": 20,
+            "unexplained_failure": 30,
+            "valid": 160
+          }
+        },
+        "constraint_filter_only": {
+          "run_count": 210,
+          "generated_count": 177,
+          "generation_rate": 0.8428571428571429,
+          "ipde_count": 154,
+          "ipde_rate": 0.7333333333333333,
+          "deep_execution_count": 154,
+          "deep_execution_rate": 0.7333333333333333,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 2386.7309388010763,
+          "ipde_per_accelerator_hour": 232.284247456268,
+          "diversity": {
+            "instrumented_execution_count": 177,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 6,
+            "runtime_behavior_ids": 20,
+            "runtime_behavior_ids_per_accelerator_hour": 30.166785383930907,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 18.100071230358544,
+            "behavior_signature_entropy_bits": 2.7751384462023574
+          },
+          "outcome_counts": {
+            "expected_rejection": 42,
+            "unexplained_failure": 12,
+            "unknown": 2,
+            "valid": 154
+          }
+        },
+        "static_hard_configfuzz": {
+          "run_count": 210,
+          "generated_count": 200,
+          "generation_rate": 0.9523809523809523,
+          "ipde_count": 166,
+          "ipde_rate": 0.7904761904761904,
+          "deep_execution_count": 166,
+          "deep_execution_rate": 0.7904761904761904,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 23,
+          "accelerator_seconds": 2697.5070759609807,
+          "ipde_per_accelerator_hour": 221.53788041023262,
+          "diversity": {
+            "instrumented_execution_count": 200,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 6,
+            "runtime_behavior_ids": 20,
+            "runtime_behavior_ids_per_accelerator_hour": 26.69131089279911,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 16.014786535679466,
+            "behavior_signature_entropy_bits": 2.8362104734806994
+          },
+          "outcome_counts": {
+            "expected_rejection": 22,
+            "unexplained_failure": 22,
+            "valid": 166
+          }
+        },
+        "configfuzz": {
+          "run_count": 210,
+          "generated_count": 210,
+          "generation_rate": 1.0,
+          "ipde_count": 168,
+          "ipde_rate": 0.8,
+          "deep_execution_count": 168,
+          "deep_execution_rate": 0.8,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 18,
+          "accelerator_seconds": 2807.1414974511135,
+          "ipde_per_accelerator_hour": 215.450486036831,
+          "diversity": {
+            "instrumented_execution_count": 210,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 6,
+            "runtime_behavior_ids": 20,
+            "runtime_behavior_ids_per_accelerator_hour": 25.648867385337024,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 15.389320431202215,
+            "behavior_signature_entropy_bits": 2.8618521949755014
+          },
+          "outcome_counts": {
+            "expected_rejection": 16,
+            "unexplained_failure": 26,
+            "valid": 168
+          }
+        },
+        "global_repair": {
+          "run_count": 210,
+          "generated_count": 210,
+          "generation_rate": 1.0,
+          "ipde_count": 168,
+          "ipde_rate": 0.8,
+          "deep_execution_count": 168,
+          "deep_execution_rate": 0.8,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 19,
+          "accelerator_seconds": 2807.450395653257,
+          "ipde_per_accelerator_hour": 215.42678044691542,
+          "diversity": {
+            "instrumented_execution_count": 210,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 3,
+            "topologies": 1,
+            "feature_interactions": 10,
+            "backend_paths": 6,
+            "runtime_behavior_ids": 20,
+            "runtime_behavior_ids_per_accelerator_hour": 25.646045291299455,
+            "behavior_signatures": 12,
+            "behavior_signatures_per_accelerator_hour": 15.387627174779672,
+            "behavior_signature_entropy_bits": 2.8618521949755014
+          },
+          "outcome_counts": {
+            "expected_rejection": 16,
+            "unexplained_failure": 26,
+            "valid": 168
+          }
+        }
+      }
+    },
+    "megatron-core": {
+      "intent_count": 90,
+      "record_count": 540,
+      "methods": {
+        "raw_mutation": {
+          "run_count": 90,
+          "generated_count": 90,
+          "generation_rate": 1.0,
+          "ipde_count": 47,
+          "ipde_rate": 0.5222222222222223,
+          "deep_execution_count": 47,
+          "deep_execution_rate": 0.5222222222222223,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 1092.8635897401255,
+          "ipde_per_accelerator_hour": 154.82261609633684,
+          "diversity": {
+            "instrumented_execution_count": 58,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 1,
+            "topologies": 1,
+            "feature_interactions": 5,
+            "backend_paths": 3,
+            "runtime_behavior_ids": 10,
+            "runtime_behavior_ids_per_accelerator_hour": 32.94098214815677,
+            "behavior_signatures": 4,
+            "behavior_signatures_per_accelerator_hour": 13.176392859262709,
+            "behavior_signature_entropy_bits": 1.654308552915933
+          },
+          "outcome_counts": {
+            "expected_rejection": 36,
+            "unexplained_failure": 7,
+            "valid": 47
+          }
+        },
+        "native_validator_guided": {
+          "run_count": 90,
+          "generated_count": 90,
+          "generation_rate": 1.0,
+          "ipde_count": 47,
+          "ipde_rate": 0.5222222222222223,
+          "deep_execution_count": 47,
+          "deep_execution_rate": 0.5222222222222223,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 1092.8635897401255,
+          "ipde_per_accelerator_hour": 154.82261609633684,
+          "diversity": {
+            "instrumented_execution_count": 58,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 1,
+            "topologies": 1,
+            "feature_interactions": 5,
+            "backend_paths": 3,
+            "runtime_behavior_ids": 10,
+            "runtime_behavior_ids_per_accelerator_hour": 32.94098214815677,
+            "behavior_signatures": 4,
+            "behavior_signatures_per_accelerator_hour": 13.176392859262709,
+            "behavior_signature_entropy_bits": 1.654308552915933
+          },
+          "outcome_counts": {
+            "expected_rejection": 36,
+            "unexplained_failure": 7,
+            "valid": 47
+          }
+        },
+        "constraint_filter_only": {
+          "run_count": 90,
+          "generated_count": 37,
+          "generation_rate": 0.4111111111111111,
+          "ipde_count": 25,
+          "ipde_rate": 0.2777777777777778,
+          "deep_execution_count": 25,
+          "deep_execution_rate": 0.2777777777777778,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 465.82617838447914,
+          "ipde_per_accelerator_hour": 193.20511421691003,
+          "diversity": {
+            "instrumented_execution_count": 27,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 1,
+            "topologies": 1,
+            "feature_interactions": 5,
+            "backend_paths": 3,
+            "runtime_behavior_ids": 10,
+            "runtime_behavior_ids_per_accelerator_hour": 77.28204568676401,
+            "behavior_signatures": 3,
+            "behavior_signatures_per_accelerator_hour": 23.184613706029204,
+            "behavior_signature_entropy_bits": 1.1170949925429108
+          },
+          "outcome_counts": {
+            "expected_rejection": 58,
+            "unexplained_failure": 1,
+            "unknown": 6,
+            "valid": 25
+          }
+        },
+        "static_hard_configfuzz": {
+          "run_count": 90,
+          "generated_count": 87,
+          "generation_rate": 0.9666666666666667,
+          "ipde_count": 50,
+          "ipde_rate": 0.5555555555555556,
+          "deep_execution_count": 50,
+          "deep_execution_rate": 0.5555555555555556,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 22,
+          "accelerator_seconds": 1065.9713799250312,
+          "ipde_per_accelerator_hour": 168.86006828125088,
+          "diversity": {
+            "instrumented_execution_count": 56,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 1,
+            "topologies": 1,
+            "feature_interactions": 5,
+            "backend_paths": 3,
+            "runtime_behavior_ids": 10,
+            "runtime_behavior_ids_per_accelerator_hour": 33.772013656250174,
+            "behavior_signatures": 3,
+            "behavior_signatures_per_accelerator_hour": 10.131604096875053,
+            "behavior_signature_entropy_bits": 1.3329187608024513
+          },
+          "outcome_counts": {
+            "expected_rejection": 38,
+            "unexplained_failure": 2,
+            "valid": 50
+          }
+        },
+        "configfuzz": {
+          "run_count": 90,
+          "generated_count": 88,
+          "generation_rate": 0.9777777777777777,
+          "ipde_count": 47,
+          "ipde_rate": 0.5222222222222223,
+          "deep_execution_count": 47,
+          "deep_execution_rate": 0.5222222222222223,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 1072.1409713739995,
+          "ipde_per_accelerator_hour": 157.81506771741238,
+          "diversity": {
+            "instrumented_execution_count": 58,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 1,
+            "topologies": 1,
+            "feature_interactions": 5,
+            "backend_paths": 3,
+            "runtime_behavior_ids": 10,
+            "runtime_behavior_ids_per_accelerator_hour": 33.577673982428166,
+            "behavior_signatures": 4,
+            "behavior_signatures_per_accelerator_hour": 13.431069592971266,
+            "behavior_signature_entropy_bits": 1.654308552915933
+          },
+          "outcome_counts": {
+            "expected_rejection": 36,
+            "unexplained_failure": 7,
+            "valid": 47
+          }
+        },
+        "global_repair": {
+          "run_count": 90,
+          "generated_count": 88,
+          "generation_rate": 0.9777777777777777,
+          "ipde_count": 47,
+          "ipde_rate": 0.5222222222222223,
+          "deep_execution_count": 47,
+          "deep_execution_rate": 0.5222222222222223,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "accelerator_seconds": 1072.1409713739995,
+          "ipde_per_accelerator_hour": 157.81506771741238,
+          "diversity": {
+            "instrumented_execution_count": 58,
+            "behavior_policy": "executed-path-v1",
+            "runtime_branches": 1,
+            "topologies": 1,
+            "feature_interactions": 5,
+            "backend_paths": 3,
+            "runtime_behavior_ids": 10,
+            "runtime_behavior_ids_per_accelerator_hour": 33.577673982428166,
+            "behavior_signatures": 4,
+            "behavior_signatures_per_accelerator_hour": 13.431069592971266,
+            "behavior_signature_entropy_bits": 1.654308552915933
+          },
+          "outcome_counts": {
+            "expected_rejection": 36,
+            "unexplained_failure": 7,
+            "valid": 47
+          }
+        }
+      }
+    }
+  },
+  "aggregate": {
+    "raw_mutation": {
+      "run_count": 720,
+      "generated_count": 720,
+      "generation_rate": 1.0,
+      "ipde_count": 520,
+      "ipde_rate": 0.7222222222222222,
+      "deep_execution_count": 520,
+      "deep_execution_rate": 0.7222222222222222,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 0,
+      "accelerator_seconds": 9679.868439349346,
+      "ipde_per_accelerator_hour": 193.39105812535513,
+      "diversity": {
+        "instrumented_execution_count": 666,
+        "behavior_policy": "executed-path-v1",
+        "runtime_branches": 3,
+        "topologies": 1,
+        "feature_interactions": 11,
+        "backend_paths": 11,
+        "runtime_behavior_ids": 26,
+        "runtime_behavior_ids_per_accelerator_hour": 9.669552906267757,
+        "behavior_signatures": 39,
+        "behavior_signatures_per_accelerator_hour": 14.504329359401636,
+        "behavior_signature_entropy_bits": 4.654375577269049
+      },
+      "outcome_counts": {
+        "expected_rejection": 106,
+        "unexplained_failure": 94,
+        "valid": 520
+      }
+    },
+    "native_validator_guided": {
+      "run_count": 720,
+      "generated_count": 720,
+      "generation_rate": 1.0,
+      "ipde_count": 520,
+      "ipde_rate": 0.7222222222222222,
+      "deep_execution_count": 520,
+      "deep_execution_rate": 0.7222222222222222,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 0,
+      "accelerator_seconds": 9679.868439349346,
+      "ipde_per_accelerator_hour": 193.39105812535513,
+      "diversity": {
+        "instrumented_execution_count": 666,
+        "behavior_policy": "executed-path-v1",
+        "runtime_branches": 3,
+        "topologies": 1,
+        "feature_interactions": 11,
+        "backend_paths": 11,
+        "runtime_behavior_ids": 26,
+        "runtime_behavior_ids_per_accelerator_hour": 9.669552906267757,
+        "behavior_signatures": 39,
+        "behavior_signatures_per_accelerator_hour": 14.504329359401636,
+        "behavior_signature_entropy_bits": 4.654375577269049
+      },
+      "outcome_counts": {
+        "expected_rejection": 106,
+        "unexplained_failure": 94,
+        "valid": 520
+      }
+    },
+    "constraint_filter_only": {
+      "run_count": 720,
+      "generated_count": 552,
+      "generation_rate": 0.7666666666666667,
+      "ipde_count": 470,
+      "ipde_rate": 0.6527777777777778,
+      "deep_execution_count": 470,
+      "deep_execution_rate": 0.6527777777777778,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 0,
+      "accelerator_seconds": 7571.890672920737,
+      "ipde_per_accelerator_hour": 223.45805995998853,
+      "diversity": {
+        "instrumented_execution_count": 533,
+        "behavior_policy": "executed-path-v1",
+        "runtime_branches": 3,
+        "topologies": 1,
+        "feature_interactions": 11,
+        "backend_paths": 11,
+        "runtime_behavior_ids": 26,
+        "runtime_behavior_ids_per_accelerator_hour": 12.361509699914258,
+        "behavior_signatures": 38,
+        "behavior_signatures_per_accelerator_hour": 18.066821869105457,
+        "behavior_signature_entropy_bits": 4.452594509584383
+      },
+      "outcome_counts": {
+        "expected_rejection": 192,
+        "unexplained_failure": 34,
+        "unknown": 24,
+        "valid": 470
+      }
+    },
+    "static_hard_configfuzz": {
+      "run_count": 720,
+      "generated_count": 683,
+      "generation_rate": 0.9486111111111111,
+      "ipde_count": 541,
+      "ipde_rate": 0.7513888888888889,
+      "deep_execution_count": 541,
+      "deep_execution_rate": 0.7513888888888889,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 91,
+      "accelerator_seconds": 9310.53064325056,
+      "ipde_per_accelerator_hour": 209.1824918069374,
+      "diversity": {
+        "instrumented_execution_count": 642,
+        "behavior_policy": "executed-path-v1",
+        "runtime_branches": 3,
+        "topologies": 1,
+        "feature_interactions": 11,
+        "backend_paths": 11,
+        "runtime_behavior_ids": 26,
+        "runtime_behavior_ids_per_accelerator_hour": 10.053132693124534,
+        "behavior_signatures": 38,
+        "behavior_signatures_per_accelerator_hour": 14.693040089951241,
+        "behavior_signature_entropy_bits": 4.548924882115724
+      },
+      "outcome_counts": {
+        "expected_rejection": 114,
+        "unexplained_failure": 65,
+        "valid": 541
+      }
+    },
+    "configfuzz": {
+      "run_count": 720,
+      "generated_count": 714,
+      "generation_rate": 0.9916666666666667,
+      "ipde_count": 544,
+      "ipde_rate": 0.7555555555555555,
+      "deep_execution_count": 544,
+      "deep_execution_rate": 0.7555555555555555,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 54,
+      "accelerator_seconds": 9652.055501404218,
+      "ipde_per_accelerator_hour": 202.89978644601499,
+      "diversity": {
+        "instrumented_execution_count": 666,
+        "behavior_policy": "executed-path-v1",
+        "runtime_branches": 3,
+        "topologies": 1,
+        "feature_interactions": 11,
+        "backend_paths": 11,
+        "runtime_behavior_ids": 26,
+        "runtime_behavior_ids_per_accelerator_hour": 9.697416263963952,
+        "behavior_signatures": 39,
+        "behavior_signatures_per_accelerator_hour": 14.546124395945927,
+        "behavior_signature_entropy_bits": 4.589417581988534
+      },
+      "outcome_counts": {
+        "expected_rejection": 94,
+        "unexplained_failure": 82,
+        "valid": 544
+      }
+    },
+    "global_repair": {
+      "run_count": 720,
+      "generated_count": 714,
+      "generation_rate": 0.9916666666666667,
+      "ipde_count": 544,
+      "ipde_rate": 0.7555555555555555,
+      "deep_execution_count": 544,
+      "deep_execution_rate": 0.7555555555555555,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 57,
+      "accelerator_seconds": 9652.535565035883,
+      "ipde_per_accelerator_hour": 202.88969533496035,
+      "diversity": {
+        "instrumented_execution_count": 666,
+        "behavior_policy": "executed-path-v1",
+        "runtime_branches": 3,
+        "topologies": 1,
+        "feature_interactions": 11,
+        "backend_paths": 11,
+        "runtime_behavior_ids": 26,
+        "runtime_behavior_ids_per_accelerator_hour": 9.696933968215017,
+        "behavior_signatures": 39,
+        "behavior_signatures_per_accelerator_hour": 14.545400952322526,
+        "behavior_signature_entropy_bits": 4.589417581988534
+      },
+      "outcome_counts": {
+        "expected_rejection": 94,
+        "unexplained_failure": 82,
+        "valid": 544
+      }
+    }
+  },
+  "paired_raw_vs_configfuzz": {
+    "pytorch-cuda": {
+      "both_deep": 157,
+      "raw_only": 0,
+      "configfuzz_only": 8,
+      "neither": 45,
+      "raw_only_target_counts": {},
+      "configfuzz_only_target_counts": {
+        "model.hidden_size": 1,
+        "model.num_attention_heads": 4,
+        "model.num_query_groups": 2,
+        "moe.moe_router_topk": 1
+      },
+      "configfuzz_only_cases": [
+        {
+          "intent_id": "chatglm3-train-num-attention-heads-integer_divisibility_boundary-7fe8e41d951e",
+          "workload_id": "chatglm3-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 15,
+          "coordinated_parameters": [
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 15,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "deepseekv3-train-moe-router-topk-integer_adjacent_above-9ca11b21c1c5",
+          "workload_id": "deepseekv3-train",
+          "target_parameter": "moe.moe_router_topk",
+          "target_value": 10,
+          "coordinated_parameters": [
+            "moe.num_experts"
+          ],
+          "solver_modifications": {
+            "moe.moe_router_topk": 10,
+            "moe.num_experts": 10
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "llama2-train-hidden-size-integer_adjacent_above-b3064be1e911",
+          "workload_id": "llama2-train",
+          "target_parameter": "model.hidden_size",
+          "target_value": 516,
+          "coordinated_parameters": [
+            "model.num_attention_heads"
+          ],
+          "solver_modifications": {
+            "model.hidden_size": 516,
+            "model.num_attention_heads": 6
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "expected_rejection",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "llama2-train-num-attention-heads-integer_divisibility_boundary-e463f4451b79",
+          "workload_id": "llama2-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 17,
+          "coordinated_parameters": [
+            "model.hidden_size",
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.hidden_size": 510,
+            "model.num_attention_heads": 17,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "expected_rejection",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "mixtral-train-num-attention-heads-integer_adjacent_above-2e7c44f83b14",
+          "workload_id": "mixtral-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 11,
+          "coordinated_parameters": [
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 11,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "mixtral-train-num-query-groups-integer_adjacent_above-0f49b13e1821",
+          "workload_id": "mixtral-train",
+          "target_parameter": "model.num_query_groups",
+          "target_value": 3,
+          "coordinated_parameters": [
+            "model.num_attention_heads"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 9,
+            "model.num_query_groups": 3
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "qwen2-train-num-attention-heads-integer_divisibility_boundary-84982a73c203",
+          "workload_id": "qwen2-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 17,
+          "coordinated_parameters": [
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 17,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "qwen2-train-num-query-groups-integer_divisibility_boundary-82487000571f",
+          "workload_id": "qwen2-train",
+          "target_parameter": "model.num_query_groups",
+          "target_value": 9,
+          "coordinated_parameters": [
+            "model.num_attention_heads"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 9,
+            "model.num_query_groups": 9
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        }
+      ],
+      "raw_only_cases": []
+    },
+    "deepspeed": {
+      "both_deep": 156,
+      "raw_only": 0,
+      "configfuzz_only": 8,
+      "neither": 46,
+      "raw_only_target_counts": {},
+      "configfuzz_only_target_counts": {
+        "model.hidden_size": 1,
+        "model.num_attention_heads": 4,
+        "model.num_query_groups": 2,
+        "moe.moe_router_topk": 1
+      },
+      "configfuzz_only_cases": [
+        {
+          "intent_id": "chatglm3-train-num-attention-heads-integer_divisibility_boundary-7fe8e41d951e",
+          "workload_id": "chatglm3-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 15,
+          "coordinated_parameters": [
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 15,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "deepseekv3-train-moe-router-topk-integer_adjacent_above-9ca11b21c1c5",
+          "workload_id": "deepseekv3-train",
+          "target_parameter": "moe.moe_router_topk",
+          "target_value": 10,
+          "coordinated_parameters": [
+            "moe.num_experts"
+          ],
+          "solver_modifications": {
+            "moe.moe_router_topk": 10,
+            "moe.num_experts": 10
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "llama2-train-hidden-size-integer_adjacent_above-b3064be1e911",
+          "workload_id": "llama2-train",
+          "target_parameter": "model.hidden_size",
+          "target_value": 516,
+          "coordinated_parameters": [
+            "model.num_attention_heads"
+          ],
+          "solver_modifications": {
+            "model.hidden_size": 516,
+            "model.num_attention_heads": 6
+          },
+          "raw_deepest_milestone": "argument_parsing",
+          "raw_outcome": "expected_rejection",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "llama2-train-num-attention-heads-integer_divisibility_boundary-e463f4451b79",
+          "workload_id": "llama2-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 17,
+          "coordinated_parameters": [
+            "model.hidden_size",
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.hidden_size": 510,
+            "model.num_attention_heads": 17,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "argument_parsing",
+          "raw_outcome": "expected_rejection",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "mixtral-train-num-attention-heads-integer_adjacent_above-2e7c44f83b14",
+          "workload_id": "mixtral-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 11,
+          "coordinated_parameters": [
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 11,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "mixtral-train-num-query-groups-integer_adjacent_above-0f49b13e1821",
+          "workload_id": "mixtral-train",
+          "target_parameter": "model.num_query_groups",
+          "target_value": 3,
+          "coordinated_parameters": [
+            "model.num_attention_heads"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 9,
+            "model.num_query_groups": 3
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "qwen2-train-num-attention-heads-integer_divisibility_boundary-84982a73c203",
+          "workload_id": "qwen2-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 17,
+          "coordinated_parameters": [
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 17,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "qwen2-train-num-query-groups-integer_divisibility_boundary-82487000571f",
+          "workload_id": "qwen2-train",
+          "target_parameter": "model.num_query_groups",
+          "target_value": 9,
+          "coordinated_parameters": [
+            "model.num_attention_heads"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 9,
+            "model.num_query_groups": 9
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        }
+      ],
+      "raw_only_cases": []
+    },
+    "transformers-accelerate": {
+      "both_deep": 160,
+      "raw_only": 0,
+      "configfuzz_only": 8,
+      "neither": 42,
+      "raw_only_target_counts": {},
+      "configfuzz_only_target_counts": {
+        "model.hidden_size": 1,
+        "model.num_attention_heads": 4,
+        "model.num_query_groups": 2,
+        "moe.moe_router_topk": 1
+      },
+      "configfuzz_only_cases": [
+        {
+          "intent_id": "chatglm3-train-num-attention-heads-integer_divisibility_boundary-7fe8e41d951e",
+          "workload_id": "chatglm3-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 15,
+          "coordinated_parameters": [
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 15,
+            "model.num_query_groups": 3
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "deepseekv3-train-moe-router-topk-integer_adjacent_above-9ca11b21c1c5",
+          "workload_id": "deepseekv3-train",
+          "target_parameter": "moe.moe_router_topk",
+          "target_value": 10,
+          "coordinated_parameters": [
+            "moe.num_experts"
+          ],
+          "solver_modifications": {
+            "moe.moe_router_topk": 10,
+            "moe.num_experts": 10
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "llama2-train-hidden-size-integer_adjacent_above-b3064be1e911",
+          "workload_id": "llama2-train",
+          "target_parameter": "model.hidden_size",
+          "target_value": 516,
+          "coordinated_parameters": [
+            "model.num_attention_heads"
+          ],
+          "solver_modifications": {
+            "model.hidden_size": 516,
+            "model.num_attention_heads": 6
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "expected_rejection",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "llama2-train-num-attention-heads-integer_divisibility_boundary-e463f4451b79",
+          "workload_id": "llama2-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 17,
+          "coordinated_parameters": [
+            "model.hidden_size",
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.hidden_size": 510,
+            "model.num_attention_heads": 17,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "expected_rejection",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "mixtral-train-num-attention-heads-integer_adjacent_above-2e7c44f83b14",
+          "workload_id": "mixtral-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 11,
+          "coordinated_parameters": [
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 11,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "mixtral-train-num-query-groups-integer_adjacent_above-0f49b13e1821",
+          "workload_id": "mixtral-train",
+          "target_parameter": "model.num_query_groups",
+          "target_value": 3,
+          "coordinated_parameters": [
+            "model.num_attention_heads"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 9,
+            "model.num_query_groups": 3
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "qwen2-train-num-attention-heads-integer_divisibility_boundary-84982a73c203",
+          "workload_id": "qwen2-train",
+          "target_parameter": "model.num_attention_heads",
+          "target_value": 17,
+          "coordinated_parameters": [
+            "model.num_query_groups"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 17,
+            "model.num_query_groups": 1
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "qwen2-train-num-query-groups-integer_divisibility_boundary-82487000571f",
+          "workload_id": "qwen2-train",
+          "target_parameter": "model.num_query_groups",
+          "target_value": 9,
+          "coordinated_parameters": [
+            "model.num_attention_heads"
+          ],
+          "solver_modifications": {
+            "model.num_attention_heads": 9,
+            "model.num_query_groups": 9
+          },
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "unexplained_failure",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        }
+      ],
+      "raw_only_cases": []
+    },
+    "megatron-core": {
+      "both_deep": 47,
+      "raw_only": 0,
+      "configfuzz_only": 0,
+      "neither": 43,
+      "raw_only_target_counts": {},
+      "configfuzz_only_target_counts": {},
+      "configfuzz_only_cases": [],
+      "raw_only_cases": []
+    },
+    "aggregate": {
+      "both_deep": 520,
+      "raw_only": 0,
+      "configfuzz_only": 24,
+      "neither": 176
+    }
+  },
+  "runtime_reuse": {
+    "reused_result_rows": 4103,
+    "unique_source_runs": 844,
+    "note": "Runtime reuse is admitted only for byte-equivalent canonical materialized configurations under the same framework, seed, launcher, and unchanged execution harness."
+  }
+}

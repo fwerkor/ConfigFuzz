@@ -1,0 +1,69 @@
+{
+  "assembled_cases": 1260,
+  "complete": true,
+  "framework_id": "pytorch-cuda",
+  "harness_equivalence": {
+    "9a57741979405515802f6accfc22789da6b6b9cd": true
+  },
+  "launcher": "/home/yanzhou/cyh/configfuzz-gpu/ConfigFuzz-diversity/experiments/gpu/launch_rq2_pytorch.sh",
+  "launcher_sha256": "de9cf72649cecb165a79d6a782f2f675391746dc655f3f3a573604333ef094d6",
+  "missing_method_counts": {},
+  "missing_plan": "formal-results/rq2-runtime-diversity-20260819/final/pytorch-cuda.missing.json",
+  "name": "rq2-selective-runtime-reuse",
+  "output": "formal-results/rq2-runtime-diversity-20260819/final/pytorch-cuda.jsonl",
+  "plan": "formal-results/rq2-runtime-diversity-20260819/subset/pytorch-cuda.json",
+  "plan_sha256": "e5aeb4db34c1d7edebb539e57373a4b3412f9a72d69d21a3f40d0276a70114d1",
+  "planned_cases": 1260,
+  "planner_statuses": {
+    "filtered": 31,
+    "ready": 1217,
+    "unknown": 2,
+    "unsat": 10
+  },
+  "provenance": {
+    "framework_id": "pytorch-cuda",
+    "launcher_sha256": "de9cf72649cecb165a79d6a782f2f675391746dc655f3f3a573604333ef094d6",
+    "plan_sha256": "e5aeb4db34c1d7edebb539e57373a4b3412f9a72d69d21a3f40d0276a70114d1",
+    "runner_revision": "9a57741979405515802f6accfc22789da6b6b9cd",
+    "runtime_instrumentation": "runtime-events-v1",
+    "workload_registry_sha256": "0169e4186d4f65c905b4acfcc33f1703ff8ecaac0d202dc0eab0e8747e20fb39"
+  },
+  "rejected_source_records": {
+    "formal-results/rq2-runtime-diversity-20260819/fresh/pytorch-cuda.jsonl": 2
+  },
+  "reuse_source_methods": {
+    "configfuzz": 22,
+    "global_repair": 1,
+    "raw_mutation": 1157,
+    "static_hard_configfuzz": 37
+  },
+  "runtime_reused_cases": 1217,
+  "schema_version": 1,
+  "source_record_counts": {
+    "formal-results/rq2-runtime-diversity-20260819/fresh/infra-rerun-pytorch-cuda.jsonl": 2,
+    "formal-results/rq2-runtime-diversity-20260819/fresh/pytorch-cuda.jsonl": 238,
+    "formal-results/rq2-runtime-diversity-20260819/fresh/smoke-features.jsonl": 3,
+    "formal-results/rq2-runtime-diversity-20260819/fresh/smoke-pytorch.jsonl": 1
+  },
+  "sources": [
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/pytorch-cuda.jsonl",
+      "sha256": "375d0318c5261fd8283480436be6f15771a68ef6726565f59bebbd0d721c5102"
+    },
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/smoke-pytorch.jsonl",
+      "sha256": "20fc5b1d16dba44b32def146e44f460424fcf8ad455a36a8e0f1f059a502d4b3"
+    },
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/smoke-features.jsonl",
+      "sha256": "b8e4f918abc22218c5959f020b7c1dcc4aed1d85d815b453fa30864ab17b2b94"
+    },
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/infra-rerun-pytorch-cuda.jsonl",
+      "sha256": "dc1727e0d7fc1dad0a3db32dcfbade0014f72228ebbaaa79a016931cc8f75ecb"
+    }
+  ],
+  "unique_missing_runtime_configurations": 0,
+  "workload_registry": "experiments/rq2/promoted/gpu/pytorch-cuda/workloads.yaml",
+  "workload_registry_sha256": "0169e4186d4f65c905b4acfcc33f1703ff8ecaac0d202dc0eab0e8747e20fb39"
+}

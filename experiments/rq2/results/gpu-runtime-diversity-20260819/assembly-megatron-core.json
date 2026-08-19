@@ -1,0 +1,55 @@
+{
+  "assembled_cases": 540,
+  "complete": true,
+  "framework_id": "megatron-core",
+  "harness_equivalence": {
+    "9a57741979405515802f6accfc22789da6b6b9cd": true
+  },
+  "launcher": "/home/yanzhou/cyh/configfuzz-gpu/ConfigFuzz-diversity/experiments/gpu/launch_rq2_megatron.sh",
+  "launcher_sha256": "0e436d378426d11a3cea9863ade21fddd393d028daf3f0c4cdcb9e692d44c14c",
+  "missing_method_counts": {},
+  "missing_plan": "formal-results/rq2-runtime-diversity-20260819/final/megatron-core.missing.json",
+  "name": "rq2-selective-runtime-reuse",
+  "output": "formal-results/rq2-runtime-diversity-20260819/final/megatron-core.jsonl",
+  "plan": "formal-results/rq2-runtime-diversity-20260819/subset/megatron-core.json",
+  "plan_sha256": "65772f5330597eec2337a0f9b871414ceb9d89fc8dd6349cf255f0e798fc4956",
+  "planned_cases": 540,
+  "planner_statuses": {
+    "filtered": 47,
+    "ready": 480,
+    "unknown": 6,
+    "unsat": 7
+  },
+  "provenance": {
+    "framework_id": "megatron-core",
+    "launcher_sha256": "0e436d378426d11a3cea9863ade21fddd393d028daf3f0c4cdcb9e692d44c14c",
+    "plan_sha256": "65772f5330597eec2337a0f9b871414ceb9d89fc8dd6349cf255f0e798fc4956",
+    "runner_revision": "9a57741979405515802f6accfc22789da6b6b9cd",
+    "runtime_instrumentation": "runtime-events-v1",
+    "workload_registry_sha256": "d09b958b01883e353653699762347f360856c6d26714c4c2926b5598e5efde7d"
+  },
+  "rejected_source_records": {},
+  "reuse_source_methods": {
+    "raw_mutation": 458,
+    "static_hard_configfuzz": 22
+  },
+  "runtime_reused_cases": 480,
+  "schema_version": 1,
+  "source_record_counts": {
+    "formal-results/rq2-runtime-diversity-20260819/fresh/megatron-core.jsonl": 110,
+    "formal-results/rq2-runtime-diversity-20260819/fresh/smoke-megatron.jsonl": 1
+  },
+  "sources": [
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/megatron-core.jsonl",
+      "sha256": "da46a3fcaba9ed2e29dc7c095704cbcf6d17659b69a61e0ebdbc4d557d57c46f"
+    },
+    {
+      "path": "formal-results/rq2-runtime-diversity-20260819/fresh/smoke-megatron.jsonl",
+      "sha256": "162d1f7b9748c270d1909ca67b5f26b0e15642b41f79387086184ad1ef9aa76f"
+    }
+  ],
+  "unique_missing_runtime_configurations": 0,
+  "workload_registry": "experiments/rq2/promoted/gpu/megatron-core/workloads.yaml",
+  "workload_registry_sha256": "d09b958b01883e353653699762347f360856c6d26714c4c2926b5598e5efde7d"
+}

@@ -1,0 +1,130 @@
+{
+  "case_count": 2,
+  "cases": [
+    {
+      "assignments": {
+        "model.max_position_embeddings": 125
+      },
+      "baseline_id": "qwen2-train-canonical-v1",
+      "case_id": "qwen2-train-max-position-embeddings-integer_adjacent_below-982b16316b2d-raw_mutation-395cb283fd8d",
+      "coordinated_parameters": [],
+      "intent_id": "qwen2-train-max-position-embeddings-integer_adjacent_below-982b16316b2d",
+      "intent_pool": "method_independent",
+      "metadata": {
+        "baseline_value": 128,
+        "comparison_role": "single_parameter_mutation",
+        "intent_class": "integer_adjacent_below",
+        "resolved_target_parameter": "model.max_position_embeddings"
+      },
+      "method": "raw_mutation",
+      "preflight": "none",
+      "solver_seconds": 0.0,
+      "solver_seconds_recorded_at_runtime": false,
+      "solver_status": null,
+      "solver_timeout_ms": null,
+      "status": "ready",
+      "target_parameter": "model.max_position_embeddings",
+      "target_value": 125,
+      "target_value_preserved": true,
+      "unknown_constraints": [],
+      "violated_constraints": [],
+      "workload_id": "qwen2-train"
+    },
+    {
+      "assignments": {
+        "training.micro_batch_size": 0
+      },
+      "baseline_id": "qwen2-train-canonical-v1",
+      "case_id": "qwen2-train-micro-batch-size-integer_adjacent_below-6ed2c6eec633-raw_mutation-98af1ed78e14",
+      "coordinated_parameters": [],
+      "intent_id": "qwen2-train-micro-batch-size-integer_adjacent_below-6ed2c6eec633",
+      "intent_pool": "method_independent",
+      "metadata": {
+        "baseline_value": 1,
+        "comparison_role": "single_parameter_mutation",
+        "intent_class": "integer_adjacent_below",
+        "resolved_target_parameter": "training.micro_batch_size"
+      },
+      "method": "raw_mutation",
+      "preflight": "none",
+      "solver_seconds": 0.0,
+      "solver_seconds_recorded_at_runtime": false,
+      "solver_status": null,
+      "solver_timeout_ms": null,
+      "status": "ready",
+      "target_parameter": "training.micro_batch_size",
+      "target_value": 0,
+      "target_value_preserved": true,
+      "unknown_constraints": [],
+      "violated_constraints": [],
+      "workload_id": "qwen2-train"
+    }
+  ],
+  "intent_count": 206,
+  "metadata": {
+    "runtime_diversity_subset": {
+      "fraction": 0.2,
+      "selection": "lowest SHA-256(intent_id) within each workload",
+      "workloads": {
+        "chatglm3-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "cogvideox-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "deepseekv3-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "internvl3-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "llama2-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "mixtral-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "qwen2-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        }
+      }
+    }
+  },
+  "method_counts": {
+    "configfuzz": 11,
+    "global_repair": 1,
+    "raw_mutation": 206,
+    "static_hard_configfuzz": 22
+  },
+  "methods": [
+    "raw_mutation",
+    "native_validator_guided",
+    "constraint_filter_only",
+    "static_hard_configfuzz",
+    "configfuzz",
+    "global_repair"
+  ],
+  "name": "configfuzz-rq2-campaign-plan",
+  "runtime_context": {
+    "args": {
+      "world_size": 2
+    },
+    "world_size": 2
+  },
+  "schema_version": 1,
+  "selective_runtime_reuse": {
+    "source_plan_sha256": "e5aeb4db34c1d7edebb539e57373a4b3412f9a72d69d21a3f40d0276a70114d1",
+    "unique_missing_runtime_configurations": 240
+  },
+  "solver_timeout_ms": 1000,
+  "status_counts": {
+    "ready": 240
+  }
+}

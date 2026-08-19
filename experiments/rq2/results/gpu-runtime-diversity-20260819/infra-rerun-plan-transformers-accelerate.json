@@ -1,0 +1,101 @@
+{
+  "case_count": 1,
+  "cases": [
+    {
+      "assignments": {
+        "training.learning_rate": 5e-05
+      },
+      "baseline_id": "qwen2-train-canonical-v1",
+      "case_id": "qwen2-train-learning-rate-float_scale_boundary-d7ec097b80c5-raw_mutation-e60a522eb185",
+      "coordinated_parameters": [],
+      "intent_id": "qwen2-train-learning-rate-float_scale_boundary-d7ec097b80c5",
+      "intent_pool": "method_independent",
+      "metadata": {
+        "baseline_value": 0.0001,
+        "comparison_role": "single_parameter_mutation",
+        "intent_class": "float_scale_boundary",
+        "resolved_target_parameter": "training.learning_rate"
+      },
+      "method": "raw_mutation",
+      "preflight": "none",
+      "solver_seconds": 0.0,
+      "solver_seconds_recorded_at_runtime": false,
+      "solver_status": null,
+      "solver_timeout_ms": null,
+      "status": "ready",
+      "target_parameter": "training.learning_rate",
+      "target_value": 5e-05,
+      "target_value_preserved": true,
+      "unknown_constraints": [],
+      "violated_constraints": [],
+      "workload_id": "qwen2-train"
+    }
+  ],
+  "intent_count": 209,
+  "metadata": {
+    "runtime_diversity_subset": {
+      "fraction": 0.2,
+      "selection": "lowest SHA-256(intent_id) within each workload",
+      "workloads": {
+        "chatglm3-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "cogvideox-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "deepseekv3-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "internvl3-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "llama2-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "mixtral-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        },
+        "qwen2-train": {
+          "available_intents": 150,
+          "selected_intents": 30
+        }
+      }
+    }
+  },
+  "method_counts": {
+    "configfuzz": 11,
+    "global_repair": 2,
+    "raw_mutation": 209,
+    "static_hard_configfuzz": 22
+  },
+  "methods": [
+    "raw_mutation",
+    "native_validator_guided",
+    "constraint_filter_only",
+    "static_hard_configfuzz",
+    "configfuzz",
+    "global_repair"
+  ],
+  "name": "configfuzz-rq2-campaign-plan",
+  "runtime_context": {
+    "args": {
+      "world_size": 2
+    },
+    "world_size": 2
+  },
+  "schema_version": 1,
+  "selective_runtime_reuse": {
+    "source_plan_sha256": "aa585fecbbe3ce10c1e6af6f993a0eb160df4f6e94725883dc5d5033e2d250b3",
+    "unique_missing_runtime_configurations": 244
+  },
+  "solver_timeout_ms": 1000,
+  "status_counts": {
+    "ready": 244
+  }
+}
