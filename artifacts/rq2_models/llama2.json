@@ -41,13 +41,13 @@
   },
   "summary": {
     "parameters": 8,
-    "parameters_with_candidates": 2,
-    "candidates": 2,
+    "parameters_with_candidates": 3,
+    "candidates": 5,
     "kinds": {
-      "relation": 2
+      "relation": 5
     },
-    "dependency_nodes": 2,
-    "dependency_edges": 1,
+    "dependency_nodes": 3,
+    "dependency_edges": 2,
     "dependency_components": 1
   },
   "results": [
@@ -68,6 +68,12 @@
               "source": "src/transformers/models/llama/configuration_llama.py",
               "line": 96,
               "detail": "rejecting guard"
+            },
+            {
+              "kind": "static",
+              "source": "src/transformers/models/llama/modeling_llama.py",
+              "line": 112,
+              "detail": "configuration-backed shape floor-division"
             }
           ]
         }
@@ -166,6 +172,40 @@
               "detail": "rejecting guard"
             }
           ]
+        },
+        {
+          "expression": "num_attention_heads % num_key_value_heads == 0",
+          "kind": "relation",
+          "parameters": [
+            "num_attention_heads",
+            "num_key_value_heads"
+          ],
+          "confidence": 0.92,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/llama/modeling_llama.py",
+              "line": 233,
+              "detail": "configuration-backed shape floor-division"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size % num_attention_heads == 0",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "num_attention_heads"
+          ],
+          "confidence": 0.72,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/llama/modeling_llama.py",
+              "line": 112,
+              "detail": "configuration-backed shape floor-division"
+            }
+          ]
         }
       ],
       "metadata": {
@@ -178,6 +218,50 @@
           "parse_errors": [],
           "raw_candidates": 1,
           "filtered_candidates": 0,
+          "accepted_candidates": 3
+        },
+        "declarations": {
+          "extractor": "declarations",
+          "python_files": 4,
+          "yaml_files": 0,
+          "json_files": 0,
+          "parse_errors": [],
+          "accepted_candidates": 0
+        },
+        "accepted_candidates": 3
+      }
+    },
+    {
+      "parameter": "num_key_value_heads",
+      "constraints": [
+        {
+          "expression": "num_attention_heads % num_key_value_heads == 0",
+          "kind": "relation",
+          "parameters": [
+            "num_attention_heads",
+            "num_key_value_heads"
+          ],
+          "confidence": 0.92,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/llama/modeling_llama.py",
+              "line": 233,
+              "detail": "configuration-backed shape floor-division"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "extractor": "combined_static",
+        "mode": "broad",
+        "code": {
+          "extractor": "python_ast",
+          "mode": "broad",
+          "scanned_files": 2,
+          "parse_errors": [],
+          "raw_candidates": 0,
+          "filtered_candidates": 0,
           "accepted_candidates": 1
         },
         "declarations": {
@@ -189,32 +273,6 @@
           "accepted_candidates": 0
         },
         "accepted_candidates": 1
-      }
-    },
-    {
-      "parameter": "num_key_value_heads",
-      "constraints": [],
-      "metadata": {
-        "extractor": "combined_static",
-        "mode": "broad",
-        "code": {
-          "extractor": "python_ast",
-          "mode": "broad",
-          "scanned_files": 2,
-          "parse_errors": [],
-          "raw_candidates": 0,
-          "filtered_candidates": 0,
-          "accepted_candidates": 0
-        },
-        "declarations": {
-          "extractor": "declarations",
-          "python_files": 4,
-          "yaml_files": 0,
-          "json_files": 0,
-          "parse_errors": [],
-          "accepted_candidates": 0
-        },
-        "accepted_candidates": 0
       }
     },
     {
@@ -306,17 +364,17 @@
       }
     },
     "summary": {
-      "nodes": 2,
-      "edges": 1,
+      "nodes": 3,
+      "edges": 2,
       "connected_components": 1,
       "node_kinds": {
-        "parameter": 2
+        "parameter": 3
       },
       "relations": {
-        "divisibility": 1
+        "divisibility": 2
       },
       "statuses": {
-        "static_candidate": 1
+        "static_candidate": 2
       }
     },
     "nodes": [
@@ -326,6 +384,10 @@
       },
       {
         "name": "num_attention_heads",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_key_value_heads",
         "kind": "parameter"
       }
     ],
@@ -361,6 +423,46 @@
             "source": "src/transformers/models/llama/configuration_llama.py",
             "line": 96,
             "detail": "rejecting guard"
+          },
+          {
+            "kind": "static",
+            "source": "src/transformers/models/llama/modeling_llama.py",
+            "line": 112,
+            "detail": "configuration-backed shape floor-division"
+          }
+        ]
+      },
+      {
+        "id": "dep-649c9ca98f7c0bbd",
+        "expression": "num_attention_heads % num_key_value_heads == 0",
+        "predicate": "num_attention_heads % num_key_value_heads == 0",
+        "relation": "divisibility",
+        "participants": [
+          "num_attention_heads",
+          "num_key_value_heads"
+        ],
+        "drivers": [
+          "num_key_value_heads"
+        ],
+        "dependents": [
+          "num_attention_heads"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.92,
+        "scope": {
+          "framework": "llama2",
+          "source_subdir": "src/transformers/models/llama",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+        },
+        "components": [
+          "src/transformers/models/llama"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/models/llama/modeling_llama.py",
+            "line": 233,
+            "detail": "configuration-backed shape floor-division"
           }
         ]
       }

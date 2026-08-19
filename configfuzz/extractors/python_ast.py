@@ -6,7 +6,7 @@ import os
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, Mapping
 
 from configfuzz.model import (
     Constraint,
@@ -813,13 +813,249 @@ def extract_python_tree(
     function_summaries: dict[str, tuple[_FunctionSummary, ...]] | None = None,
     known_parameters: Iterable[str] = (),
 ) -> ConstraintSet:
-    return PythonConstraintExtractor(
+    known = tuple(dict.fromkeys(str(item).rsplit(".", 1)[-1] for item in known_parameters))
+    result = PythonConstraintExtractor(
         parameter=parameter,
         source=source,
         strict=strict,
         function_summaries=function_summaries,
-        known_parameters=known_parameters,
+        known_parameters=known,
     ).extract(tree, exact_bindings=exact_bindings)
+    inferred = _infer_model_semantic_constraints(
+        tree,
+        source=source,
+        parameter=parameter,
+        known_parameters=known,
+    )
+    result.extend(inferred)
+    result.metadata["inferred_model_semantics"] = len(inferred)
+    result.metadata["accepted_candidates"] = len(result.constraints)
+    return result
+
+
+def _infer_model_semantic_constraints(
+    tree: ast.AST,
+    *,
+    source: str,
+    parameter: str,
+    known_parameters: Iterable[str],
+) -> tuple[Constraint, ...]:
+    """Infer bounded shape/API relations that are implicit in model code.
+
+    Framework model implementations often encode configuration requirements in
+    shape arithmetic rather than explicit validators.  We keep this pass narrow:
+    exact configuration-backed floor division yields a divisibility candidate,
+    and MoE router ``topk`` calls yield a bound only when both the requested k
+    and the expert/group count are unambiguously backed by configuration fields
+    in the same class.
+    """
+
+    target = parameter.rsplit(".", 1)[-1]
+    known = set(known_parameters)
+    known.add(target)
+    constraints: list[Constraint] = []
+    seen: set[tuple[str, tuple[str, ...]]] = set()
+
+    scopes: list[tuple[ast.AST, dict[str, str]]] = [(tree, {})]
+    scopes.extend((node, _self_field_config_aliases(node)) for node in ast.walk(tree) if isinstance(node, ast.ClassDef))
+    for scope, aliases in scopes:
+        for node in ast.walk(scope):
+            if isinstance(node, ast.BinOp) and isinstance(node.op, ast.FloorDiv):
+                numerator = _config_reference_key(node.left, aliases, known)
+                denominator = _config_reference_key(node.right, aliases, known)
+                if (
+                    numerator is not None
+                    and denominator is not None
+                    and numerator != denominator
+                    and target in {numerator, denominator}
+                ):
+                    _append_inferred_constraint(
+                        constraints,
+                        seen,
+                        parameter=parameter,
+                        target=target,
+                        expression=f"{numerator} % {denominator} == 0",
+                        parameters=(numerator, denominator),
+                        source=source,
+                        line=getattr(node, "lineno", None),
+                        confidence=_shape_division_confidence(numerator, denominator),
+                        detail="configuration-backed shape floor-division",
+                    )
+
+            if not _is_topk_call(node):
+                continue
+            k_node = _topk_k_argument(node)
+            if k_node is None:
+                continue
+            k_parameter = _config_reference_key(k_node, aliases, known)
+            upper = _topk_upper_parameter(k_parameter, aliases, known)
+            if k_parameter is None or upper is None or target not in {k_parameter, upper}:
+                continue
+            _append_inferred_constraint(
+                constraints,
+                seen,
+                parameter=parameter,
+                target=target,
+                expression=f"{k_parameter} <= {upper}",
+                parameters=(k_parameter, upper),
+                source=source,
+                line=getattr(node, "lineno", None),
+                confidence=0.90,
+                detail="top-k API bound over configuration-backed router dimension",
+            )
+
+    return tuple(constraints)
+
+
+def _shape_division_confidence(numerator: str, denominator: str) -> float:
+    exact_groupings = {
+        ("num_attention_heads", "num_key_value_heads"),
+        ("num_attention_heads", "num_query_groups"),
+        ("n_routed_experts", "n_group"),
+        ("num_experts", "num_expert_groups"),
+    }
+    if (numerator, denominator) in exact_groupings:
+        return 0.92
+    return 0.72
+
+
+def _append_inferred_constraint(
+    output: list[Constraint],
+    seen: set[tuple[str, tuple[str, ...]]],
+    *,
+    parameter: str,
+    target: str,
+    expression: str,
+    parameters: tuple[str, ...],
+    source: str,
+    line: int | None,
+    confidence: float,
+    detail: str,
+) -> None:
+    rendered_parameters = tuple(
+        parameter if name == target else name for name in parameters
+    )
+    fingerprint = (expression, rendered_parameters)
+    if fingerprint in seen:
+        return
+    seen.add(fingerprint)
+    output.append(
+        Constraint(
+            expression=expression,
+            kind=ConstraintKind.RELATION,
+            parameters=rendered_parameters,
+            confidence=confidence,
+            evidence=(
+                Evidence(
+                    kind=EvidenceKind.STATIC,
+                    source=source,
+                    line=line,
+                    detail=detail,
+                ),
+            ),
+        )
+    )
+
+
+def _self_field_config_aliases(node: ast.ClassDef) -> dict[str, str]:
+    discovered: dict[str, str] = {}
+    ambiguous: set[str] = set()
+    for child in ast.walk(node):
+        value: ast.expr | None = None
+        targets: list[ast.AST] = []
+        if isinstance(child, ast.Assign):
+            value = child.value
+            targets = list(child.targets)
+        elif isinstance(child, ast.AnnAssign) and child.value is not None:
+            value = child.value
+            targets = [child.target]
+        if value is None:
+            continue
+        key = _direct_config_key(value)
+        if key is None:
+            continue
+        for item in targets:
+            if not (
+                isinstance(item, ast.Attribute)
+                and isinstance(item.value, ast.Name)
+                and item.value.id == "self"
+            ):
+                continue
+            previous = discovered.get(item.attr)
+            if previous is not None and previous != key:
+                ambiguous.add(item.attr)
+            else:
+                discovered[item.attr] = key
+    return {name: key for name, key in discovered.items() if name not in ambiguous}
+
+
+def _config_reference_key(
+    node: ast.AST,
+    aliases: Mapping[str, str],
+    known: set[str],
+) -> str | None:
+    key = _direct_config_key(node)
+    if key in known:
+        return key
+    if isinstance(node, ast.Name) and node.id in known:
+        return node.id
+    if (
+        isinstance(node, ast.Attribute)
+        and isinstance(node.value, ast.Name)
+        and node.value.id == "self"
+    ):
+        alias = aliases.get(node.attr)
+        if alias in known:
+            return alias
+    if (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "getattr"
+        and len(node.args) >= 2
+        and _looks_like_config_container(node.args[0])
+    ):
+        key = _constant_string(node.args[1])
+        if key in known:
+            return key
+    return None
+
+
+def _is_topk_call(node: ast.AST) -> bool:
+    return (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "topk"
+    )
+
+
+def _topk_k_argument(node: ast.Call) -> ast.AST | None:
+    for keyword in node.keywords:
+        if keyword.arg == "k":
+            return keyword.value
+    if not isinstance(node.func, ast.Attribute):
+        return None
+    root = _expression_root_name(node.func.value)
+    index = 1 if root == "torch" else 0
+    return node.args[index] if len(node.args) > index else None
+
+
+def _topk_upper_parameter(
+    k_parameter: str | None,
+    aliases: Mapping[str, str],
+    known: set[str],
+) -> str | None:
+    if k_parameter is None:
+        return None
+    preferred: tuple[str, ...]
+    if k_parameter in {"num_experts_per_tok", "moe_router_topk"}:
+        preferred = ("num_local_experts", "n_routed_experts", "num_experts")
+    elif k_parameter in {"topk_group", "moe_topk_group"}:
+        preferred = ("n_group", "moe_router_num_groups")
+    else:
+        return None
+    available = set(aliases.values()) | known
+    matches = [name for name in preferred if name in available]
+    return matches[0] if matches else None
 
 
 def scan_python_paths(

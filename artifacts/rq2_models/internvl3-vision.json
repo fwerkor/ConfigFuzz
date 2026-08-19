@@ -42,17 +42,37 @@
   },
   "summary": {
     "parameters": 9,
-    "parameters_with_candidates": 0,
-    "candidates": 0,
-    "kinds": {},
-    "dependency_nodes": 0,
-    "dependency_edges": 0,
-    "dependency_components": 0
+    "parameters_with_candidates": 2,
+    "candidates": 2,
+    "kinds": {
+      "relation": 2
+    },
+    "dependency_nodes": 2,
+    "dependency_edges": 1,
+    "dependency_components": 1
   },
   "results": [
     {
       "parameter": "hidden_size",
-      "constraints": [],
+      "constraints": [
+        {
+          "expression": "hidden_size % num_attention_heads == 0",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "num_attention_heads"
+          ],
+          "confidence": 0.72,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/internvl/modeling_internvl.py",
+              "line": 100,
+              "detail": "configuration-backed shape floor-division"
+            }
+          ]
+        }
+      ],
       "metadata": {
         "extractor": "combined_static",
         "mode": "broad",
@@ -63,7 +83,7 @@
           "parse_errors": [],
           "raw_candidates": 0,
           "filtered_candidates": 0,
-          "accepted_candidates": 0
+          "accepted_candidates": 1
         },
         "declarations": {
           "extractor": "declarations",
@@ -73,7 +93,7 @@
           "parse_errors": [],
           "accepted_candidates": 0
         },
-        "accepted_candidates": 0
+        "accepted_candidates": 1
       }
     },
     {
@@ -130,7 +150,25 @@
     },
     {
       "parameter": "num_attention_heads",
-      "constraints": [],
+      "constraints": [
+        {
+          "expression": "hidden_size % num_attention_heads == 0",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "num_attention_heads"
+          ],
+          "confidence": 0.72,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/internvl/modeling_internvl.py",
+              "line": 100,
+              "detail": "configuration-backed shape floor-division"
+            }
+          ]
+        }
+      ],
       "metadata": {
         "extractor": "combined_static",
         "mode": "broad",
@@ -141,7 +179,7 @@
           "parse_errors": [],
           "raw_candidates": 0,
           "filtered_candidates": 0,
-          "accepted_candidates": 0
+          "accepted_candidates": 1
         },
         "declarations": {
           "extractor": "declarations",
@@ -151,7 +189,7 @@
           "parse_errors": [],
           "accepted_candidates": 0
         },
-        "accepted_candidates": 0
+        "accepted_candidates": 1
       }
     },
     {
@@ -295,14 +333,64 @@
       }
     },
     "summary": {
-      "nodes": 0,
-      "edges": 0,
-      "connected_components": 0,
-      "node_kinds": {},
-      "relations": {},
-      "statuses": {}
+      "nodes": 2,
+      "edges": 1,
+      "connected_components": 1,
+      "node_kinds": {
+        "parameter": 2
+      },
+      "relations": {
+        "divisibility": 1
+      },
+      "statuses": {
+        "static_candidate": 1
+      }
     },
-    "nodes": [],
-    "edges": []
+    "nodes": [
+      {
+        "name": "hidden_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_attention_heads",
+        "kind": "parameter"
+      }
+    ],
+    "edges": [
+      {
+        "id": "dep-3b1bac4befa5dcd1",
+        "expression": "hidden_size % num_attention_heads == 0",
+        "predicate": "hidden_size % num_attention_heads == 0",
+        "relation": "divisibility",
+        "participants": [
+          "hidden_size",
+          "num_attention_heads"
+        ],
+        "drivers": [
+          "num_attention_heads"
+        ],
+        "dependents": [
+          "hidden_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.72,
+        "scope": {
+          "framework": "internvl3-vision",
+          "source_subdir": "src/transformers/models/internvl",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+        },
+        "components": [
+          "src/transformers/models/internvl"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/models/internvl/modeling_internvl.py",
+            "line": 100,
+            "detail": "configuration-backed shape floor-division"
+          }
+        ]
+      }
+    ]
   }
 }

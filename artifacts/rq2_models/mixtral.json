@@ -43,17 +43,37 @@
   },
   "summary": {
     "parameters": 10,
-    "parameters_with_candidates": 0,
-    "candidates": 0,
-    "kinds": {},
-    "dependency_nodes": 0,
-    "dependency_edges": 0,
-    "dependency_components": 0
+    "parameters_with_candidates": 5,
+    "candidates": 6,
+    "kinds": {
+      "relation": 6
+    },
+    "dependency_nodes": 5,
+    "dependency_edges": 3,
+    "dependency_components": 2
   },
   "results": [
     {
       "parameter": "hidden_size",
-      "constraints": [],
+      "constraints": [
+        {
+          "expression": "hidden_size % num_attention_heads == 0",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "num_attention_heads"
+          ],
+          "confidence": 0.72,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/mixtral/modeling_mixtral.py",
+              "line": 198,
+              "detail": "configuration-backed shape floor-division"
+            }
+          ]
+        }
+      ],
       "metadata": {
         "extractor": "combined_static",
         "mode": "broad",
@@ -64,7 +84,7 @@
           "parse_errors": [],
           "raw_candidates": 0,
           "filtered_candidates": 0,
-          "accepted_candidates": 0
+          "accepted_candidates": 1
         },
         "declarations": {
           "extractor": "declarations",
@@ -74,7 +94,7 @@
           "parse_errors": [],
           "accepted_candidates": 0
         },
-        "accepted_candidates": 0
+        "accepted_candidates": 1
       }
     },
     {
@@ -131,7 +151,42 @@
     },
     {
       "parameter": "num_attention_heads",
-      "constraints": [],
+      "constraints": [
+        {
+          "expression": "num_attention_heads % num_key_value_heads == 0",
+          "kind": "relation",
+          "parameters": [
+            "num_attention_heads",
+            "num_key_value_heads"
+          ],
+          "confidence": 0.92,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/mixtral/modeling_mixtral.py",
+              "line": 303,
+              "detail": "configuration-backed shape floor-division"
+            }
+          ]
+        },
+        {
+          "expression": "hidden_size % num_attention_heads == 0",
+          "kind": "relation",
+          "parameters": [
+            "hidden_size",
+            "num_attention_heads"
+          ],
+          "confidence": 0.72,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/mixtral/modeling_mixtral.py",
+              "line": 198,
+              "detail": "configuration-backed shape floor-division"
+            }
+          ]
+        }
+      ],
       "metadata": {
         "extractor": "combined_static",
         "mode": "broad",
@@ -142,7 +197,7 @@
           "parse_errors": [],
           "raw_candidates": 0,
           "filtered_candidates": 0,
-          "accepted_candidates": 0
+          "accepted_candidates": 2
         },
         "declarations": {
           "extractor": "declarations",
@@ -152,12 +207,30 @@
           "parse_errors": [],
           "accepted_candidates": 0
         },
-        "accepted_candidates": 0
+        "accepted_candidates": 2
       }
     },
     {
       "parameter": "num_key_value_heads",
-      "constraints": [],
+      "constraints": [
+        {
+          "expression": "num_attention_heads % num_key_value_heads == 0",
+          "kind": "relation",
+          "parameters": [
+            "num_attention_heads",
+            "num_key_value_heads"
+          ],
+          "confidence": 0.92,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/mixtral/modeling_mixtral.py",
+              "line": 303,
+              "detail": "configuration-backed shape floor-division"
+            }
+          ]
+        }
+      ],
       "metadata": {
         "extractor": "combined_static",
         "mode": "broad",
@@ -168,7 +241,7 @@
           "parse_errors": [],
           "raw_candidates": 0,
           "filtered_candidates": 0,
-          "accepted_candidates": 0
+          "accepted_candidates": 1
         },
         "declarations": {
           "extractor": "declarations",
@@ -178,7 +251,7 @@
           "parse_errors": [],
           "accepted_candidates": 0
         },
-        "accepted_candidates": 0
+        "accepted_candidates": 1
       }
     },
     {
@@ -261,7 +334,31 @@
     },
     {
       "parameter": "num_local_experts",
-      "constraints": [],
+      "constraints": [
+        {
+          "expression": "num_experts_per_tok <= num_local_experts",
+          "kind": "relation",
+          "parameters": [
+            "num_experts_per_tok",
+            "num_local_experts"
+          ],
+          "confidence": 0.9,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/mixtral/modeling_mixtral.py",
+              "line": 113,
+              "detail": "top-k API bound over configuration-backed router dimension"
+            },
+            {
+              "kind": "static",
+              "source": "src/transformers/models/mixtral/modular_mixtral.py",
+              "line": 187,
+              "detail": "top-k API bound over configuration-backed router dimension"
+            }
+          ]
+        }
+      ],
       "metadata": {
         "extractor": "combined_static",
         "mode": "broad",
@@ -272,7 +369,7 @@
           "parse_errors": [],
           "raw_candidates": 0,
           "filtered_candidates": 0,
-          "accepted_candidates": 0
+          "accepted_candidates": 1
         },
         "declarations": {
           "extractor": "declarations",
@@ -282,12 +379,36 @@
           "parse_errors": [],
           "accepted_candidates": 0
         },
-        "accepted_candidates": 0
+        "accepted_candidates": 1
       }
     },
     {
       "parameter": "num_experts_per_tok",
-      "constraints": [],
+      "constraints": [
+        {
+          "expression": "num_experts_per_tok <= num_local_experts",
+          "kind": "relation",
+          "parameters": [
+            "num_experts_per_tok",
+            "num_local_experts"
+          ],
+          "confidence": 0.9,
+          "evidence": [
+            {
+              "kind": "static",
+              "source": "src/transformers/models/mixtral/modeling_mixtral.py",
+              "line": 113,
+              "detail": "top-k API bound over configuration-backed router dimension"
+            },
+            {
+              "kind": "static",
+              "source": "src/transformers/models/mixtral/modular_mixtral.py",
+              "line": 187,
+              "detail": "top-k API bound over configuration-backed router dimension"
+            }
+          ]
+        }
+      ],
       "metadata": {
         "extractor": "combined_static",
         "mode": "broad",
@@ -298,7 +419,7 @@
           "parse_errors": [],
           "raw_candidates": 0,
           "filtered_candidates": 0,
-          "accepted_candidates": 0
+          "accepted_candidates": 1
         },
         "declarations": {
           "extractor": "declarations",
@@ -308,7 +429,7 @@
           "parse_errors": [],
           "accepted_candidates": 0
         },
-        "accepted_candidates": 0
+        "accepted_candidates": 1
       }
     }
   ],
@@ -322,14 +443,151 @@
       }
     },
     "summary": {
-      "nodes": 0,
-      "edges": 0,
-      "connected_components": 0,
-      "node_kinds": {},
-      "relations": {},
-      "statuses": {}
+      "nodes": 5,
+      "edges": 3,
+      "connected_components": 2,
+      "node_kinds": {
+        "parameter": 5
+      },
+      "relations": {
+        "bound": 1,
+        "divisibility": 2
+      },
+      "statuses": {
+        "static_candidate": 3
+      }
     },
-    "nodes": [],
-    "edges": []
+    "nodes": [
+      {
+        "name": "hidden_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_attention_heads",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_experts_per_tok",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_key_value_heads",
+        "kind": "parameter"
+      },
+      {
+        "name": "num_local_experts",
+        "kind": "parameter"
+      }
+    ],
+    "edges": [
+      {
+        "id": "dep-3b1bac4befa5dcd1",
+        "expression": "hidden_size % num_attention_heads == 0",
+        "predicate": "hidden_size % num_attention_heads == 0",
+        "relation": "divisibility",
+        "participants": [
+          "hidden_size",
+          "num_attention_heads"
+        ],
+        "drivers": [
+          "num_attention_heads"
+        ],
+        "dependents": [
+          "hidden_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.72,
+        "scope": {
+          "framework": "mixtral",
+          "source_subdir": "src/transformers/models/mixtral",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+        },
+        "components": [
+          "src/transformers/models/mixtral"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/models/mixtral/modeling_mixtral.py",
+            "line": 198,
+            "detail": "configuration-backed shape floor-division"
+          }
+        ]
+      },
+      {
+        "id": "dep-649c9ca98f7c0bbd",
+        "expression": "num_attention_heads % num_key_value_heads == 0",
+        "predicate": "num_attention_heads % num_key_value_heads == 0",
+        "relation": "divisibility",
+        "participants": [
+          "num_attention_heads",
+          "num_key_value_heads"
+        ],
+        "drivers": [
+          "num_key_value_heads"
+        ],
+        "dependents": [
+          "num_attention_heads"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.92,
+        "scope": {
+          "framework": "mixtral",
+          "source_subdir": "src/transformers/models/mixtral",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+        },
+        "components": [
+          "src/transformers/models/mixtral"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/models/mixtral/modeling_mixtral.py",
+            "line": 303,
+            "detail": "configuration-backed shape floor-division"
+          }
+        ]
+      },
+      {
+        "id": "dep-a9d1c03056edd7d2",
+        "expression": "num_experts_per_tok <= num_local_experts",
+        "predicate": "num_experts_per_tok <= num_local_experts",
+        "relation": "bound",
+        "participants": [
+          "num_experts_per_tok",
+          "num_local_experts"
+        ],
+        "drivers": [
+          "num_local_experts"
+        ],
+        "dependents": [
+          "num_experts_per_tok"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.9,
+        "scope": {
+          "framework": "mixtral",
+          "source_subdir": "src/transformers/models/mixtral",
+          "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+        },
+        "components": [
+          "src/transformers/models/mixtral"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "src/transformers/models/mixtral/modeling_mixtral.py",
+            "line": 113,
+            "detail": "top-k API bound over configuration-backed router dimension"
+          },
+          {
+            "kind": "static",
+            "source": "src/transformers/models/mixtral/modular_mixtral.py",
+            "line": 187,
+            "detail": "top-k API bound over configuration-backed router dimension"
+          }
+        ]
+      }
+    ]
   }
 }

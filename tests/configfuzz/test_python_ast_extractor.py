@@ -5,6 +5,7 @@ from pathlib import Path
 
 from configfuzz.extractors.python_ast import (
     PythonConstraintExtractor,
+    extract_python_tree,
     scan_python_paths_multi,
 )
 from configfuzz.model import ConstraintKind
@@ -17,6 +18,65 @@ def extract(source: str, parameter: str):
 
 def expressions(result):
     return {constraint.expression for constraint in result.constraints}
+
+
+def test_infers_divisibility_from_configuration_backed_shape_floor_division() -> None:
+    tree = ast.parse(
+        """
+class Attention:
+    def __init__(self, config):
+        self.num_key_value_groups = config.num_attention_heads // config.num_key_value_heads
+"""
+    )
+    known = ("num_attention_heads", "num_key_value_heads")
+
+    heads = extract_python_tree(
+        tree,
+        source="modeling.py",
+        parameter="num_attention_heads",
+        known_parameters=known,
+    )
+    kv_heads = extract_python_tree(
+        tree,
+        source="modeling.py",
+        parameter="num_key_value_heads",
+        known_parameters=known,
+    )
+
+    assert "num_attention_heads % num_key_value_heads == 0" in expressions(heads)
+    assert "num_attention_heads % num_key_value_heads == 0" in expressions(kv_heads)
+
+
+def test_infers_moe_topk_bound_from_configuration_backed_router_fields() -> None:
+    tree = ast.parse(
+        """
+class Router:
+    def __init__(self, config):
+        self.top_k = config.num_experts_per_tok
+        self.num_experts = config.num_local_experts
+        self.hidden_dim = config.hidden_size
+
+    def forward(self, router_probs):
+        return torch.topk(router_probs, self.top_k, dim=-1)
+"""
+    )
+    known = ("num_experts_per_tok", "num_local_experts", "hidden_size")
+
+    topk = extract_python_tree(
+        tree,
+        source="modeling.py",
+        parameter="num_experts_per_tok",
+        known_parameters=known,
+    )
+    experts = extract_python_tree(
+        tree,
+        source="modeling.py",
+        parameter="num_local_experts",
+        known_parameters=known,
+    )
+
+    assert "num_experts_per_tok <= num_local_experts" in expressions(topk)
+    assert "num_experts_per_tok <= num_local_experts" in expressions(experts)
 
 
 def test_extracts_asserted_range_constraints() -> None:
