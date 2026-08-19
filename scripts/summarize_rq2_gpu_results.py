@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, Iterable, Mapping
@@ -46,6 +47,58 @@ def _deep(record: Mapping[str, Any]) -> bool:
     return MILESTONE_ORDER.get(milestone, -1) >= MILESTONE_ORDER[TARGET_MILESTONE]
 
 
+def _entropy_bits(values: list[str]) -> float | None:
+    if not values:
+        return None
+    counts = Counter(values)
+    total = len(values)
+    return -sum((count / total) * math.log2(count / total) for count in counts.values())
+
+
+def _diversity_summary(records: list[Mapping[str, Any]], accelerator_hours: float) -> dict[str, Any]:
+    instrumented = [
+        row
+        for row in records
+        if bool(row.get("generated")) and bool(row.get("behavior_ids"))
+    ]
+    behavior_ids = {
+        str(value)
+        for row in instrumented
+        for value in row.get("behavior_ids", ())
+    }
+    signatures = [
+        str(row["behavior_signature"])
+        for row in instrumented
+        if row.get("behavior_signature")
+    ]
+
+    def distinct(field: str) -> int:
+        return len(
+            {
+                str(value)
+                for row in instrumented
+                for value in row.get(field, ())
+            }
+        )
+
+    return {
+        "instrumented_execution_count": len(instrumented),
+        "runtime_branches": distinct("runtime_branches"),
+        "topologies": distinct("topologies"),
+        "feature_interactions": distinct("feature_interactions"),
+        "backend_paths": distinct("backend_paths"),
+        "runtime_behavior_ids": len(behavior_ids),
+        "runtime_behavior_ids_per_accelerator_hour": (
+            len(behavior_ids) / accelerator_hours if accelerator_hours > 0 else None
+        ),
+        "behavior_signatures": len(set(signatures)),
+        "behavior_signatures_per_accelerator_hour": (
+            len(set(signatures)) / accelerator_hours if accelerator_hours > 0 else None
+        ),
+        "behavior_signature_entropy_bits": _entropy_bits(signatures),
+    }
+
+
 def _method_summary(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
     records = list(rows)
     generated = [row for row in records if bool(row.get("generated"))]
@@ -59,6 +112,7 @@ def _method_summary(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
         float(row.get("accelerator_seconds", row.get("gpu_seconds", 0.0)))
         for row in records
     )
+    accelerator_hours = gpu_seconds / 3600.0
     return {
         "run_count": len(records),
         "generated_count": len(generated),
@@ -71,8 +125,9 @@ def _method_summary(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
         "coordinated_case_count": sum(bool(row.get("coordinated_parameters")) for row in records),
         "accelerator_seconds": gpu_seconds,
         "ipde_per_accelerator_hour": (
-            len(deep) / (gpu_seconds / 3600.0) if gpu_seconds > 0 else None
+            len(deep) / accelerator_hours if accelerator_hours > 0 else None
         ),
+        "diversity": _diversity_summary(records, accelerator_hours),
         "outcome_counts": dict(sorted(Counter(str(row.get("outcome", "unknown")) for row in records).items())),
     }
 

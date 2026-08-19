@@ -19,6 +19,7 @@ from configfuzz.experiment import (
 )
 from configfuzz.experiment_campaign import CampaignWorkload, load_campaign_workloads
 from configfuzz.rq2_gpu_executor import (
+    RUNTIME_INSTRUMENTATION_VERSION,
     _modification_distance,
     _run_id,
     materialize_profile,
@@ -33,6 +34,7 @@ HARNESS_PATHS = (
     "experiments/gpu/rq2_family_runner.py",
     "experiments/gpu/rq2_megatron_runner.py",
     "experiments/gpu/rq2_family_factory.py",
+    "experiments/gpu/runtime_events.py",
     "experiments/gpu/launch_rq2_pytorch.sh",
     "experiments/gpu/launch_rq2_deepspeed.sh",
     "experiments/gpu/launch_rq2_accelerate.sh",
@@ -140,6 +142,7 @@ def _provenance(
         "plan_sha256": _sha256(plan),
         "workload_registry_sha256": _sha256(workloads),
         "launcher_sha256": _sha256(launcher),
+        "runtime_instrumentation": RUNTIME_INSTRUMENTATION_VERSION,
     }
 
 
@@ -163,6 +166,8 @@ def _eligible_source(
     if str(metadata.get("framework_id")) != framework:
         return False
     if str(metadata.get("launcher_sha256")) != launcher_sha256:
+        return False
+    if str(metadata.get("runtime_instrumentation", "")) != RUNTIME_INSTRUMENTATION_VERSION:
         return False
     revision = str(metadata.get("runner_revision", ""))
     return bool(revision) and _harness_unchanged(revision, harness_cache)
@@ -474,8 +479,6 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=2026)
     args = parser.parse_args()
-    if not args.source_result:
-        parser.error("at least one --source-result is required")
     payload = assemble(
         framework=args.framework,
         plan_path=args.plan,

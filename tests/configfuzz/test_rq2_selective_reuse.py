@@ -12,6 +12,7 @@ from configfuzz.experiment import (
     ExperimentOutcome,
     ExperimentRunRecord,
 )
+from configfuzz.rq2_gpu_executor import RUNTIME_INSTRUMENTATION_VERSION
 from scripts.assemble_rq2_selective_reuse import assemble
 
 
@@ -119,6 +120,7 @@ def test_selective_reuse_uses_identical_runtime_and_emits_one_missing_config(tmp
             "framework_id": "toy",
             "launcher_sha256": _sha256(launcher),
             "runner_revision": revision,
+            "runtime_instrumentation": RUNTIME_INSTRUMENTATION_VERSION,
             "config_path": "/old/config.json",
             "log_path": "/old/run.log",
         },
@@ -202,6 +204,7 @@ def test_selective_reuse_writes_complete_plan_after_fresh_source_is_added(tmp_pa
                 "framework_id": "toy",
                 "launcher_sha256": _sha256(launcher),
                 "runner_revision": revision,
+                "runtime_instrumentation": RUNTIME_INSTRUMENTATION_VERSION,
             },
         ).to_dict()
         path.write_text(json.dumps(payload) + "\n", encoding="utf-8")
@@ -279,6 +282,7 @@ def test_selective_reuse_rejects_infrastructure_failure_source(tmp_path: Path) -
             "framework_id": "toy",
             "launcher_sha256": _sha256(launcher),
             "runner_revision": revision,
+            "runtime_instrumentation": RUNTIME_INSTRUMENTATION_VERSION,
         },
     ).to_dict()
     source.write_text(json.dumps(payload) + "\n", encoding="utf-8")
