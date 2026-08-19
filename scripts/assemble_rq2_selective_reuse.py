@@ -17,7 +17,12 @@ from configfuzz.experiment import (
     ExperimentOutcome,
     ExperimentRunRecord,
 )
-from configfuzz.rq2_gpu_executor import _modification_distance, _run_id
+from configfuzz.experiment_campaign import CampaignWorkload, load_campaign_workloads
+from configfuzz.rq2_gpu_executor import (
+    _modification_distance,
+    _run_id,
+    materialize_profile,
+)
 
 
 HARNESS_PATHS = (
@@ -62,19 +67,36 @@ def _stable_assignments(value: Mapping[str, Any]) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
-def _source_key(record: Mapping[str, Any]) -> tuple[str, str] | None:
-    intent_id = record.get("intent_id")
+def _source_key(
+    record: Mapping[str, Any],
+    workloads: Mapping[str, CampaignWorkload],
+) -> tuple[str, str] | None:
+    workload_id = str(record.get("workload_id", ""))
+    workload = workloads.get(workload_id)
     assignments = record.get("solver_modifications")
-    if not intent_id or not isinstance(assignments, Mapping):
+    if (
+        workload is None
+        or str(record.get("baseline_id", "")) != workload.baseline_id
+        or not isinstance(assignments, Mapping)
+    ):
         return None
-    return str(intent_id), _stable_assignments(assignments)
+    try:
+        profile = materialize_profile(workload, {"assignments": assignments})
+    except (KeyError, TypeError, ValueError):
+        return None
+    return workload_id, _stable_assignments(profile)
 
 
-def _case_key(case: Mapping[str, Any]) -> tuple[str, str]:
-    assignments = case.get("assignments")
-    if not isinstance(assignments, Mapping):
-        raise ValueError("planned case assignments must be an object")
-    return str(case["intent_id"]), _stable_assignments(assignments)
+def _case_key(
+    case: Mapping[str, Any],
+    workloads: Mapping[str, CampaignWorkload],
+) -> tuple[str, str]:
+    workload_id = str(case["workload_id"])
+    workload = workloads.get(workload_id)
+    if workload is None:
+        raise KeyError(f"plan references unknown workload: {workload_id}")
+    profile = materialize_profile(workload, case)
+    return workload_id, _stable_assignments(profile)
 
 
 def _git_revision() -> str:
@@ -248,12 +270,14 @@ def _reuse_record(
                     "source_result_sha256": _sha256(source_path),
                     "source_run_id": source.get("run_id"),
                     "source_method": source.get("method"),
+                    "source_intent_id": source.get("intent_id"),
                     "source_runner_revision": source_metadata.get("runner_revision"),
                     "source_config_path": source_metadata.get("config_path"),
                     "source_log_path": source_metadata.get("log_path"),
                     "rationale": (
-                        "identical frozen intent and materialized assignments; "
-                        "same launcher, seed, framework, and unchanged execution harness"
+                        "byte-equivalent canonical materialized configuration for the same "
+                        "workload; same launcher, seed, framework, and unchanged execution "
+                        "harness; intent labels are not consumed by the runtime runner"
                     ),
                 },
             },
@@ -295,6 +319,7 @@ def assemble(
 ) -> dict[str, Any]:
     plan = _read_json(plan_path)
     cases = [case for case in plan.get("cases", ()) if isinstance(case, Mapping)]
+    workloads = load_campaign_workloads(workload_registry)
     provenance = _provenance(
         framework=framework,
         plan=plan_path,
@@ -308,7 +333,7 @@ def assemble(
     rejected_sources: Counter[str] = Counter()
     for source_path in source_paths:
         for record in _iter_jsonl(source_path):
-            key = _source_key(record)
+            key = _source_key(record, workloads)
             if key is None:
                 continue
             if not _eligible_source(
@@ -340,7 +365,7 @@ def assemble(
                 )
             )
             continue
-        key = _case_key(case)
+        key = _case_key(case, workloads)
         matches = indexed.get(key, ())
         if matches:
             source, source_path = matches[0]

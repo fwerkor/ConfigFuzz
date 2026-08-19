@@ -5,6 +5,7 @@ import json
 import subprocess
 from pathlib import Path
 
+from configfuzz.dependencies import DependencyGraph
 from configfuzz.experiment import (
     ExecutionMilestone,
     ExperimentMethod,
@@ -45,11 +46,32 @@ def _case(case_id: str, method: str, value: int, *, status: str = "ready") -> di
     }
 
 
+def _write_workload_files(tmp_path: Path) -> Path:
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(json.dumps({"x": 1}), encoding="utf-8")
+    graph = tmp_path / "graph.json"
+    graph.write_text(json.dumps(DependencyGraph().to_dict()), encoding="utf-8")
+    workloads = tmp_path / "workloads.yaml"
+    workloads.write_text(
+        "\n".join(
+            [
+                "workloads:",
+                "- workload_id: w",
+                "  baseline_id: b",
+                "  baseline_config: baseline.json",
+                "  dependency_graph: graph.json",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    return workloads
+
+
 def test_selective_reuse_uses_identical_runtime_and_emits_one_missing_config(tmp_path: Path) -> None:
     launcher = tmp_path / "launcher.sh"
     launcher.write_text("#!/bin/sh\n", encoding="utf-8")
-    workloads = tmp_path / "workloads.yaml"
-    workloads.write_text("workloads: []\n", encoding="utf-8")
+    workloads = _write_workload_files(tmp_path)
     plan = tmp_path / "plan.json"
     plan.write_text(
         json.dumps(
@@ -78,7 +100,7 @@ def test_selective_reuse_uses_identical_runtime_and_emits_one_missing_config(tmp
         method=ExperimentMethod.RAW_MUTATION,
         workload_id="w",
         baseline_id="b",
-        intent_id="intent-x",
+        intent_id="source-intent",
         intent_pool="method_independent",
         seed=2026,
         generated=True,
@@ -131,8 +153,7 @@ def test_selective_reuse_uses_identical_runtime_and_emits_one_missing_config(tmp
 def test_selective_reuse_writes_complete_plan_after_fresh_source_is_added(tmp_path: Path) -> None:
     launcher = tmp_path / "launcher.sh"
     launcher.write_text("#!/bin/sh\n", encoding="utf-8")
-    workloads = tmp_path / "workloads.yaml"
-    workloads.write_text("workloads: []\n", encoding="utf-8")
+    workloads = _write_workload_files(tmp_path)
     cases = [
         _case("raw", "raw_mutation", 2),
         _case("cf", "configfuzz", 2),
