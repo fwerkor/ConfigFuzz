@@ -82,17 +82,20 @@ rq2:
       coordinated_repair: false
     static_hard_configfuzz:
       target_assignment: fixed
+      repairable_non_target_parameters: affected_hypergraph_region_except_explicit_intent_anchors
       recovered_static_constraints: all_hard
       execution_validation_status: ignored
       scope_refinement: ignored
       coordinated_repair: affected_hypergraph_region
     configfuzz:
       target_assignment: fixed
+      repairable_non_target_parameters: affected_hypergraph_region_except_explicit_intent_anchors
       native_validator: optional
       recovered_constraints: status_and_confidence_aware
       coordinated_repair: affected_hypergraph_region
     global_repair:
       target_assignment: fixed
+      repairable_non_target_parameters: all_parameters_except_explicit_intent_anchors
       native_validator: optional
       manual_constraint_filter: true
       coordinated_repair: all_parameters

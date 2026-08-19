@@ -20,9 +20,6 @@ workloads:
   native_validator_manifest: null
   semantic_anchors:
   - target_parameter
-  - model.hidden_size
-  - model.num_attention_heads
-  - model.num_query_groups
   command_manifest: null
   required_paths:
   - tensor_parallel
@@ -44,8 +41,6 @@ workloads:
   native_validator_manifest: null
   semantic_anchors:
   - target_parameter
-  - model.hidden_size
-  - model.num_attention_heads
   command_manifest: null
   required_paths:
   - tensor_parallel
@@ -67,8 +62,6 @@ workloads:
   native_validator_manifest: null
   semantic_anchors:
   - target_parameter
-  - model.seq_length
-  - parallel.context_parallel_size
   command_manifest: null
   required_paths:
   - grouped_query_attention
@@ -90,9 +83,6 @@ workloads:
   native_validator_manifest: null
   semantic_anchors:
   - target_parameter
-  - moe.num_experts
-  - moe.moe_router_topk
-  - parallel.expert_model_parallel_size
   command_manifest: null
   required_paths:
   - expert_parallel
@@ -113,9 +103,6 @@ workloads:
   native_validator_manifest: null
   semantic_anchors:
   - target_parameter
-  - moe.num_experts
-  - mla.kv_lora_rank
-  - parallel.expert_model_parallel_size
   command_manifest: null
   required_paths:
   - multi_latent_attention
@@ -137,9 +124,6 @@ workloads:
   native_validator_manifest: null
   semantic_anchors:
   - target_parameter
-  - multimodal.image_size
-  - model.hidden_size
-  - multimodal.vision_hidden_size
   command_manifest: null
   required_paths:
   - vision_encoder
@@ -161,10 +145,6 @@ workloads:
   native_validator_manifest: null
   semantic_anchors:
   - target_parameter
-  - video.frames
-  - video.sample_height
-  - video.sample_width
-  - video.text_embed_dim
   command_manifest: null
   required_paths:
   - video_diffusion
