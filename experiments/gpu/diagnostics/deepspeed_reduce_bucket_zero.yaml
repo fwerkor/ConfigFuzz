@@ -1,8 +1,8 @@
 schema_version: 1
 name: deepspeed-reduce-bucket-zero-diagnostic
-campaign_date: '2026-08-17'
-runner_revision: 44fc744
-frozen_targets_sha256: e20cb9cfbe8cfe5855e065d2455780fb5fd707540be60393d612bdc902921a8e
+campaign_date: '2026-08-19'
+runner_revision: 2d59f2b
+frozen_targets_sha256: 63cce93f5fffed63af44d03ebd41cde5f57827a118d2a805e2e7b143e0ee2eb2
 subject: deepspeed
 edge_id: dep-660c94ed03780170
 expression: reduce_bucket_size >= 0
@@ -30,4 +30,5 @@ interpretation: >-
   The admitted boundary is a reproducible implementation-defect signal, but the
   relation remains unresolved for RQ1 because paired confirmation requires the
   repaired configuration to complete the target execution milestone.
-raw_record: formal-results/rq1-gpu-final-20260817-v3/diagnostics/deepspeed-reduce-bucket-zero
+formal_result_sha256: b6c2f62b8516868982a5d0a0f11faa7264bd78b1a626a3949261f63545da6e93
+raw_record: artifacts/gpu/final-expanded-results/deepspeed.json

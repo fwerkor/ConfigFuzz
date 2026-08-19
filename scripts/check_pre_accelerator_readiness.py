@@ -165,13 +165,13 @@ def main() -> int:
     gpu_aggregate = gpu_summary.get("aggregate", {})
     gpu_summary_complete = (
         current_hash == stored_hash
-        and gpu_summary.get("campaign_date") == "2026-08-17"
-        and gpu_summary.get("frozen_target_count") == 19
-        and gpu_aggregate.get("targets") == 19
-        and gpu_aggregate.get("samples") == 57
-        and gpu_aggregate.get("paired_confirmed") == 15
-        and gpu_aggregate.get("scope_disputed") == 2
-        and gpu_aggregate.get("unresolved") == 2
+        and gpu_summary.get("campaign_date") == "2026-08-19"
+        and gpu_summary.get("frozen_target_count") == 24
+        and gpu_aggregate.get("targets") == 24
+        and gpu_aggregate.get("samples") == 72
+        and gpu_aggregate.get("paired_confirmed") == 16
+        and gpu_aggregate.get("scope_disputed") == 5
+        and gpu_aggregate.get("unresolved") == 3
     )
     check(
         "gpu_rq1_frozen_summary_matches_targets",

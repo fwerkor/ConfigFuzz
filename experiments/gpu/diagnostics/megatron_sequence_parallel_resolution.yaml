@@ -1,8 +1,8 @@
 schema_version: 1
 name: megatron-sequence-parallel-resolution
-campaign_date: '2026-08-17'
-runner_revision: 44fc744
-frozen_targets_sha256: e20cb9cfbe8cfe5855e065d2455780fb5fd707540be60393d612bdc902921a8e
+campaign_date: '2026-08-19'
+runner_revision: 2d59f2b
+frozen_targets_sha256: 63cce93f5fffed63af44d03ebd41cde5f57827a118d2a805e2e7b143e0ee2eb2
 subject: megatron-core
 edge_id: dep-77fd7ce216b36ffd
 expression: sequence_parallel => tensor_model_parallel_size > 1
@@ -33,9 +33,10 @@ formal_triplet:
     sequence_parallel: true
     outcome: valid
     evidence: completed through checkpoint save/load and the final milestone
-result_sha256: dba17d9f4e4b07f047997083d3c8c01839aca67abb1bf6426c479171d63d25d0
+result_sha256: c81caceced1b1357f743a11d843a68dd1527c1f70c12f8f45383ddb12f4d5251
 interpretation: >-
   The corrected execution isolates the recovered relation and supplies the
-  valid/invalid/valid paired evidence required for paired confirmation. Megatron-Core
-  therefore has no unresolved RQ1 target in the final GPU campaign.
-raw_record: formal-results/rq1-gpu-final-20260817-v3/megatron-core.json
+  valid/invalid/valid paired evidence required for paired confirmation. The
+  expanded campaign retains this result while adding separately classified
+  Megatron-Core targets, including one unresolved zero-layer relation.
+raw_record: artifacts/gpu/final-expanded-results/megatron-core.json

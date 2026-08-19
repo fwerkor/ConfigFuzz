@@ -195,14 +195,14 @@
     },
     {
       "detail": {
-        "campaign_date": "2026-08-17",
-        "current_targets_sha256": "e20cb9cfbe8cfe5855e065d2455780fb5fd707540be60393d612bdc902921a8e",
-        "paired_confirmed": 15,
-        "samples": 57,
-        "scope_disputed": 2,
-        "stored_summary_targets_sha256": "e20cb9cfbe8cfe5855e065d2455780fb5fd707540be60393d612bdc902921a8e",
-        "targets": 19,
-        "unresolved": 2
+        "campaign_date": "2026-08-19",
+        "current_targets_sha256": "63cce93f5fffed63af44d03ebd41cde5f57827a118d2a805e2e7b143e0ee2eb2",
+        "paired_confirmed": 16,
+        "samples": 72,
+        "scope_disputed": 5,
+        "stored_summary_targets_sha256": "63cce93f5fffed63af44d03ebd41cde5f57827a118d2a805e2e7b143e0ee2eb2",
+        "targets": 24,
+        "unresolved": 3
       },
       "name": "gpu_rq1_frozen_summary_matches_targets",
       "ok": true

@@ -127,17 +127,21 @@ The formal GPU generalization campaign uses `validation_targets.frozen.yaml`.
 Targets are ranked and frozen from each versioned static graph plus its qualified
 effective baseline before formal execution feedback is considered. Candidates
 with an explicit execution-stage scope that does not match the qualified workload
-are excluded before ranking. This prevents later runtime outcomes from changing
-the evaluated target set. The current frozen set contains 19 targets across the
-four GPU stacks and records hashes for each source artifact, baseline, execution
-manifest, launch script, qualification runner, and shared runner source.
+are excluded before ranking. For Megatron-Core, the satisfying and repaired arms
+must additionally retain the already qualified TP/PP/CP/EP process topology;
+candidates that require a different process-group layout are excluded before
+execution so unrelated topology support cannot confound the relation oracle.
+This prevents later runtime outcomes from changing the evaluated target set. The
+current frozen set contains 24 targets across the four GPU stacks and records
+hashes for each source artifact, baseline, execution manifest, launch script,
+qualification runner, and shared runner source.
 
 Regenerate and verify the frozen set with:
 
 ```bash
 python scripts/freeze_gpu_validation_targets.py \
   --output experiments/gpu/validation_targets.frozen.yaml \
-  --limit-per-subject 6 --solver-timeout-ms 3000
+  --limit-per-subject 20 --solver-timeout-ms 5000
 ```
 
 Run one framework against the exact frozen intervention plans with:
@@ -156,10 +160,10 @@ kept separate from these frozen-campaign outputs.
 
 The normalized result summary for the frozen RQ1 campaign is recorded in
 `formal_results_summary.yaml`; raw process logs remain outside the repository
-because they contain machine-local execution paths. The final August 17 campaign
+because they contain machine-local execution paths. The final August 19 campaign
 uses the NPU-aligned 4-layer/hidden-512 baselines and the frozen target set with
-internal hash `e20cb9cf...`. Across 19 targets and 57 satisfying/violating/repaired
-executions, 15 targets are paired-confirmed, two are scope-disputed, and two
+internal hash `63cce93f...`. Across 24 targets and 72 satisfying/violating/repaired
+executions, 16 targets are paired-confirmed, five are scope-disputed, and three
 remain unresolved. The corrected Megatron-Core harness preserves local attention
 and tensor-parallel linear modules and uses Transformer Engine only for
 normalization; under this harness, `sequence_parallel => tensor_model_parallel_size > 1`
@@ -173,5 +177,9 @@ raising `ZeroDivisionError`. Three independent reruns reproduce that boundary
 failure; the compact record is stored in
 `diagnostics/deepspeed_reduce_bucket_zero.yaml`. Transformers/Accelerate's
 remaining unresolved target is environment-limited because the selected FP8
-intervention is unavailable on the qualified A6000 stack. Rebuild the normalized
-summary from the raw outputs with `scripts/summarize_frozen_gpu_validation.py`.
+intervention is unavailable on the qualified A6000 stack. Megatron-Core's added
+`num_layers > 0` target is also left unresolved: the violating zero-layer case
+fails during `TransformerConfig` construction through a division-by-zero path
+that does not match the recovered source provenance, so the failure is not used
+as paired relation evidence. Rebuild the normalized summary from the raw outputs
+with `scripts/summarize_frozen_gpu_validation.py`.
