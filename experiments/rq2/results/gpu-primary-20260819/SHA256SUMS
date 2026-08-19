@@ -1,0 +1,8 @@
+06b43623fdfa285286ae48848ba9e69e4342cffee4789c0fa75ba71527ce2d4b  experiments/rq2/results/gpu-primary-20260819/transformers-accelerate.jsonl.gz
+3e7a2775490851a3c340ab0c1ff13e92a68c249fe3c3bfa0e6fd49f93337d4c2  experiments/rq2/results/gpu-primary-20260819/pytorch-cuda.jsonl.gz
+3fe89bb4584919d07c4f267d98f4cd18a7d4f6fdbb1361c506bcbc716ba1c4b0  experiments/rq2/results/gpu-primary-20260819/megatron-v3-selective-plan.json.gz
+5f4a1532eb49a666fb3a59385ac24d5374eff86f132a346c7176509be5c9d5cf  experiments/rq2/results/gpu-primary-20260819/README.md
+9c34ae0a2c2eea15c7ba5eadb373431cefc3d4237e264085855d3926270ccb9e  experiments/rq2/results/gpu-primary-20260819/megatron-core.jsonl.gz
+c8eabb6ff1f8913df1256decf662f0558286678a305d2f31c2754c0c5c174ed7  experiments/rq2/results/gpu-primary-20260819/deepspeed.jsonl.gz
+ce5dced9e661a8d60540ced0abb1297436225e82d641340d0cee83949aa56b93  experiments/rq2/results/gpu-primary-20260819/summary.json
+e3af4b1801df3f11ad083d494a0d81e804d9334e3e3ae7b7079c81ce92536027  experiments/rq2/results/gpu-primary-20260819/manifest.json

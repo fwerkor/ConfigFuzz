@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "name": "ConfigFuzz RQ2 GPU primary-seed final results",
+  "date": "2026-08-19",
+  "seed": 2026,
+  "target_milestone": "optimizer_step",
+  "total_records": 21600,
+  "frameworks": {
+    "pytorch-cuda": {
+      "records": 6300,
+      "jsonl_bytes": 17629673,
+      "jsonl_sha256": "3a532946ef39ed3673fce4255a0102ec8408b07884aaf0e180bc6ffba3347528",
+      "gzip_bytes": 650136,
+      "gzip_sha256": "3e7a2775490851a3c340ab0c1ff13e92a68c249fe3c3bfa0e6fd49f93337d4c2"
+    },
+    "deepspeed": {
+      "records": 6300,
+      "jsonl_bytes": 17396058,
+      "jsonl_sha256": "9f78e96990862b2647e62ad0e7b9cb579aa572b53b623109a3489e864cce0f6d",
+      "gzip_bytes": 642341,
+      "gzip_sha256": "c8eabb6ff1f8913df1256decf662f0558286678a305d2f31c2754c0c5c174ed7"
+    },
+    "transformers-accelerate": {
+      "records": 6300,
+      "jsonl_bytes": 18015292,
+      "jsonl_sha256": "e5028ec7ee1eecadf2e22b8ecf048d1000ddccba6e2335505849e080fe2c47af",
+      "gzip_bytes": 652840,
+      "gzip_sha256": "06b43623fdfa285286ae48848ba9e69e4342cffee4789c0fa75ba71527ce2d4b"
+    },
+    "megatron-core": {
+      "records": 2700,
+      "jsonl_bytes": 9360311,
+      "jsonl_sha256": "5f07bc0a0d72e6f582f42310c229e9a6271dd2696746a0debea0bda03d01e6b3",
+      "gzip_bytes": 314897,
+      "gzip_sha256": "9c34ae0a2c2eea15c7ba5eadb373431cefc3d4237e264085855d3926270ccb9e"
+    }
+  },
+  "runner_revision": "44fc744e8e573d5c5409ac5f29b069949ccfb739",
+  "current_promotion_path": "experiments/rq2/promoted/gpu",
+  "current_promotion_sha256": "73441ed2cf9bcf9ea9610ae8264302d5e146278b47b5a581a976c3e82e4c6a00",
+  "megatron_merge": {
+    "reused_from_original_campaign": [
+      "raw_mutation",
+      "native_validator_guided",
+      "static_hard_configfuzz"
+    ],
+    "rerun_with_current_validated_graph": [
+      "constraint_filter_only",
+      "configfuzz",
+      "global_repair"
+    ],
+    "selective_plan_sha256": "76640f89c9cabbdca1cd219a5067c358a8ce6453f956587d2ecc41be12c208d4",
+    "selective_plan_gzip_sha256": "3fe89bb4584919d07c4f267d98f4cd18a7d4f6fdbb1361c506bcbc716ba1c4b0",
+    "rationale": "Only methods that consume the validated graph changed after the final Megatron RQ1 refinement; the static graph and graph node set remained unchanged."
+  },
+  "measurement_note": "behavior_signature in these GPU records hashes milestone/outcome/error-tail and is not the runtime branch/backend/topology diversity instrumentation defined for the final RQ2 diversity metric."
+}

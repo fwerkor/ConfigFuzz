@@ -1,0 +1,583 @@
+{
+  "schema_version": 2,
+  "name": "rq2-gpu-final-primary-seed",
+  "seed": 2026,
+  "target_milestone": "optimizer_step",
+  "total_records": 21600,
+  "frameworks": {
+    "pytorch-cuda": {
+      "intent_count": 1050,
+      "record_count": 6300,
+      "methods": {
+        "raw_mutation": {
+          "run_count": 1050,
+          "generated_count": 1050,
+          "generation_rate": 1.0,
+          "ipde_count": 737,
+          "ipde_rate": 0.7019047619047619,
+          "deep_execution_count": 737,
+          "deep_execution_rate": 0.7019047619047619,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 101,
+            "unexplained_failure": 212,
+            "valid": 737
+          }
+        },
+        "native_validator_guided": {
+          "run_count": 1050,
+          "generated_count": 1050,
+          "generation_rate": 1.0,
+          "ipde_count": 737,
+          "ipde_rate": 0.7019047619047619,
+          "deep_execution_count": 737,
+          "deep_execution_rate": 0.7019047619047619,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 101,
+            "unexplained_failure": 212,
+            "valid": 737
+          }
+        },
+        "constraint_filter_only": {
+          "run_count": 1050,
+          "generated_count": 1027,
+          "generation_rate": 0.9780952380952381,
+          "ipde_count": 737,
+          "ipde_rate": 0.7019047619047619,
+          "deep_execution_count": 737,
+          "deep_execution_rate": 0.7019047619047619,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 101,
+            "unexplained_failure": 211,
+            "unknown": 1,
+            "valid": 737
+          }
+        },
+        "static_hard_configfuzz": {
+          "run_count": 1050,
+          "generated_count": 1027,
+          "generation_rate": 0.9780952380952381,
+          "ipde_count": 737,
+          "ipde_rate": 0.7019047619047619,
+          "deep_execution_count": 737,
+          "deep_execution_rate": 0.7019047619047619,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 102,
+            "unexplained_failure": 211,
+            "valid": 737
+          }
+        },
+        "configfuzz": {
+          "run_count": 1050,
+          "generated_count": 1050,
+          "generation_rate": 1.0,
+          "ipde_count": 737,
+          "ipde_rate": 0.7019047619047619,
+          "deep_execution_count": 737,
+          "deep_execution_rate": 0.7019047619047619,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 101,
+            "unexplained_failure": 212,
+            "valid": 737
+          }
+        },
+        "global_repair": {
+          "run_count": 1050,
+          "generated_count": 1050,
+          "generation_rate": 1.0,
+          "ipde_count": 737,
+          "ipde_rate": 0.7019047619047619,
+          "deep_execution_count": 737,
+          "deep_execution_rate": 0.7019047619047619,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 101,
+            "unexplained_failure": 212,
+            "valid": 737
+          }
+        }
+      }
+    },
+    "deepspeed": {
+      "intent_count": 1050,
+      "record_count": 6300,
+      "methods": {
+        "raw_mutation": {
+          "run_count": 1050,
+          "generated_count": 1050,
+          "generation_rate": 1.0,
+          "ipde_count": 725,
+          "ipde_rate": 0.6904761904761905,
+          "deep_execution_count": 725,
+          "deep_execution_rate": 0.6904761904761905,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 127,
+            "unexplained_failure": 198,
+            "valid": 725
+          }
+        },
+        "native_validator_guided": {
+          "run_count": 1050,
+          "generated_count": 1050,
+          "generation_rate": 1.0,
+          "ipde_count": 725,
+          "ipde_rate": 0.6904761904761905,
+          "deep_execution_count": 725,
+          "deep_execution_rate": 0.6904761904761905,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 127,
+            "unexplained_failure": 198,
+            "valid": 725
+          }
+        },
+        "constraint_filter_only": {
+          "run_count": 1050,
+          "generated_count": 953,
+          "generation_rate": 0.9076190476190477,
+          "ipde_count": 679,
+          "ipde_rate": 0.6466666666666666,
+          "deep_execution_count": 679,
+          "deep_execution_rate": 0.6466666666666666,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 127,
+            "unexplained_failure": 197,
+            "unknown": 47,
+            "valid": 679
+          }
+        },
+        "static_hard_configfuzz": {
+          "run_count": 1050,
+          "generated_count": 961,
+          "generation_rate": 0.9152380952380952,
+          "ipde_count": 687,
+          "ipde_rate": 0.6542857142857142,
+          "deep_execution_count": 687,
+          "deep_execution_rate": 0.6542857142857142,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 105,
+            "unexplained_failure": 197,
+            "unknown": 61,
+            "valid": 687
+          }
+        },
+        "configfuzz": {
+          "run_count": 1050,
+          "generated_count": 984,
+          "generation_rate": 0.9371428571428572,
+          "ipde_count": 687,
+          "ipde_rate": 0.6542857142857142,
+          "deep_execution_count": 687,
+          "deep_execution_rate": 0.6542857142857142,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 104,
+            "unexplained_failure": 198,
+            "unknown": 61,
+            "valid": 687
+          }
+        },
+        "global_repair": {
+          "run_count": 1050,
+          "generated_count": 984,
+          "generation_rate": 0.9371428571428572,
+          "ipde_count": 687,
+          "ipde_rate": 0.6542857142857142,
+          "deep_execution_count": 687,
+          "deep_execution_rate": 0.6542857142857142,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 104,
+            "unexplained_failure": 198,
+            "unknown": 61,
+            "valid": 687
+          }
+        }
+      }
+    },
+    "transformers-accelerate": {
+      "intent_count": 1050,
+      "record_count": 6300,
+      "methods": {
+        "raw_mutation": {
+          "run_count": 1050,
+          "generated_count": 1050,
+          "generation_rate": 1.0,
+          "ipde_count": 749,
+          "ipde_rate": 0.7133333333333334,
+          "deep_execution_count": 749,
+          "deep_execution_rate": 0.7133333333333334,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 82,
+            "unexplained_failure": 219,
+            "valid": 749
+          }
+        },
+        "native_validator_guided": {
+          "run_count": 1050,
+          "generated_count": 1050,
+          "generation_rate": 1.0,
+          "ipde_count": 749,
+          "ipde_rate": 0.7133333333333334,
+          "deep_execution_count": 749,
+          "deep_execution_rate": 0.7133333333333334,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 82,
+            "unexplained_failure": 219,
+            "valid": 749
+          }
+        },
+        "constraint_filter_only": {
+          "run_count": 1050,
+          "generated_count": 1020,
+          "generation_rate": 0.9714285714285714,
+          "ipde_count": 744,
+          "ipde_rate": 0.7085714285714285,
+          "deep_execution_count": 744,
+          "deep_execution_rate": 0.7085714285714285,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 87,
+            "unexplained_failure": 218,
+            "unknown": 1,
+            "valid": 744
+          }
+        },
+        "static_hard_configfuzz": {
+          "run_count": 1050,
+          "generated_count": 1015,
+          "generation_rate": 0.9666666666666667,
+          "ipde_count": 739,
+          "ipde_rate": 0.7038095238095238,
+          "deep_execution_count": 739,
+          "deep_execution_rate": 0.7038095238095238,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 1,
+          "outcome_counts": {
+            "expected_rejection": 81,
+            "unexplained_failure": 218,
+            "unknown": 12,
+            "valid": 739
+          }
+        },
+        "configfuzz": {
+          "run_count": 1050,
+          "generated_count": 1038,
+          "generation_rate": 0.9885714285714285,
+          "ipde_count": 739,
+          "ipde_rate": 0.7038095238095238,
+          "deep_execution_count": 739,
+          "deep_execution_rate": 0.7038095238095238,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 1,
+          "outcome_counts": {
+            "expected_rejection": 80,
+            "unexplained_failure": 219,
+            "unknown": 12,
+            "valid": 739
+          }
+        },
+        "global_repair": {
+          "run_count": 1050,
+          "generated_count": 1038,
+          "generation_rate": 0.9885714285714285,
+          "ipde_count": 739,
+          "ipde_rate": 0.7038095238095238,
+          "deep_execution_count": 739,
+          "deep_execution_rate": 0.7038095238095238,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 1,
+          "outcome_counts": {
+            "expected_rejection": 80,
+            "unexplained_failure": 219,
+            "unknown": 12,
+            "valid": 739
+          }
+        }
+      }
+    },
+    "megatron-core": {
+      "intent_count": 450,
+      "record_count": 2700,
+      "methods": {
+        "raw_mutation": {
+          "run_count": 450,
+          "generated_count": 450,
+          "generation_rate": 1.0,
+          "ipde_count": 229,
+          "ipde_rate": 0.5088888888888888,
+          "deep_execution_count": 229,
+          "deep_execution_rate": 0.5088888888888888,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 163,
+            "unexplained_failure": 58,
+            "valid": 229
+          }
+        },
+        "native_validator_guided": {
+          "run_count": 450,
+          "generated_count": 450,
+          "generation_rate": 1.0,
+          "ipde_count": 229,
+          "ipde_rate": 0.5088888888888888,
+          "deep_execution_count": 229,
+          "deep_execution_rate": 0.5088888888888888,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 163,
+            "unexplained_failure": 58,
+            "valid": 229
+          }
+        },
+        "constraint_filter_only": {
+          "run_count": 450,
+          "generated_count": 185,
+          "generation_rate": 0.4111111111111111,
+          "ipde_count": 124,
+          "ipde_rate": 0.27555555555555555,
+          "deep_execution_count": 124,
+          "deep_execution_rate": 0.27555555555555555,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 0,
+          "outcome_counts": {
+            "expected_rejection": 272,
+            "unexplained_failure": 14,
+            "unknown": 40,
+            "valid": 124
+          }
+        },
+        "static_hard_configfuzz": {
+          "run_count": 450,
+          "generated_count": 257,
+          "generation_rate": 0.5711111111111111,
+          "ipde_count": 153,
+          "ipde_rate": 0.34,
+          "deep_execution_count": 153,
+          "deep_execution_rate": 0.34,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 34,
+          "outcome_counts": {
+            "expected_rejection": 179,
+            "unexplained_failure": 17,
+            "unknown": 101,
+            "valid": 153
+          }
+        },
+        "configfuzz": {
+          "run_count": 450,
+          "generated_count": 349,
+          "generation_rate": 0.7755555555555556,
+          "ipde_count": 168,
+          "ipde_rate": 0.37333333333333335,
+          "deep_execution_count": 168,
+          "deep_execution_rate": 0.37333333333333335,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 28,
+          "outcome_counts": {
+            "expected_rejection": 140,
+            "unexplained_failure": 41,
+            "unknown": 101,
+            "valid": 168
+          }
+        },
+        "global_repair": {
+          "run_count": 450,
+          "generated_count": 349,
+          "generation_rate": 0.7755555555555556,
+          "ipde_count": 98,
+          "ipde_rate": 0.21777777777777776,
+          "deep_execution_count": 98,
+          "deep_execution_rate": 0.21777777777777776,
+          "target_retention_rate": 1.0,
+          "coordinated_case_count": 208,
+          "outcome_counts": {
+            "expected_rejection": 240,
+            "unexplained_failure": 11,
+            "unknown": 101,
+            "valid": 98
+          }
+        }
+      }
+    }
+  },
+  "aggregate": {
+    "raw_mutation": {
+      "run_count": 3600,
+      "generated_count": 3600,
+      "generation_rate": 1.0,
+      "ipde_count": 2440,
+      "ipde_rate": 0.6777777777777778,
+      "deep_execution_count": 2440,
+      "deep_execution_rate": 0.6777777777777778,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 0
+    },
+    "native_validator_guided": {
+      "run_count": 3600,
+      "generated_count": 3600,
+      "generation_rate": 1.0,
+      "ipde_count": 2440,
+      "ipde_rate": 0.6777777777777778,
+      "deep_execution_count": 2440,
+      "deep_execution_rate": 0.6777777777777778,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 0
+    },
+    "constraint_filter_only": {
+      "run_count": 3600,
+      "generated_count": 3185,
+      "generation_rate": 0.8847222222222222,
+      "ipde_count": 2284,
+      "ipde_rate": 0.6344444444444445,
+      "deep_execution_count": 2284,
+      "deep_execution_rate": 0.6344444444444445,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 0
+    },
+    "static_hard_configfuzz": {
+      "run_count": 3600,
+      "generated_count": 3260,
+      "generation_rate": 0.9055555555555556,
+      "ipde_count": 2316,
+      "ipde_rate": 0.6433333333333333,
+      "deep_execution_count": 2316,
+      "deep_execution_rate": 0.6433333333333333,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 35
+    },
+    "configfuzz": {
+      "run_count": 3600,
+      "generated_count": 3421,
+      "generation_rate": 0.9502777777777778,
+      "ipde_count": 2331,
+      "ipde_rate": 0.6475,
+      "deep_execution_count": 2331,
+      "deep_execution_rate": 0.6475,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 29
+    },
+    "global_repair": {
+      "run_count": 3600,
+      "generated_count": 3421,
+      "generation_rate": 0.9502777777777778,
+      "ipde_count": 2261,
+      "ipde_rate": 0.6280555555555556,
+      "deep_execution_count": 2261,
+      "deep_execution_rate": 0.6280555555555556,
+      "target_retention_rate": 1.0,
+      "coordinated_case_count": 209
+    }
+  },
+  "paired_raw_vs_configfuzz": {
+    "pytorch-cuda": {
+      "both_deep": 737,
+      "raw_only": 0,
+      "configfuzz_only": 0,
+      "neither": 313,
+      "raw_only_target_counts": {},
+      "configfuzz_only_target_counts": {},
+      "configfuzz_only_cases": []
+    },
+    "deepspeed": {
+      "both_deep": 687,
+      "raw_only": 38,
+      "configfuzz_only": 0,
+      "neither": 325,
+      "raw_only_target_counts": {
+        "training.micro_batch_size": 38
+      },
+      "configfuzz_only_target_counts": {},
+      "configfuzz_only_cases": []
+    },
+    "transformers-accelerate": {
+      "both_deep": 739,
+      "raw_only": 10,
+      "configfuzz_only": 0,
+      "neither": 301,
+      "raw_only_target_counts": {
+        "precision.bf16": 6,
+        "precision.fp16": 4
+      },
+      "configfuzz_only_target_counts": {},
+      "configfuzz_only_cases": []
+    },
+    "megatron-core": {
+      "both_deep": 166,
+      "raw_only": 63,
+      "configfuzz_only": 2,
+      "neither": 219,
+      "raw_only_target_counts": {
+        "model.ffn_hidden_size": 12,
+        "model.hidden_size": 3,
+        "model.num_attention_heads": 2,
+        "model.num_layers": 29,
+        "model.num_query_groups": 2,
+        "model.seq_length": 6,
+        "moe.num_experts": 8,
+        "training.micro_batch_size": 1
+      },
+      "configfuzz_only_target_counts": {
+        "precision.fp16": 2
+      },
+      "configfuzz_only_cases": [
+        {
+          "intent_id": "llama2-train-fp16-boolean_transition-bf5cc49bb249",
+          "workload_id": "llama2-train",
+          "target_parameter": "precision.fp16",
+          "coordinated_parameters": [
+            "precision.bf16"
+          ],
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "expected_rejection",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        },
+        {
+          "intent_id": "qwen2-train-fp16-boolean_transition-4bd9d2718651",
+          "workload_id": "qwen2-train",
+          "target_parameter": "precision.fp16",
+          "coordinated_parameters": [
+            "precision.bf16"
+          ],
+          "raw_deepest_milestone": "process_group_initialization",
+          "raw_outcome": "expected_rejection",
+          "configfuzz_deepest_milestone": "completed",
+          "configfuzz_outcome": "valid"
+        }
+      ]
+    },
+    "aggregate": {
+      "both_deep": 2329,
+      "raw_only": 111,
+      "configfuzz_only": 2,
+      "neither": 1158
+    }
+  }
+}
