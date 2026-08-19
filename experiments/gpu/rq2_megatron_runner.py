@@ -19,6 +19,7 @@ from megatron.core.transformer.module import Float16Module
 from megatron.core.transformer.transformer_config import TransformerConfig
 from megatron.training.arguments import parse_args as parse_megatron_args
 from megatron.training.arguments import validate_args as validate_megatron_args
+from runtime_events import RuntimeEventRecorder
 
 
 MILESTONE_PREFIX = "CONFIGFUZZ_MILESTONE:"
@@ -86,6 +87,8 @@ def main() -> int:
     local_rank = int(os.environ.get("LOCAL_RANK", "0"))
     rank = int(os.environ.get("RANK", "0"))
     world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    recorder = RuntimeEventRecorder(rank)
+    recorder.emit_profile_state(profile)
     _validate_native(profile, world_size)
     milestone("configuration_validation", rank)
     torch.cuda.set_device(local_rank)
@@ -104,6 +107,19 @@ def main() -> int:
         context_parallel_size=cp,
         expert_model_parallel_size=ep,
         expert_tensor_parallel_size=tp,
+    )
+    recorder.emit_distributed_state(
+        framework="megatron_core",
+        world_size=world_size,
+        tp=parallel_state.get_tensor_model_parallel_world_size(),
+        pp=parallel_state.get_pipeline_model_parallel_world_size(),
+        cp=parallel_state.get_context_parallel_world_size(),
+        ep=parallel_state.get_expert_model_parallel_world_size(),
+    )
+    recorder.emit("backend", "attention=megatron_local_spec")
+    recorder.emit(
+        "feature",
+        f"sequence_parallel={'enabled' if bool(parallel_cfg.get('sequence_parallel', False)) else 'disabled'}",
     )
     seed = int(os.environ.get("CONFIGFUZZ_SEED", "2026"))
     model_parallel_cuda_manual_seed(seed)
@@ -144,6 +160,7 @@ def main() -> int:
     ).to(device)
     if use_bf16 or use_fp16:
         model = Float16Module(config, model)
+    recorder.instrument_model(model, profile)
     milestone("model_construction", rank)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(profile["training"]["learning_rate"]))
@@ -158,6 +175,7 @@ def main() -> int:
         position_ids = torch.arange(seq, device=device).unsqueeze(0).expand(batch_size, -1)
         attention_mask = torch.triu(torch.ones((1, 1, seq, seq), dtype=torch.bool, device=device), diagonal=1)
         optimizer.zero_grad(set_to_none=True)
+        recorder.emit("branch", "forward_path=language")
         losses = model(input_ids=input_ids, position_ids=position_ids, attention_mask=attention_mask, labels=labels)
         loss = losses.float().mean()
         milestone("forward", rank)
@@ -180,6 +198,7 @@ def main() -> int:
         optimizer.load_state_dict(state["optimizer"])
         milestone("checkpoint_save_load", rank)
     milestone("completed", rank)
+    recorder.close()
     parallel_state.destroy_model_parallel()
     dist.destroy_process_group()
     return 0

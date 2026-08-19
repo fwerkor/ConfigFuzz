@@ -14,6 +14,7 @@ from configfuzz.rq2_gpu_executor import (
     classify_outcome,
     deepest_milestone,
     materialize_profile,
+    parse_runtime_events,
 )
 
 
@@ -72,6 +73,33 @@ def test_gpu_output_classification_uses_deepest_reported_milestone() -> None:
     assert milestone is ExecutionMilestone.FORWARD
     assert classify_outcome(output, 1, False, milestone) is ExperimentOutcome.UNEXPLAINED_FAILURE
     assert behavior_signature(output, milestone, ExperimentOutcome.UNEXPLAINED_FAILURE)
+
+
+def test_runtime_events_are_categorized_and_signed_independently_of_outcome() -> None:
+    output = "\n".join(
+        [
+            'CONFIGFUZZ_RUNTIME_EVENT:{"kind":"branch","value":"attention_mode=gqa"}',
+            'CONFIGFUZZ_RUNTIME_EVENT:{"kind":"backend","value":"attention=sdpa"}',
+            'CONFIGFUZZ_RUNTIME_EVENT:{"kind":"topology","value":"world=2,tp=1,pp=1,cp=1,ep=1"}',
+            'CONFIGFUZZ_RUNTIME_EVENT:{"kind":"feature","value":"attention"}',
+            'CONFIGFUZZ_RUNTIME_EVENT:{"kind":"feature","value":"attention"}',
+            "RuntimeError: unrelated failure text",
+        ]
+    )
+
+    events = parse_runtime_events(output)
+
+    assert events["branch"] == ("attention_mode=gqa",)
+    assert events["backend"] == ("attention=sdpa",)
+    assert events["topology"] == ("world=2,tp=1,pp=1,cp=1,ep=1",)
+    assert events["feature"] == ("attention",)
+    assert events["behavior_ids"] == (
+        "backend:attention=sdpa",
+        "branch:attention_mode=gqa",
+        "feature:attention",
+        "topology:world=2,tp=1,pp=1,cp=1,ep=1",
+    )
+    assert events["behavior_signature"] is not None
 
 
 def test_explicit_configuration_error_after_distributed_init_is_expected_rejection() -> None:

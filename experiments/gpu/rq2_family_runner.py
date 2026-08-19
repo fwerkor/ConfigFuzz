@@ -12,6 +12,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 from rq2_family_factory import build_model, load_profile
+from runtime_events import RuntimeEventRecorder
 
 
 MILESTONE_PREFIX = "CONFIGFUZZ_MILESTONE:"
@@ -41,13 +42,28 @@ def main() -> int:
 
 def _run_pytorch(profile, args) -> int:
     rank, local_rank, world_size, device = _torch_distributed_context()
+    recorder = RuntimeEventRecorder(rank)
+    recorder.emit_profile_state(profile)
+    recorder.emit_distributed_state(
+        framework="pytorch_ddp",
+        world_size=world_size,
+    )
     milestone("distributed_initialization", rank)
     model = build_model(profile).to(device=device, dtype=_dtype(profile))
+    recorder.instrument_model(model, profile)
     milestone("model_construction", rank)
     if world_size > 1:
         model = DDP(model, device_ids=[local_rank])
     optimizer = torch.optim.AdamW(model.parameters(), lr=_learning_rate(profile))
-    _train_steps(profile, model, optimizer, device, rank, backward=lambda loss: loss.backward())
+    _train_steps(
+        profile,
+        model,
+        optimizer,
+        device,
+        rank,
+        backward=lambda loss: loss.backward(),
+        recorder=recorder,
+    )
     if not args.skip_checkpoint:
         checkpoint = _checkpoint_dir(profile, "pytorch") / "state.pt"
         if rank == 0:
@@ -62,6 +78,7 @@ def _run_pytorch(profile, args) -> int:
         optimizer.load_state_dict(state["optimizer"])
         milestone("checkpoint_save_load", rank)
     milestone("completed", rank)
+    recorder.close()
     if dist.is_initialized():
         dist.destroy_process_group()
     return 0
@@ -72,9 +89,13 @@ def _run_deepspeed(profile, args) -> int:
 
     local_rank = args.local_rank if args.local_rank >= 0 else int(os.environ.get("LOCAL_RANK", "0"))
     rank = int(os.environ.get("RANK", "0"))
+    world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    recorder = RuntimeEventRecorder(rank)
+    recorder.emit_profile_state(profile)
     torch.cuda.set_device(local_rank)
     device = torch.device("cuda", local_rank)
     model = build_model(profile).to(dtype=_dtype(profile))
+    recorder.instrument_model(model, profile)
     milestone("model_construction", rank)
     training = profile["training"]
     ds = profile.get("framework", {}).get("deepspeed", {})
@@ -95,8 +116,22 @@ def _run_deepspeed(profile, args) -> int:
     optimizer = torch.optim.AdamW(model.parameters(), lr=_learning_rate(profile))
     engine, optimizer, _, _ = deepspeed.initialize(model=model, model_parameters=model.parameters(), optimizer=optimizer, config=ds_config)
     device = engine.device
+    recorder.emit_distributed_state(
+        framework="deepspeed",
+        world_size=world_size,
+    )
+    recorder.emit("backend", f"deepspeed_zero=stage{int(ds_config['zero_optimization']['stage'])}")
     milestone("distributed_initialization", rank)
-    _train_steps(profile, engine, optimizer, device, rank, backward=engine.backward, step=engine.step)
+    _train_steps(
+        profile,
+        engine,
+        optimizer,
+        device,
+        rank,
+        backward=engine.backward,
+        step=engine.step,
+        recorder=recorder,
+    )
     if not args.skip_checkpoint:
         checkpoint = _checkpoint_dir(profile, "deepspeed")
         checkpoint.mkdir(parents=True, exist_ok=True)
@@ -106,6 +141,7 @@ def _run_deepspeed(profile, args) -> int:
         engine.load_checkpoint(str(checkpoint), tag="formal-preflight")
         milestone("checkpoint_save_load", rank)
     milestone("completed", rank)
+    recorder.close()
     if dist.is_initialized():
         dist.barrier()
     return 0
@@ -120,12 +156,29 @@ def _run_accelerate(profile, args) -> int:
         gradient_accumulation_steps=int(profile["training"].get("gradient_accumulation_steps", 1)),
     )
     rank = accelerator.process_index
+    recorder = RuntimeEventRecorder(rank)
+    recorder.emit_profile_state(profile)
+    recorder.emit_distributed_state(
+        framework="accelerate",
+        world_size=accelerator.num_processes,
+    )
+    recorder.emit("backend", f"accelerate_distributed={str(accelerator.distributed_type).lower()}")
+    recorder.emit("backend", f"accelerate_mixed_precision={accelerator.mixed_precision}")
     milestone("distributed_initialization", rank)
     model = build_model(profile)
+    recorder.instrument_model(model, profile)
     optimizer = torch.optim.AdamW(model.parameters(), lr=_learning_rate(profile))
     model, optimizer = accelerator.prepare(model, optimizer)
     milestone("model_construction", rank)
-    _train_steps(profile, model, optimizer, accelerator.device, rank, backward=accelerator.backward)
+    _train_steps(
+        profile,
+        model,
+        optimizer,
+        accelerator.device,
+        rank,
+        backward=accelerator.backward,
+        recorder=recorder,
+    )
     if not args.skip_checkpoint:
         checkpoint = _checkpoint_dir(profile, "accelerate")
         checkpoint.mkdir(parents=True, exist_ok=True)
@@ -134,16 +187,17 @@ def _run_accelerate(profile, args) -> int:
         accelerator.load_state(str(checkpoint))
         milestone("checkpoint_save_load", rank)
     milestone("completed", rank)
+    recorder.close()
     accelerator.wait_for_everyone()
     return 0
 
 
-def _train_steps(profile, model, optimizer, device, rank, *, backward, step=None) -> None:
+def _train_steps(profile, model, optimizer, device, rank, *, backward, step=None, recorder=None) -> None:
     steps = int(profile["training"].get("train_iters", 2))
     seed = int(os.environ.get("CONFIGFUZZ_SEED", "2026"))
     for index in range(steps):
         optimizer.zero_grad(set_to_none=True)
-        loss = _forward_loss(profile, model, device, rank, index, seed)
+        loss = _forward_loss(profile, model, device, rank, index, seed, recorder=recorder)
         milestone("forward", rank)
         backward(loss)
         milestone("backward", rank)
@@ -157,10 +211,26 @@ def _train_steps(profile, model, optimizer, device, rank, *, backward, step=None
     milestone("repeated_training", rank)
 
 
-def _forward_loss(profile, model, device, rank: int, step: int, seed: int = 2026) -> torch.Tensor:
+def _forward_loss(
+    profile,
+    model,
+    device,
+    rank: int,
+    step: int,
+    seed: int = 2026,
+    *,
+    recorder=None,
+) -> torch.Tensor:
     family = str(profile["family"])
     if family == "cogvideox_video_text":
+        if recorder is not None:
+            recorder.emit("branch", "forward_path=video")
         return _cogvideox_loss(profile, model, device, rank, step, seed)
+    if recorder is not None:
+        recorder.emit(
+            "branch",
+            "forward_path=vision_text" if family == "internvl3_vision_text" else "forward_path=language",
+        )
     return _language_or_multimodal_loss(profile, model, device, rank, step, seed)
 
 

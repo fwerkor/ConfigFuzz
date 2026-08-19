@@ -403,6 +403,7 @@ class ExperimentRunRecord:
     constraints_exercised: tuple[str, ...] = ()
     boundaries_exercised: tuple[str, ...] = ()
     guard_transitions: tuple[str, ...] = ()
+    runtime_branches: tuple[str, ...] = ()
     topologies: tuple[str, ...] = ()
     feature_interactions: tuple[str, ...] = ()
     backend_paths: tuple[str, ...] = ()
@@ -544,6 +545,7 @@ class ExperimentRunRecord:
             constraints_exercised=_string_tuple(data.get("constraints_exercised", ())),
             boundaries_exercised=_string_tuple(data.get("boundaries_exercised", ())),
             guard_transitions=_string_tuple(data.get("guard_transitions", ())),
+            runtime_branches=_string_tuple(data.get("runtime_branches", ())),
             topologies=_string_tuple(data.get("topologies", ())),
             feature_interactions=_string_tuple(data.get("feature_interactions", ())),
             backend_paths=_string_tuple(data.get("backend_paths", ())),
@@ -640,6 +642,7 @@ class ExperimentRunRecord:
             "constraints_exercised": list(self.constraints_exercised),
             "boundaries_exercised": list(self.boundaries_exercised),
             "guard_transitions": list(self.guard_transitions),
+            "runtime_branches": list(self.runtime_branches),
             "topologies": list(self.topologies),
             "feature_interactions": list(self.feature_interactions),
             "backend_paths": list(self.backend_paths),
@@ -1244,6 +1247,13 @@ def summarize_rq2(
                         value
                         for item in method_records
                         for value in item.guard_transitions
+                    }
+                ),
+                "runtime_branches": len(
+                    {
+                        value
+                        for item in method_records
+                        for value in item.runtime_branches
                     }
                 ),
                 "topologies": len(
@@ -2101,6 +2111,7 @@ def _runtime_behavior_ids(record: ExperimentRunRecord) -> tuple[str, ...]:
     # Backward-compatible derivation for records produced before explicit behavior IDs
     # were added. Input-only constraint/boundary identifiers are intentionally excluded.
     derived = {
+        *(f"branch:{value}" for value in record.runtime_branches),
         *(f"topology:{value}" for value in record.topologies),
         *(f"feature:{value}" for value in record.feature_interactions),
         *(f"backend:{value}" for value in record.backend_paths),

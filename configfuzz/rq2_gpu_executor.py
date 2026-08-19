@@ -57,6 +57,9 @@ _VALIDATION_PATTERNS = (
     "should be",
 )
 _ERROR_LINE = re.compile(r"(?:ValueError|AssertionError|RuntimeError|ZeroDivisionError|TypeError):.*")
+_RUNTIME_EVENT_PREFIX = "CONFIGFUZZ_RUNTIME_EVENT:"
+_RUNTIME_EVENT_KINDS = {"branch", "backend", "topology", "feature"}
+RUNTIME_INSTRUMENTATION_VERSION = "runtime-events-v1"
 
 
 def load_plan(path: str | Path) -> Mapping[str, Any]:
@@ -111,6 +114,7 @@ def execute_primary_campaign(
         "plan_sha256": _file_sha256(Path(plan_path)),
         "workload_registry_sha256": _file_sha256(Path(workload_registry_path)),
         "launcher_sha256": _file_sha256(launcher_path),
+        "runtime_instrumentation": RUNTIME_INSTRUMENTATION_VERSION,
     }
 
     completed_ids = _existing_run_ids(output)
@@ -319,7 +323,7 @@ def _execute_case(
         }
     )
     common["metadata"] = metadata
-    signature = behavior_signature(text, milestone, outcome)
+    runtime_events = parse_runtime_events(text)
     record = ExperimentRunRecord(
         **common,
         generated=True,
@@ -330,8 +334,12 @@ def _execute_case(
         timed_out=timed_out,
         campaign_elapsed_seconds=time.monotonic() - campaign_started,
         campaign_gpu_seconds=cumulative_accelerator_seconds + duration * device_count,
-        behavior_ids=(signature,),
-        behavior_signature=signature,
+        runtime_branches=runtime_events["branch"],
+        topologies=runtime_events["topology"],
+        feature_interactions=runtime_events["feature"],
+        backend_paths=runtime_events["backend"],
+        behavior_ids=runtime_events["behavior_ids"],
+        behavior_signature=runtime_events["behavior_signature"],
     )
     return record, True
 
@@ -379,6 +387,42 @@ def behavior_signature(
     tail = errors[-1].strip() if errors else ""
     material = f"{milestone.value}\n{outcome.value}\n{tail}"
     return hashlib.sha256(material.encode("utf-8")).hexdigest()[:20]
+
+
+def parse_runtime_events(output: str) -> dict[str, Any]:
+    categorized: dict[str, set[str]] = {kind: set() for kind in _RUNTIME_EVENT_KINDS}
+    for line in output.splitlines():
+        if not line.startswith(_RUNTIME_EVENT_PREFIX):
+            continue
+        raw = line[len(_RUNTIME_EVENT_PREFIX) :]
+        try:
+            payload = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(payload, Mapping):
+            continue
+        kind = str(payload.get("kind", ""))
+        value = payload.get("value")
+        if kind not in _RUNTIME_EVENT_KINDS or not isinstance(value, str) or not value:
+            continue
+        categorized[kind].add(value)
+
+    behavior_ids = tuple(
+        sorted(
+            f"{kind}:{value}"
+            for kind, values in categorized.items()
+            for value in values
+        )
+    )
+    signature = None
+    if behavior_ids:
+        material = json.dumps(behavior_ids, ensure_ascii=False, separators=(",", ":"))
+        signature = hashlib.sha256(material.encode("utf-8")).hexdigest()[:20]
+    return {
+        **{kind: tuple(sorted(values)) for kind, values in categorized.items()},
+        "behavior_ids": behavior_ids,
+        "behavior_signature": signature,
+    }
 
 
 def _assign(profile: dict[str, Any], parameter: str, value: Any) -> None:
