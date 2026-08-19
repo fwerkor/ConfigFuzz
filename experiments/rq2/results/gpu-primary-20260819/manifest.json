@@ -1,57 +1,59 @@
 {
-  "schema_version": 1,
-  "name": "ConfigFuzz RQ2 GPU primary-seed final results",
+  "assembly_revision": "c4cf82271b0fe55f3bcf65e62ddefd57a57546df",
   "date": "2026-08-19",
-  "seed": 2026,
-  "target_milestone": "optimizer_step",
-  "total_records": 21600,
-  "frameworks": {
-    "pytorch-cuda": {
-      "records": 6300,
-      "jsonl_bytes": 17629673,
-      "jsonl_sha256": "3a532946ef39ed3673fce4255a0102ec8408b07884aaf0e180bc6ffba3347528",
-      "gzip_bytes": 650136,
-      "gzip_sha256": "3e7a2775490851a3c340ab0c1ff13e92a68c249fe3c3bfa0e6fd49f93337d4c2"
-    },
-    "deepspeed": {
-      "records": 6300,
-      "jsonl_bytes": 17396058,
-      "jsonl_sha256": "9f78e96990862b2647e62ad0e7b9cb579aa572b53b623109a3489e864cce0f6d",
-      "gzip_bytes": 642341,
-      "gzip_sha256": "c8eabb6ff1f8913df1256decf662f0558286678a305d2f31c2754c0c5c174ed7"
-    },
-    "transformers-accelerate": {
-      "records": 6300,
-      "jsonl_bytes": 18015292,
-      "jsonl_sha256": "e5028ec7ee1eecadf2e22b8ecf048d1000ddccba6e2335505849e080fe2c47af",
-      "gzip_bytes": 652840,
-      "gzip_sha256": "06b43623fdfa285286ae48848ba9e69e4342cffee4789c0fa75ba71527ce2d4b"
-    },
-    "megatron-core": {
-      "records": 2700,
-      "jsonl_bytes": 9360311,
-      "jsonl_sha256": "5f07bc0a0d72e6f582f42310c229e9a6271dd2696746a0debea0bda03d01e6b3",
-      "gzip_bytes": 314897,
-      "gzip_sha256": "9c34ae0a2c2eea15c7ba5eadb373431cefc3d4237e264085855d3926270ccb9e"
+  "final_checks": {
+    "infrastructure_failure_records": 0,
+    "raw_vs_configfuzz_paired": {
+      "both_deep": 2440,
+      "configfuzz_only": 158,
+      "neither": 1002,
+      "raw_only": 0
     }
   },
-  "runner_revision": "44fc744e8e573d5c5409ac5f29b069949ccfb739",
-  "current_promotion_path": "experiments/rq2/promoted/gpu",
-  "current_promotion_sha256": "73441ed2cf9bcf9ea9610ae8264302d5e146278b47b5a581a976c3e82e4c6a00",
-  "megatron_merge": {
-    "reused_from_original_campaign": [
-      "raw_mutation",
-      "native_validator_guided",
-      "static_hard_configfuzz"
-    ],
-    "rerun_with_current_validated_graph": [
-      "constraint_filter_only",
-      "configfuzz",
-      "global_repair"
-    ],
-    "selective_plan_sha256": "76640f89c9cabbdca1cd219a5067c358a8ce6453f956587d2ecc41be12c208d4",
-    "selective_plan_gzip_sha256": "3fe89bb4584919d07c4f267d98f4cd18a7d4f6fdbb1361c506bcbc716ba1c4b0",
-    "rationale": "Only methods that consume the validated graph changed after the final Megatron RQ1 refinement; the static graph and graph node set remained unchanged."
+  "frameworks": {
+    "deepspeed": {
+      "gzip_bytes": 589379,
+      "gzip_sha256": "8840e57acf6a1de442f3e4825943097d5db706dfd8cbf1b7a930e480c63d695c",
+      "jsonl_bytes": 21857793,
+      "jsonl_sha256": "2a0288f08c6fa957bbe88bf12fe58703b30bd5b3386fa2a15f2eb9469a72a7a6",
+      "records": 6300
+    },
+    "megatron-core": {
+      "gzip_bytes": 388540,
+      "gzip_sha256": "87130a03f55b861e57095775169b00dbff4d811916a3a7dbdf9803a97fb699cb",
+      "jsonl_bytes": 12737521,
+      "jsonl_sha256": "1736e5c75ce765c2530168249499b5d459b88b8da3b24705b2162ad04a1a60f4",
+      "records": 2700
+    },
+    "pytorch-cuda": {
+      "gzip_bytes": 596733,
+      "gzip_sha256": "974853f34b305f778d3d7df59a87698cb2808b1332ea19d175c3a5c105340be6",
+      "jsonl_bytes": 22520538,
+      "jsonl_sha256": "1bb12f8a90a8d852daa1afc37ecd96cb38a97a92a1a8e1db4b32a4cfe3e0b9af",
+      "records": 6300
+    },
+    "transformers-accelerate": {
+      "gzip_bytes": 603877,
+      "gzip_sha256": "e61030c4560f99fa6a283461c27a95c348786b7b54b14ef9ca4803a2a91f281f",
+      "jsonl_bytes": 22837393,
+      "jsonl_sha256": "8387ebad1941fcde6357cad2da18561647f78cb8f5172c6c8757a82669c7cc96",
+      "records": 6300
+    }
   },
-  "measurement_note": "behavior_signature in these GPU records hashes milestone/outcome/error-tail and is not the runtime branch/backend/topology diversity instrumentation defined for the final RQ2 diversity metric."
+  "measurement_note": "behavior_signature in these GPU records hashes milestone/outcome/error-tail and is not used as evidence for the runtime branch/backend/topology diversity metric.",
+  "name": "ConfigFuzz RQ2 GPU primary-seed final results",
+  "promotion_path": "experiments/rq2/promoted/gpu",
+  "promotion_sha256": "c5a56673f2d5f793b0f726d191c27fc5871022fcce6cb655f7ab71c7f76e745a",
+  "published_assembly_revision": "044d5f97c11d31e1828459181b3a5c0c66435741",
+  "revision_map": "revision-map.json",
+  "schema_version": 2,
+  "seed": 2026,
+  "selective_execution": {
+    "infrastructure_failures_reusable": false,
+    "new_unique_configurations": 595,
+    "reuse_rule": "same framework, workload, seed, launcher, unchanged launched runtime harness, and byte-equivalent canonical materialized configuration",
+    "transient_infrastructure_reruns": 8
+  },
+  "target_milestone": "optimizer_step",
+  "total_records": 21600
 }

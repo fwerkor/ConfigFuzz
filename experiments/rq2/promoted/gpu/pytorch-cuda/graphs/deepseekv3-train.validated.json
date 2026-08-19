@@ -728,7 +728,7 @@
         "torch/ao/quantization/fx",
         "torch/distributed"
       ],
-      "confidence": 0.69,
+      "confidence": 0.2,
       "dependents": [
         "group_size"
       ],
@@ -759,7 +759,7 @@
           "source": "torch/distributed/distributed_c10d.py"
         },
         {
-          "detail": "consistent_valid=6; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=1; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=5; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
           "kind": "dynamic",
           "source": "runtime-feedback"
         }
@@ -1985,6 +1985,200 @@
         "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
       },
       "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/deepseek_v3"
+      ],
+      "confidence": 0.72,
+      "dependents": [
+        "model.hidden_size"
+      ],
+      "drivers": [
+        "model.num_attention_heads"
+      ],
+      "evidence": [
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 97,
+          "source": "src/transformers/models/deepseek_v3/modeling_deepseek_v3.py"
+        }
+      ],
+      "expression": "model.hidden_size % model.num_attention_heads == 0",
+      "id": "model:deepseekv3-train:1:dep-3b1bac4befa5dcd1",
+      "participants": [
+        "model.hidden_size",
+        "model.num_attention_heads"
+      ],
+      "predicate": "model.hidden_size % model.num_attention_heads == 0",
+      "relation": "divisibility",
+      "scope": {
+        "framework": "deepseekv3",
+        "source_subdir": "src/transformers/models/deepseek_v3",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/deepseek_v3"
+      ],
+      "confidence": 0.92,
+      "dependents": [
+        "moe.num_experts"
+      ],
+      "drivers": [
+        "moe.moe_router_num_groups"
+      ],
+      "evidence": [
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 227,
+          "source": "src/transformers/models/deepseek_v3/modeling_deepseek_v3.py"
+        },
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 146,
+          "source": "src/transformers/models/deepseek_v3/modular_deepseek_v3.py"
+        }
+      ],
+      "expression": "moe.num_experts % moe.moe_router_num_groups == 0",
+      "id": "model:deepseekv3-train:1:dep-4da154a2e2a98307",
+      "participants": [
+        "moe.num_experts",
+        "moe.moe_router_num_groups"
+      ],
+      "predicate": "moe.num_experts % moe.moe_router_num_groups == 0",
+      "relation": "divisibility",
+      "scope": {
+        "framework": "deepseekv3",
+        "source_subdir": "src/transformers/models/deepseek_v3",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/deepseek_v3"
+      ],
+      "confidence": 0.92,
+      "dependents": [
+        "model.num_attention_heads"
+      ],
+      "drivers": [
+        "model.num_query_groups"
+      ],
+      "evidence": [
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 371,
+          "source": "src/transformers/models/deepseek_v3/modeling_deepseek_v3.py"
+        },
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 176,
+          "source": "src/transformers/models/deepseek_v3/modular_deepseek_v3.py"
+        }
+      ],
+      "expression": "model.num_attention_heads % model.num_query_groups == 0",
+      "id": "model:deepseekv3-train:1:dep-649c9ca98f7c0bbd",
+      "participants": [
+        "model.num_attention_heads",
+        "model.num_query_groups"
+      ],
+      "predicate": "model.num_attention_heads % model.num_query_groups == 0",
+      "relation": "divisibility",
+      "scope": {
+        "framework": "deepseekv3",
+        "source_subdir": "src/transformers/models/deepseek_v3",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/deepseek_v3"
+      ],
+      "confidence": 0.9,
+      "dependents": [
+        "moe.topk_group"
+      ],
+      "drivers": [
+        "moe.moe_router_num_groups"
+      ],
+      "evidence": [
+        {
+          "detail": "top-k API bound over configuration-backed router dimension",
+          "kind": "static",
+          "line": 222,
+          "source": "src/transformers/models/deepseek_v3/modeling_deepseek_v3.py"
+        },
+        {
+          "detail": "top-k API bound over configuration-backed router dimension",
+          "kind": "static",
+          "line": 141,
+          "source": "src/transformers/models/deepseek_v3/modular_deepseek_v3.py"
+        }
+      ],
+      "expression": "moe.topk_group <= moe.moe_router_num_groups",
+      "id": "model:deepseekv3-train:1:dep-73464f201557f409",
+      "participants": [
+        "moe.topk_group",
+        "moe.moe_router_num_groups"
+      ],
+      "predicate": "moe.topk_group <= moe.moe_router_num_groups",
+      "relation": "bound",
+      "scope": {
+        "framework": "deepseekv3",
+        "source_subdir": "src/transformers/models/deepseek_v3",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/deepseek_v3"
+      ],
+      "confidence": 0.9,
+      "dependents": [
+        "moe.moe_router_topk"
+      ],
+      "drivers": [
+        "moe.num_experts"
+      ],
+      "evidence": [
+        {
+          "detail": "top-k API bound over configuration-backed router dimension",
+          "kind": "static",
+          "line": 231,
+          "source": "src/transformers/models/deepseek_v3/modeling_deepseek_v3.py"
+        },
+        {
+          "detail": "top-k API bound over configuration-backed router dimension",
+          "kind": "static",
+          "line": 150,
+          "source": "src/transformers/models/deepseek_v3/modular_deepseek_v3.py"
+        }
+      ],
+      "expression": "moe.moe_router_topk <= moe.num_experts",
+      "id": "model:deepseekv3-train:1:dep-8034eabe17dfb0cf",
+      "participants": [
+        "moe.moe_router_topk",
+        "moe.num_experts"
+      ],
+      "predicate": "moe.moe_router_topk <= moe.num_experts",
+      "relation": "bound",
+      "scope": {
+        "framework": "deepseekv3",
+        "source_subdir": "src/transformers/models/deepseek_v3",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
     }
   ],
   "metadata": {
@@ -2074,6 +2268,34 @@
       "name": "kind"
     },
     {
+      "kind": "parameter",
+      "name": "model.hidden_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "model.num_attention_heads"
+    },
+    {
+      "kind": "parameter",
+      "name": "model.num_query_groups"
+    },
+    {
+      "kind": "parameter",
+      "name": "moe.moe_router_num_groups"
+    },
+    {
+      "kind": "parameter",
+      "name": "moe.moe_router_topk"
+    },
+    {
+      "kind": "parameter",
+      "name": "moe.num_experts"
+    },
+    {
+      "kind": "parameter",
+      "name": "moe.topk_group"
+    },
+    {
       "kind": "derived",
       "name": "n.args"
     },
@@ -2136,18 +2358,18 @@
   ],
   "schema_version": 1,
   "summary": {
-    "connected_components": 5,
-    "edges": 48,
+    "connected_components": 7,
+    "edges": 53,
     "node_kinds": {
       "derived": 21,
       "environment": 2,
       "feature": 8,
-      "parameter": 4
+      "parameter": 11
     },
-    "nodes": 35,
+    "nodes": 42,
     "relations": {
-      "bound": 7,
-      "divisibility": 2,
+      "bound": 9,
+      "divisibility": 5,
       "enum": 2,
       "environment": 7,
       "equality": 18,
@@ -2160,7 +2382,7 @@
       "dynamically_supported": 4,
       "environment_specific": 6,
       "scope_disputed": 1,
-      "static_candidate": 34
+      "static_candidate": 39
     }
   }
 }

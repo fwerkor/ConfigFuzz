@@ -1,0 +1,78 @@
+{
+  "assembled_cases": 6300,
+  "complete": true,
+  "framework_id": "pytorch-cuda",
+  "harness_equivalence": {
+    "44fc744e8e573d5c5409ac5f29b069949ccfb739": true,
+    "65fb4b5d2b2fb07bda28f4fa7b5bff8639e11ae6": true,
+    "bbba08587a436cfe0be0de5dbce60e2df1c8da78": true,
+    "c462e244fd808a8fa8e3e3effb0baa0986de116e": true,
+    "ee250f7c2fe2f900747a67b9c0a1a0e1abef9e0f": true
+  },
+  "launcher": "/home/yanzhou/cyh/configfuzz-gpu/ConfigFuzz/experiments/gpu/launch_rq2_pytorch.sh",
+  "launcher_sha256": "de9cf72649cecb165a79d6a782f2f675391746dc655f3f3a573604333ef094d6",
+  "missing_method_counts": {},
+  "missing_plan": "formal-results/rq2-gpu-primary-v4-20260819/reuse/pytorch-cuda.final.missing.json",
+  "name": "rq2-selective-runtime-reuse",
+  "output": "formal-results/rq2-gpu-primary-v4-20260819/pytorch-cuda.jsonl",
+  "plan": "formal-results/rq2-gpu-primary-v4-20260819/plans/pytorch-cuda.json",
+  "plan_sha256": "b062be2bf4a2d99d08936b700f42877f5b0eda9952410318b5e8474fb30b9ecb",
+  "planned_cases": 6300,
+  "planner_statuses": {
+    "filtered": 183,
+    "ready": 6028,
+    "unknown": 11,
+    "unsat": 78
+  },
+  "provenance": {
+    "framework_id": "pytorch-cuda",
+    "launcher_sha256": "de9cf72649cecb165a79d6a782f2f675391746dc655f3f3a573604333ef094d6",
+    "plan_sha256": "b062be2bf4a2d99d08936b700f42877f5b0eda9952410318b5e8474fb30b9ecb",
+    "runner_revision": "c4cf82271b0fe55f3bcf65e62ddefd57a57546df",
+    "workload_registry_sha256": "0169e4186d4f65c905b4acfcc33f1703ff8ecaac0d202dc0eab0e8747e20fb39"
+  },
+  "rejected_source_records": {
+    "experiments/rq2/results/gpu-primary-20260819/pytorch-cuda.jsonl.gz": 46,
+    "formal-results/rq2-gpu-primary-v4-20260819/fresh/pytorch-cuda.jsonl": 2
+  },
+  "reuse_source_methods": {
+    "configfuzz": 110,
+    "global_repair": 24,
+    "raw_mutation": 5691,
+    "static_hard_configfuzz": 203
+  },
+  "runtime_reused_cases": 6028,
+  "schema_version": 1,
+  "source_record_counts": {
+    "experiments/rq2/results/gpu-primary-20260819/pytorch-cuda.jsonl.gz": 6254,
+    "formal-results/rq2-gpu-primary-v2-20260819/fresh/pytorch-cuda.jsonl": 9,
+    "formal-results/rq2-gpu-primary-v3-20260819/fresh/pytorch-cuda.jsonl": 25,
+    "formal-results/rq2-gpu-primary-v4-20260819/fresh/pytorch-cuda.jsonl": 150,
+    "formal-results/rq2-gpu-primary-v4-20260819/infra-rerun/pytorch-cuda.jsonl": 2
+  },
+  "sources": [
+    {
+      "path": "formal-results/rq2-gpu-primary-v4-20260819/infra-rerun/pytorch-cuda.jsonl",
+      "sha256": "0740e443746301e0fd3250b11c35d0906992d3039d9aef42104fe923a8a66c3c"
+    },
+    {
+      "path": "formal-results/rq2-gpu-primary-v2-20260819/fresh/pytorch-cuda.jsonl",
+      "sha256": "26804f57ac6384709463d263ec16aa99f4c93bcbf3fcd3c97d632ff6c05ce967"
+    },
+    {
+      "path": "formal-results/rq2-gpu-primary-v3-20260819/fresh/pytorch-cuda.jsonl",
+      "sha256": "52015368951f719d625617f4b257f6a74d42334221bce50682c2b7059b40a119"
+    },
+    {
+      "path": "formal-results/rq2-gpu-primary-v4-20260819/fresh/pytorch-cuda.jsonl",
+      "sha256": "7c96b154a779aa9820a8c70e9e0a3c13a750a906b9203f2f489a91503370bf33"
+    },
+    {
+      "path": "experiments/rq2/results/gpu-primary-20260819/pytorch-cuda.jsonl.gz",
+      "sha256": "3e7a2775490851a3c340ab0c1ff13e92a68c249fe3c3bfa0e6fd49f93337d4c2"
+    }
+  ],
+  "unique_missing_runtime_configurations": 0,
+  "workload_registry": "experiments/rq2/promoted/gpu-v6/pytorch-cuda/workloads.yaml",
+  "workload_registry_sha256": "0169e4186d4f65c905b4acfcc33f1703ff8ecaac0d202dc0eab0e8747e20fb39"
+}

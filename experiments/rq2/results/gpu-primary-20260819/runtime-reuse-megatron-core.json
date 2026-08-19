@@ -1,0 +1,58 @@
+{
+  "assembled_cases": 2700,
+  "complete": true,
+  "framework_id": "megatron-core",
+  "harness_equivalence": {
+    "44fc744e8e573d5c5409ac5f29b069949ccfb739": true,
+    "c3e063d79757517810ac47b25fc14b3e07e97d61": true
+  },
+  "launcher": "/home/yanzhou/cyh/configfuzz-gpu/ConfigFuzz/experiments/gpu/launch_rq2_megatron.sh",
+  "launcher_sha256": "0e436d378426d11a3cea9863ade21fddd393d028daf3f0c4cdcb9e692d44c14c",
+  "missing_method_counts": {},
+  "missing_plan": "formal-results/rq2-gpu-primary-v4-20260819/reuse/megatron-core.final.missing.json",
+  "name": "rq2-selective-runtime-reuse",
+  "output": "formal-results/rq2-gpu-primary-v4-20260819/megatron-core.jsonl",
+  "plan": "formal-results/rq2-gpu-primary-v4-20260819/plans/megatron-core.json",
+  "plan_sha256": "5a7e7fb479a3dc278d3a88451ea67a37662aa7461ceeb3d0b7d71ff3277ace96",
+  "planned_cases": 2700,
+  "planner_statuses": {
+    "filtered": 225,
+    "ready": 2363,
+    "unknown": 40,
+    "unsat": 72
+  },
+  "provenance": {
+    "framework_id": "megatron-core",
+    "launcher_sha256": "0e436d378426d11a3cea9863ade21fddd393d028daf3f0c4cdcb9e692d44c14c",
+    "plan_sha256": "5a7e7fb479a3dc278d3a88451ea67a37662aa7461ceeb3d0b7d71ff3277ace96",
+    "runner_revision": "c4cf82271b0fe55f3bcf65e62ddefd57a57546df",
+    "workload_registry_sha256": "d09b958b01883e353653699762347f360856c6d26714c4c2926b5598e5efde7d"
+  },
+  "rejected_source_records": {
+    "experiments/rq2/results/gpu-primary-20260819/megatron-core.jsonl.gz": 660
+  },
+  "reuse_source_methods": {
+    "configfuzz": 6,
+    "raw_mutation": 2237,
+    "static_hard_configfuzz": 120
+  },
+  "runtime_reused_cases": 2363,
+  "schema_version": 1,
+  "source_record_counts": {
+    "experiments/rq2/results/gpu-primary-20260819/megatron-core.jsonl.gz": 2040,
+    "formal-results/rq2-gpu-primary-v4-20260819/fresh/megatron-core.jsonl": 82
+  },
+  "sources": [
+    {
+      "path": "formal-results/rq2-gpu-primary-v4-20260819/fresh/megatron-core.jsonl",
+      "sha256": "7e29395ea3bafb5936d4bcde3aae1c87680756e9b28ef48482f51aae63149dcb"
+    },
+    {
+      "path": "experiments/rq2/results/gpu-primary-20260819/megatron-core.jsonl.gz",
+      "sha256": "9c34ae0a2c2eea15c7ba5eadb373431cefc3d4237e264085855d3926270ccb9e"
+    }
+  ],
+  "unique_missing_runtime_configurations": 0,
+  "workload_registry": "experiments/rq2/promoted/gpu-v6/megatron-core/workloads.yaml",
+  "workload_registry_sha256": "d09b958b01883e353653699762347f360856c6d26714c4c2926b5598e5efde7d"
+}

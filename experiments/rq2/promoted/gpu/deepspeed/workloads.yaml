@@ -3,7 +3,7 @@ name: rq2-deepspeed-promoted-workloads
 metadata:
   status: gpu_accelerator_qualified
   framework_id: deepspeed
-  rq1_result_sha256: 51cd5aa28ef6ff40660575babb1014906645f936e402678754988603f4dfce1d
+  rq1_result_sha256: b6c2f62b8516868982a5d0a0f11faa7264bd78b1a626a3949261f63545da6e93
   static_artifact_sha256: d42c2920af8e180072b410f6afea0b33c77b27163cdca35a8e01a1a5903fa457
   qualification_summary_sha256: eabedead0756c18320e6629046864a609b6f35a639e91c41434b14d10d91291f
 workloads:
@@ -17,8 +17,6 @@ workloads:
   native_validator_manifest: native_validator.json
   semantic_anchors:
   - target_parameter
-  - model.seq_length
-  - parallel.context_parallel_size
   command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
   required_paths:
   - grouped_query_attention
@@ -40,10 +38,6 @@ workloads:
   native_validator_manifest: native_validator.json
   semantic_anchors:
   - target_parameter
-  - video.frames
-  - video.sample_height
-  - video.sample_width
-  - video.text_embed_dim
   command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
   required_paths:
   - video_diffusion
@@ -65,9 +59,6 @@ workloads:
   native_validator_manifest: native_validator.json
   semantic_anchors:
   - target_parameter
-  - moe.num_experts
-  - mla.kv_lora_rank
-  - parallel.expert_model_parallel_size
   command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
   required_paths:
   - multi_latent_attention
@@ -89,9 +80,6 @@ workloads:
   native_validator_manifest: native_validator.json
   semantic_anchors:
   - target_parameter
-  - multimodal.image_size
-  - model.hidden_size
-  - multimodal.vision_hidden_size
   command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
   required_paths:
   - vision_encoder
@@ -113,8 +101,6 @@ workloads:
   native_validator_manifest: native_validator.json
   semantic_anchors:
   - target_parameter
-  - model.hidden_size
-  - model.num_attention_heads
   command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
   required_paths:
   - tensor_parallel
@@ -136,9 +122,6 @@ workloads:
   native_validator_manifest: native_validator.json
   semantic_anchors:
   - target_parameter
-  - moe.num_experts
-  - moe.moe_router_topk
-  - parallel.expert_model_parallel_size
   command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
   required_paths:
   - expert_parallel
@@ -159,9 +142,6 @@ workloads:
   native_validator_manifest: native_validator.json
   semantic_anchors:
   - target_parameter
-  - model.hidden_size
-  - model.num_attention_heads
-  - model.num_query_groups
   command_manifest: ../../../../gpu/launch_rq2_deepspeed.sh
   required_paths:
   - tensor_parallel

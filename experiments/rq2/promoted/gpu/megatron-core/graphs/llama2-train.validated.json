@@ -685,7 +685,7 @@
           "source": "megatron/core/optimizer/optimizer_config.py"
         },
         {
-          "detail": "consistent_valid=4; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "detail": "consistent_valid=7; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
           "kind": "dynamic",
           "source": "runtime-feedback"
         }
@@ -1304,7 +1304,7 @@
       "components": [
         "megatron/core/export/trtllm/trtllm_weights_converter"
       ],
-      "confidence": 1.0,
+      "confidence": 0.67,
       "dependents": [
         "virtual_pipeline_model_parallel_size"
       ],
@@ -1315,6 +1315,11 @@
           "kind": "static",
           "line": 78,
           "source": "megatron/core/export/trtllm/trtllm_weights_converter/distributed_trtllm_model_weights_converter.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=1; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
         }
       ],
       "expression": "virtual_pipeline_model_parallel_size is None or virtual_pipeline_model_parallel_size == 1",
@@ -1332,7 +1337,7 @@
         "source_subdir": "megatron",
         "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
       },
-      "status": "static_candidate"
+      "status": "scope_disputed"
     },
     {
       "components": [
@@ -1675,7 +1680,7 @@
           "source": "megatron/core/model_parallel_config.py"
         },
         {
-          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "detail": "consistent_valid=5; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
           "kind": "dynamic",
           "source": "runtime-feedback"
         }
@@ -1907,7 +1912,7 @@
       "components": [
         "megatron/core/optimizer"
       ],
-      "confidence": 0.3,
+      "confidence": 0.22,
       "dependents": [
         "precision.fp16"
       ],
@@ -1920,7 +1925,7 @@
           "source": "megatron/core/optimizer/__init__.py"
         },
         {
-          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=2; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
+          "detail": "consistent_valid=4; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=3; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
           "kind": "dynamic",
           "source": "runtime-feedback"
         }
@@ -2433,7 +2438,7 @@
           "source": "megatron/core/model_parallel_config.py"
         },
         {
-          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=1; unexplained_preserving=0; bug_preserving=0",
+          "detail": "consistent_valid=3; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=1; unexplained_preserving=0; bug_preserving=0",
           "kind": "dynamic",
           "source": "runtime-feedback"
         }
@@ -2574,7 +2579,7 @@
         "megatron/core",
         "megatron/training"
       ],
-      "confidence": 1.0,
+      "confidence": 0.99,
       "dependents": [
         "training.micro_batch_size"
       ],
@@ -2597,6 +2602,11 @@
           "kind": "static",
           "line": 104,
           "source": "megatron/training/yaml_arguments.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
         }
       ],
       "expression": "training.micro_batch_size is not None",
@@ -2615,7 +2625,7 @@
         "source_subdir": "megatron",
         "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
       },
-      "status": "static_candidate"
+      "status": "dynamically_supported"
     },
     {
       "components": [
@@ -3477,7 +3487,7 @@
       "components": [
         "megatron/core/transformer"
       ],
-      "confidence": 1.0,
+      "confidence": 0.2,
       "dependents": [
         "virtual_pipeline_model_parallel_size"
       ],
@@ -3488,6 +3498,11 @@
           "kind": "static",
           "line": 512,
           "source": "megatron/core/transformer/attention.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=3; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
         }
       ],
       "expression": "virtual_pipeline_model_parallel_size is None",
@@ -3505,7 +3520,7 @@
         "source_subdir": "megatron",
         "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
       },
-      "status": "static_candidate"
+      "status": "scope_disputed"
     },
     {
       "components": [
@@ -3666,7 +3681,7 @@
       "components": [
         "megatron/core/transformer"
       ],
-      "confidence": 0.3,
+      "confidence": 0.22,
       "dependents": [
         "parallel.sequence_parallel"
       ],
@@ -3679,7 +3694,7 @@
           "source": "megatron/core/transformer/torch_norm.py"
         },
         {
-          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=2; ambiguous_invalid=1; unexplained_preserving=0; bug_preserving=0",
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=3; ambiguous_invalid=1; unexplained_preserving=0; bug_preserving=0",
           "kind": "dynamic",
           "source": "runtime-feedback"
         }
@@ -3705,7 +3720,7 @@
       "components": [
         "megatron/training/config"
       ],
-      "confidence": 1.0,
+      "confidence": 0.99,
       "dependents": [],
       "drivers": [],
       "evidence": [
@@ -3714,6 +3729,11 @@
           "kind": "static",
           "line": 12,
           "source": "megatron/training/config/training_config.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
         }
       ],
       "expression": "training.micro_batch_size: integer",
@@ -3732,7 +3752,7 @@
         "source_subdir": "megatron",
         "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
       },
-      "status": "static_candidate"
+      "status": "dynamically_supported"
     },
     {
       "components": [
@@ -3776,7 +3796,7 @@
       "components": [
         "megatron/core/transformer"
       ],
-      "confidence": 1.0,
+      "confidence": 0.99,
       "dependents": [],
       "drivers": [],
       "evidence": [
@@ -3785,6 +3805,11 @@
           "kind": "static",
           "line": 64,
           "source": "megatron/core/transformer/transformer_config.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
         }
       ],
       "expression": "model.num_layers: integer",
@@ -3802,7 +3827,7 @@
         "source_subdir": "megatron",
         "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
       },
-      "status": "static_candidate"
+      "status": "dynamically_supported"
     },
     {
       "components": [
@@ -3915,7 +3940,7 @@
           "source": "megatron/training/arguments.py"
         },
         {
-          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
+          "detail": "consistent_valid=3; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
           "kind": "dynamic",
           "source": "runtime-feedback"
         }
@@ -4021,7 +4046,7 @@
       "components": [
         "megatron/core"
       ],
-      "confidence": 0.95,
+      "confidence": 0.15,
       "dependents": [
         "parallel.pipeline_model_parallel_size"
       ],
@@ -4034,6 +4059,11 @@
           "kind": "static",
           "line": 741,
           "source": "megatron/core/parallel_state.py"
+        },
+        {
+          "detail": "consistent_valid=0; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=3; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
         }
       ],
       "expression": "virtual_pipeline_model_parallel_size is not None => parallel.pipeline_model_parallel_size > 1",
@@ -4053,7 +4083,7 @@
         "source_subdir": "megatron",
         "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
       },
-      "status": "static_candidate"
+      "status": "scope_disputed"
     },
     {
       "components": [
@@ -4231,7 +4261,7 @@
       "components": [
         "megatron/core/models/hybrid"
       ],
-      "confidence": 1.0,
+      "confidence": 0.99,
       "dependents": [
         "model.num_layers"
       ],
@@ -4242,6 +4272,11 @@
           "kind": "static",
           "line": 90,
           "source": "megatron/core/models/hybrid/hybrid_layer_allocation.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
         }
       ],
       "expression": "model.num_layers > 0",
@@ -4259,7 +4294,7 @@
         "source_subdir": "megatron",
         "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
       },
-      "status": "static_candidate"
+      "status": "dynamically_supported"
     },
     {
       "components": [
@@ -4658,7 +4693,7 @@
         "megatron/training",
         "megatron/training/datasets"
       ],
-      "confidence": 1.0,
+      "confidence": 0.99,
       "dependents": [
         "training.micro_batch_size"
       ],
@@ -4687,6 +4722,11 @@
           "kind": "static",
           "line": 105,
           "source": "megatron/training/yaml_arguments.py"
+        },
+        {
+          "detail": "consistent_valid=2; isolated_violation=1; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
         }
       ],
       "expression": "training.micro_batch_size > 0",
@@ -4705,7 +4745,7 @@
         "source_subdir": "megatron",
         "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
       },
-      "status": "static_candidate"
+      "status": "confirmed"
     },
     {
       "components": [
@@ -5159,7 +5199,7 @@
       "components": [
         "megatron/core"
       ],
-      "confidence": 1.0,
+      "confidence": 0.99,
       "dependents": [],
       "drivers": [],
       "evidence": [
@@ -5168,6 +5208,11 @@
           "kind": "static",
           "line": 31,
           "source": "megatron/core/model_parallel_config.py"
+        },
+        {
+          "detail": "consistent_valid=3; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0",
+          "kind": "dynamic",
+          "source": "runtime-feedback"
         }
       ],
       "expression": "virtual_pipeline_model_parallel_size: integer",
@@ -5185,7 +5230,7 @@
         "source_subdir": "megatron",
         "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
       },
-      "status": "static_candidate"
+      "status": "dynamically_supported"
     },
     {
       "components": [
@@ -6032,11 +6077,11 @@
       "type": 23
     },
     "statuses": {
-      "confirmed": 5,
-      "dynamically_supported": 20,
+      "confirmed": 6,
+      "dynamically_supported": 25,
       "environment_specific": 7,
-      "scope_disputed": 3,
-      "static_candidate": 104
+      "scope_disputed": 6,
+      "static_candidate": 95
     }
   }
 }

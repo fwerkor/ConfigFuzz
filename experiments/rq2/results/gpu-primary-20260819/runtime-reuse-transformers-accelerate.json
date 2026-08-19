@@ -1,0 +1,65 @@
+{
+  "assembled_cases": 6300,
+  "complete": true,
+  "framework_id": "transformers-accelerate",
+  "harness_equivalence": {
+    "44fc744e8e573d5c5409ac5f29b069949ccfb739": true,
+    "c3e063d79757517810ac47b25fc14b3e07e97d61": true,
+    "c462e244fd808a8fa8e3e3effb0baa0986de116e": true
+  },
+  "launcher": "/home/yanzhou/cyh/configfuzz-gpu/ConfigFuzz/experiments/gpu/launch_rq2_accelerate.sh",
+  "launcher_sha256": "9057ad511526f637224cc3b4f9fd97e0fbf8fe5c86b1470400acf3702e84c9d3",
+  "missing_method_counts": {},
+  "missing_plan": "formal-results/rq2-gpu-primary-v4-20260819/reuse/transformers-accelerate.final.missing.json",
+  "name": "rq2-selective-runtime-reuse",
+  "output": "formal-results/rq2-gpu-primary-v4-20260819/transformers-accelerate.jsonl",
+  "plan": "formal-results/rq2-gpu-primary-v4-20260819/plans/transformers-accelerate.json",
+  "plan_sha256": "c2d19d1a8d61f96c9bffde5529c8ec3f6b82160bd294a45fb73ef8a7786fbf51",
+  "planned_cases": 6300,
+  "planner_statuses": {
+    "filtered": 190,
+    "ready": 6021,
+    "unknown": 11,
+    "unsat": 78
+  },
+  "provenance": {
+    "framework_id": "transformers-accelerate",
+    "launcher_sha256": "9057ad511526f637224cc3b4f9fd97e0fbf8fe5c86b1470400acf3702e84c9d3",
+    "plan_sha256": "c2d19d1a8d61f96c9bffde5529c8ec3f6b82160bd294a45fb73ef8a7786fbf51",
+    "runner_revision": "c4cf82271b0fe55f3bcf65e62ddefd57a57546df",
+    "workload_registry_sha256": "59ea871649097495ef3687e2082feacd2a5b27e06d6fa968d41f7d583a69612c"
+  },
+  "rejected_source_records": {
+    "experiments/rq2/results/gpu-primary-20260819/transformers-accelerate.jsonl.gz": 89
+  },
+  "reuse_source_methods": {
+    "configfuzz": 109,
+    "global_repair": 25,
+    "raw_mutation": 5663,
+    "static_hard_configfuzz": 224
+  },
+  "runtime_reused_cases": 6021,
+  "schema_version": 1,
+  "source_record_counts": {
+    "experiments/rq2/results/gpu-primary-20260819/transformers-accelerate.jsonl.gz": 6211,
+    "formal-results/rq2-gpu-primary-v2-20260819/fresh/transformers-accelerate.jsonl": 10,
+    "formal-results/rq2-gpu-primary-v4-20260819/fresh/transformers-accelerate.jsonl": 183
+  },
+  "sources": [
+    {
+      "path": "formal-results/rq2-gpu-primary-v2-20260819/fresh/transformers-accelerate.jsonl",
+      "sha256": "6ceaca023fadd6fe37700aea389bb3622e54c11e0ffebd8fe3ca5097627bd79e"
+    },
+    {
+      "path": "formal-results/rq2-gpu-primary-v4-20260819/fresh/transformers-accelerate.jsonl",
+      "sha256": "0ebfb46f40aaff4babb8e7a3d0af0f97acf1cb35bab21a652f870e78c5ce1dc7"
+    },
+    {
+      "path": "experiments/rq2/results/gpu-primary-20260819/transformers-accelerate.jsonl.gz",
+      "sha256": "06b43623fdfa285286ae48848ba9e69e4342cffee4789c0fa75ba71527ce2d4b"
+    }
+  ],
+  "unique_missing_runtime_configurations": 0,
+  "workload_registry": "experiments/rq2/promoted/gpu-v6/transformers-accelerate/workloads.yaml",
+  "workload_registry_sha256": "59ea871649097495ef3687e2082feacd2a5b27e06d6fa968d41f7d583a69612c"
+}

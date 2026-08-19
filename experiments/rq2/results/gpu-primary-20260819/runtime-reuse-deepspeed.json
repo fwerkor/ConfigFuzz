@@ -1,0 +1,72 @@
+{
+  "assembled_cases": 6300,
+  "complete": true,
+  "framework_id": "deepspeed",
+  "harness_equivalence": {
+    "44fc744e8e573d5c5409ac5f29b069949ccfb739": true,
+    "bbba08587a436cfe0be0de5dbce60e2df1c8da78": true,
+    "c3e063d79757517810ac47b25fc14b3e07e97d61": true,
+    "c462e244fd808a8fa8e3e3effb0baa0986de116e": true
+  },
+  "launcher": "/home/yanzhou/cyh/configfuzz-gpu/ConfigFuzz/experiments/gpu/launch_rq2_deepspeed.sh",
+  "launcher_sha256": "7dfea5b8f214eacacc64dd791bc9817b802d30474ab1ea21752d2b5dd65adaf8",
+  "missing_method_counts": {},
+  "missing_plan": "formal-results/rq2-gpu-primary-v4-20260819/reuse/deepspeed.final.missing.json",
+  "name": "rq2-selective-runtime-reuse",
+  "output": "formal-results/rq2-gpu-primary-v4-20260819/deepspeed.jsonl",
+  "plan": "formal-results/rq2-gpu-primary-v4-20260819/plans/deepspeed.json",
+  "plan_sha256": "538e2d47c69d19691b326f3574217b42ed8d384030dcd86d1fc666912c663d68",
+  "planned_cases": 6300,
+  "planner_statuses": {
+    "filtered": 211,
+    "ready": 5870,
+    "unknown": 57,
+    "unsat": 162
+  },
+  "provenance": {
+    "framework_id": "deepspeed",
+    "launcher_sha256": "7dfea5b8f214eacacc64dd791bc9817b802d30474ab1ea21752d2b5dd65adaf8",
+    "plan_sha256": "538e2d47c69d19691b326f3574217b42ed8d384030dcd86d1fc666912c663d68",
+    "runner_revision": "c4cf82271b0fe55f3bcf65e62ddefd57a57546df",
+    "workload_registry_sha256": "74841ed5f4b772f2ceea277c55603bb80c800e4277ae78929292787d47cedd02"
+  },
+  "rejected_source_records": {
+    "experiments/rq2/results/gpu-primary-20260819/deepspeed.jsonl.gz": 318,
+    "formal-results/rq2-gpu-primary-v4-20260819/fresh/deepspeed.jsonl": 6
+  },
+  "reuse_source_methods": {
+    "configfuzz": 109,
+    "global_repair": 25,
+    "raw_mutation": 5533,
+    "static_hard_configfuzz": 203
+  },
+  "runtime_reused_cases": 5870,
+  "schema_version": 1,
+  "source_record_counts": {
+    "experiments/rq2/results/gpu-primary-20260819/deepspeed.jsonl.gz": 5982,
+    "formal-results/rq2-gpu-primary-v2-20260819/fresh/deepspeed.jsonl": 9,
+    "formal-results/rq2-gpu-primary-v4-20260819/fresh/deepspeed.jsonl": 172,
+    "formal-results/rq2-gpu-primary-v4-20260819/infra-rerun/deepspeed.jsonl": 6
+  },
+  "sources": [
+    {
+      "path": "formal-results/rq2-gpu-primary-v4-20260819/infra-rerun/deepspeed.jsonl",
+      "sha256": "7860c9ad446aee5507d11866cf521a20e80fab513427801aa560a1fa906dfeed"
+    },
+    {
+      "path": "formal-results/rq2-gpu-primary-v2-20260819/fresh/deepspeed.jsonl",
+      "sha256": "f586c8efb965f6a7fae5c157650a4bfb232f35783229fbbf2020a4e079768243"
+    },
+    {
+      "path": "formal-results/rq2-gpu-primary-v4-20260819/fresh/deepspeed.jsonl",
+      "sha256": "8e549186dd057cf4d4caa81b876b53090894e50165a82d6568f9bf2b20093d74"
+    },
+    {
+      "path": "experiments/rq2/results/gpu-primary-20260819/deepspeed.jsonl.gz",
+      "sha256": "c8eabb6ff1f8913df1256decf662f0558286678a305d2f31c2754c0c5c174ed7"
+    }
+  ],
+  "unique_missing_runtime_configurations": 0,
+  "workload_registry": "experiments/rq2/promoted/gpu-v6/deepspeed/workloads.yaml",
+  "workload_registry_sha256": "74841ed5f4b772f2ceea277c55603bb80c800e4277ae78929292787d47cedd02"
+}

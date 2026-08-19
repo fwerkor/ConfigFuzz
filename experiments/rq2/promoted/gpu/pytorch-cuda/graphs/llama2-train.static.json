@@ -1958,6 +1958,12 @@
           "kind": "static",
           "line": 96,
           "source": "src/transformers/models/llama/configuration_llama.py"
+        },
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 112,
+          "source": "src/transformers/models/llama/modeling_llama.py"
         }
       ],
       "expression": "model.hidden_size % model.num_attention_heads == 0",
@@ -1967,6 +1973,40 @@
         "model.num_attention_heads"
       ],
       "predicate": "model.hidden_size % model.num_attention_heads == 0",
+      "relation": "divisibility",
+      "scope": {
+        "framework": "llama2",
+        "source_subdir": "src/transformers/models/llama",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/llama"
+      ],
+      "confidence": 0.92,
+      "dependents": [
+        "model.num_attention_heads"
+      ],
+      "drivers": [
+        "model.num_query_groups"
+      ],
+      "evidence": [
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 233,
+          "source": "src/transformers/models/llama/modeling_llama.py"
+        }
+      ],
+      "expression": "model.num_attention_heads % model.num_query_groups == 0",
+      "id": "model:llama2-train:1:dep-649c9ca98f7c0bbd",
+      "participants": [
+        "model.num_attention_heads",
+        "model.num_query_groups"
+      ],
+      "predicate": "model.num_attention_heads % model.num_query_groups == 0",
       "relation": "divisibility",
       "scope": {
         "framework": "llama2",
@@ -2071,6 +2111,10 @@
       "name": "model.num_attention_heads"
     },
     {
+      "kind": "parameter",
+      "name": "model.num_query_groups"
+    },
+    {
       "kind": "derived",
       "name": "n.args"
     },
@@ -2134,17 +2178,17 @@
   "schema_version": 1,
   "summary": {
     "connected_components": 6,
-    "edges": 49,
+    "edges": 50,
     "node_kinds": {
       "derived": 21,
       "environment": 2,
       "feature": 8,
-      "parameter": 6
+      "parameter": 7
     },
-    "nodes": 37,
+    "nodes": 38,
     "relations": {
       "bound": 7,
-      "divisibility": 3,
+      "divisibility": 4,
       "enum": 2,
       "environment": 7,
       "equality": 18,
@@ -2154,7 +2198,7 @@
     },
     "statuses": {
       "environment_specific": 7,
-      "static_candidate": 42
+      "static_candidate": 43
     }
   }
 }

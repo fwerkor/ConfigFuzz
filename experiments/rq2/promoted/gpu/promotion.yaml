@@ -13,8 +13,8 @@ subjects:
   - llama2-train
   - mixtral-train
   - qwen2-train
-  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817-v3/pytorch-native.json
-  rq1_result_sha256: 32a9c6bcf1cb08ddabdfbdac492afd583e483290863b1ad51ac88b754797b7b3
+  rq1_result: ../../../../formal-results/rq1-gpu-final-expanded-20260819/pytorch-native.json
+  rq1_result_sha256: a73ffa495b99413a2cda64322af9419fc1741be6fe732e6764409f9df3769f16
   static_artifact: ../../../../artifacts/frameworks/pytorch_v2.13.0.json
   static_artifact_sha256: 282a2dd5fc5e4f94906f24bdd4544062cb5ac3929c15906488570d43a88f9cbe
   qualification_dir: ../../../../formal-results/accelerator-qualification/pytorch-cuda-20260817-093015
@@ -49,47 +49,47 @@ subjects:
     deepest_milestone: completed
   graphs:
   - workload_id: chatglm3-train
-    static_edges: 48
-    validated_edges: 48
-    model_stack_edges: 0
-    static_graph_sha256: 92620d66117fbc50d0afc3da62c8ca1984b206117323f790a321feda00256040
-    validated_graph_sha256: 5a0b9beaa9eba3528a9ae3796a39d69d12a68ec78a83fc63e90b76e8edfb418b
+    static_edges: 50
+    validated_edges: 50
+    model_stack_edges: 2
+    static_graph_sha256: 11d412355b2d27449cf09ee220c436ce003e2566d6e873626bc9729a8d5967f3
+    validated_graph_sha256: e2e8fe5e2034c1558a0f52bbcf67faa77f7ae6411d13c2df3847f760544c7a36
   - workload_id: cogvideox-train
     static_edges: 48
     validated_edges: 48
     model_stack_edges: 0
     static_graph_sha256: 7673dc205eeb98aeeada71f3cc6bad67dd69a268df299bcc556bab5237540534
-    validated_graph_sha256: f3a61040016792ac162019bfb121bea081433cd13b8b9c2c8fa7f70a1bf4fa75
+    validated_graph_sha256: c483bdf463d2277592020e7a3e21fc555bbe0a0b2151bb9d502b4d71668ecd4d
   - workload_id: deepseekv3-train
-    static_edges: 48
-    validated_edges: 48
-    model_stack_edges: 0
-    static_graph_sha256: ccc5752751414b40bcdb6781ba26e21aefdda2900ab59a8cc78877732d7fb11a
-    validated_graph_sha256: ead3f0104e53d110e811ec3a5cec35898b2a81dfabbef4f794a92d154d41213d
+    static_edges: 53
+    validated_edges: 53
+    model_stack_edges: 5
+    static_graph_sha256: d7d1c70dd583383f86d038849827efdd7728b3a6b8b822cb14ab33f95fb68ce1
+    validated_graph_sha256: 036460a0993b7bc5cc464e9b98b3afb2394dd9b9cac5b5bdd61bf891b1595a07
   - workload_id: internvl3-train
-    static_edges: 48
-    validated_edges: 48
-    model_stack_edges: 0
-    static_graph_sha256: 7cfd4cc9cf5a997d3ab16c3a4e1081074c56d50645332c37dd9cf14b0224b6cd
-    validated_graph_sha256: e9309a87e8083f67689953412104efa8906d3562af4483d6f93956d03581acdc
+    static_edges: 51
+    validated_edges: 51
+    model_stack_edges: 3
+    static_graph_sha256: 25b5105a605604ab3810148a1426aa1c2abbe6e9acd073c9e49ffa0582f1ef7a
+    validated_graph_sha256: 0d5e8876edb206ce72e547659f1a70077ed8279f36d4c4420b25a1b63836b435
   - workload_id: llama2-train
-    static_edges: 49
-    validated_edges: 49
-    model_stack_edges: 1
-    static_graph_sha256: 38629eeb98284e72c6e32796331e8241b31f06afbeed858bf1506e2524e22464
-    validated_graph_sha256: 17ba8eb7b2b6b59929538d20bece7f1bf5554afac4c98b9f4aab8bf4eef4f2c1
+    static_edges: 50
+    validated_edges: 50
+    model_stack_edges: 2
+    static_graph_sha256: baa97dbe081eb595b5dd336221c6b76342b1655d4b2f38044401f6e1ea201142
+    validated_graph_sha256: 7bb493b8c41f9437afe41795571845428e0a4bf8e40db748546f1254419dd671
   - workload_id: mixtral-train
-    static_edges: 48
-    validated_edges: 48
-    model_stack_edges: 0
-    static_graph_sha256: c0ada157d510ff473f675a0ad0230b56f17166c4133ed810bf833b0421894818
-    validated_graph_sha256: cd8fd6f8852ce7062d46116ffbbb0354578ba79a163b16a1a48c064994789cb5
+    static_edges: 51
+    validated_edges: 51
+    model_stack_edges: 3
+    static_graph_sha256: 763121f31769de9e848d050648f9c4790319f2aef391d678b8d2d9751bb2cb74
+    validated_graph_sha256: ec8b153a6fdad3697901644295900648b1835a9d92da82651957a68656d57818
   - workload_id: qwen2-train
-    static_edges: 48
-    validated_edges: 48
-    model_stack_edges: 0
-    static_graph_sha256: dc9ad63281706b654ac59a4296db1915994f8b5ad3444c31d729362da460b8e8
-    validated_graph_sha256: f099149d07da3eb89777cb590225f690a0b65b9b5b9a61c839086f1e55026567
+    static_edges: 50
+    validated_edges: 50
+    model_stack_edges: 2
+    static_graph_sha256: 26658dc44a2bc996fd0572081549344a147be8cc263861556147fd5aeb9fc5ba
+    validated_graph_sha256: 96c7856177b78531346f323b9a0657ce5c4da6c812a6879b72a67e90127e24b9
 - framework_id: deepspeed
   workload_count: 7
   workloads:
@@ -100,8 +100,8 @@ subjects:
   - llama2-train
   - mixtral-train
   - qwen2-train
-  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817-v3/deepspeed.json
-  rq1_result_sha256: 51cd5aa28ef6ff40660575babb1014906645f936e402678754988603f4dfce1d
+  rq1_result: ../../../../formal-results/rq1-gpu-final-expanded-20260819/deepspeed.json
+  rq1_result_sha256: b6c2f62b8516868982a5d0a0f11faa7264bd78b1a626a3949261f63545da6e93
   static_artifact: ../../../../artifacts/frameworks/deepspeed_v0.19.1.json
   static_artifact_sha256: d42c2920af8e180072b410f6afea0b33c77b27163cdca35a8e01a1a5903fa457
   qualification_dir: ../../../../formal-results/accelerator-qualification/deepspeed-20260817-093305
@@ -136,11 +136,11 @@ subjects:
     deepest_milestone: completed
   graphs:
   - workload_id: chatglm3-train
-    static_edges: 20
-    validated_edges: 20
-    model_stack_edges: 0
-    static_graph_sha256: c1c12162d124fe74cb5721cd919eab1af4cf0494c32635411ec0f1cada9d0eeb
-    validated_graph_sha256: df22c22b2d08d043accbff799b9e094775a6c05a57db85a94ca1f270be646d0a
+    static_edges: 22
+    validated_edges: 22
+    model_stack_edges: 2
+    static_graph_sha256: 6aee8ffe407a48d5babba53465a940f289698d92deda649db568c1a6cea68500
+    validated_graph_sha256: ec58ccd0eeafba08911df6525cfd065c975c46df71205a1bfa44990a124fe6d2
   - workload_id: cogvideox-train
     static_edges: 20
     validated_edges: 20
@@ -148,35 +148,35 @@ subjects:
     static_graph_sha256: 984aa73622ef349d23514686df27ca7a0f1dff908cfee640c45a04f6fd6fa506
     validated_graph_sha256: 8392da9bab7b9fdec48ac1206a7c9894e5ec8c1af4979cf528b6a3200a442554
   - workload_id: deepseekv3-train
-    static_edges: 20
-    validated_edges: 20
-    model_stack_edges: 0
-    static_graph_sha256: 54243b6c35a5abcb5cbdf91e62ae658795df8f024ee43c9cc2943a34f24403b7
-    validated_graph_sha256: 5a3efaaaa2912c0ac6834e5b7a3d17c1fa65265bd3a37af139221947527e7ee2
+    static_edges: 25
+    validated_edges: 25
+    model_stack_edges: 5
+    static_graph_sha256: 7ae7a5423e04fe841cbc9464cdc9191f2970041cacff1a145d7b50aff7917e78
+    validated_graph_sha256: 59e99199c61f8eb7e40a9f7c6f9a469cee5e09584a97011220f0cf8e477120f0
   - workload_id: internvl3-train
-    static_edges: 20
-    validated_edges: 20
-    model_stack_edges: 0
-    static_graph_sha256: 2bbd2196a5fa2a2bb0fdd9a52b4ce302f80d1fe8740cb729f473508ad0bf96b0
-    validated_graph_sha256: 39f9319d4f3c624f5aa3963a99bf11a9654d9a0344fafda14b44aef7356274ed
+    static_edges: 23
+    validated_edges: 23
+    model_stack_edges: 3
+    static_graph_sha256: 2e9e5964fe2fd331b6bb74c0ab1473a033f43dfb6299813b9315c6f2f0b523df
+    validated_graph_sha256: e6371a0668c73b32ce7fb6f3f35d8338fb95a656e7046b9477194d2f525da811
   - workload_id: llama2-train
-    static_edges: 21
-    validated_edges: 21
-    model_stack_edges: 1
-    static_graph_sha256: d86420f6f06d214fd9c08f2d9b4d5b7f0c057db77d958cc99ddb03348e6c878f
-    validated_graph_sha256: 4fb95a6a01e3126a367dce5149e087ed9ef3cbcffb89ce140375ad1e4475867e
+    static_edges: 22
+    validated_edges: 22
+    model_stack_edges: 2
+    static_graph_sha256: f6acc53f5f89bb7181e29065548ab4d3f753a2815ea324c7d38f42a51776efe0
+    validated_graph_sha256: d2420e34cd021a62997fa826f96b967e5f11d791f8d9bbfe922db428e0329456
   - workload_id: mixtral-train
-    static_edges: 20
-    validated_edges: 20
-    model_stack_edges: 0
-    static_graph_sha256: 045f5f746fcf633bcf3ffb1454af13584a873b7e956698c4dbe0a734d48ead28
-    validated_graph_sha256: 844203de149411517ae9097d2776348be9a41efe98ee2cc4e833461259f2e31f
+    static_edges: 23
+    validated_edges: 23
+    model_stack_edges: 3
+    static_graph_sha256: 1af26d84958582c3d5209cf3f80a1a83304ac60d28da1868ed1cbe789080d8fb
+    validated_graph_sha256: 4876377e8412d31206589c82f4fd512b4f0c3dacdcba391a744f7c4f08ec1f28
   - workload_id: qwen2-train
-    static_edges: 20
-    validated_edges: 20
-    model_stack_edges: 0
-    static_graph_sha256: 30112df8822ec793e007bb20d81b53978ddd962b395a08f7000ea86bda3b4a80
-    validated_graph_sha256: 2bd973964b50695c44a4a2f7fc3eb2b0bb87071aed1237093aa3544b9e09e153
+    static_edges: 22
+    validated_edges: 22
+    model_stack_edges: 2
+    static_graph_sha256: 0171d40378a3c04af9dcc3c236836fd953748708d41fad8bb740c7cace23f8c9
+    validated_graph_sha256: 8f56f72ae664f3804568e7d2eff2294c8445cb054d5f819d0543527665563d40
 - framework_id: transformers-accelerate
   workload_count: 7
   workloads:
@@ -187,8 +187,8 @@ subjects:
   - llama2-train
   - mixtral-train
   - qwen2-train
-  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817-v3/transformers-accelerate.json
-  rq1_result_sha256: 35827af425fc4014c8485958e2e4cbddc6453662c42c8d67781b21920bbae8d0
+  rq1_result: ../../../../formal-results/rq1-gpu-final-expanded-20260819/transformers-accelerate.json
+  rq1_result_sha256: 6119a980e8bf485ad6e373d7f8beecaf6987a8fead5e691799af6ce84be2dcda
   static_artifact: ../../../../artifacts/frameworks/transformers_v5.9.0_accelerate_v1.14.0.json
   static_artifact_sha256: 89f1ed40040478c0dfd5bf54d1232aad28d220702e30928e996e5f0c0e34de7c
   qualification_dir: ../../../../formal-results/accelerator-qualification/transformers-accelerate-20260817-095036
@@ -223,11 +223,11 @@ subjects:
     deepest_milestone: completed
   graphs:
   - workload_id: chatglm3-train
-    static_edges: 31
-    validated_edges: 31
-    model_stack_edges: 0
-    static_graph_sha256: 31f06db81ff99a47427041a8de2a4c30aa69bc804bedab0003a1dc0c88d83ec2
-    validated_graph_sha256: 43adb1bad9c63004352df0229fa082ea72d1059c0126344bc4dcf099c419a327
+    static_edges: 33
+    validated_edges: 33
+    model_stack_edges: 2
+    static_graph_sha256: d05f746f9173fc06287e5049874f2c232f0e05f2da70c20fbfd53842f380c76d
+    validated_graph_sha256: 36dec597d691d1ab03fa1469b0ab7ec28b799aaac40b4cf03c2d4039c76b14f9
   - workload_id: cogvideox-train
     static_edges: 31
     validated_edges: 31
@@ -235,43 +235,43 @@ subjects:
     static_graph_sha256: a34bf674426d202e0914f5464deda8030631baa07c1d989548283f5488afe0c4
     validated_graph_sha256: 5ad8f10d91f7f60f62d4889a18476dabe03e18cf849fe98bd1620989d04ac0db
   - workload_id: deepseekv3-train
-    static_edges: 31
-    validated_edges: 31
-    model_stack_edges: 0
-    static_graph_sha256: de0c5ff5c4c82e721982d7d13f36f2a76e02bf2829f4ff41c3170b75958ebfc7
-    validated_graph_sha256: 11e2bddc36c8e2c604e37a1f7019a98f4b3523991e9c2de8b012fc25c2e88e9f
+    static_edges: 36
+    validated_edges: 36
+    model_stack_edges: 5
+    static_graph_sha256: 7ab2e7743ae69fe799437443bd027943d5b2f0c973f11b5608a321b95c242e40
+    validated_graph_sha256: aea817dc4afd528675879ca9ef77fb2a8fbbcb3777a27b7d9a7cf651469f0537
   - workload_id: internvl3-train
-    static_edges: 31
-    validated_edges: 31
-    model_stack_edges: 0
-    static_graph_sha256: ac9953f8439c32619319caf06b04ab88799fa96d1e9dc18fe514256d62fe64e0
-    validated_graph_sha256: 95d2ed42771333237c9113ab633fad0646893636e1c3ec53f387e6f397bb0d62
+    static_edges: 34
+    validated_edges: 34
+    model_stack_edges: 3
+    static_graph_sha256: d3a752b552ccc05161f560f9994bc7a5f46cbe4f7051f72602b2be72146e180a
+    validated_graph_sha256: 812775923a29bfb28f6c811f820f36cd1acd4979fffa6c00cdfb94945d6dd618
   - workload_id: llama2-train
-    static_edges: 32
-    validated_edges: 32
-    model_stack_edges: 1
-    static_graph_sha256: d549c41f3174d9a1db0a2f67e056aa12c74b1fbaf34d1f25180c69a3c3952ee4
-    validated_graph_sha256: 7877f448fc8f7c789dfe44b785ec20d9509e5a0d0ebdd70118ed2296fc602237
+    static_edges: 33
+    validated_edges: 33
+    model_stack_edges: 2
+    static_graph_sha256: 099a879f83ad4e93ff5f2311e733b91805a68420022dc7bcb2223fe184f11038
+    validated_graph_sha256: 5f1cbdd739b8651f98b975a059126a8f1ec454d95c68c702579cb782e8a7e236
   - workload_id: mixtral-train
-    static_edges: 31
-    validated_edges: 31
-    model_stack_edges: 0
-    static_graph_sha256: 2129026e635a353fe2c8d5887d0f4f834d9b8ab1d64f8a539d2254f17bbdc8f9
-    validated_graph_sha256: ea3eb283d53abfa7b52b3a7a6bbae4935d986abf494c4eed59cf4205fd2460e0
+    static_edges: 34
+    validated_edges: 34
+    model_stack_edges: 3
+    static_graph_sha256: 9727cf806d4cb0d0fb283691f71d43a091ad0d82798e22fd17b297f993ab60c2
+    validated_graph_sha256: 66973532bea57c3a3212d51536a4782e0049b64806a42a82bc2a751ea8818a75
   - workload_id: qwen2-train
-    static_edges: 31
-    validated_edges: 31
-    model_stack_edges: 0
-    static_graph_sha256: efcc14e2a0369501814d702ebd7dab36b801d8ee91bd952e3f310384d3045256
-    validated_graph_sha256: 138c20a5f71ae3d3a94e382573ba1f64f035b22cc8affa347b92d13c2dd7b623
+    static_edges: 33
+    validated_edges: 33
+    model_stack_edges: 2
+    static_graph_sha256: 3763059073138d31b1f06d0f0325291ecb78986ef59a0646f658b320056aa5bd
+    validated_graph_sha256: ea80c39bdc0028bc3251fa84f2ce617b6ecd665d6ec90cf92dda3609a6463e8f
 - framework_id: megatron-core
   workload_count: 3
   workloads:
   - llama2-train
   - mixtral-train
   - qwen2-train
-  rq1_result: ../../../../formal-results/rq1-gpu-final-20260817-v3/megatron-core.json
-  rq1_result_sha256: dba17d9f4e4b07f047997083d3c8c01839aca67abb1bf6426c479171d63d25d0
+  rq1_result: ../../../../formal-results/rq1-gpu-final-expanded-20260819/megatron-core.json
+  rq1_result_sha256: c81caceced1b1357f743a11d843a68dd1527c1f70c12f8f45383ddb12f4d5251
   static_artifact: ../../../../artifacts/frameworks/megatron_core_v0.18.2.json
   static_artifact_sha256: f618f09db0054a57657d0c4f3840a6d7864b50046c44eeb4fecd4b9b811c2c73
   qualification_dir: ../../../../formal-results/accelerator-qualification/megatron-core-20260817-095512
@@ -294,16 +294,16 @@ subjects:
     validated_edges: 139
     model_stack_edges: 0
     static_graph_sha256: a9b6bbaaff0e469a8e3112c2d2d7ccd15f8bc5828b74b24b98d7faec62918454
-    validated_graph_sha256: 463e644a47ff4988bad9ed200faa151675ed04f312efed14f1fe8e5ea6cd3e07
+    validated_graph_sha256: 3dcf7c09712695b7466702113664f46799fed1765dd11173f89f329d90f2e151
   - workload_id: mixtral-train
     static_edges: 139
     validated_edges: 139
     model_stack_edges: 0
     static_graph_sha256: 53409d634b4ad036ae9c72a558b60b19290e3acceca41f9ece76a596db00ce24
-    validated_graph_sha256: 308b222d8e12eb6a89863f152426d01ea8c0aefa83ea1055ea942a95d94a3f74
+    validated_graph_sha256: ac2d2b6af8426c3bfef2fc9f6af159fc037132821a1c31b1c9c3154dbca5bc02
   - workload_id: qwen2-train
     static_edges: 139
     validated_edges: 139
     model_stack_edges: 0
     static_graph_sha256: ac3d9f89cceaa7efc010fc85cab76db8521e5be152ac685439e89dac344be529
-    validated_graph_sha256: 75d4e48fa0000d42debd82a0d02461a3995e40a0e6805401bdf17fb17b874547
+    validated_graph_sha256: b28517ccf9c568bffe370ed91fcedee6d9cf89cdde6e72eb7a6e1f493e577782

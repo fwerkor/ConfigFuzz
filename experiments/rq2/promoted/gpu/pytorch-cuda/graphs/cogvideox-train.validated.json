@@ -728,7 +728,7 @@
         "torch/ao/quantization/fx",
         "torch/distributed"
       ],
-      "confidence": 0.69,
+      "confidence": 0.2,
       "dependents": [
         "group_size"
       ],
@@ -759,7 +759,7 @@
           "source": "torch/distributed/distributed_c10d.py"
         },
         {
-          "detail": "consistent_valid=6; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=1; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=5; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
           "kind": "dynamic",
           "source": "runtime-feedback"
         }

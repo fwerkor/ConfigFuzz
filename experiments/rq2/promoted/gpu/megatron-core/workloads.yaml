@@ -3,7 +3,7 @@ name: rq2-megatron-core-promoted-workloads
 metadata:
   status: gpu_accelerator_qualified
   framework_id: megatron-core
-  rq1_result_sha256: dba17d9f4e4b07f047997083d3c8c01839aca67abb1bf6426c479171d63d25d0
+  rq1_result_sha256: c81caceced1b1357f743a11d843a68dd1527c1f70c12f8f45383ddb12f4d5251
   static_artifact_sha256: f618f09db0054a57657d0c4f3840a6d7864b50046c44eeb4fecd4b9b811c2c73
   qualification_summary_sha256: fce77a226555b6c6ff9d9b4a8427f707b4a71d665ab016fdf994d17e676adf60
 workloads:
@@ -17,8 +17,6 @@ workloads:
   native_validator_manifest: native_validator.json
   semantic_anchors:
   - target_parameter
-  - model.hidden_size
-  - model.num_attention_heads
   command_manifest: ../../../../gpu/launch_rq2_megatron.sh
   required_paths:
   - tensor_parallel
@@ -40,9 +38,6 @@ workloads:
   native_validator_manifest: native_validator.json
   semantic_anchors:
   - target_parameter
-  - moe.num_experts
-  - moe.moe_router_topk
-  - parallel.expert_model_parallel_size
   command_manifest: ../../../../gpu/launch_rq2_megatron.sh
   required_paths:
   - expert_parallel
@@ -63,9 +58,6 @@ workloads:
   native_validator_manifest: native_validator.json
   semantic_anchors:
   - target_parameter
-  - model.hidden_size
-  - model.num_attention_heads
-  - model.num_query_groups
   command_manifest: ../../../../gpu/launch_rq2_megatron.sh
   required_paths:
   - tensor_parallel

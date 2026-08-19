@@ -728,7 +728,7 @@
         "torch/ao/quantization/fx",
         "torch/distributed"
       ],
-      "confidence": 0.69,
+      "confidence": 0.2,
       "dependents": [
         "group_size"
       ],
@@ -759,7 +759,7 @@
           "source": "torch/distributed/distributed_c10d.py"
         },
         {
-          "detail": "consistent_valid=6; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=1; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
+          "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=5; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0",
           "kind": "dynamic",
           "source": "runtime-feedback"
         }
@@ -1985,6 +1985,114 @@
         "version": "cf30153c4c131c8164ee7798e5022d810682e2cb"
       },
       "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/mixtral"
+      ],
+      "confidence": 0.72,
+      "dependents": [
+        "model.hidden_size"
+      ],
+      "drivers": [
+        "model.num_attention_heads"
+      ],
+      "evidence": [
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 198,
+          "source": "src/transformers/models/mixtral/modeling_mixtral.py"
+        }
+      ],
+      "expression": "model.hidden_size % model.num_attention_heads == 0",
+      "id": "model:mixtral-train:1:dep-3b1bac4befa5dcd1",
+      "participants": [
+        "model.hidden_size",
+        "model.num_attention_heads"
+      ],
+      "predicate": "model.hidden_size % model.num_attention_heads == 0",
+      "relation": "divisibility",
+      "scope": {
+        "framework": "mixtral",
+        "source_subdir": "src/transformers/models/mixtral",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/mixtral"
+      ],
+      "confidence": 0.92,
+      "dependents": [
+        "model.num_attention_heads"
+      ],
+      "drivers": [
+        "model.num_query_groups"
+      ],
+      "evidence": [
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 303,
+          "source": "src/transformers/models/mixtral/modeling_mixtral.py"
+        }
+      ],
+      "expression": "model.num_attention_heads % model.num_query_groups == 0",
+      "id": "model:mixtral-train:1:dep-649c9ca98f7c0bbd",
+      "participants": [
+        "model.num_attention_heads",
+        "model.num_query_groups"
+      ],
+      "predicate": "model.num_attention_heads % model.num_query_groups == 0",
+      "relation": "divisibility",
+      "scope": {
+        "framework": "mixtral",
+        "source_subdir": "src/transformers/models/mixtral",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/mixtral"
+      ],
+      "confidence": 0.9,
+      "dependents": [
+        "moe.moe_router_topk"
+      ],
+      "drivers": [
+        "moe.num_experts"
+      ],
+      "evidence": [
+        {
+          "detail": "top-k API bound over configuration-backed router dimension",
+          "kind": "static",
+          "line": 113,
+          "source": "src/transformers/models/mixtral/modeling_mixtral.py"
+        },
+        {
+          "detail": "top-k API bound over configuration-backed router dimension",
+          "kind": "static",
+          "line": 187,
+          "source": "src/transformers/models/mixtral/modular_mixtral.py"
+        }
+      ],
+      "expression": "moe.moe_router_topk <= moe.num_experts",
+      "id": "model:mixtral-train:1:dep-a9d1c03056edd7d2",
+      "participants": [
+        "moe.moe_router_topk",
+        "moe.num_experts"
+      ],
+      "predicate": "moe.moe_router_topk <= moe.num_experts",
+      "relation": "bound",
+      "scope": {
+        "framework": "mixtral",
+        "source_subdir": "src/transformers/models/mixtral",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
     }
   ],
   "metadata": {
@@ -2074,6 +2182,26 @@
       "name": "kind"
     },
     {
+      "kind": "parameter",
+      "name": "model.hidden_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "model.num_attention_heads"
+    },
+    {
+      "kind": "parameter",
+      "name": "model.num_query_groups"
+    },
+    {
+      "kind": "parameter",
+      "name": "moe.moe_router_topk"
+    },
+    {
+      "kind": "parameter",
+      "name": "moe.num_experts"
+    },
+    {
       "kind": "derived",
       "name": "n.args"
     },
@@ -2136,18 +2264,18 @@
   ],
   "schema_version": 1,
   "summary": {
-    "connected_components": 5,
-    "edges": 48,
+    "connected_components": 7,
+    "edges": 51,
     "node_kinds": {
       "derived": 21,
       "environment": 2,
       "feature": 8,
-      "parameter": 4
+      "parameter": 9
     },
-    "nodes": 35,
+    "nodes": 40,
     "relations": {
-      "bound": 7,
-      "divisibility": 2,
+      "bound": 8,
+      "divisibility": 4,
       "enum": 2,
       "environment": 7,
       "equality": 18,
@@ -2160,7 +2288,7 @@
       "dynamically_supported": 4,
       "environment_specific": 6,
       "scope_disputed": 1,
-      "static_candidate": 34
+      "static_candidate": 37
     }
   }
 }
