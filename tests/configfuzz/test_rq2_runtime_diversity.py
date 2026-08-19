@@ -39,14 +39,16 @@ def test_method_summary_counts_explicit_runtime_diversity() -> None:
             "outcome": "valid",
             "gpu_seconds": 1800.0,
             "coordinated_parameters": [],
-            "runtime_branches": ["attention_mode=gqa"],
+            "runtime_branches": ["attention_mode=gqa", "forward_path=language"],
             "topologies": ["world=2,tp=1,pp=1,cp=1,ep=1"],
             "feature_interactions": ["attention"],
             "backend_paths": ["attention=sdpa"],
             "behavior_ids": [
                 "branch:attention_mode=gqa",
+                "branch:forward_path=language",
                 "topology:world=2,tp=1,pp=1,cp=1,ep=1",
                 "feature:attention",
+                "feature:moe_configuration",
                 "backend:attention=sdpa",
             ],
             "behavior_signature": "sig-a",
@@ -58,15 +60,17 @@ def test_method_summary_counts_explicit_runtime_diversity() -> None:
             "outcome": "valid",
             "gpu_seconds": 1800.0,
             "coordinated_parameters": [],
-            "runtime_branches": ["attention_mode=mha"],
+            "runtime_branches": ["attention_mode=mha", "forward_path=language"],
             "topologies": ["world=2,tp=1,pp=1,cp=1,ep=1"],
             "feature_interactions": ["attention", "moe"],
             "backend_paths": ["attention=sdpa"],
             "behavior_ids": [
                 "branch:attention_mode=mha",
+                "branch:forward_path=language",
                 "topology:world=2,tp=1,pp=1,cp=1,ep=1",
                 "feature:attention",
                 "feature:moe",
+                "feature:shared_experts",
                 "backend:attention=sdpa",
             ],
             "behavior_signature": "sig-b",
@@ -77,10 +81,11 @@ def test_method_summary_counts_explicit_runtime_diversity() -> None:
     diversity = summary["diversity"]
 
     assert diversity["instrumented_execution_count"] == 2
-    assert diversity["runtime_branches"] == 2
+    assert diversity["behavior_policy"] == "executed-path-v1"
+    assert diversity["runtime_branches"] == 1
     assert diversity["topologies"] == 1
     assert diversity["feature_interactions"] == 2
     assert diversity["backend_paths"] == 1
-    assert diversity["runtime_behavior_ids"] == 6
+    assert diversity["runtime_behavior_ids"] == 5
     assert diversity["behavior_signatures"] == 2
     assert diversity["behavior_signature_entropy_bits"] == 1.0

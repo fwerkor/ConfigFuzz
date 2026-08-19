@@ -2106,22 +2106,37 @@ def _distribution(values: Sequence[float | int]) -> dict[str, Any]:
 
 
 def _runtime_behavior_ids(record: ExperimentRunRecord) -> tuple[str, ...]:
-    if record.behavior_ids:
-        return tuple(sorted(set(record.behavior_ids)))
-    # Backward-compatible derivation for records produced before explicit behavior IDs
-    # were added. Input-only constraint/boundary identifiers are intentionally excluded.
-    derived = {
-        *(f"branch:{value}" for value in record.runtime_branches),
-        *(f"topology:{value}" for value in record.topologies),
-        *(f"feature:{value}" for value in record.feature_interactions),
-        *(f"backend:{value}" for value in record.backend_paths),
-    }
-    return tuple(sorted(derived))
+    raw = set(record.behavior_ids)
+    if not raw:
+        # Backward-compatible derivation for records produced before explicit behavior
+        # IDs were added. Input-only constraint/boundary identifiers stay excluded.
+        raw = {
+            *(f"branch:{value}" for value in record.runtime_branches),
+            *(f"topology:{value}" for value in record.topologies),
+            *(f"feature:{value}" for value in record.feature_interactions),
+            *(f"backend:{value}" for value in record.backend_paths),
+        }
+    return tuple(sorted(value for value in raw if _is_observed_runtime_behavior_id(value)))
+
+
+def _is_observed_runtime_behavior_id(value: str) -> bool:
+    """Keep only events tied to an executed runtime path.
+
+    ``runtime-events-v1`` also records a few low-cardinality profile states to aid
+    debugging. Those values are useful trace context, but counting them as runtime
+    diversity would make a configuration difference look like an executed-path
+    difference. Forward-path branches, resolved backends, initialized topology, and
+    forward-hook feature activations are the behavior IDs used by RQ2.
+    """
+
+    if value.startswith("branch:"):
+        return value.startswith("branch:forward_path=")
+    if value in {"feature:moe_configuration", "feature:shared_experts"}:
+        return False
+    return value.startswith(("topology:", "feature:", "backend:"))
 
 
 def _runtime_behavior_signature(record: ExperimentRunRecord) -> str | None:
-    if record.behavior_signature:
-        return record.behavior_signature
     behavior_ids = _runtime_behavior_ids(record)
     if not behavior_ids:
         return None

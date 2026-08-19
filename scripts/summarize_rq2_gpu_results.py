@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 from collections import Counter, defaultdict
@@ -55,38 +56,83 @@ def _entropy_bits(values: list[str]) -> float | None:
     return -sum((count / total) * math.log2(count / total) for count in counts.values())
 
 
+def _observed_behavior_ids(row: Mapping[str, Any]) -> tuple[str, ...]:
+    values = set(str(value) for value in row.get("behavior_ids", ()))
+    if not values:
+        values = {
+            *(f"branch:{value}" for value in row.get("runtime_branches", ())),
+            *(f"topology:{value}" for value in row.get("topologies", ())),
+            *(f"feature:{value}" for value in row.get("feature_interactions", ())),
+            *(f"backend:{value}" for value in row.get("backend_paths", ())),
+        }
+    observed: list[str] = []
+    for value in values:
+        if value.startswith("branch:") and not value.startswith("branch:forward_path="):
+            continue
+        if value in {"feature:moe_configuration", "feature:shared_experts"}:
+            continue
+        if value.startswith(("branch:", "topology:", "feature:", "backend:")):
+            observed.append(value)
+    return tuple(sorted(set(observed)))
+
+
+def _observed_signature(row: Mapping[str, Any]) -> str | None:
+    values = _observed_behavior_ids(row)
+    if not values:
+        return None
+    payload = json.dumps(values, ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:20]
+
+
 def _diversity_summary(records: list[Mapping[str, Any]], accelerator_hours: float) -> dict[str, Any]:
     instrumented = [
         row
         for row in records
-        if bool(row.get("generated")) and bool(row.get("behavior_ids"))
+        if bool(row.get("generated")) and bool(_observed_behavior_ids(row))
     ]
     behavior_ids = {
-        str(value)
+        value
         for row in instrumented
-        for value in row.get("behavior_ids", ())
+        for value in _observed_behavior_ids(row)
     }
     signatures = [
-        str(row["behavior_signature"])
+        signature
         for row in instrumented
-        if row.get("behavior_signature")
+        if (signature := _observed_signature(row)) is not None
     ]
 
-    def distinct(field: str) -> int:
-        return len(
-            {
-                str(value)
-                for row in instrumented
-                for value in row.get(field, ())
-            }
-        )
+    runtime_branches = {
+        value.removeprefix("branch:")
+        for row in instrumented
+        for value in _observed_behavior_ids(row)
+        if value.startswith("branch:")
+    }
+    topologies = {
+        value.removeprefix("topology:")
+        for row in instrumented
+        for value in _observed_behavior_ids(row)
+        if value.startswith("topology:")
+    }
+    feature_interactions = {
+        value.removeprefix("feature:")
+        for row in instrumented
+        for value in _observed_behavior_ids(row)
+        if value.startswith("feature:")
+    }
+    backend_paths = {
+        value.removeprefix("backend:")
+        for row in instrumented
+        for value in _observed_behavior_ids(row)
+        if value.startswith("backend:")
+    }
 
     return {
         "instrumented_execution_count": len(instrumented),
-        "runtime_branches": distinct("runtime_branches"),
-        "topologies": distinct("topologies"),
-        "feature_interactions": distinct("feature_interactions"),
-        "backend_paths": distinct("backend_paths"),
+        "behavior_policy": "executed-path-v1",
+        "runtime_branches": len(runtime_branches),
+        "topologies": len(topologies),
+        "feature_interactions": len(feature_interactions),
+        "backend_paths": len(backend_paths),
         "runtime_behavior_ids": len(behavior_ids),
         "runtime_behavior_ids_per_accelerator_hour": (
             len(behavior_ids) / accelerator_hours if accelerator_hours > 0 else None
