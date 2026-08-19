@@ -597,6 +597,7 @@ def _solve_intervention_case(
 
     hard_edges = [edge_id]
     soft_edges: list[str] = []
+    preferred_soft_edges: list[str] = []
     unsupported: list[str] = []
     compiled_soft: dict[str, z3.BoolRef] = {}
     try:
@@ -654,14 +655,33 @@ def _solve_intervention_case(
             optimizer.add(formula)
             hard_edges.append(current.id)
         else:
+            soft_edges.append(current.id)
+            compiled_soft[current.id] = formula
+            preference_reference = (
+                tie_break_reference if tie_break_reference is not None else reference
+            )
+            baseline_evaluation = graph.evaluate_edge(current, preference_reference)
+            if not (
+                current.status is DependencyStatus.STATIC_CANDIDATE
+                and baseline_evaluation.satisfied is False
+            ):
+                preferred_soft_edges.append(current.id)
+
+    # For the satisfying arm, keep the qualified baseline as local as possible
+    # before considering other unconfirmed candidates. This prevents a valid
+    # baseline from drifting into an unrelated topology merely to satisfy a
+    # second static candidate. Violating and repaired arms retain the original
+    # dependency-first policy so the counterexample and repair stay isolated
+    # from other candidate violations as much as possible.
+    locality_first = role == "satisfying"
+    if not locality_first:
+        for current_id in preferred_soft_edges:
+            current = graph.edges[current_id]
             optimizer.add_soft(
-                formula,
+                compiled_soft[current_id],
                 weight=str(max(1, round(current.confidence * 100))),
                 id="intervention_dependencies",
             )
-            soft_edges.append(current.id)
-            compiled_soft[current.id] = formula
-
     _add_reference_objectives(
         optimizer,
         variables,
@@ -679,6 +699,14 @@ def _solve_intervention_case(
             tie_break_reference,
             missing,
         )
+    if locality_first:
+        for current_id in preferred_soft_edges:
+            current = graph.edges[current_id]
+            optimizer.add_soft(
+                compiled_soft[current_id],
+                weight=str(max(1, round(current.confidence * 100))),
+                id="intervention_dependencies",
+            )
     _add_deterministic_objectives(
         optimizer,
         variables,

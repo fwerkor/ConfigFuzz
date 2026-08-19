@@ -46,6 +46,29 @@ def test_gpu_targets_freeze_deterministically(tmp_path: Path) -> None:
     assert loaded["frozen"] == first["frozen"]
 
 
+def test_expanded_megatron_targets_keep_qualified_process_topology() -> None:
+    payload = build_frozen_gpu_targets(ROOT, limit_per_subject=20, solver_timeout_ms=5000)
+    subject = next(item for item in payload["subjects"] if item["subject"] == "megatron-core")
+    baseline = yaml.safe_load((ROOT / subject["baseline"]).read_text(encoding="utf-8"))
+
+    assert len(subject["targets"]) == 11
+    assert subject["selection_summary"]["pre_topology_filter_candidates"] == 19
+    assert subject["selection_summary"]["skipped_unqualified_topology"] == 8
+    topology = {
+        "tensor_model_parallel_size",
+        "pipeline_model_parallel_size",
+        "context_parallel_size",
+        "expert_model_parallel_size",
+        "expert_tensor_parallel_size",
+    }
+    for target in subject["targets"]:
+        cases = target["intervention"]["cases"]
+        for role in ("satisfying", "repaired"):
+            assignment = cases[role]["configuration"]
+            for name in topology.intersection(assignment):
+                assert assignment[name] == baseline[name]
+
+
 def test_gpu_target_hash_detects_tampering(tmp_path: Path) -> None:
     payload = build_frozen_gpu_targets(ROOT, limit_per_subject=1, solver_timeout_ms=2000)
     tampered = deepcopy(payload)

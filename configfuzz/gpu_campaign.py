@@ -46,6 +46,27 @@ GPU_HARNESS_FILES: dict[str, tuple[str, ...]] = {
     ),
 }
 
+MEGATRON_PROCESS_TOPOLOGY_FIELDS = (
+    "tensor_model_parallel_size",
+    "pipeline_model_parallel_size",
+    "context_parallel_size",
+    "expert_model_parallel_size",
+    "expert_tensor_parallel_size",
+)
+
+
+def _keeps_qualified_process_topology(candidate: Any, baseline: Mapping[str, Any]) -> bool:
+    """Require positive-control and repaired arms to use the qualified layout."""
+    cases = [candidate.intervention.satisfying, candidate.intervention.repaired]
+    for case in cases:
+        if case is None:
+            return False
+        assignment = case.assignment
+        for name in MEGATRON_PROCESS_TOPOLOGY_FIELDS:
+            if name in assignment and name in baseline and assignment[name] != baseline[name]:
+                return False
+    return True
+
 def build_frozen_gpu_targets(
     root: Path,
     *,
@@ -71,6 +92,16 @@ def build_frozen_gpu_targets(
             limit=limit_per_subject,
             solver_timeout_ms=solver_timeout_ms,
         )
+        candidates = list(queue.candidates)
+        skipped_unqualified_topology = 0
+        if subject == "megatron-core":
+            filtered = [
+                candidate
+                for candidate in candidates
+                if _keeps_qualified_process_topology(candidate, baseline)
+            ]
+            skipped_unqualified_topology = len(candidates) - len(filtered)
+            candidates = filtered
         targets = [
             {
                 "rank": rank,
@@ -83,8 +114,14 @@ def build_frozen_gpu_targets(
                 "score_components": dict(candidate.score_components),
                 "intervention": candidate.intervention.to_dict(),
             }
-            for rank, candidate in enumerate(queue.candidates, start=1)
+            for rank, candidate in enumerate(candidates, start=1)
         ]
+        selection_summary = dict(queue.to_dict()["summary"])
+        selection_summary["pre_topology_filter_candidates"] = int(
+            selection_summary["selected_candidates"]
+        )
+        selection_summary["skipped_unqualified_topology"] = skipped_unqualified_topology
+        selection_summary["selected_candidates"] = len(targets)
         target_count += len(targets)
         subjects.append(
             {
@@ -102,7 +139,7 @@ def build_frozen_gpu_targets(
                     }
                     for path in GPU_HARNESS_FILES[subject]
                 ],
-                "selection_summary": queue.to_dict()["summary"],
+                "selection_summary": selection_summary,
                 "targets": targets,
             }
         )

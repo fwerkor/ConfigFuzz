@@ -150,6 +150,26 @@ def test_unconfirmed_transitive_neighbors_do_not_expand_mutable_region() -> None
     assert plan.violating.status is SolveStatus.SAT
 
 
+def test_unconfirmed_neighbor_does_not_move_satisfying_case_off_baseline() -> None:
+    graph = make_graph(
+        constraint("x > 0", ("x",), kind=ConstraintKind.RANGE),
+        constraint("x == y", ("x", "y")),
+    )
+    target = next(edge for edge in graph.edges.values() if edge.expression == "x > 0")
+    baseline = {"x": 1, "y": 2}
+
+    plan = design_edge_intervention(graph, baseline, target.id)
+
+    assert plan.satisfying.status is SolveStatus.SAT
+    assert plan.satisfying.assignment == {"x": 1}
+    assert plan.satisfying.changed_values == {}
+    neighbor = next(edge for edge in graph.edges.values() if edge.expression == "x == y")
+    assert neighbor.id in plan.satisfying.violated_soft_edges
+    assert plan.repaired is not None
+    assert plan.repaired.assignment == {"x": 1}
+    assert neighbor.id in plan.repaired.violated_soft_edges
+
+
 def test_intervention_timeout_must_be_positive() -> None:
     graph = make_graph(constraint("x % 2 == 0", ("x",)))
     edge = next(iter(graph.edges.values()))
