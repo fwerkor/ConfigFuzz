@@ -150,6 +150,8 @@ def _eligible_source(
 ) -> bool:
     if not bool(record.get("generated")):
         return False
+    if str(record.get("outcome")) == ExperimentOutcome.INFRASTRUCTURE_FAILURE.value:
+        return False
     if record.get("seed") != seed:
         return False
     metadata = record.get("metadata")

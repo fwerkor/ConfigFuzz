@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import re
+import socket
 import subprocess
 import time
 from pathlib import Path
@@ -155,7 +156,7 @@ def execute_primary_campaign(
                 gpu_devices=gpu_devices,
                 device_count=device_count,
                 seed=seed,
-                master_port=master_port + (index % 200),
+                master_port=_available_master_port(master_port + (index % 200)),
                 timeout_seconds=timeout_seconds,
                 run_id=run_id,
                 campaign_test_index=index,
@@ -430,6 +431,33 @@ def _run_id(framework_id: str, case: Mapping[str, Any], seed: int) -> str:
     material = f"{framework_id}:{case['case_id']}:{seed}"
     digest = hashlib.sha256(material.encode("utf-8")).hexdigest()[:16]
     return f"rq2-{framework_id}-{digest}"
+
+
+def _available_master_port(preferred: int, *, attempts: int = 256) -> int:
+    """Return an unused localhost TCP port near ``preferred``.
+
+    RQ2 cases execute sequentially, but other experiments on the same worker can
+    occupy ports in the campaign's nominal range.  Probing before each launch
+    prevents a transient ``EADDRINUSE`` from being recorded as a framework
+    outcome.
+    """
+
+    if not 1 <= preferred <= 65535:
+        raise ValueError("preferred port must be in [1, 65535]")
+    for offset in range(attempts):
+        port = preferred + offset
+        if port > 65535:
+            port = 1024 + (port - 65536)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+            probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            try:
+                probe.bind(("127.0.0.1", port))
+            except OSError:
+                continue
+        return port
+    raise RuntimeError(
+        f"could not find a free master port near {preferred} after {attempts} attempts"
+    )
 
 
 def _existing_run_ids(path: Path) -> set[str]:

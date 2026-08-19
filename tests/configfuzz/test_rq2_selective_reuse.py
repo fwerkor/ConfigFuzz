@@ -231,3 +231,70 @@ def test_selective_reuse_writes_complete_plan_after_fresh_source_is_added(tmp_pa
     assert rows[-1]["campaign_accelerator_seconds"] == 16.0
     assert rows[1]["metadata"]["runtime_reuse"]["source_run_id"] == "old"
     assert rows[3]["metadata"]["runtime_reuse"]["source_run_id"] == "fresh"
+
+
+def test_selective_reuse_rejects_infrastructure_failure_source(tmp_path: Path) -> None:
+    launcher = tmp_path / "launcher.sh"
+    launcher.write_text("#!/bin/sh\n", encoding="utf-8")
+    workloads = _write_workload_files(tmp_path)
+    case = _case("cf", "configfuzz", 2)
+    plan = tmp_path / "plan.json"
+    plan.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "intent_count": 1,
+                "case_count": 1,
+                "method_counts": {},
+                "status_counts": {},
+                "cases": [case],
+            }
+        ),
+        encoding="utf-8",
+    )
+    revision = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    source = tmp_path / "infra.jsonl"
+    payload = ExperimentRunRecord(
+        run_id="infra",
+        rq="rq2",
+        method=ExperimentMethod.CONFIGFUZZ,
+        workload_id="w",
+        baseline_id="b",
+        intent_id="intent-x",
+        intent_pool="method_independent",
+        seed=2026,
+        generated=True,
+        target_value_preserved=True,
+        coordinated_parameters=(),
+        modification_distance=1.0,
+        solver_seconds=0.0,
+        deepest_milestone=ExecutionMilestone.UNKNOWN,
+        outcome=ExperimentOutcome.INFRASTRUCTURE_FAILURE,
+        duration_seconds=1.0,
+        gpu_seconds=2.0,
+        peak_memory_mib=None,
+        timed_out=False,
+        solver_modifications={"x": 2},
+        metadata={
+            "framework_id": "toy",
+            "launcher_sha256": _sha256(launcher),
+            "runner_revision": revision,
+        },
+    ).to_dict()
+    source.write_text(json.dumps(payload) + "\n", encoding="utf-8")
+
+    summary = assemble(
+        framework="toy",
+        plan_path=plan,
+        workload_registry=workloads,
+        launcher=launcher,
+        source_paths=[source],
+        output=tmp_path / "final.jsonl",
+        missing_plan=tmp_path / "missing.json",
+        manifest=tmp_path / "manifest.json",
+        seed=2026,
+    )
+
+    assert summary["complete"] is False
+    assert summary["runtime_reused_cases"] == 0
+    assert summary["unique_missing_runtime_configurations"] == 1

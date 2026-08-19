@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import socket
 from pathlib import Path
 
 import yaml
@@ -8,11 +9,19 @@ import yaml
 from configfuzz.experiment import ExecutionMilestone, ExperimentOutcome
 from configfuzz.experiment_campaign import load_campaign_workloads
 from configfuzz.rq2_gpu_executor import (
+    _available_master_port,
     behavior_signature,
     classify_outcome,
     deepest_milestone,
     materialize_profile,
 )
+
+
+def test_available_master_port_skips_an_occupied_port() -> None:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as occupied:
+        occupied.bind(("127.0.0.1", 0))
+        port = occupied.getsockname()[1]
+        assert _available_master_port(port) != port
 
 
 def test_materialize_profile_binds_exact_and_unique_leaf_assignments(tmp_path: Path) -> None:
