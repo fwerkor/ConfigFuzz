@@ -25,6 +25,10 @@ from configfuzz.rq2_gpu_executor import (
 )
 
 
+# Runtime equivalence is defined by the code actually launched on the
+# accelerator.  The outer campaign executor is intentionally excluded: full
+# materialized configs are compared byte-for-byte before reuse, and executor
+# changes such as master-port allocation do not alter workload behavior.
 HARNESS_PATHS = (
     "experiments/gpu/rq2_family_runner.py",
     "experiments/gpu/rq2_megatron_runner.py",
@@ -33,7 +37,6 @@ HARNESS_PATHS = (
     "experiments/gpu/launch_rq2_deepspeed.sh",
     "experiments/gpu/launch_rq2_accelerate.sh",
     "experiments/gpu/launch_rq2_megatron.sh",
-    "configfuzz/rq2_gpu_executor.py",
 )
 
 
