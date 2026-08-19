@@ -37,6 +37,11 @@ def main() -> int:
         help="per-case Z3 timeout for solver-based methods (default: 1000)",
     )
     parser.add_argument(
+        "--world-size",
+        type=int,
+        help="runtime distributed world size supplied as immutable solver context",
+    )
+    parser.add_argument(
         "--method",
         action="append",
         choices=tuple(item.value for item in ExperimentMethod),
@@ -71,6 +76,14 @@ def main() -> int:
         intents,
         methods=methods,
         solver_timeout_ms=args.solver_timeout_ms,
+        runtime_context=(
+            {
+                "world_size": args.world_size,
+                "args": {"world_size": args.world_size},
+            }
+            if args.world_size is not None
+            else None
+        ),
     )
     write_json(args.output, payload)
     print(

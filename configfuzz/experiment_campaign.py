@@ -183,6 +183,7 @@ def plan_campaign(
         ExperimentMethod.GLOBAL_REPAIR,
     ),
     solver_timeout_ms: int = 1000,
+    runtime_context: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     if solver_timeout_ms <= 0:
         raise ValueError("campaign solver timeout must be positive")
@@ -208,6 +209,7 @@ def plan_campaign(
                 ),
             )
         baseline, graph, static_graph = cache[workload.workload_id]
+        planning_baseline = _merge_runtime_context(baseline, runtime_context)
         for method in methods:
             method_graph = (
                 static_graph
@@ -217,7 +219,7 @@ def plan_campaign(
             cases.append(
                 _plan_case(
                     workload,
-                    baseline,
+                    planning_baseline,
                     method_graph,
                     intent,
                     method,
@@ -238,6 +240,7 @@ def plan_campaign(
         "status_counts": dict(sorted(status_counts.items())),
         "methods": [item.value for item in methods],
         "solver_timeout_ms": solver_timeout_ms,
+        "runtime_context": dict(runtime_context or {}),
         "cases": [case.to_dict() for case in cases],
     }
 
@@ -381,7 +384,12 @@ def _plan_case(
         timeout_ms=solver_timeout_ms,
     )
     solver_seconds = time.perf_counter() - solver_started
-    status = {
+    missing_anchor_fallback = (
+        plan.status is SolveStatus.UNKNOWN
+        and plan.reason == "semantic anchor context is unavailable or unsupported"
+        and method in {ExperimentMethod.CONFIGFUZZ, ExperimentMethod.GLOBAL_REPAIR}
+    )
+    status = CampaignCaseStatus.READY if missing_anchor_fallback else {
         SolveStatus.SAT: CampaignCaseStatus.READY,
         SolveStatus.UNSAT: CampaignCaseStatus.UNSAT,
         SolveStatus.UNKNOWN: CampaignCaseStatus.UNKNOWN,
@@ -404,7 +412,11 @@ def _plan_case(
         assignments=assignments,
         coordinated_parameters=coordinated,
         target_value_preserved=target_preserved,
-        preflight="manual_constraints_and_solver",
+        preflight=(
+            "manual_constraints_and_solver_fallback"
+            if missing_anchor_fallback
+            else "manual_constraints_and_solver"
+        ),
         violated_constraints=tuple(plan.violated_soft_edges),
         unknown_constraints=tuple(plan.unsupported_edges),
         solver_status=plan.status.value,
@@ -417,6 +429,11 @@ def _plan_case(
             "out_of_scope_edges": list(plan.out_of_scope_edges),
             "missing_context": list(plan.missing_context),
             "reason": plan.reason,
+            "fallback": (
+                "target_only_missing_semantic_anchor_context"
+                if missing_anchor_fallback
+                else None
+            ),
             "resolved_target_parameter": graph_target,
             "baseline_value": intent.metadata.get("baseline_value"),
             "intent_class": intent.intent_class,
@@ -438,6 +455,23 @@ def _plan_case(
             ),
         },
     )
+
+
+def _merge_runtime_context(
+    baseline: Mapping[str, Any],
+    runtime_context: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    merged = dict(baseline)
+    if not runtime_context:
+        return merged
+    for key, value in runtime_context.items():
+        if isinstance(value, Mapping) and isinstance(merged.get(key), Mapping):
+            nested = dict(merged[key])
+            nested.update(value)
+            merged[key] = nested
+        else:
+            merged[key] = value
+    return merged
 
 
 def _resolve_graph_parameter(graph: DependencyGraph, parameter: str) -> str:

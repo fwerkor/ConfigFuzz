@@ -170,6 +170,24 @@ def test_normalize_context_resolves_unique_nested_leaf_names() -> None:
     assert context["model.hidden_size"] == 4096
 
 
+def test_normalize_context_maps_zero_virtual_pipeline_sentinel_to_none() -> None:
+    graph = make_graph(
+        constraint(
+            "num_layers_per_virtual_pipeline_stage: integer",
+            ConstraintKind.TYPE,
+            ("num_layers_per_virtual_pipeline_stage",),
+        )
+    )
+
+    context = normalize_context(
+        graph,
+        {"parallel": {"num_layers_per_virtual_pipeline_stage": 0}},
+    )
+
+    assert context["parallel.num_layers_per_virtual_pipeline_stage"] is None
+    assert context["num_layers_per_virtual_pipeline_stage"] is None
+
+
 def test_missing_fixed_guard_context_is_not_solver_invented() -> None:
     graph = make_graph(
         constraint("feature: boolean", ConstraintKind.TYPE, ("feature",)),

@@ -180,6 +180,12 @@ class _CompileError(ValueError):
         self.missing = frozenset(missing or ())
 
 
+_ZERO_IS_DISABLED_PARAMETERS = {
+    "num_layers_per_virtual_pipeline_stage",
+    "virtual_pipeline_model_parallel_size",
+}
+
+
 def solve_graph_mutation(
     graph: DependencyGraph,
     baseline: Mapping[str, Any],
@@ -884,6 +890,12 @@ def normalize_context(
     baseline: Mapping[str, Any],
 ) -> dict[str, Any]:
     flattened = _flatten_mapping(baseline)
+    for path, value in tuple(flattened.items()):
+        if (
+            path.rsplit(".", 1)[-1] in _ZERO_IS_DISABLED_PARAMETERS
+            and value == 0
+        ):
+            flattened[path] = None
     result: dict[str, Any] = dict(flattened)
     suffixes: dict[str, list[str]] = {}
     for path in flattened:

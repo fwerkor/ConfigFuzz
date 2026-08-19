@@ -19,6 +19,7 @@ plan_subject() {
     --workloads "experiments/rq2/promoted/gpu/$framework/workloads.yaml" \
     --intents experiments/rq2/intents.prequalified.frozen.yaml \
     --output "$PLAN_ROOT/$framework.json" \
+    --world-size "$DEVICE_COUNT" \
     "$@"
 }
 

@@ -317,6 +317,150 @@ def test_target_placeholder_anchor_is_resolved_and_filter_ignores_unrelated_edge
     assert "target_parameter" not in cases["configfuzz"]["metadata"]["missing_context"]
 
 
+def test_missing_semantic_anchor_falls_back_to_target_only_execution(tmp_path: Path) -> None:
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(json.dumps({"x": 1}), encoding="utf-8")
+    graph = DependencyGraph(
+        nodes={
+            "x": DependencyNode("x", DependencyNodeKind.PARAMETER),
+            "anchor": DependencyNode("anchor", DependencyNodeKind.PARAMETER),
+        },
+        edges={},
+    )
+    graph_path = tmp_path / "graph.json"
+    graph_path.write_text(json.dumps(graph.to_dict()), encoding="utf-8")
+    workloads = tmp_path / "workloads.yaml"
+    workloads.write_text(
+        yaml.safe_dump(
+            {
+                "workloads": [
+                    {
+                        "workload_id": "w",
+                        "baseline_id": "b",
+                        "baseline_config": "baseline.json",
+                        "dependency_graph": "graph.json",
+                        "semantic_anchors": ["anchor"],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    intent = MutationIntent(
+        intent_id="x-two",
+        workload_id="w",
+        baseline_id="b",
+        target_parameter="x",
+        target_value=2,
+        intent_class="boundary",
+    )
+
+    payload = plan_campaign(
+        load_campaign_workloads(workloads),
+        [intent],
+        methods=[ExperimentMethod.CONFIGFUZZ],
+    )
+    case = payload["cases"][0]
+
+    assert case["status"] == "ready"
+    assert case["assignments"] == {"x": 2}
+    assert case["coordinated_parameters"] == []
+    assert case["preflight"] == "manual_constraints_and_solver_fallback"
+    assert case["solver_status"] == "unknown"
+    assert case["metadata"]["fallback"] == "target_only_missing_semantic_anchor_context"
+
+
+def test_campaign_runtime_context_is_available_to_solver(tmp_path: Path) -> None:
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(
+        json.dumps(
+            {
+                "x": 1,
+                "parallel": {
+                    "pipeline_model_parallel_size": 1,
+                    "tensor_model_parallel_size": 1,
+                    "context_parallel_size": 1,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    graph = DependencyGraph(
+        nodes={
+            "x": DependencyNode("x", DependencyNodeKind.PARAMETER),
+            "parallel.pipeline_model_parallel_size": DependencyNode(
+                "parallel.pipeline_model_parallel_size", DependencyNodeKind.PARAMETER
+            ),
+            "parallel.tensor_model_parallel_size": DependencyNode(
+                "parallel.tensor_model_parallel_size", DependencyNodeKind.PARAMETER
+            ),
+            "parallel.context_parallel_size": DependencyNode(
+                "parallel.context_parallel_size", DependencyNodeKind.PARAMETER
+            ),
+            "world_size": DependencyNode("world_size", DependencyNodeKind.ENVIRONMENT),
+        },
+        edges={
+            "world": DependencyEdge(
+                id="world",
+                expression=(
+                    "world_size % (parallel.tensor_model_parallel_size * "
+                    "parallel.pipeline_model_parallel_size * parallel.context_parallel_size) == 0"
+                ),
+                predicate=(
+                    "world_size % (parallel.tensor_model_parallel_size * "
+                    "parallel.pipeline_model_parallel_size * parallel.context_parallel_size) == 0"
+                ),
+                relation=DependencyRelation.DIVISIBILITY,
+                participants=(
+                    "world_size",
+                    "parallel.tensor_model_parallel_size",
+                    "parallel.pipeline_model_parallel_size",
+                    "parallel.context_parallel_size",
+                ),
+                drivers=("world_size",),
+                dependents=("parallel.pipeline_model_parallel_size",),
+                status=DependencyStatus.ENVIRONMENT_SPECIFIC,
+            )
+        },
+    )
+    graph_path = tmp_path / "graph.json"
+    graph_path.write_text(json.dumps(graph.to_dict()), encoding="utf-8")
+    workloads = tmp_path / "workloads.yaml"
+    workloads.write_text(
+        yaml.safe_dump(
+            {
+                "workloads": [
+                    {
+                        "workload_id": "w",
+                        "baseline_id": "b",
+                        "baseline_config": "baseline.json",
+                        "dependency_graph": "graph.json",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    intent = MutationIntent(
+        intent_id="pp-three",
+        workload_id="w",
+        baseline_id="b",
+        target_parameter="parallel.pipeline_model_parallel_size",
+        target_value=3,
+        intent_class="boundary",
+    )
+
+    payload = plan_campaign(
+        load_campaign_workloads(workloads),
+        [intent],
+        methods=[ExperimentMethod.CONFIGFUZZ],
+        runtime_context={"world_size": 2},
+    )
+
+    assert payload["runtime_context"] == {"world_size": 2}
+    assert payload["cases"][0]["status"] == "unsat"
+
+
 def test_frozen_intent_hash_is_verified(tmp_path: Path) -> None:
     source = tmp_path / "intents.yaml"
     source.write_text(
