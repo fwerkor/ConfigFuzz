@@ -5439,6 +5439,114 @@
         "version": "571370c829ca768fe37244f4e2e7f28d8accc4ab"
       },
       "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/mixtral"
+      ],
+      "confidence": 0.72,
+      "dependents": [
+        "model.hidden_size"
+      ],
+      "drivers": [
+        "model.num_attention_heads"
+      ],
+      "evidence": [
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 198,
+          "source": "src/transformers/models/mixtral/modeling_mixtral.py"
+        }
+      ],
+      "expression": "model.hidden_size % model.num_attention_heads == 0",
+      "id": "model:mixtral-train:1:dep-3b1bac4befa5dcd1",
+      "participants": [
+        "model.hidden_size",
+        "model.num_attention_heads"
+      ],
+      "predicate": "model.hidden_size % model.num_attention_heads == 0",
+      "relation": "divisibility",
+      "scope": {
+        "framework": "mixtral",
+        "source_subdir": "src/transformers/models/mixtral",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/mixtral"
+      ],
+      "confidence": 0.92,
+      "dependents": [
+        "model.num_attention_heads"
+      ],
+      "drivers": [
+        "model.num_query_groups"
+      ],
+      "evidence": [
+        {
+          "detail": "configuration-backed shape floor-division",
+          "kind": "static",
+          "line": 303,
+          "source": "src/transformers/models/mixtral/modeling_mixtral.py"
+        }
+      ],
+      "expression": "model.num_attention_heads % model.num_query_groups == 0",
+      "id": "model:mixtral-train:1:dep-649c9ca98f7c0bbd",
+      "participants": [
+        "model.num_attention_heads",
+        "model.num_query_groups"
+      ],
+      "predicate": "model.num_attention_heads % model.num_query_groups == 0",
+      "relation": "divisibility",
+      "scope": {
+        "framework": "mixtral",
+        "source_subdir": "src/transformers/models/mixtral",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
+    },
+    {
+      "components": [
+        "src/transformers/models/mixtral"
+      ],
+      "confidence": 0.9,
+      "dependents": [
+        "moe.moe_router_topk"
+      ],
+      "drivers": [
+        "moe.num_experts"
+      ],
+      "evidence": [
+        {
+          "detail": "top-k API bound over configuration-backed router dimension",
+          "kind": "static",
+          "line": 113,
+          "source": "src/transformers/models/mixtral/modeling_mixtral.py"
+        },
+        {
+          "detail": "top-k API bound over configuration-backed router dimension",
+          "kind": "static",
+          "line": 187,
+          "source": "src/transformers/models/mixtral/modular_mixtral.py"
+        }
+      ],
+      "expression": "moe.moe_router_topk <= moe.num_experts",
+      "id": "model:mixtral-train:1:dep-a9d1c03056edd7d2",
+      "participants": [
+        "moe.moe_router_topk",
+        "moe.num_experts"
+      ],
+      "predicate": "moe.moe_router_topk <= moe.num_experts",
+      "relation": "bound",
+      "scope": {
+        "framework": "mixtral",
+        "source_subdir": "src/transformers/models/mixtral",
+        "version": "0a2757da521a7a49b8143d9e0c938f08747d682e"
+      },
+      "status": "static_candidate"
     }
   ],
   "metadata": {
@@ -5630,6 +5738,10 @@
     {
       "kind": "derived",
       "name": "model_parallel_size"
+    },
+    {
+      "kind": "parameter",
+      "name": "moe.moe_router_topk"
     },
     {
       "kind": "parameter",
@@ -5851,18 +5963,18 @@
   "schema_version": 1,
   "summary": {
     "connected_components": 2,
-    "edges": 139,
+    "edges": 142,
     "node_kinds": {
       "derived": 49,
       "environment": 2,
       "feature": 30,
-      "parameter": 19
+      "parameter": 20
     },
-    "nodes": 100,
+    "nodes": 101,
     "relations": {
-      "bound": 13,
+      "bound": 14,
       "conflicts": 9,
-      "divisibility": 35,
+      "divisibility": 37,
       "enum": 2,
       "environment": 7,
       "equality": 23,
@@ -5873,7 +5985,7 @@
     },
     "statuses": {
       "environment_specific": 7,
-      "static_candidate": 132
+      "static_candidate": 135
     }
   }
 }

@@ -290,20 +290,20 @@ subjects:
     deepest_milestone: completed
   graphs:
   - workload_id: llama2-train
-    static_edges: 139
-    validated_edges: 139
-    model_stack_edges: 0
-    static_graph_sha256: a9b6bbaaff0e469a8e3112c2d2d7ccd15f8bc5828b74b24b98d7faec62918454
-    validated_graph_sha256: 3dcf7c09712695b7466702113664f46799fed1765dd11173f89f329d90f2e151
+    static_edges: 141
+    validated_edges: 141
+    model_stack_edges: 2
+    static_graph_sha256: cc4b629ce180e2a16900f5ff8b8a28a8e486088a95151b495347fed884d8d7f3
+    validated_graph_sha256: 438283846e278be710b86d683bd38ddc9151da1ec4b012a85e44a071bf6244f3
   - workload_id: mixtral-train
-    static_edges: 139
-    validated_edges: 139
-    model_stack_edges: 0
-    static_graph_sha256: 53409d634b4ad036ae9c72a558b60b19290e3acceca41f9ece76a596db00ce24
-    validated_graph_sha256: ac2d2b6af8426c3bfef2fc9f6af159fc037132821a1c31b1c9c3154dbca5bc02
+    static_edges: 142
+    validated_edges: 142
+    model_stack_edges: 3
+    static_graph_sha256: 8cda9bfac3781dc910191fc984239c25808af14348a22742336a03318d3c4761
+    validated_graph_sha256: 1d3888f501af04cbd7842de92e479f016456444344fafdb3c4ea91a9f080f354
   - workload_id: qwen2-train
-    static_edges: 139
-    validated_edges: 139
-    model_stack_edges: 0
-    static_graph_sha256: ac3d9f89cceaa7efc010fc85cab76db8521e5be152ac685439e89dac344be529
-    validated_graph_sha256: b28517ccf9c568bffe370ed91fcedee6d9cf89cdde6e72eb7a6e1f493e577782
+    static_edges: 141
+    validated_edges: 141
+    model_stack_edges: 2
+    static_graph_sha256: 7c7042766e00a897be8ee4b50b760c7925bdcd9746e75093f6839483597e7b2c
+    validated_graph_sha256: 2dbed772fb6f64eb122811686f2bfee79c1eb98c719758e930f6c68da89bb784

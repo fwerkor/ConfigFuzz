@@ -28,6 +28,8 @@ workloads:
   binding_mode: framework_specific
   framework_binding_registry: framework_workload_matrix.yaml
   runtime_subject_registry: runtime_subjects.prequalified.yaml
+  runtime_context:
+    kv_channels: null
 - workload_id: mixtral-train
   family: mixtral_moe
   status: gpu_accelerator_qualified
@@ -48,6 +50,8 @@ workloads:
   binding_mode: framework_specific
   framework_binding_registry: framework_workload_matrix.yaml
   runtime_subject_registry: runtime_subjects.prequalified.yaml
+  runtime_context:
+    kv_channels: null
 - workload_id: qwen2-train
   family: qwen2_dense_gqa
   status: gpu_accelerator_qualified
@@ -69,3 +73,5 @@ workloads:
   binding_mode: framework_specific
   framework_binding_registry: framework_workload_matrix.yaml
   runtime_subject_registry: runtime_subjects.prequalified.yaml
+  runtime_context:
+    kv_channels: null
