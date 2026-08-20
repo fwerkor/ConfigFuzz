@@ -1,0 +1,836 @@
+schema_version: 1
+name: rq3-gpu-historical-source-admission-queue
+status: frozen_source_admission_queue
+window:
+  start: '2025-08-01'
+  end: '2026-07-31'
+  basis: fix date
+selection_policy:
+  repositories:
+  - pytorch/pytorch
+  - deepspeedai/DeepSpeed
+  - NVIDIA/Megatron-LM
+  - huggingface/transformers
+  enumeration: all closed issues found by framework-specific configuration-control terms in the frozen window
+  requires_explicit_functional_failure_signal_in_issue_title: true
+  requires_explicit_issue_to_fix_link_or_closing_commit_in_window: true
+  pure_performance_install_build_docs_and_question_items_excluded: true
+  pytorch_compile_only_items_require_training_or_distributed_configuration_interaction: true
+  no_framework_balancing_or_count_cap: true
+candidate_count: 67
+repository_counts:
+  NVIDIA/Megatron-LM: 14
+  deepspeedai/DeepSpeed: 22
+  huggingface/transformers: 18
+  pytorch/pytorch: 13
+membership_sha256: 717b2b5be18387ec4ffbea484660958b280e673132b7039bbf2f567dba89be98
+admission_policy:
+  attempt_every_frozen_candidate: true
+  configuration_trigger_must_be_expressible_without_changing_model_code_or_test_input: true
+  buggy_commit_repetitions: 3
+  fixed_revision_must_pass: true
+  failure_must_be_functional_not_pure_performance: true
+  ordinary_oom_resource_and_infrastructure_failures_do_not_admit: true
+  observed_failure_must_match_fix_root_cause: true
+  deduplicate_final_benchmark_by_independent_root_cause: true
+  membership_may_not_change_after_execution_starts: true
+candidates:
+- candidate_id: nvidia-megatron-lm-issue-2284
+  repository: NVIDIA/Megatron-LM
+  issue_number: 2284
+  title: '`--fp4-param-gather` is not working correctly'
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/2284
+  fixes:
+  - kind: merged_pr
+    number: 4358
+    merged_at: '2026-05-22T06:14:11Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/4358
+    title: make FP4 param gather work with the mixed precisions in NVFP4 recipe
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-2294
+  repository: NVIDIA/Megatron-LM
+  issue_number: 2294
+  title: 'IndexError in activation checkpointing: uniform split generates invalid layer indices'
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/2294
+  fixes:
+  - kind: merged_pr
+    number: 3562
+    merged_at: '2026-03-23T18:27:49Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/3562
+    title: Fix IndexError in uniform activation recompute when num_layers not divisible by recompute_num_layers
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-2775
+  repository: NVIDIA/Megatron-LM
+  issue_number: 2775
+  title: '[BUG] Save checkpoint bug when using  --optimizer-cpu-offload and  --use-precision-aware-optimizer'
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/2775
+  fixes:
+  - kind: merged_pr
+    number: 2874
+    merged_at: '2026-02-02T06:38:13Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/2874
+    title: Handle `step` key correctly in checkpoint save with `--optimizer-cpu-offload`
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-3723
+  repository: NVIDIA/Megatron-LM
+  issue_number: 3723
+  title: ProcessGroupCollection.__repr__ crashes with list-typed hierarchical CP groups
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/3723
+  fixes:
+  - kind: merged_pr
+    number: 3753
+    merged_at: '2026-04-13T13:59:19Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/3753
+    title: 'fix: handle list-typed process groups in ProcessGroupCollection.__repr__'
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-3884
+  repository: NVIDIA/Megatron-LM
+  issue_number: 3884
+  title: RerunStateMachine crashes on resume from RERUNNING_IN_PLACE checkpoint (exit code 17)
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/3884
+  fixes:
+  - kind: merged_pr
+    number: 3981
+    merged_at: '2026-04-06T21:03:07Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/3981
+    title: 'Fix `RerunStateMachine` crash (`TypeError: ''NoneType'' object is not subscriptable`) by not saving a checkpoint
+      after a transient NaN / Inf'
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-4053
+  repository: NVIDIA/Megatron-LM
+  issue_number: 4053
+  title: 'ImportError: cannot import name ''verify_checkpoint_and_load_strategy'' from ''megatron.core.dist_checkpointing.validation'''
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/4053
+  fixes:
+  - kind: merged_pr
+    number: 4079
+    merged_at: '2026-03-31T17:51:16Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/4079
+    title: Fix checkpoint inspector
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-4194
+  repository: NVIDIA/Megatron-LM
+  issue_number: 4194
+  title: GDN packed sequence (THD format) + CP + SP causes shape mismatch at residual connection.
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/4194
+  fixes:
+  - kind: merged_pr
+    number: 4230
+    merged_at: '2026-04-13T06:47:55Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/4230
+    title: '[dev] fix(ssm): handle alignment padding in GDN packed seq + CP'
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-4553
+  repository: NVIDIA/Megatron-LM
+  issue_number: 4553
+  title: Megatron-Fsdp checkpoint fails on Qwen3.5 with tensor and expert paralelism
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/4553
+  fixes:
+  - kind: merged_pr
+    number: 4664
+    merged_at: '2026-05-11T22:11:26Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/4664
+    title: 'fix(fsdp): recognize legacy GDN TP metadata'
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-4669
+  repository: NVIDIA/Megatron-LM
+  issue_number: 4669
+  title: Torch FSDP2 crashes in `finalize_model_grads` because `_BaseDataParallel.finish_grad_sync()` does not accept `force_all_reduce`
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/4669
+  fixes:
+  - kind: merged_pr
+    number: 4953
+    merged_at: '2026-07-08T03:29:52Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/4953
+    title: 'Fix Torch FSDP2 crash: add force_all_reduce kwarg to base finish_grad_sync'
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-4958
+  repository: NVIDIA/Megatron-LM
+  issue_number: 4958
+  title: '[BUG] Megatron-FSDP safe_get_rank() fallback raises NameError because os is not imported'
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/4958
+  fixes:
+  - kind: merged_pr
+    number: 4959
+    merged_at: '2026-07-09T18:17:44Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/4959
+    title: 'fix(fsdp): import os in safe_get_rank fallback'
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-5641
+  repository: NVIDIA/Megatron-LM
+  issue_number: 5641
+  title: '[BUG] TE FP8 cache not refreshed under per-module quant_recipe'
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/5641
+  fixes:
+  - kind: merged_pr
+    number: 5642
+    merged_at: '2026-07-10T19:32:36Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/5642
+    title: Set is_first_microbatch when quant_recipe is configured
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-5758
+  repository: NVIDIA/Megatron-LM
+  issue_number: 5758
+  title: '[BUG] Public API dist_checkpointing.remove_sharded_tensors is broken: any call raises AttributeError'
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/5758
+  fixes:
+  - kind: merged_pr
+    number: 5759
+    merged_at: '2026-07-19T08:26:11Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/5759
+    title: Fix broken remove_sharded_tensors public API and re-enable its unit test
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-5789
+  repository: NVIDIA/Megatron-LM
+  issue_number: 5789
+  title: '[BUG] `MegatronFSDP.forward` calls `self.module.forward(...)` directly, bypassing the wrapped module''s registered
+    forward hooks'
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/5789
+  fixes:
+  - kind: merged_pr
+    number: 5808
+    merged_at: '2026-07-15T05:21:04Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/5808
+    title: Fix MegatronFSDP root module hook dispatch
+  admission_status: pending
+- candidate_id: nvidia-megatron-lm-issue-5974
+  repository: NVIDIA/Megatron-LM
+  issue_number: 5974
+  title: '[BUG] Megatron-FSDP fully_shard optimizer under-applies the weight update vs DDP/FSDP2 (same gradient → ~1.3–2×
+    smaller step)'
+  issue_url: https://github.com/NVIDIA/Megatron-LM/issues/5974
+  fixes:
+  - kind: merged_pr
+    number: 5976
+    merged_at: '2026-07-30T20:53:22Z'
+    url: https://github.com/NVIDIA/Megatron-LM/pull/5976
+    title: Fix Megatron FSDP optimizer under-update
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7188
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7188
+  title: '[BUG]when use ''overlap_comm:True'' w/ ''contiguous_gradients:True'', grad_norm is NaN'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7188
+  fixes:
+  - kind: closing_commit
+    commit: f897b67394827e2bc18a354603470d45b7e687ae
+    date: '2025-08-04T18:36:42Z'
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7568
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7568
+  title: '[BUG] raining hangs with scheduler + fp16 + zero_optimization enabled'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7568
+  fixes:
+  - kind: merged_pr
+    number: 7580
+    merged_at: '2025-09-23T15:51:43Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7580
+    title: Broadcast fp16 overflow in Z1
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7571
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7571
+  title: 'AttributeError: ''FP16_Optimizer'' object has no attribute ''_restore_from_bit16_weights'''
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7571
+  fixes:
+  - kind: merged_pr
+    number: 7586
+    merged_at: '2025-09-25T20:31:14Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7586
+    title: disables ZeRO checkpoint loading path when stage=0
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7650
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7650
+  title: '[BUG] IndexError occurs when saving checkpoint under ZeRO Stage 1/2'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7650
+  fixes:
+  - kind: merged_pr
+    number: 7659
+    merged_at: '2025-11-03T19:37:59Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7659
+    title: resolved a 0-dim tensor slicing bug from _get_state_without_padding
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7653
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7653
+  title: '[BUG] ZeRO-1 RuntimeError when using `communication_data_type: bf16`'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7653
+  fixes:
+  - kind: merged_pr
+    number: 7660
+    merged_at: '2025-10-31T04:19:18Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7660
+    title: '[bug]: fixed comm_dtype in extra_large_param_to_reduce'
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7678
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7678
+  title: '[BUG] nebula checkpoint engine AttributeError: ''str'' object has no attribute ''tag'''
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7678
+  fixes:
+  - kind: merged_pr
+    number: 7740
+    merged_at: '2025-12-22T13:07:39Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7740
+    title: Fix Nebula checkpoint engine commit() API mismatch
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7686
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7686
+  title: '[BUG] Zenflow_stage3 - RuntimeError: narrow() cannot be applied to a 0-dim tensor.'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7686
+  fixes:
+  - kind: merged_pr
+    number: 8042
+    merged_at: '2026-06-04T17:20:47Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/8042
+    title: Fix ZenFlow ZeRO-3 selective optimizer crash with parameter offload on nvme
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7729
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7729
+  title: '[BUG] `UlyssesSPAttentionHF.register_with_transformers()` crashes with PEFT models due to overly strict `isinstance(model,
+    PreTrainedModel)` check'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7729
+  fixes:
+  - kind: merged_pr
+    number: 7737
+    merged_at: '2025-12-19T18:57:32Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7737
+    title: '[BUG] Fix UlyssesSPAttentionHF.register_with_transformers() crash with PEFT models'
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7741
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7741
+  title: '[BUG] DecoupledCheckpointEngine hangs indefinitely due to missing timeouts and process health checks'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7741
+  fixes:
+  - kind: merged_pr
+    number: 7742
+    merged_at: '2025-12-22T15:25:31Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7742
+    title: Fix DecoupledCheckpointEngine deadlock and improve reliability
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7752
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7752
+  title: '[BUG] IndexError in BF16_Optimizer.destroy() when optimizer=None (DummyOptim)'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7752
+  fixes:
+  - kind: merged_pr
+    number: 7763
+    merged_at: '2026-01-07T08:32:17Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7763
+    title: 'fix: avoid IndexError in BF16_Optimizer.destroy() when using DummyOptim'
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7804
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7804
+  title: '[BUG] ZeRO-2 with `overlap_comm=True` and `contiguous_gradients=True` does not work properly'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7804
+  fixes:
+  - kind: merged_pr
+    number: 7805
+    merged_at: '2026-01-22T11:12:18Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7805
+    title: Fix ping-pong buffer index reset and removing redundant stream sync
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7807
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7807
+  title: '[BUG] Cross-partition parameters incorrectly updated when using ZeRO-1/ZeRO-2 with reduce_scatter=true and Muon
+    optimizer'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7807
+  fixes:
+  - kind: merged_pr
+    number: 8090
+    merged_at: '2026-06-27T14:37:13Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/8090
+    title: Reject Muon optimizer with reduce_scatter in ZeRO-1/2
+  - kind: merged_pr
+    number: 8091
+    merged_at: '2026-06-29T07:21:47Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/8091
+    title: Add numerical-correctness test for Muon under ZeRO-1/2
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7811
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7811
+  title: '[BUG] ZeRO-3: zero.GatheredParameters([multiple params], modifier_rank=None) + in-place slice touch triggers assert
+    not param.ds_active_sub_modules in free_param()'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7811
+  fixes:
+  - kind: merged_pr
+    number: 7817
+    merged_at: '2026-01-28T00:29:13Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7817
+    title: Raise clear error on in-place GatheredParameters edits without modifier_rank
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7824
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7824
+  title: '[BUG] DeepSpeed ZeRO3 with transformer Qwen3 MOE encountered a race condition'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7824
+  fixes:
+  - kind: merged_pr
+    number: 7825
+    merged_at: '2026-01-30T22:35:34Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7825
+    title: Fix leaf module race condition
+  - kind: closing_commit
+    commit: 52b1d4d6e3d77b76180b03dbbcab6ba7d36e4ec7
+    date: '2026-01-30T22:35:36Z'
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7830
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7830
+  title: '[BUG]AttributeError in ZeRO-3 with gradient_checkpointing: ''NoneType'' object has no attribute ''next_functions''
+    (DeepSpeed 0.18.5)'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7830
+  fixes:
+  - kind: merged_pr
+    number: 7841
+    merged_at: '2026-03-01T20:27:42Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7841
+    title: Fix no-grad grad-fn lookup in ZeRO hook counting on PyTorch 2.3 (#7830)
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7837
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7837
+  title: '[BUG] Gradient norm abnormally increases when training with ZeRO-0'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7837
+  fixes:
+  - kind: closing_commit
+    commit: 1752c2ab64e789341af6a15bb4af8466edad7c22
+    date: '2026-02-12T17:04:52Z'
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-7913
+  repository: deepspeedai/DeepSpeed
+  issue_number: 7913
+  title: '[BUG] LinearFunctionForZeroStage3 crashes with torch.func transforms (missing setup_context)'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/7913
+  fixes:
+  - kind: merged_pr
+    number: 7916
+    merged_at: '2026-05-21T05:15:56Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/7916
+    title: 'fix: add setup_context for torch.func compatibility'
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-8003
+  repository: deepspeedai/DeepSpeed
+  issue_number: 8003
+  title: '[BUG] FastFileWriter leaks one fd per save, causing orphan inodes and filesystem ENOSPC on checkpoint rotation workloads'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/8003
+  fixes:
+  - kind: merged_pr
+    number: 8005
+    merged_at: '2026-05-17T08:11:12Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/8005
+    title: 'fix(io): close aio_fd in FastFileWriter._fini to prevent fd leak'
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-8061
+  repository: deepspeedai/DeepSpeed
+  issue_number: 8061
+  title: '[BUG] ZeRO stage 1/2 overlap_comm only waits current stream, but contiguous gradient bucket copies may come from
+    multiple streams'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/8061
+  fixes:
+  - kind: merged_pr
+    number: 8080
+    merged_at: '2026-07-14T04:58:59Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/8080
+    title: 'ZeRO 1/2: wait on all IPG-bucket producer streams in average_tensor (#8061)'
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-8072
+  repository: deepspeedai/DeepSpeed
+  issue_number: 8072
+  title: '[BUG] ZeRO-3 + PEFT (LoRA) regression in 0.19.2: TypeError: output tensor must have the same type as input tensor
+    in _allgather_params_coalesced'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/8072
+  fixes:
+  - kind: merged_pr
+    number: 8073
+    merged_at: '2026-06-23T04:56:08Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/8073
+    title: 'Fix ZeRO-3: Use per-param dtype for output buffers in _allgather_params_coalesced'
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-8084
+  repository: deepspeedai/DeepSpeed
+  issue_number: 8084
+  title: zero.Init silently does not shard (world_size=1) when the process group is uninitialized before from_pretrained ->
+    per-rank full load -> OOM
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/8084
+  fixes:
+  - kind: merged_pr
+    number: 8089
+    merged_at: '2026-07-31T14:49:41Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/8089
+    title: Warn when zero.Init silently falls back to a single rank (#8084)
+  admission_status: pending
+- candidate_id: deepspeedai-deepspeed-issue-8152
+  repository: deepspeedai/DeepSpeed
+  issue_number: 8152
+  title: '[BUG] Gradient accumulation scaling is applied repeatedly across pipeline stages'
+  issue_url: https://github.com/deepspeedai/DeepSpeed/issues/8152
+  fixes:
+  - kind: merged_pr
+    number: 8154
+    merged_at: '2026-07-20T23:21:42Z'
+    url: https://github.com/deepspeedai/DeepSpeed/pull/8154
+    title: Fix repeated gradient scaling across pipeline stages
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-39408
+  repository: huggingface/transformers
+  issue_number: 39408
+  title: Off-by-one error when using flash_attention with a sliding window
+  issue_url: https://github.com/huggingface/transformers/issues/39408
+  fixes:
+  - kind: merged_pr
+    number: 40163
+    merged_at: '2025-08-20T12:23:14Z'
+    url: https://github.com/huggingface/transformers/pull/40163
+    title: ':rotating_light: [`Flash Attention`] Fix sliding window size'
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-39814
+  repository: huggingface/transformers
+  issue_number: 39814
+  title: Flash Attention fails with non aligned position_ids
+  issue_url: https://github.com/huggingface/transformers/issues/39814
+  fixes:
+  - kind: merged_pr
+    number: 39843
+    merged_at: '2025-08-07T17:26:23Z'
+    url: https://github.com/huggingface/transformers/pull/39843
+    title: FA2 can continue generation from cache
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-40875
+  repository: huggingface/transformers
+  issue_number: 40875
+  title: ColPaliForRetrieval errors out when loaded in half precision dtypes
+  issue_url: https://github.com/huggingface/transformers/issues/40875
+  fixes:
+  - kind: merged_pr
+    number: 40912
+    merged_at: '2025-09-16T16:07:56Z'
+    url: https://github.com/huggingface/transformers/pull/40912
+    title: Fix dtype in Paligemma
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-41152
+  repository: huggingface/transformers
+  issue_number: 41152
+  title: '[Bug] Qwen2.5-VL prepare_inputs_for_generation does not pass second_per_grid_ts to get_rope_index'
+  issue_url: https://github.com/huggingface/transformers/issues/41152
+  fixes:
+  - kind: merged_pr
+    number: 41153
+    merged_at: '2025-09-25T10:33:47Z'
+    url: https://github.com/huggingface/transformers/pull/41153
+    title: 'Fix: align Qwen2.5-VL inference rope index with training by passing second_per_grid_ts'
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-41875
+  repository: huggingface/transformers
+  issue_number: 41875
+  title: 'Flash Attention Error During AutoModelForSeq2SeqLM.generate (model: gemma-2b-2b-ul2-it)'
+  issue_url: https://github.com/huggingface/transformers/issues/41875
+  fixes:
+  - kind: merged_pr
+    number: 41890
+    merged_at: '2025-11-11T18:08:35Z'
+    url: https://github.com/huggingface/transformers/pull/41890
+    title: '[`T5Gemma`] Fix cross attention cache'
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-42533
+  repository: huggingface/transformers
+  issue_number: 42533
+  title: gpt-oss is not working with flash-attention
+  issue_url: https://github.com/huggingface/transformers/issues/42533
+  fixes:
+  - kind: merged_pr
+    number: 44081
+    merged_at: '2026-02-17T13:20:40Z'
+    url: https://github.com/huggingface/transformers/pull/44081
+    title: add default flash impl
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-43125
+  repository: huggingface/transformers
+  issue_number: 43125
+  title: Saving bug using FSDP 2.0 + parallelism_config set (while works fine without providing parallelism_config in TrainingArguments)
+  issue_url: https://github.com/huggingface/transformers/issues/43125
+  fixes:
+  - kind: merged_pr
+    number: 43314
+    merged_at: '2026-01-24T17:30:06Z'
+    url: https://github.com/huggingface/transformers/pull/43314
+    title: '43125: Ensure correct checkpoint saving behavior by simplifying Trainer.save_model parallelism logic'
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-43716
+  repository: huggingface/transformers
+  issue_number: 43716
+  title: 'Mistral-3: dtype mismatch between image preprocessor and model'
+  issue_url: https://github.com/huggingface/transformers/issues/43716
+  fixes:
+  - kind: merged_pr
+    number: 43731
+    merged_at: '2026-02-04T13:54:52Z'
+    url: https://github.com/huggingface/transformers/pull/43731
+    title: Fix dtype in image-text-to-text pipe
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-43828
+  repository: huggingface/transformers
+  issue_number: 43828
+  title: With torch.autocast, Phi-tiny-MoE-instruct raises an dtype mismatch error
+  issue_url: https://github.com/huggingface/transformers/issues/43828
+  fixes:
+  - kind: merged_pr
+    number: 43839
+    merged_at: '2026-02-11T10:42:45Z'
+    url: https://github.com/huggingface/transformers/pull/43839
+    title: 'fix(moe): Handle dtype mismatch in torch._grouped_mm with autocast'
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-45068
+  repository: huggingface/transformers
+  issue_number: 45068
+  title: 'TypeError in rope validation: set -= list when config loaded from JSON'
+  issue_url: https://github.com/huggingface/transformers/issues/45068
+  fixes:
+  - kind: merged_pr
+    number: 45069
+    merged_at: '2026-03-30T11:41:12Z'
+    url: https://github.com/huggingface/transformers/pull/45069
+    title: Fix TypeError in rope validation when ignore_keys is a list
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-45072
+  repository: huggingface/transformers
+  issue_number: 45072
+  title: '[BUG][CI] SwitchTransformers and TimmWrapperModel dtype mismatches in bfloat16 inference'
+  issue_url: https://github.com/huggingface/transformers/issues/45072
+  fixes:
+  - kind: merged_pr
+    number: 45074
+    merged_at: '2026-04-02T13:32:57Z'
+    url: https://github.com/huggingface/transformers/pull/45074
+    title: 'fix(models): Fix dtype mismatch in SwitchTransformers and TimmWrapperModel'
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-45137
+  repository: huggingface/transformers
+  issue_number: 45137
+  title: 'IndexError: pop from an empty deque with DeepSpeed ZeRO3'
+  issue_url: https://github.com/huggingface/transformers/issues/45137
+  fixes:
+  - kind: merged_pr
+    number: 45414
+    merged_at: '2026-04-13T16:38:50Z'
+    url: https://github.com/huggingface/transformers/pull/45414
+    title: Fix IndexError with DeepSpeed ZeRO-3 when kernels rotary is active
+  - kind: closing_commit
+    commit: 52f2268b2a9e3daf3172ec8f0577e42d2ea16e08
+    date: '2026-04-13T16:38:52Z'
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-45242
+  repository: huggingface/transformers
+  issue_number: 45242
+  title: '[Gemma 4] `use_cache=False` corrupts attention computation, producing garbage logits'
+  issue_url: https://github.com/huggingface/transformers/issues/45242
+  fixes:
+  - kind: merged_pr
+    number: 45328
+    merged_at: '2026-04-22T06:58:28Z'
+    url: https://github.com/huggingface/transformers/pull/45328
+    title: Update Gemma4 weight conversion script
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-45588
+  repository: huggingface/transformers
+  issue_number: 45588
+  title: '`integrations/flash_attention.py` crashes with `AttributeError` on `s_aux=None` for sink-less models'
+  issue_url: https://github.com/huggingface/transformers/issues/45588
+  fixes:
+  - kind: merged_pr
+    number: 45589
+    merged_at: '2026-04-23T07:32:55Z'
+    url: https://github.com/huggingface/transformers/pull/45589
+    title: Fix `AttributeError` on `s_aux=None` in `flash_attention_forward`
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-46032
+  repository: huggingface/transformers
+  issue_number: 46032
+  title: 'Mamba2Mixer: use_cache with seq_len > 1 silently produces incorrect results (both CPU and GPU paths)'
+  issue_url: https://github.com/huggingface/transformers/issues/46032
+  fixes:
+  - kind: merged_pr
+    number: 46084
+    merged_at: '2026-06-23T15:51:07Z'
+    url: https://github.com/huggingface/transformers/pull/46084
+    title: 'Fix use_cache with seq_len > 1 ( #46032)'
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-46121
+  repository: huggingface/transformers
+  issue_number: 46121
+  title: '`convert_rope_params_to_dict` raises `TypeError` when `ignore_keys_at_rope_validation` is a JSON-loaded list'
+  issue_url: https://github.com/huggingface/transformers/issues/46121
+  fixes:
+  - kind: merged_pr
+    number: 46142
+    merged_at: '2026-05-25T18:39:48Z'
+    url: https://github.com/huggingface/transformers/pull/46142
+    title: Fix TypeError on list-typed ignore_keys_at_rope_validation in RoPE config
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-46459
+  repository: huggingface/transformers
+  issue_number: 46459
+  title: '`dtype` is silently ignored when loading composite (multimodal) checkpoints through AutoModelForCausalLM (affects
+    all Qwen3.5 repos)'
+  issue_url: https://github.com/huggingface/transformers/issues/46459
+  fixes:
+  - kind: merged_pr
+    number: 46514
+    merged_at: '2026-06-11T11:34:57Z'
+    url: https://github.com/huggingface/transformers/pull/46514
+    title: Honor a concrete dtype in AutoModel for composite checkpoints
+  admission_status: pending
+- candidate_id: huggingface-transformers-issue-47328
+  repository: huggingface/transformers
+  issue_number: 47328
+  title: 'Qwen2.5-Omni Token2Wav DiT uses mismatched RoPE layout (half-split cos/sin with interleaved rotate) — regression
+    from #39847'
+  issue_url: https://github.com/huggingface/transformers/issues/47328
+  fixes:
+  - kind: merged_pr
+    number: 47403
+    merged_at: '2026-07-23T16:41:55Z'
+    url: https://github.com/huggingface/transformers/pull/47403
+    title: Fix Qwen2.5-Omni Token2Wav DiT rotary embedding layout (interleaved cos/sin)
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-126510
+  repository: pytorch/pytorch
+  issue_number: 126510
+  title: 'Potential issue of “errno: 98- Address already in use” error in DDP (with torchrun)'
+  issue_url: https://github.com/pytorch/pytorch/issues/126510
+  fixes:
+  - kind: closing_commit
+    commit: e81980ea58c65a283cf01a7132e0f420834ecf10
+    date: '2026-02-25T18:26:24Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-158719
+  repository: pytorch/pytorch
+  issue_number: 158719
+  title: '[FSDP2] FSDP Fails when parameters are used differently across ranks'
+  issue_url: https://github.com/pytorch/pytorch/issues/158719
+  fixes:
+  - kind: closing_commit
+    commit: 775500a5991db0967e96cb7d1ebf21efe055c9dc
+    date: '2026-04-04T05:27:35Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-158753
+  repository: pytorch/pytorch
+  issue_number: 158753
+  title: DDP + Complex Dtype Appears to be Bugged
+  issue_url: https://github.com/pytorch/pytorch/issues/158753
+  fixes:
+  - kind: closing_commit
+    commit: 74fe26a1ebe32931783569f2e762e3c2c974901f
+    date: '2025-12-03T08:23:23Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-161904
+  repository: pytorch/pytorch
+  issue_number: 161904
+  title: ZeroBubble and DualPipeV pipeline parallel schedules fail with torch.compiled model
+  issue_url: https://github.com/pytorch/pytorch/issues/161904
+  fixes:
+  - kind: closing_commit
+    commit: a3eb275d3c78912e36e2d1703c81f0af1e75a6c4
+    date: '2025-10-10T18:49:48Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-167308
+  repository: pytorch/pytorch
+  issue_number: 167308
+  title: RMSNorm doesn't dispatch to fused kernel in mixed precision if combined with linear layer
+  issue_url: https://github.com/pytorch/pytorch/issues/167308
+  fixes:
+  - kind: closing_commit
+    commit: 9b886c83ed4ea03b0175870c2595063efff4832c
+    date: '2026-02-19T23:17:30Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-168995
+  repository: pytorch/pytorch
+  issue_number: 168995
+  title: 'MXFP8 + torch.compile error: NotImplementedError: make_reindexer NYI on DtypeView'
+  issue_url: https://github.com/pytorch/pytorch/issues/168995
+  fixes:
+  - kind: closing_commit
+    commit: 22781f9916e1a03d199d2859d2532e9277928125
+    date: '2026-07-14T00:50:01Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-169545
+  repository: pytorch/pytorch
+  issue_number: 169545
+  title: torch.compile + CUDAGraph + gradient accumulation fails
+  issue_url: https://github.com/pytorch/pytorch/issues/169545
+  fixes:
+  - kind: closing_commit
+    commit: ea7e147040940a500025872c72412e0ab5493c36
+    date: '2026-05-26T04:28:51Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-171190
+  repository: pytorch/pytorch
+  issue_number: 171190
+  title: torch.compile (Inductor) silently ignores explicit dtype casts in SDPA, diverging from eager semantics
+  issue_url: https://github.com/pytorch/pytorch/issues/171190
+  fixes:
+  - kind: closing_commit
+    commit: d8253fa0385658a2ecd9331d054f03eed307eb33
+    date: '2026-05-13T19:16:10Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-171389
+  repository: pytorch/pytorch
+  issue_number: 171389
+  title: SDPA produces NaN with torch.compile mode=“max-autotune-no-cudagraphs” when batch_size × seq_len == 65536 (64k)
+  issue_url: https://github.com/pytorch/pytorch/issues/171389
+  fixes:
+  - kind: closing_commit
+    commit: 9589e5796da98dfff1519ebb0cd5be9794cf7302
+    date: '2026-04-02T04:26:48Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-175024
+  repository: pytorch/pytorch
+  issue_number: 175024
+  title: '`RuntimeError: inplace operation` when doing two forward passes through DDP-wrapped BatchNorm module (PyTorch ≥
+    2.6)'
+  issue_url: https://github.com/pytorch/pytorch/issues/175024
+  fixes:
+  - kind: closing_commit
+    commit: c0e32574e2b301ed19b7226b0aed500e4c54c0b9
+    date: '2026-02-28T17:57:22Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-177514
+  repository: pytorch/pytorch
+  issue_number: 177514
+  title: DDP `init_sync=True` does not sync buffers when `broadcast_buffers=False`
+  issue_url: https://github.com/pytorch/pytorch/issues/177514
+  fixes:
+  - kind: closing_commit
+    commit: eae166ce8e6578e61581bfdcc1a25fefdf5261cd
+    date: '2026-05-06T06:08:40Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-186998
+  repository: pytorch/pytorch
+  issue_number: 186998
+  title: '[FSDP2] Mixed precision breaks after unfreezing when the first forward ran with requires_grad=False (RuntimeError
+    at backward)'
+  issue_url: https://github.com/pytorch/pytorch/issues/186998
+  fixes:
+  - kind: closing_commit
+    commit: dabc19f88f7683ec5f415d29574cbc1eb4360436
+    date: '2026-06-16T07:24:24Z'
+  admission_status: pending
+- candidate_id: pytorch-pytorch-issue-188989
+  repository: pytorch/pytorch
+  issue_number: 188989
+  title: '[FSDP] summon_full_params(offload_to_cpu=True) fails with CPU-offloaded FSDP model'
+  issue_url: https://github.com/pytorch/pytorch/issues/188989
+  fixes:
+  - kind: closing_commit
+    commit: 849136bcb8b7a3f0d96fe69e2c086b80a1a1854a
+    date: '2026-07-09T22:19:16Z'
+  admission_status: pending

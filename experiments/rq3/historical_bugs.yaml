@@ -1,5 +1,5 @@
 schema_version: 1
-name: mindspeed-configuration-bug-benchmark
+name: configfuzz-configuration-bug-benchmark
 selection_criteria:
   - identifiable buggy commit
   - identifiable fixed commit
@@ -8,8 +8,11 @@ selection_criteria:
   - observable failure oracle
   - not a pure performance issue or ordinary out-of-memory failure
 policy:
-  target_bug_count: 20-40
+  historical_selection_policy: historical_selection_policy.frozen.yaml
+  gpu_source_queue: gpu_historical_source_queue.frozen.yaml
+  npu_source_queue: npu_historical_source_queue.frozen.yaml
   exact_reproducer_is_tool_input: false
   minimum_repetitions: 3
   deduplication_unit: independent_root_cause
+  only_dynamically_admitted_cases_are_copied_here: true
 bugs: []

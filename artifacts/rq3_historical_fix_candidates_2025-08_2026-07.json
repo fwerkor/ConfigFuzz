@@ -1,0 +1,3791 @@
+{
+  "candidate_count": 154,
+  "candidates": [
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage",
+        "pipeline_model_parallel_size",
+        "multi_head_latent_attention",
+        "num_experts",
+        "num_layers"
+      ],
+      "authored_at": "2025-08-18T11:12:20+00:00",
+      "buggy_commit": "ea1200a1d82293181b8a7451761c4976528fb4a7",
+      "candidate_id": "mindspeed-llm-8ff43a117958",
+      "changed_files": [
+        "examples/mcore/qwen2_moe/evaluate_qwen2_57b_a14b_ptd.sh",
+        "examples/mcore/qwen2_moe/generate_qwen2_57b_a14b_ptd.sh",
+        "examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_32k_ptd.sh",
+        "examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_A3_ptd.sh",
+        "examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_ptd.sh",
+        "examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_full.sh",
+        "examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_full_pack.sh",
+        "examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_lora.sh",
+        "mindspeed_llm/core/transformer/transformer_block.py",
+        "mindspeed_llm/features_manager/pipeline_parallel/noop_layers.py",
+        "mindspeed_llm/features_manager/tokenizer/build_tokenizer.py",
+        "mindspeed_llm/features_manager/transformer/flash_attention/fusion_attention_feature.py",
+        "mindspeed_llm/features_manager/transformer/mtp.py",
+        "mindspeed_llm/features_manager/transformer/multi_latent_attention/mla_feature.py",
+        "mindspeed_llm/features_manager/transformer/transformer_block.py",
+        "mindspeed_llm/training/arguments.py",
+        "tests/st/shell_scripts/qwen2_moe_tp1_pp2_ep2_cp2_32k.sh"
+      ],
+      "fix_commit": "8ff43a117958cad4374e8bf2bc89a17ffdc6194a",
+      "merge_request_number": 3125,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3125",
+      "patch_additions": 50,
+      "patch_deletions": 53,
+      "repository": "MindSpeed-LLM",
+      "score": 13.5,
+      "status": "untriaged",
+      "subject": "!3125 [pytorch][bugfix]fix qwen2_moe spec Merge pull request !3125 from guozhihua/fix_transformer_block_build_layer"
+    },
+    {
+      "affected_parameter_candidates": [
+        "expert_model_parallel_size",
+        "tensor_model_parallel_size",
+        "group_query_attention",
+        "num_attention_heads",
+        "hidden_size"
+      ],
+      "authored_at": "2026-07-30T19:39:42+08:00",
+      "buggy_commit": "6b9c3f1e104cc425a95ceb7fd2b83f44d32c3e48",
+      "candidate_id": "mindspeed-llm-118f67aae8c6",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json",
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py",
+        "tests/pipeline/ut/checkpoint/test_checkpoint.json"
+      ],
+      "fix_commit": "118f67aae8c6a314c8e57d6cb36c3af2c2e05875",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 156,
+      "patch_deletions": 115,
+      "repository": "MindSpeed-LLM",
+      "score": 13.0,
+      "status": "untriaged",
+      "subject": "refactor: make post_norm config-driven, fix fc_type ref, clean qkv_split"
+    },
+    {
+      "affected_parameter_candidates": [
+        "pipeline_model_parallel_size",
+        "multi_head_latent_attention",
+        "ffn_hidden_size",
+        "num_layers"
+      ],
+      "authored_at": "2025-08-05T13:07:44+00:00",
+      "buggy_commit": "a3fab77bc085ab6a856898a5fdba9e87aff3e353",
+      "candidate_id": "mindspeed-llm-c06c15094bef",
+      "changed_files": [
+        "mindspeed_llm/features_manager/__init__.py",
+        "mindspeed_llm/features_manager/common/embedding.py",
+        "mindspeed_llm/features_manager/common/rotary.py",
+        "mindspeed_llm/features_manager/megatron_basic/model_basic.py",
+        "mindspeed_llm/features_manager/moe/moe_allgather_overlap.py",
+        "mindspeed_llm/features_manager/moe/moe_alltoallseq_overlap.py",
+        "mindspeed_llm/features_manager/moe/moe_router.py",
+        "mindspeed_llm/features_manager/moe/shared_expert.py",
+        "mindspeed_llm/features_manager/transformer/multi_latent_attention/mla_feature.py"
+      ],
+      "fix_commit": "c06c15094bef1abd6326dcf9067624dc0c9a406a",
+      "merge_request_number": 3085,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3085",
+      "patch_additions": 12,
+      "patch_deletions": 99,
+      "repository": "MindSpeed-LLM",
+      "score": 12.5,
+      "status": "untriaged",
+      "subject": "!3085 [pytorch][refactor]fix moe and fusions features in the refactor Merge pull request !3085 from guozhihua/fix_moe"
+    },
+    {
+      "affected_parameter_candidates": [
+        "position_embedding_type",
+        "context_parallel_size",
+        "num_attention_heads",
+        "hidden_size",
+        "world_size",
+        "seq_length",
+        "num_layers",
+        "seq_len"
+      ],
+      "authored_at": "2025-08-14T15:08:56+00:00",
+      "buggy_commit": "cffbab1a8229fc2b3c5025e03d3a984b41c8dfe3",
+      "candidate_id": "mindspeed-llm-50b1b1c437c5",
+      "changed_files": [
+        "mindspeed_llm/core/context_parallel/dot_product_attention.py",
+        "mindspeed_llm/features_manager/tokenizer/build_tokenizer.py",
+        "mindspeed_llm/training/arguments.py",
+        "tests/pipeline/context_parallel/test_adaptive_context_parallel.py",
+        "tests/pipeline/context_parallel/test_hybrid_context_parallel.py",
+        "tests/pipeline/context_parallel/test_ringattn_context_parallel.py",
+        "tests/pipeline/context_parallel/test_ulysses_context_parallel.py",
+        "tests/pipeline/model_module/test_attention.py"
+      ],
+      "fix_commit": "50b1b1c437c57012dc08656ee423a4ce9e5bf99e",
+      "merge_request_number": 3142,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3142",
+      "patch_additions": 196,
+      "patch_deletions": 317,
+      "repository": "MindSpeed-LLM",
+      "score": 11.5,
+      "status": "untriaged",
+      "subject": "!3142 [pytorch][bugfix] fix pipeline cases in v2 Merge pull request !3142 from yanzhixiao/fix-v2-0814"
+    },
+    {
+      "affected_parameter_candidates": [
+        "moe_router_num_groups",
+        "moe_router_topk",
+        "num_experts",
+        "topk_group",
+        "seq_length"
+      ],
+      "authored_at": "2025-08-18T01:44:25+00:00",
+      "buggy_commit": "c48cd97812bda8db168e491eac64a8a5a9384b2a",
+      "candidate_id": "mindspeed-llm-9366e31edfcd",
+      "changed_files": [
+        "mindspeed_llm/core/transformer/moe/router.py",
+        "mindspeed_llm/features_manager/common/rotary.py",
+        "mindspeed_llm/features_manager/megatron_basic/megatron_basic.py",
+        "mindspeed_llm/features_manager/moe/moe_router.py",
+        "mindspeed_llm/training/arguments.py",
+        "tests/pipeline/phi35-moe/phi35_moe_tp1_pp8_mcore.sh"
+      ],
+      "fix_commit": "9366e31edfcd86dc951eaf660c86136ab642ed1b",
+      "merge_request_number": 3149,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3149",
+      "patch_additions": 66,
+      "patch_deletions": 35,
+      "repository": "MindSpeed-LLM",
+      "score": 11.5,
+      "status": "untriaged",
+      "subject": "!3149 [pytorch][bugfix]some fixes and compatibles Merge pull request !3149 from shengjy/bf0815"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage",
+        "pipeline_model_parallel_size",
+        "recompute_granularity",
+        "recompute_num_layers",
+        "recompute_method",
+        "num_layers"
+      ],
+      "authored_at": "2025-09-04T12:33:01+00:00",
+      "buggy_commit": "708af43cf9d42ec729a5cbb65bf20e0106bb67bd",
+      "candidate_id": "mindspeed-03bb94e94855",
+      "changed_files": [
+        "mindspeed/features_manager/pipeline_parallel/ripipe_schedules_feature.py"
+      ],
+      "fix_commit": "03bb94e948552071b5abe66a0ec6f04f91404ed9",
+      "merge_request_number": 2811,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2811",
+      "patch_additions": 16,
+      "patch_deletions": 7,
+      "repository": "MindSpeed",
+      "score": 11.5,
+      "status": "untriaged",
+      "subject": "!2811 fix: transformer config validate bug Merge pull request !2811 from YE ZHENYUAN/master0904"
+    },
+    {
+      "affected_parameter_candidates": [
+        "distribute_saved_activations",
+        "tensor_model_parallel_size",
+        "max_position_embeddings",
+        "position_embedding_type",
+        "context_parallel_size",
+        "max_sequence_length",
+        "sequence_parallel",
+        "attention_dropout",
+        "ffn_hidden_size",
+        "add_bias_linear",
+        "parallel_output",
+        "hidden_dropout",
+        "hidden_size",
+        "vocab_size",
+        "seq_length",
+        "batch_size"
+      ],
+      "authored_at": "2025-09-09T06:26:44+00:00",
+      "buggy_commit": "ca6c3a39cbb2ee18632a51f9c08bd85970fc5036",
+      "candidate_id": "mindspeed-llm-5c72f5c5415e",
+      "changed_files": [
+        "mindspeed_llm/mindspore/core/transformer/dot_product_attention.py",
+        "mindspeed_llm/mindspore/core/transformer/moba_attention.py",
+        "mindspeed_llm/mindspore/core/transformer/module.py",
+        "mindspeed_llm/mindspore/tasks/checkpoint/__init__.py",
+        "mindspeed_llm/mindspore/tasks/models/transformer/multi_token_predication.py"
+      ],
+      "fix_commit": "5c72f5c5415eb4f8b2da65d1ccd0f125f94a80e0",
+      "merge_request_number": 3282,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3282",
+      "patch_additions": 0,
+      "patch_deletions": 662,
+      "repository": "MindSpeed-LLM",
+      "score": 11.5,
+      "status": "untriaged",
+      "subject": "!3282 [mindspore][master]fix ringattentionupdate Merge pull request !3282 from 杨承翰/ring_master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "moe_router_load_balancing_type",
+        "expert_model_parallel_size",
+        "tensor_model_parallel_size",
+        "sequence_parallel",
+        "world_size"
+      ],
+      "authored_at": "2025-09-23T09:47:54+08:00",
+      "buggy_commit": "e04850bfd6fbc4e586cd970a651392a707c10bb0",
+      "candidate_id": "mindspeed-7b25bff37e26",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/moe_feature/common.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/mlp_layers.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/moe_common.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/moe_layer.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/moe_layer_overlap_all2allseq.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/moe_layer_overlap_allgather.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/token_dispatcher.py",
+        "mindspeed/core/transformer/moe/moe_feature/tp_extend_ep/moe_layer.py",
+        "mindspeed/core/transformer/moe/moe_feature/tp_extend_ep/token_dispatcher.py"
+      ],
+      "fix_commit": "7b25bff37e26ec485b83c4d507cc6fbb890175b9",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 848,
+      "patch_deletions": 75,
+      "repository": "MindSpeed",
+      "score": 11.5,
+      "status": "untriaged",
+      "subject": "[bugfix!!!]alltoallseq update!!!"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage",
+        "tensor_model_parallel_size",
+        "recompute_granularity",
+        "context_parallel_size",
+        "num_attention_heads",
+        "sequence_parallel",
+        "micro_batch_size",
+        "activation_func",
+        "seq_length"
+      ],
+      "authored_at": "2025-09-30T09:59:24+08:00",
+      "buggy_commit": "1ec58c8c13c8c3a0c8554d32892cae0282805194",
+      "candidate_id": "mindspeed-llm-81135be0b93c",
+      "changed_files": [
+        "mindspeed_llm/core/optimizer/distrib_optimizer.py",
+        "mindspeed_llm/core/tensor_parallel/layers.py",
+        "mindspeed_llm/core/transformer/dot_product_attention.py",
+        "mindspeed_llm/core/transformer/moe/layers.py",
+        "mindspeed_llm/core/transformer/multi_token_prediction.py",
+        "mindspeed_llm/features_manager/megatron_basic/megatron_basic.py",
+        "mindspeed_llm/legacy/model/transformer.py",
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py",
+        "mindspeed_llm/tasks/models/transformer/hunyuan_large_attention.py",
+        "mindspeed_llm/tasks/models/transformer/multi_latent_attention.py",
+        "mindspeed_llm/tasks/models/transformer/qwen3_next_gated_deltanet_attention.py",
+        "mindspeed_llm/training/arguments.py",
+        "mindspeed_llm/training/training.py"
+      ],
+      "fix_commit": "81135be0b93c153770272c1ff83ba9bc1cf4f088",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 116,
+      "patch_deletions": 74,
+      "repository": "MindSpeed-LLM",
+      "score": 11.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix about cleancode"
+    },
+    {
+      "affected_parameter_candidates": [
+        "position_embedding_type",
+        "context_parallel_size",
+        "sequence_parallel",
+        "attention_dropout",
+        "micro_batch_size"
+      ],
+      "authored_at": "2025-10-10T14:25:28+08:00",
+      "buggy_commit": "20d4700119a23799156a46225173ff4428a3970d",
+      "candidate_id": "mindspeed-llm-8304f575356c",
+      "changed_files": [
+        "mindspeed_llm/core/context_parallel/dot_product_attention.py",
+        "mindspeed_llm/core/transformer/alibi_attention.py",
+        "mindspeed_llm/core/transformer/custom_dot_product_attention.py",
+        "mindspeed_llm/core/transformer/dot_product_attention.py",
+        "mindspeed_llm/features_manager/transformer/flash_attention/alibi_feature.py"
+      ],
+      "fix_commit": "8304f575356c0be551159b6bb554d25b79c041e6",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 181,
+      "patch_deletions": 6,
+      "repository": "MindSpeed-LLM",
+      "score": 11.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] baichaun2 no-fa-adapt"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage",
+        "pipeline_model_parallel_size",
+        "data_parallel_size",
+        "global_batch_size",
+        "micro_batch_size",
+        "num_layers"
+      ],
+      "authored_at": "2025-10-23T09:08:19+08:00",
+      "buggy_commit": "4d04245e67e85f76270148d774bd61021398709e",
+      "candidate_id": "mindspeed-865587aa86c4",
+      "changed_files": [
+        "docs/features/megatron_moe/megatron-moe-fb-overlap.md",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/modules/token_dispatcher.py",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/bwd.py",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/fwd.py",
+        "mindspeed/features_manager/megatron_basic/megatron_basic.py",
+        "mindspeed/features_manager/moe/fb_overlap.py"
+      ],
+      "fix_commit": "865587aa86c4155c047e3348ec3447d9b6cbb1ac",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 71,
+      "patch_deletions": 32,
+      "repository": "MindSpeed",
+      "score": 11.5,
+      "status": "untriaged",
+      "subject": "【bugfix!!!】fbov&vpp bugfix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size",
+        "sequence_parallel",
+        "activation_func",
+        "vocab_size",
+        "seq_len"
+      ],
+      "authored_at": "2025-12-03T19:25:02+08:00",
+      "buggy_commit": "3b82d6efbdd87ce9491bb6abe66d0de001a25dfb",
+      "candidate_id": "mindspeed-cf92e8112886",
+      "changed_files": [
+        "mindspeed/core/context_parallel/utils.py",
+        "mindspeed/core/fusions/fused_moe_permute.py",
+        "mindspeed/core/transformer/flash_attention/reset_attention_mask/adaptor.py",
+        "mindspeed/core/transformer/flash_attention/reset_attention_mask/utils.py",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/bwd.py",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/fwd.py",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/fwdbwd.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/experts.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/grouped_mlp_with_comp_and_comm_overlap_all2all.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/grouped_mlp_with_comp_and_comm_overlap_all2allseq.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/moe_layer_overlap_all2all.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/moe_layer_overlap_all2allseq.py",
+        "mindspeed/features_manager/context_parallel/context_parallel_feature.py",
+        "mindspeed/features_manager/transformer/flash_attention/reset_attention_mask_feature.py"
+      ],
+      "fix_commit": "cf92e8112886358896f6710436acaa53cb331bb7",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 196,
+      "patch_deletions": 173,
+      "repository": "MindSpeed",
+      "score": 11.5,
+      "status": "untriaged",
+      "subject": "[bugfix!!!]7 bugfix&eod update"
+    },
+    {
+      "affected_parameter_candidates": [
+        "moe_router_load_balancing_type",
+        "tensor_model_parallel_size",
+        "sequence_parallel",
+        "num_layers"
+      ],
+      "authored_at": "2025-08-25T07:53:32+00:00",
+      "buggy_commit": "cf6e25cf7959c02fa44bf4d504aac555dda74377",
+      "candidate_id": "mindspeed-llm-6f8618b622c7",
+      "changed_files": [
+        "mindspeed_llm/core/transformer/moe/moe_layer.py",
+        "mindspeed_llm/features_manager/moe/moe_router.py"
+      ],
+      "fix_commit": "6f8618b622c71bf543c312465f17370f7e06f895",
+      "merge_request_number": 3192,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3192",
+      "patch_additions": 56,
+      "patch_deletions": 49,
+      "repository": "MindSpeed-LLM",
+      "score": 11.0,
+      "status": "untriaged",
+      "subject": "!3192 [pytorch][bugfix]change moe layer forward Merge pull request !3192 from guozhihua/fix-group-limited-greedy-bug"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads",
+        "hidden_size",
+        "vocab_size"
+      ],
+      "authored_at": "2025-12-24T17:10:21+08:00",
+      "buggy_commit": "1e0c57f27ac039746a4fbd3a69e3c970b7f3b42c",
+      "candidate_id": "mindspeed-mm-289bdb4f22cb",
+      "changed_files": [
+        "examples/bagel/fsdp2_config.yaml",
+        "mindspeed_mm/models/transformer/mllms/__init__.py",
+        "mindspeed_mm/models/transformer/mllms/bagel_qwen2_mot.py",
+        "mindspeed_mm/models/transformer/transformer_model.py"
+      ],
+      "fix_commit": "289bdb4f22cb2654093aec397362d2a34dd06f84",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 2,
+      "patch_deletions": 759,
+      "repository": "MindSpeed-MM",
+      "score": 11.0,
+      "status": "untriaged",
+      "subject": "[Bugfix] Bug in Bagel folder changes and validation"
+    },
+    {
+      "affected_parameter_candidates": [
+        "expert_model_parallel_size",
+        "hidden_size",
+        "q_lora_rank",
+        "num_experts",
+        "num_layers"
+      ],
+      "authored_at": "2026-03-24T20:29:41+08:00",
+      "buggy_commit": "9cf05f01e3c9209e033676e44ebd2c3040a4d2aa",
+      "candidate_id": "mindspeed-llm-170213bc0b43",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py",
+        "mindspeed_llm/tasks/checkpoint/loader_mg.py",
+        "mindspeed_llm/tasks/checkpoint/model_builder.py"
+      ],
+      "fix_commit": "170213bc0b43ebe5bde76cead86918b40b4e9aa3",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 270,
+      "patch_deletions": 35,
+      "repository": "MindSpeed-LLM",
+      "score": 11.0,
+      "status": "untriaged",
+      "subject": "fix(pytorch):  fix v1/v2 ckpt convert and v2 convert support lora"
+    },
+    {
+      "affected_parameter_candidates": [
+        "pipeline_model_parallel_size",
+        "tensor_model_parallel_size",
+        "context_parallel_size",
+        "world_size"
+      ],
+      "authored_at": "2025-11-11T18:53:08+08:00",
+      "buggy_commit": "57cb6427b32ac49d0f0ac1c1ba9ce8107b09fa1d",
+      "candidate_id": "mindspeed-mm-7a7cc1d3e213",
+      "changed_files": [
+        "mindspeed_mm/utils/hetero_parallel.py"
+      ],
+      "fix_commit": "7a7cc1d3e213c8f18ccb1eab02549b29e70e571e",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 166,
+      "patch_deletions": 202,
+      "repository": "MindSpeed-MM",
+      "score": 10.5,
+      "status": "untriaged",
+      "subject": "[Bugfix] Fallback to older Hetero-Parallel Data Comm"
+    },
+    {
+      "affected_parameter_candidates": [
+        "max_position_embeddings",
+        "moe_intermediate_size",
+        "num_attention_heads",
+        "intermediate_size",
+        "attention_dropout",
+        "hidden_size",
+        "num_experts",
+        "patch_size",
+        "vocab_size",
+        "hidden_act"
+      ],
+      "authored_at": "2026-02-05T17:31:43+08:00",
+      "buggy_commit": "cb57c5ba85356db81372e8f9fa672fdfa94d4a55",
+      "candidate_id": "mindspeed-mm-ae96c223fbb5",
+      "changed_files": [
+        "mindspeed_mm/models/transformers/qwen3vl/attention_utils.py",
+        "mindspeed_mm/models/transformers/qwen3vl/qwen3vl.py",
+        "tests/ut/models/transformers/qwen3vl/test_attention_utils.py"
+      ],
+      "fix_commit": "ae96c223fbb5e66b51ba7c1ed7f7ef82aff56773",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 230,
+      "patch_deletions": 2,
+      "repository": "MindSpeed-MM",
+      "score": 10.5,
+      "status": "untriaged",
+      "subject": "[Test] add qwen3vl attention ut, and bugfix for qwen3vl attention, qwen3vl freeze modules"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage",
+        "pipeline_model_parallel_size",
+        "sequence_parallel",
+        "num_layers"
+      ],
+      "authored_at": "2026-06-26T10:45:48+08:00",
+      "buggy_commit": "233ea33fedd9ba2b56f3b9742b152c21d108ba50",
+      "candidate_id": "mindspeed-b63f896f39cc",
+      "changed_files": [
+        "mindspeed/core/optimizer/adamw.py",
+        "mindspeed/core/optimizer/distrib_optimizer.py",
+        "mindspeed/core/optimizer/optimizer.py",
+        "mindspeed/core/optimizer/utils.py",
+        "mindspeed/features_manager/megatron_basic/megatron_basic.py",
+        "mindspeed/optimizer/adamw.py",
+        "mindspeed/te/pytorch/module/layernorm_column_parallel_linear.py"
+      ],
+      "fix_commit": "b63f896f39cc8657279d9c903496296e848b6e79",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 304,
+      "patch_deletions": 156,
+      "repository": "MindSpeed",
+      "score": 10.5,
+      "status": "untriaged",
+      "subject": "fix: TE LayerNormLinear init weight order align NVTE"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads",
+        "hidden_size",
+        "batch_size",
+        "swiglu"
+      ],
+      "authored_at": "2026-07-20T10:41:59+08:00",
+      "buggy_commit": "b8d8b936f9793aa211baf88b6f501ccbc4aed02b",
+      "candidate_id": "mindspeed-258f81112be9",
+      "changed_files": [
+        "docs/zh/features/Automatic_Parallelism.md",
+        "docs/zh/features/LayerZeRO.md",
+        "docs/zh/features/activation-function-recompute.md",
+        "docs/zh/features/aiqos.md",
+        "docs/zh/features/alibi.md",
+        "docs/zh/features/async-ddp-param-gather.md",
+        "docs/zh/features/async-ddp.md",
+        "docs/zh/features/async-log-allreduce.md",
+        "docs/zh/features/auto_settings.md",
+        "docs/zh/features/automated-pipeline.md",
+        "docs/zh/features/balanced_moe.md",
+        "docs/zh/features/communication-over-computation.md",
+        "docs/zh/features/compress-tensor.md",
+        "docs/zh/features/context_parallelism_kv_cache.md",
+        "docs/zh/features/conv3d_sequence_paralle.md",
+        "docs/zh/features/custom_fsdp.md",
+        "docs/zh/features/double-ring.md",
+        "docs/zh/features/dualpipev.md",
+        "docs/zh/features/flash-attention.md",
+        "docs/zh/features/fsdp2.md",
+        "docs/zh/features/fused_ema_adamw_optimizer.md",
+        "docs/zh/features/fusion-attn-v2.md",
+        "docs/zh/features/hccl-group-buffer-set.md",
+        "docs/zh/features/hccl-replace-gloo.md",
+        "docs/zh/features/hybrid-context-parallel.md",
+        "docs/zh/features/kvallgather-context-parallel.md",
+        "docs/zh/features/mc2.md",
+        "docs/zh/features/megatron_moe/megatron-moe-allgather-dispatcher.md",
+        "docs/zh/features/megatron_moe/megatron-moe-alltoall-overlap-comm.md",
+        "docs/zh/features/megatron_moe/megatron-moe-fb-overlap.md",
+        "docs/zh/features/megatron_moe/megatron-moe-gmm.md",
+        "docs/zh/features/megatron_moe/megatron-moe-tp-extend-ep.md",
+        "docs/zh/features/megatron_moe/megatron-moe-zero-memory.md",
+        "docs/zh/features/moe-token-permute-and-unpermute.md",
+        "docs/zh/features/moe_expert_load_balance_placeemnt.md",
+        "docs/zh/features/multi-head-latent-attention.md",
+        "docs/zh/features/multi_parameter_pipeline.md",
+        "docs/zh/features/multi_parameter_pipeline_and_variable_seq_lengths.md",
+        "docs/zh/features/mxfp8/Zero_Redundancy_Weight.md",
+        "docs/zh/features/noop-layers.md",
+        "docs/zh/features/norm-recompute.md",
+        "docs/zh/features/npu_datadump.md",
+        "docs/zh/features/npu_deterministic.md",
+        "docs/zh/features/npu_matmul_add.md",
+        "docs/zh/features/ops_flops_cal.md",
+        "docs/zh/features/pipeline-parallel.md",
+        "docs/zh/features/preprocess-eod-data.md",
+        "docs/zh/features/qat_quant.md",
+        "docs/zh/features/recomputation.md",
+        "docs/zh/features/reset-bucket-group-order.md",
+        "docs/zh/features/reuse-fp32-param.md",
+        "docs/zh/features/ring-attention-context-parallel.md",
+        "docs/zh/features/rms_norm.md",
+        "docs/zh/features/rotary-embedding.md",
+        "docs/zh/features/sequence-parallel.md",
+        "docs/zh/features/shared-experts.md",
+        "docs/zh/features/smart_swap.md",
+        "docs/zh/features/swap-optimizer.md",
+        "docs/zh/features/swap_attention.md",
+        "docs/zh/features/swiglu.md",
+        "docs/zh/features/tensor-parallel-2d.md",
+        "docs/zh/features/transformer_engine.md",
+        "docs/zh/features/ulysses-context-parallel.md",
+        "docs/zh/features/unaligned-pipeline.md",
+        "docs/zh/features/unaligned-ulysses-context-parallel.md",
+        "docs/zh/features/unaligned_linear.md",
+        "docs/zh/features/variable_seq_lengths.md",
+        "docs/zh/features/virtual-optimizer.md",
+        "docs/zh/features/virtual-pipeline-parallel.md"
+      ],
+      "fix_commit": "258f81112be9fea3dd61804f4626b35dd8dfbf82",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 283,
+      "patch_deletions": 286,
+      "repository": "MindSpeed",
+      "score": 10.5,
+      "status": "untriaged",
+      "subject": "docs: fix Chinese documentation issues from AIDD review"
+    },
+    {
+      "affected_parameter_candidates": [
+        "untie_embeddings_and_output_weights",
+        "pipeline_model_parallel_size",
+        "make_vocab_size_divisible_by",
+        "multi_head_latent_attention",
+        "tensor_model_parallel_size",
+        "max_position_embeddings",
+        "position_embedding_type",
+        "moe_intermediate_size",
+        "num_attention_heads",
+        "add_bias_linear",
+        "kv_lora_rank",
+        "hidden_size",
+        "q_lora_rank",
+        "num_experts",
+        "seq_length",
+        "num_layers",
+        "swiglu"
+      ],
+      "authored_at": "2025-09-16T02:36:00+00:00",
+      "buggy_commit": "511a2a63143f68e1decd6f2858a4adab7fbb810d",
+      "candidate_id": "mindspeed-llm-71524ac7653b",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/loader_optim.py",
+        "mindspeed_llm/tasks/checkpoint/model_builder.py"
+      ],
+      "fix_commit": "71524ac7653bad7fb2076b21766ecc97b2df1e3c",
+      "merge_request_number": 3327,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3327",
+      "patch_additions": 1,
+      "patch_deletions": 185,
+      "repository": "MindSpeed-LLM",
+      "score": 10.0,
+      "status": "untriaged",
+      "subject": "!3327 [pytorch][bugfix]fix bug of ckpt and delete optim ckpt Merge pull request !3327 from jwhk/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "pipeline_model_parallel_size",
+        "tensor_model_parallel_size",
+        "context_parallel_size",
+        "micro_batch_size",
+        "seq_length"
+      ],
+      "authored_at": "2025-11-18T17:21:04+08:00",
+      "buggy_commit": "7a8dfb6527679c4bada4294f2af1a3247c927793",
+      "candidate_id": "mindspeed-llm-0dfae692d4c5",
+      "changed_files": [
+        "mindspeed_llm/features_manager/transformer/flash_attention/reset_attention_mask_feature.py",
+        "mindspeed_llm/training/utils.py"
+      ],
+      "fix_commit": "0dfae692d4c5dd6123dc760d2ea7406861ab1062",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 17,
+      "patch_deletions": 118,
+      "repository": "MindSpeed-LLM",
+      "score": 10.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] fix data bug when use mtp layer"
+    },
+    {
+      "affected_parameter_candidates": [
+        "bias_dropout_fusion",
+        "moe_router_topk",
+        "hidden_dropout"
+      ],
+      "authored_at": "2026-03-28T15:13:48+08:00",
+      "buggy_commit": "e05ed6f5cf48e0c8cee3131486de68408ac44019",
+      "candidate_id": "mindspeed-1b9c563b2c86",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/moe_feature/balanced_moe/overlap_funcs/fwdbwd.py",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/transformer_layer.py"
+      ],
+      "fix_commit": "1b9c563b2c86d3f4019fdfd4940adb6f00700592",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 554,
+      "patch_deletions": 12,
+      "repository": "MindSpeed",
+      "score": 10.0,
+      "status": "untriaged",
+      "subject": "fix:balanced moe supported for dualpipev"
+    },
+    {
+      "affected_parameter_candidates": [
+        "ffn_hidden_size",
+        "moe_router_topk",
+        "num_experts"
+      ],
+      "authored_at": "2025-08-06T09:05:51+00:00",
+      "buggy_commit": "d83691627ff88d888360fb7daa10291e2a582361",
+      "candidate_id": "mindspeed-00217efa5d29",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/modules/token_dispatcher.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/moe_layer_overlap_all2all.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/token_dispatcher.py",
+        "mindspeed/features_manager/moe/fb_overlap.py",
+        "mindspeed/features_manager/moe/moe_allgather_overlap.py",
+        "mindspeed/features_manager/moe/moe_alltoall_overlap.py",
+        "mindspeed/features_manager/moe/shared_expert.py"
+      ],
+      "fix_commit": "00217efa5d29e8867ab22c7f2d5ad2b6e1c1ce39",
+      "merge_request_number": 2723,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2723",
+      "patch_additions": 117,
+      "patch_deletions": 33,
+      "repository": "MindSpeed",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "!2723 [FEAT] fb overlap 支持drop & bugfix Merge pull request !2723 from yangjie/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "pipeline_model_parallel_size"
+      ],
+      "authored_at": "2025-08-21T09:18:18+00:00",
+      "buggy_commit": "031352653fe749202b6b1d7363632c9da3a85898",
+      "candidate_id": "mindspeed-97f7ef9a0e89",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/moe_feature/overlap/moe_common.py",
+        "mindspeed/core/transformer/moe/moe_utils.py",
+        "mindspeed/model/transformer.py",
+        "tests_extend/unit_tests/features/recomputing/test_activation_recompute.py",
+        "tests_extend/unit_tests/features/recomputing/test_norm_recompute.py"
+      ],
+      "fix_commit": "97f7ef9a0e891d52cbae71ab60c3f9687af2c632",
+      "merge_request_number": 2771,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2771",
+      "patch_additions": 6,
+      "patch_deletions": 5,
+      "repository": "MindSpeed",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "!2771 fix: adjust inappropriate config Merge pull request !2771 from YE ZHENYUAN/master0821"
+    },
+    {
+      "affected_parameter_candidates": [
+        "moe_router_load_balancing_type",
+        "moe_intermediate_size",
+        "ffn_hidden_size",
+        "hidden_size",
+        "num_layers"
+      ],
+      "authored_at": "2025-08-26T09:34:18+00:00",
+      "buggy_commit": "dde309316c8dbab817cf880e918ed06175b4b936",
+      "candidate_id": "mindspeed-llm-9ff7c6d7b5ee",
+      "changed_files": [
+        "mindspeed_llm/mindspore/core/transformer/moe/moe_layer.py"
+      ],
+      "fix_commit": "9ff7c6d7b5ee7820732e4753ba3e361e6266fa40",
+      "merge_request_number": 3189,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3189",
+      "patch_additions": 0,
+      "patch_deletions": 126,
+      "repository": "MindSpeed-LLM",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "!3189 [mindspore][master][bugfix]fix tune sh Merge pull request !3189 from 杨承翰/bugfix_master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "micro_batch_size",
+        "moe_router_topk",
+        "num_experts",
+        "seq_length",
+        "num_layers"
+      ],
+      "authored_at": "2025-08-26T11:53:02+00:00",
+      "buggy_commit": "180ef1412a19ccd413c8b8d06b18a400961ae141",
+      "candidate_id": "mindspeed-llm-d03a7b42a521",
+      "changed_files": [
+        "mindspeed_llm/mindspore/core/transformer/moe/router.py"
+      ],
+      "fix_commit": "d03a7b42a521d704722173570ea45cf309d81a40",
+      "merge_request_number": 3205,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3205",
+      "patch_additions": 7,
+      "patch_deletions": 54,
+      "repository": "MindSpeed-LLM",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "!3205 [mindspore][bugfix][master]fix accuracy Merge pull request !3205 from 杨承翰/router_master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2025-08-27T03:15:52+00:00",
+      "buggy_commit": "7efad41df636190e414f6a2faca9b8eda3201804",
+      "candidate_id": "mindspeed-mm-01bf398a5957",
+      "changed_files": [
+        "checkpoint/common/constant.py",
+        "checkpoint/common/merge_base_lora_weight.py",
+        "checkpoint/common/permissions.py",
+        "checkpoint/sora_model/convert_utils/save_load_utils.py",
+        "checkpoint/vlm_model/converters/deepseekvl2.py",
+        "checkpoint/vlm_model/converters/deepseekvl_hf_to_mm.py",
+        "checkpoint/vlm_model/converters/glm.py",
+        "checkpoint/vlm_model/converters/internvl.py",
+        "checkpoint/vlm_model/converters/qwen2_5omni.py",
+        "checkpoint/vlm_model/converters/qwen2_5vl.py",
+        "checkpoint/vlm_model/converters/qwen2vl.py",
+        "checkpoint/vlm_model/converters/qwen3vl.py",
+        "checkpoint/vlm_model/converters/videoalign.py"
+      ],
+      "fix_commit": "01bf398a5957414cdb7904d49e889b5760e1b9ab",
+      "merge_request_number": 1445,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-MM/pulls/1445",
+      "patch_additions": 65,
+      "patch_deletions": 354,
+      "repository": "MindSpeed-MM",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "!1445 [Bugfix]Modify the file permission control in the weight conversion scenario Merge pull request !1445 from zhangxubin/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "pipeline_model_parallel_size",
+        "tensor_model_parallel_size"
+      ],
+      "authored_at": "2025-12-06T15:21:05+08:00",
+      "buggy_commit": "e62e99fd287c1a0d51141e894113c5875e91956e",
+      "candidate_id": "mindspeed-96bc0a3bf339",
+      "changed_files": [
+        "mindspeed/checkpointing.py",
+        "mindspeed/core/distributed/torch_fully_sharded_data_parallel/checkpointing.py",
+        "mindspeed/features_manager/distributed/torch_fully_sharded_data_parallel.py"
+      ],
+      "fix_commit": "96bc0a3bf3398bf45ac26e0bded95ee174ac449b",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 480,
+      "patch_deletions": 379,
+      "repository": "MindSpeed",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "[Bugfix] Fix Megatron checkpoint saving&loading compatibility for torch_dcp format"
+    },
+    {
+      "affected_parameter_candidates": [
+        "expert_model_parallel_size",
+        "num_experts"
+      ],
+      "authored_at": "2026-01-08T19:36:36+08:00",
+      "buggy_commit": "da699862bb3828eb826eb3ee5fe608cded25ce2c",
+      "candidate_id": "mindspeed-255be5014077",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/moe_utils.py",
+        "mindspeed/features_manager/__init__.py",
+        "mindspeed/features_manager/moe/moe_fix_router.py"
+      ],
+      "fix_commit": "255be5014077de0c80659833798074b9f6df7daa",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 156,
+      "patch_deletions": 3,
+      "repository": "MindSpeed",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "add moe fix router v6"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads",
+        "hidden_size",
+        "seq_len"
+      ],
+      "authored_at": "2026-03-02T21:44:25+08:00",
+      "buggy_commit": "145a6db708d4a1de9ac27e6dff9f4b6963de87ab",
+      "candidate_id": "mindspeed-mm-e2bc6246b523",
+      "changed_files": [
+        "mindspeed_mm/models/transformers/cp_utils.py",
+        "mindspeed_mm/models/transformers/mistral3/modeling_mistral.py",
+        "mindspeed_mm/models/transformers/mistral3/modules.py",
+        "mindspeed_mm/models/transformers/qwen3omni/modeling_qwen3_omni_moe.py",
+        "mindspeed_mm/models/transformers/qwen3omni/modules.py",
+        "mindspeed_mm/models/transformers/qwen3vl/modeling_qwen3_vl.py",
+        "mindspeed_mm/models/transformers/qwen3vl/modules.py",
+        "mindspeed_mm/models/transformers/qwen3vl/utils.py",
+        "tests/ut/models/transformers/qwen3omni/test_attention_modules.py",
+        "tests/ut/models/transformers/qwen3vl/test_attention_utils.py"
+      ],
+      "fix_commit": "e2bc6246b5233c11926bf0a483b3099dc0d3a562",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 350,
+      "patch_deletions": 83,
+      "repository": "MindSpeed-MM",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "feat(torch): Qwen3-Omni support ulysses cp / fix(torch): repeat_kv and activation_offload bug"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage",
+        "pipeline_model_parallel_size",
+        "num_layers"
+      ],
+      "authored_at": "2026-04-02T18:54:20+08:00",
+      "buggy_commit": "c995b7f9c58ca20f170ab8a6249079ae47bc6470",
+      "candidate_id": "mindspeed-llm-b4298e04884b",
+      "changed_files": [
+        "mindspeed_llm/features_manager/convert_checkpoint/convert_checkpoint.py",
+        "mindspeed_llm/features_manager/megatron_basic/training_basic.py",
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py",
+        "mindspeed_llm/training/utils.py"
+      ],
+      "fix_commit": "b4298e04884bd7869bfe56d0358e32ccaf76187a",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 49,
+      "patch_deletions": 5,
+      "repository": "MindSpeed-LLM",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "fix(pytorch):Ensure no PP/VPP stage contains only empty layers during LoRA fine-tuning"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage",
+        "pipeline_model_parallel_size",
+        "recompute_num_layers"
+      ],
+      "authored_at": "2026-06-10T17:21:48+08:00",
+      "buggy_commit": "83b876b9791ea894c93128dce3c858d8da744f54",
+      "candidate_id": "mindspeed-llm-309cbccf36e5",
+      "changed_files": [
+        "mindspeed_llm/core/layerwise_disaggregated_training/parallel_state.py",
+        "mindspeed_llm/core/layerwise_disaggregated_training/recompute_adaptor.py",
+        "mindspeed_llm/core/layerwise_disaggregated_training/recompute_common.py",
+        "mindspeed_llm/core/layerwise_disaggregated_training/schedules.py",
+        "mindspeed_llm/features_manager/layerwise_disaggregated_training/u_shaped_split_feature.py"
+      ],
+      "fix_commit": "309cbccf36e52671fd3c7cea5b58998766657888",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 169,
+      "patch_deletions": 15,
+      "repository": "MindSpeed-LLM",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "fix: LDT training supports qwen25-72b model"
+    },
+    {
+      "affected_parameter_candidates": [
+        "activation_func",
+        "moe_router_topk"
+      ],
+      "authored_at": "2026-07-01T15:25:36+08:00",
+      "buggy_commit": "6c3c4bf2dfa91e0456d8bf6aea3a55d13f499670",
+      "candidate_id": "mindspeed-5f1f4abf20ec",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/experts.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/experts.py",
+        "mindspeed/core/transformer/moe/moe_feature/tp_extend_ep/experts.py"
+      ],
+      "fix_commit": "5f1f4abf20ec0f0987afd00c60741b257f2801da",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 185,
+      "patch_deletions": 111,
+      "repository": "MindSpeed",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "fix: adapt cpu-initialization and moe-tp-extend-ep"
+    },
+    {
+      "affected_parameter_candidates": [
+        "micro_batch_size"
+      ],
+      "authored_at": "2026-07-07T09:15:37+08:00",
+      "buggy_commit": "536e1147fa065349051c862874afbc60d28e9327",
+      "candidate_id": "mindspeed-mm-643738f9f985",
+      "changed_files": [
+        "examples/qwen3_5/qwen3_5_122B_config.yaml",
+        "examples/qwen3_5/qwen3_5_397B_config.yaml",
+        "examples/qwen3_5/qwen3_5_4B_config.yaml",
+        "examples/qwen3_5/qwen3_5_9B_config.yaml",
+        "examples/qwen3_6/qwen3_6_27B_config.yaml",
+        "examples/qwen3_6/qwen3_6_35B_A3B_config.yaml"
+      ],
+      "fix_commit": "643738f9f985ddd719c33473c34e5ffed99f8e42",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 91,
+      "patch_deletions": 39,
+      "repository": "MindSpeed-MM",
+      "score": 9.5,
+      "status": "untriaged",
+      "subject": "bugfix: qwen35 gdn config update"
+    },
+    {
+      "affected_parameter_candidates": [
+        "recompute_granularity",
+        "recompute_num_layers",
+        "recompute_method"
+      ],
+      "authored_at": "2025-08-18T03:33:33+00:00",
+      "buggy_commit": "7ff818c4c77ddb290f61261a6f12d7cfa1bf62e2",
+      "candidate_id": "mindspeed-4042a51365f7",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/bwd.py",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/fwd.py",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/fwdbwd.py",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/transformer_layer.py"
+      ],
+      "fix_commit": "4042a51365f7b1a25cdc3fe35286b154b70c1b32",
+      "merge_request_number": 2752,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2752",
+      "patch_additions": 28,
+      "patch_deletions": 15,
+      "repository": "MindSpeed",
+      "score": 9.0,
+      "status": "untriaged",
+      "subject": "!2752 【bugfix!!!】fb recompute fix&amp;mtp recompute supported Merge pull request !2752 from yangjie/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "pipeline_model_parallel_size",
+        "tensor_model_parallel_size",
+        "recompute_granularity"
+      ],
+      "authored_at": "2025-09-17T09:13:42+08:00",
+      "buggy_commit": "e520c629e38009477934f38b3e27593bfa0b045b",
+      "candidate_id": "mindspeed-3fb357211fb3",
+      "changed_files": [
+        "docs/features/fsdp2.md",
+        "mindspeed/checkpointing.py",
+        "mindspeed/core/distributed/torch_fully_sharded_data_parallel/torch_fully_sharded_data_parallel_adaptor.py",
+        "mindspeed/features_manager/distributed/torch_fully_sharded_data_parallel.py"
+      ],
+      "fix_commit": "3fb357211fb31c421e7f8dabf57b1afb47d037ef",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 466,
+      "patch_deletions": 28,
+      "repository": "MindSpeed",
+      "score": 9.0,
+      "status": "untriaged",
+      "subject": "[Bugfix]Fix distributed weight loading in Megatron and add recomputation support for FSDP2"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads",
+        "num_experts",
+        "num_layers"
+      ],
+      "authored_at": "2026-05-08T15:25:35+08:00",
+      "buggy_commit": "34c475829b13b0a81e72c71ced59dcc849799575",
+      "candidate_id": "mindspeed-llm-bbdc4cf69c1a",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json",
+        "mindspeed_llm/tasks/checkpoint/convert_ckpt_deepseek4.py",
+        "mindspeed_llm/tasks/checkpoint/model_builder.py",
+        "tests/ut/checkpoint/test_checkpoint.json"
+      ],
+      "fix_commit": "bbdc4cf69c1a04755e4016c38218693513badb52",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 24,
+      "patch_deletions": 15,
+      "repository": "MindSpeed-LLM",
+      "score": 9.0,
+      "status": "untriaged",
+      "subject": "fix(pytorch):  fix some bugs of ds4 ckpt"
+    },
+    {
+      "affected_parameter_candidates": [
+        "world_size",
+        "seq_len"
+      ],
+      "authored_at": "2025-08-15T16:45:28+00:00",
+      "buggy_commit": "50b1b1c437c57012dc08656ee423a4ce9e5bf99e",
+      "candidate_id": "mindspeed-llm-eb9a13d762ef",
+      "changed_files": [
+        "mindspeed_llm/features_manager/models/module.py",
+        "mindspeed_llm/features_manager/transformer/transformer_block.py",
+        "mindspeed_llm/training/arguments.py",
+        "tests/pipeline/context_parallel/test_ringattn_context_parallel.py",
+        "tests/pipeline/model_module/test_attention.py"
+      ],
+      "fix_commit": "eb9a13d762effd9214bd5b18199a6a4d16c58adb",
+      "merge_request_number": 3148,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3148",
+      "patch_additions": 20,
+      "patch_deletions": 17,
+      "repository": "MindSpeed-LLM",
+      "score": 8.5,
+      "status": "untriaged",
+      "subject": "!3148 [pytorch][bigfix]fix pipeline cases in v2 Merge pull request !3148 from yanzhixiao/fix-v2-0815"
+    },
+    {
+      "affected_parameter_candidates": [
+        "expert_model_parallel_size",
+        "moe_router_topk",
+        "num_experts",
+        "seq_length"
+      ],
+      "authored_at": "2025-09-22T17:09:40+08:00",
+      "buggy_commit": "6597c0ad4ec86c38f9bb7c2666bed7632f6d3c1b",
+      "candidate_id": "mindspeed-5442325ab73c",
+      "changed_files": [
+        "mindspeed/mindspore/core/transformer/moe/moe_feature/tp_extend_ep/token_dispatcher.py"
+      ],
+      "fix_commit": "5442325ab73c608d758d0f8421a4e6377e148d20",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 39,
+      "patch_deletions": 39,
+      "repository": "MindSpeed",
+      "score": 8.5,
+      "status": "untriaged",
+      "subject": "[Feature] alltoallvc performance optimization under --fix-router"
+    },
+    {
+      "affected_parameter_candidates": [
+        "expert_model_parallel_size",
+        "moe_router_topk",
+        "num_experts"
+      ],
+      "authored_at": "2025-10-11T18:10:24+08:00",
+      "buggy_commit": "7783926d8c9569791a69507f170e1f7ee23087a2",
+      "candidate_id": "mindspeed-2be735b88191",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/moe_feature/common.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/token_dispatcher.py",
+        "mindspeed/features_manager/moe/gmm.py"
+      ],
+      "fix_commit": "2be735b88191f9e4024d48f95702fa1858b13167",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 107,
+      "patch_deletions": 3,
+      "repository": "MindSpeed",
+      "score": 8.5,
+      "status": "untriaged",
+      "subject": "【bugfix】GMM性能提高"
+    },
+    {
+      "affected_parameter_candidates": [
+        "tensor_model_parallel_size",
+        "sequence_parallel"
+      ],
+      "authored_at": "2025-10-21T14:57:41+08:00",
+      "buggy_commit": "0df2a758be1f7f70ddc488968e5c783afd13aa1f",
+      "candidate_id": "mindspeed-6883ea9d0abd",
+      "changed_files": [
+        "mindspeed/auto_settings/config/search_config.py",
+        "mindspeed/features_manager/__init__.py",
+        "mindspeed/features_manager/auto_settings/__init__.py",
+        "mindspeed/features_manager/auto_settings/auto_settings_feature.py",
+        "mindspeed/features_manager/tensor_parallel/mc2.py"
+      ],
+      "fix_commit": "6883ea9d0abd166fd085c734f4b7a71a728c0a14",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 160,
+      "patch_deletions": 4,
+      "repository": "MindSpeed",
+      "score": 8.5,
+      "status": "untriaged",
+      "subject": "[auto settings] fix auto settings feature"
+    },
+    {
+      "affected_parameter_candidates": [
+        "hidden_size",
+        "num_experts"
+      ],
+      "authored_at": "2025-10-22T14:41:11+08:00",
+      "buggy_commit": "d2d50890376bec209c98887b23af1c7401d6b993",
+      "candidate_id": "mindspeed-llm-4c3e129ddc9b",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py"
+      ],
+      "fix_commit": "4c3e129ddc9b4ae0fe19a7658b760130fc83f56b",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 3,
+      "patch_deletions": 3,
+      "repository": "MindSpeed-LLM",
+      "score": 8.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix checkpoint convert v2 bug"
+    },
+    {
+      "affected_parameter_candidates": [
+        "multi_head_latent_attention",
+        "context_parallel_size"
+      ],
+      "authored_at": "2026-01-20T09:12:23+08:00",
+      "buggy_commit": "6cd85e8a7cf861efe30d01896afa62180e82d30d",
+      "candidate_id": "mindspeed-d5ce746788c1",
+      "changed_files": [
+        "mindspeed/core/context_parallel/adaptor.py",
+        "mindspeed/core/context_parallel/dot_product_attention.py",
+        "mindspeed/core/context_parallel/get_batch_utils.py",
+        "mindspeed/core/transformer/flash_attention/reset_attention_mask/adaptor.py",
+        "mindspeed/core/transformer/multi_head_latent_attention/adaptor.py",
+        "mindspeed/features_manager/context_parallel/context_parallel_feature.py",
+        "mindspeed/features_manager/transformer/flash_attention/reset_attention_mask_feature.py"
+      ],
+      "fix_commit": "d5ce746788c106f6f01f2b8f6e174771211b3674",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 66,
+      "patch_deletions": 17,
+      "repository": "MindSpeed",
+      "score": 8.5,
+      "status": "untriaged",
+      "subject": "fix: bugfix for mla in ulysses"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size",
+        "seq_length"
+      ],
+      "authored_at": "2026-02-28T14:30:25+08:00",
+      "buggy_commit": "6746fcf47d27fe7ffce6a72f69a727a54b1cf1a4",
+      "candidate_id": "mindspeed-ebe3245bd65b",
+      "changed_files": [
+        "mindspeed/core/context_parallel/dot_product_attention.py",
+        "mindspeed/core/context_parallel/ulysses_context_parallel/ulysses_context_parallel.py",
+        "mindspeed/core/transformer/flash_attention/reset_attention_mask/adaptor.py",
+        "mindspeed/features_manager/context_parallel/context_parallel_feature.py",
+        "mindspeed/te/pytorch/attention/dot_product_attention/ulysses_context_parallel.py"
+      ],
+      "fix_commit": "ebe3245bd65b4537fae4a9ba489393cdd78a1c0f",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 47,
+      "patch_deletions": 22,
+      "repository": "MindSpeed",
+      "score": 8.5,
+      "status": "untriaged",
+      "subject": "fix(torch/cp): use sbnd format before all2all"
+    },
+    {
+      "affected_parameter_candidates": [
+        "hidden_size",
+        "seq_len"
+      ],
+      "authored_at": "2026-06-15T10:31:49+08:00",
+      "buggy_commit": "acb04e98d1dbe9203c1e9579575aa8360c64fc80",
+      "candidate_id": "mindspeed-mm-0ba9bf7c0e20",
+      "changed_files": [
+        "mindspeed_mm/fsdp/models/qwen3_5_moe/modeling_qwen3_5_moe.py",
+        "mindspeed_mm/fsdp/ops/moe_ops/permute.py",
+        "mindspeed_mm/fsdp/ops/moe_ops/unpermute.py",
+        "tests/ut_fsdp/ops/moe_ops/test_permute.py",
+        "tests/ut_fsdp/ops/moe_ops/test_unpermute.py"
+      ],
+      "fix_commit": "0ba9bf7c0e20cd3f6c3725c0cba4fbd8cc6c9ade",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 32,
+      "patch_deletions": 4,
+      "repository": "MindSpeed-MM",
+      "score": 8.5,
+      "status": "untriaged",
+      "subject": "fix: ep allgather dispatch fix and eager ops fix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "expert_model_parallel_size",
+        "tensor_model_parallel_size"
+      ],
+      "authored_at": "2026-07-09T09:20:36+08:00",
+      "buggy_commit": "15a77775a937e5684449291ca70b501ed59ce493",
+      "candidate_id": "mindspeed-llm-d4eadad772ec",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json",
+        "examples/mcore/phi35/ckpt_convert_phi35_moe_hf2mcore.sh",
+        "examples/mcore/phi35/ckpt_convert_phi35_moe_mcore2hf.sh",
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py",
+        "mindspeed_llm/tasks/checkpoint/model_builder.py"
+      ],
+      "fix_commit": "d4eadad772ec5e3b4b89532124cda7428380d40b",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 234,
+      "patch_deletions": 246,
+      "repository": "MindSpeed-LLM",
+      "score": 8.5,
+      "status": "untriaged",
+      "subject": "fix: migrate llama2 convert scripts to v2"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads",
+        "attention_dropout"
+      ],
+      "authored_at": "2026-07-10T16:31:30+08:00",
+      "buggy_commit": "53c3dc787ba392890c0b1ef500e678169fc1922a",
+      "candidate_id": "mindspeed-25568bbf2423",
+      "changed_files": [
+        "mindspeed/te/pytorch/attention/dot_product_attention/dot_product_attention.py"
+      ],
+      "fix_commit": "25568bbf2423d67e129ff42470ef7ddf47f2e37a",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 53,
+      "patch_deletions": 68,
+      "repository": "MindSpeed",
+      "score": 8.5,
+      "status": "untriaged",
+      "subject": "fix: MindSpeedTEDotProductAttention reads context_parallel_algo from global args instead of stale config"
+    },
+    {
+      "affected_parameter_candidates": [
+        "pipeline_model_parallel_size",
+        "num_experts",
+        "num_layers"
+      ],
+      "authored_at": "2025-08-19T03:42:47+00:00",
+      "buggy_commit": "fc42df9a8068f04addf581448deac858c91d1f71",
+      "candidate_id": "mindspeed-llm-c08693d8b210",
+      "changed_files": [
+        "mindspeed_llm/features_manager/transformer/transformer_block.py",
+        "mindspeed_llm/tasks/models/transformer/mla_dot_product_attention.py"
+      ],
+      "fix_commit": "c08693d8b2100eb3fa29eaf046e24b237b5e4cc8",
+      "merge_request_number": 3160,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3160",
+      "patch_additions": 9,
+      "patch_deletions": 10,
+      "repository": "MindSpeed-LLM",
+      "score": 8.0,
+      "status": "untriaged",
+      "subject": "!3160 [pytorch][bugfix]fix MLA init and args bug Merge pull request !3160 from HanhuiChen/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "ffn_hidden_size"
+      ],
+      "authored_at": "2025-09-02T11:22:21+00:00",
+      "buggy_commit": "7fef2a5234865c1ee50c2a00ac00454dc040f3bd",
+      "candidate_id": "mindspeed-a7c198b62d3e",
+      "changed_files": [
+        "mindspeed/features_manager/moe/shared_expert.py",
+        "mindspeed/features_manager/pipeline_parallel/variable_seq_length.py"
+      ],
+      "fix_commit": "a7c198b62d3e47376f11cf28919f9011119530b6",
+      "merge_request_number": 2801,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2801",
+      "patch_additions": 4,
+      "patch_deletions": 1,
+      "repository": "MindSpeed",
+      "score": 8.0,
+      "status": "untriaged",
+      "subject": "!2801 fix: transformer config validate bug Merge pull request !2801 from YE ZHENYUAN/master0902"
+    },
+    {
+      "affected_parameter_candidates": [
+        "bias_dropout_fusion",
+        "hidden_dropout",
+        "num_layers"
+      ],
+      "authored_at": "2025-09-15T12:18:03+00:00",
+      "buggy_commit": "c9791547c421b2c2d8bf130856c8e9dc41caf27b",
+      "candidate_id": "mindspeed-llm-511a2a63143f",
+      "changed_files": [
+        "examples/mcore/minicpm/ckpt_convert_minicpm_moe_hf2mcore.sh",
+        "mindspeed_llm/core/transformer/transformer_layer.py"
+      ],
+      "fix_commit": "511a2a63143f68e1decd6f2858a4adab7fbb810d",
+      "merge_request_number": 3297,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3297",
+      "patch_additions": 128,
+      "patch_deletions": 0,
+      "repository": "MindSpeed-LLM",
+      "score": 8.0,
+      "status": "untriaged",
+      "subject": "!3297 [pytorch][bugfix] align minicpm loss Merge pull request !3297 from yanzhixiao/adapt-minicpm"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2025-10-22T17:29:48+08:00",
+      "buggy_commit": "cb248046ffad2cad7bda4d72a03060ea20dfd3a3",
+      "candidate_id": "mindspeed-llm-885cb967359a",
+      "changed_files": [
+        "mindspeed_llm/core/transformer/moe/moe_layer.py",
+        "mindspeed_llm/features_manager/finetune/lora.py"
+      ],
+      "fix_commit": "885cb967359a492ead664fadf2bab6bb5100361c",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 53,
+      "patch_deletions": 10,
+      "repository": "MindSpeed-LLM",
+      "score": 8.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix lora bug in moe"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage",
+        "pipeline_model_parallel_size",
+        "num_layers"
+      ],
+      "authored_at": "2025-12-24T14:27:50+08:00",
+      "buggy_commit": "b96f6ed6ed071f459063c8cb7d686bee6944056a",
+      "candidate_id": "mindspeed-llm-a787261e3b7b",
+      "changed_files": [
+        "mindspeed_llm/features_manager/finetune/lora.py",
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py"
+      ],
+      "fix_commit": "a787261e3b7b4270503d82ed915bc1382d3fbd1c",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 8,
+      "patch_deletions": 1,
+      "repository": "MindSpeed-LLM",
+      "score": 8.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]add valid_parameter of vpp and lora"
+    },
+    {
+      "affected_parameter_candidates": [
+        "multi_head_latent_attention",
+        "context_parallel_size"
+      ],
+      "authored_at": "2026-01-26T10:16:41+08:00",
+      "buggy_commit": "f1b3d84d57e139a010d9e543d991d00151980d9e",
+      "candidate_id": "mindspeed-2c3d59d149e7",
+      "changed_files": [
+        "mindspeed/features_manager/__init__.py",
+        "mindspeed/features_manager/context_parallel/context_parallel_feature.py",
+        "mindspeed/features_manager/transformer/experimental_attention_variant/dsa.py",
+        "mindspeed/te/pytorch/attention/dot_product_attention/kvallgather_context_parallel.py"
+      ],
+      "fix_commit": "2c3d59d149e7b4e8c249b4a5a5e117d7b74dd24c",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 68,
+      "patch_deletions": 31,
+      "repository": "MindSpeed",
+      "score": 8.0,
+      "status": "untriaged",
+      "subject": "fix: fix cp feature patch"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts",
+        "world_size"
+      ],
+      "authored_at": "2026-03-17T14:23:51+08:00",
+      "buggy_commit": "9bbefa2d8a14de9bf9a5c73ab4bbc29c14862377",
+      "candidate_id": "mindspeed-c146a24e4650",
+      "changed_files": [
+        "docs/zh/features/aiqos.md",
+        "mindspeed/features_manager/qos/qos_feature.py",
+        "tests_extend/unit_tests/features/qos/test_domain_info.py",
+        "tests_extend/unit_tests/features/qos/test_qos.py"
+      ],
+      "fix_commit": "c146a24e4650ea7f55c4f6477ec7dd95a2dec7df",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 573,
+      "patch_deletions": 18,
+      "repository": "MindSpeed",
+      "score": 8.0,
+      "status": "untriaged",
+      "subject": "feat(ut/qos/torch): 补充ut，修复代码遗漏BUG"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads",
+        "hidden_size",
+        "world_size"
+      ],
+      "authored_at": "2026-05-12T17:36:49+08:00",
+      "buggy_commit": "c3431391834298379ba1dd91762b660e66cc8be9",
+      "candidate_id": "mindspeed-llm-0bf285a0d066",
+      "changed_files": [
+        "mindspeed_llm/tasks/models/transformer/deepseek4/g2_attention.py",
+        "mindspeed_llm/tasks/models/transformer/deepseek4/rmsnorm_without_weight_triton_kernel.py"
+      ],
+      "fix_commit": "0bf285a0d066c1113ee9cfc13ff5f8b293448303",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 238,
+      "patch_deletions": 201,
+      "repository": "MindSpeed-LLM",
+      "score": 8.0,
+      "status": "untriaged",
+      "subject": "fix(pytorch): fix deepseekv4 rope embedding"
+    },
+    {
+      "affected_parameter_candidates": [
+        "deallocate_pipeline_outputs"
+      ],
+      "authored_at": "2025-08-05T07:58:44+00:00",
+      "buggy_commit": "6ab791d2869ff8926d9fc36e0dca97a120a708c6",
+      "candidate_id": "mindspeed-f1d60765de99",
+      "changed_files": [
+        "mindspeed/mindspore/core/pipeline_parallel/schedules.py"
+      ],
+      "fix_commit": "f1d60765de993209103e61b913339555ec2bd11e",
+      "merge_request_number": 2720,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2720",
+      "patch_additions": 18,
+      "patch_deletions": 6,
+      "repository": "MindSpeed",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "!2720 [mindspore][bugfix][master] fix pp schedule shape error Merge pull request !2720 from 孔德硕/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size",
+        "seq_length"
+      ],
+      "authored_at": "2025-08-06T16:21:15+00:00",
+      "buggy_commit": "00217efa5d29e8867ab22c7f2d5ad2b6e1c1ce39",
+      "candidate_id": "mindspeed-b5b973c7f143",
+      "changed_files": [
+        "mindspeed/arguments.py",
+        "mindspeed/core/context_parallel/dot_product_attention.py",
+        "mindspeed/core/context_parallel/get_batch_utils.py"
+      ],
+      "fix_commit": "b5b973c7f14304bd5cbbcfdd33605e886a263f93",
+      "merge_request_number": 2725,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2725",
+      "patch_additions": 23,
+      "patch_deletions": 7,
+      "repository": "MindSpeed",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "!2725 修复EoD特性在Ulysses分支的逻辑问题 Merge pull request !2725 from yuqi/ulysses_eod_fix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers"
+      ],
+      "authored_at": "2025-08-09T03:10:10+00:00",
+      "buggy_commit": "e92252f4f1b7cbd78868922e6fe5659f8b762bf8",
+      "candidate_id": "mindspeed-55859a22c6a1",
+      "changed_files": [
+        "docs/features/megatron_moe/megatron-moe-allgather-overlap-comm.md",
+        "docs/features/megatron_moe/megatron-moe-alltoall-overlap-comm.md",
+        "docs/features/megatron_moe/megatron-moe-zero-memory.md",
+        "docs/features/moe-token-permute-and-unpermute.md",
+        "mindspeed/core/tensor_parallel/cross_entropy.py",
+        "mindspeed/core/transformer/moe/moe_feature/adaptor.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/moe_layer_overlap_all2allseq.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/token_dispatcher.py"
+      ],
+      "fix_commit": "55859a22c6a107f4f79fa1f62c391cd121c90f95",
+      "merge_request_number": 2729,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2729",
+      "patch_additions": 95,
+      "patch_deletions": 27,
+      "repository": "MindSpeed",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "!2729 [bugfix!!!]shared_expert_gate remove&amp; logits adjust &amp; overlap readme append Merge pull request !2729 from yangjie/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "world_size"
+      ],
+      "authored_at": "2025-08-20T08:30:34+00:00",
+      "buggy_commit": "88cffbe06cdfacf0b70cb8ca2f8fe0920336a069",
+      "candidate_id": "mindspeed-726291e42599",
+      "changed_files": [
+        "docs/features/fsdp2.md",
+        "mindspeed/core/distributed/torch_fully_sharded_data_parallel/distributed_data_parallel_config_adaptor.py",
+        "mindspeed/core/distributed/torch_fully_sharded_data_parallel/torch_fully_sharded_data_parallel_adaptor.py",
+        "mindspeed/features_manager/distributed/torch_fully_sharded_data_parallel.py",
+        "tests_extend/system_tests/gpt/fsdp2_config.yaml"
+      ],
+      "fix_commit": "726291e42599bdae8b0af075d2d41dc9267ac20a",
+      "merge_request_number": 2754,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2754",
+      "patch_additions": 210,
+      "patch_deletions": 44,
+      "repository": "MindSpeed",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "!2754 [bugfix] fixes for fsdp2 Merge pull request !2754 from zs-Derrick/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers"
+      ],
+      "authored_at": "2025-08-29T01:37:47+00:00",
+      "buggy_commit": "7579c1d7a99d3da82f520e3a97279959b7b41d69",
+      "candidate_id": "mindspeed-mm-d88d37e5535d",
+      "changed_files": [
+        "tests/st/run_configs/finetune_deepseekvl2/model.json"
+      ],
+      "fix_commit": "d88d37e5535d8aec8288948dd161858e73e2b5c9",
+      "merge_request_number": 1459,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-MM/pulls/1459",
+      "patch_additions": 3,
+      "patch_deletions": 0,
+      "repository": "MindSpeed-MM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "!1459 [Bugfix] Modify default config for deepseekvl2 Merge pull request !1459 from 王泽/deepseekvl2_config"
+    },
+    {
+      "affected_parameter_candidates": [
+        "position_embedding_type",
+        "context_parallel_size",
+        "seq_length"
+      ],
+      "authored_at": "2025-09-15T09:49:15+00:00",
+      "buggy_commit": "d380babf05f1e969d4d5efa2013ce11d0d5837c1",
+      "candidate_id": "mindspeed-llm-ab1d9d2a0a00",
+      "changed_files": [
+        "mindspeed_llm/features_manager/context_parallel/context_parallel_feature.py"
+      ],
+      "fix_commit": "ab1d9d2a0a00683abad4d53004cbd055a8f0eea2",
+      "merge_request_number": 3313,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3313",
+      "patch_additions": 11,
+      "patch_deletions": 0,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "!3313 [pytorch][feature] add parameter validation for scenarios not supported by CP Merge pull request !3313 from yanzhixiao/fix-cp"
+    },
+    {
+      "affected_parameter_candidates": [
+        "swiglu"
+      ],
+      "authored_at": "2025-09-24T06:18:51+00:00",
+      "buggy_commit": "151c0f78c778ee06ce89ae68030b5ac787516965",
+      "candidate_id": "mindspeed-llm-fb1842f97e6d",
+      "changed_files": [
+        "examples/mcore/qwen3_moe/pretrain_qwen3_30b_a3b_4K_A3_fsdp2.sh",
+        "examples/mcore/qwen3_moe/pretrain_qwen3_30b_a3b_4K_ptd_fsdp2_A3.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_256K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_256K_full_pack_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_4K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_4K_full_pack_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_64K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_64K_full_pack_ptd.sh",
+        "mindspeed_llm/features_manager/functional/profiling.py",
+        "mindspeed_llm/training/training.py",
+        "tests/poc/qwen3-moe/pretrain_qwen3_235b_a22b_4k_A3_ptd.sh"
+      ],
+      "fix_commit": "fb1842f97e6d75d1dbf4c59871caa3a6a9b8305f",
+      "merge_request_number": 3369,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3369",
+      "patch_additions": 179,
+      "patch_deletions": 2,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "!3369 [pytorch][optimize]fix profile step setting and qwen3 scripts Merge pull request !3369 from 丁子叉/profile"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2025-09-28T14:51:11+08:00",
+      "buggy_commit": "09c3aeaf315b6a6f1cdd10f71edb742152c28680",
+      "candidate_id": "mindspeed-llm-ecfa623147fc",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json"
+      ],
+      "fix_commit": "ecfa623147fc8be1f071fabd1865a83cdb540503",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 4,
+      "patch_deletions": 4,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] glm45-moe ckpt bugfix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "learnable_pos_embed"
+      ],
+      "authored_at": "2025-09-29T10:12:46+08:00",
+      "buggy_commit": "4ed9d3130e9be5d9b16f624974db19f1f3187b2a",
+      "candidate_id": "mindspeed-mm-aac873e536f8",
+      "changed_files": [
+        "tests/st/run_configs/pretrain_cogvideox_i2v_1_5/model.json"
+      ],
+      "fix_commit": "aac873e536f8d2cda2e11b8bf1ba5d25d0e5a4e7",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 2,
+      "patch_deletions": 1,
+      "repository": "MindSpeed-MM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[Bugfix] adjust cogvideox default config"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage",
+        "pipeline_model_parallel_size",
+        "num_layers"
+      ],
+      "authored_at": "2025-10-30T11:58:14+08:00",
+      "buggy_commit": "201651e8040132c29baa311aa93eb922ec791191",
+      "candidate_id": "mindspeed-2846b4cc45f5",
+      "changed_files": [
+        "mindspeed/features_manager/megatron_basic/megatron_basic.py"
+      ],
+      "fix_commit": "2846b4cc45f5750a4e94c847254212ee790235cf",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 8,
+      "patch_deletions": 0,
+      "repository": "MindSpeed",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "【问题单】 修复重全计算、norm重计算、激活重计算逻辑问题， 添加vpp校验"
+    },
+    {
+      "affected_parameter_candidates": [
+        "world_size"
+      ],
+      "authored_at": "2025-11-03T18:02:24+08:00",
+      "buggy_commit": "b2d18f7264e56478134afcbf09da9f2d5179d296",
+      "candidate_id": "mindspeed-93c45456c704",
+      "changed_files": [
+        "mindspeed/core/distributed/torch_fully_sharded_data_parallel/arguments.py",
+        "mindspeed/core/distributed/torch_fully_sharded_data_parallel/torch_fully_sharded_data_parallel_adaptor.py",
+        "mindspeed/core/distributed/torch_fully_sharded_data_parallel/training.py",
+        "mindspeed/core/distributed/torch_fully_sharded_data_parallel/utils.py",
+        "mindspeed/features_manager/distributed/torch_fully_sharded_data_parallel.py"
+      ],
+      "fix_commit": "93c45456c7044bacddebc5072316c01006c938f9",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 245,
+      "patch_deletions": 3,
+      "repository": "MindSpeed",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[Bugfix]Megatron bugfix when using FSDP2"
+    },
+    {
+      "affected_parameter_candidates": [
+        "untie_embeddings_and_output_weights",
+        "tensor_model_parallel_size"
+      ],
+      "authored_at": "2025-11-14T15:59:50+08:00",
+      "buggy_commit": "38f4247b881c355a4f1a8a2beda65095230dd518",
+      "candidate_id": "mindspeed-llm-6605fd8a012a",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py",
+        "mindspeed_llm/tasks/checkpoint/model_builder.py"
+      ],
+      "fix_commit": "6605fd8a012a6dccea03fa0ccb2f2003bd96e231",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 47,
+      "patch_deletions": 21,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix untie-embed-and-output and no model-dict in ckpt v2"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2025-12-01T10:02:28+08:00",
+      "buggy_commit": "65dda82fc41cf027da360fd3df0b384c201ccdee",
+      "candidate_id": "mindspeed-llm-af422e60c7a8",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/models.py"
+      ],
+      "fix_commit": "af422e60c7a8284c078da43f59609a0094b522d6",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 4,
+      "patch_deletions": 0,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix ckpt of args_check about moe with lora"
+    },
+    {
+      "affected_parameter_candidates": [
+        "vocab_size"
+      ],
+      "authored_at": "2025-12-11T19:13:27+08:00",
+      "buggy_commit": "03fb76d009d9a4b19579c71e1017eb5e92735c59",
+      "candidate_id": "mindspeed-llm-3e3a5ab092aa",
+      "changed_files": [
+        "examples/fsdp2/qwen3/fsdp2_config.yaml",
+        "mindspeed_llm/features_manager/__init__.py",
+        "mindspeed_llm/features_manager/fsdp2/__init__.py",
+        "mindspeed_llm/features_manager/fsdp2/fsdp2.py",
+        "mindspeed_llm/features_manager/megatron_basic/training_basic.py",
+        "mindspeed_llm/fsdp2/models/qwen3/qwen3_moe.py"
+      ],
+      "fix_commit": "3e3a5ab092aa2b1a772e7b5e069f851c5d0d988f",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 34,
+      "patch_deletions": 14,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]modify finetuning calculation of loss in FSDP2"
+    },
+    {
+      "affected_parameter_candidates": [
+        "activation_func"
+      ],
+      "authored_at": "2025-12-12T15:38:52+08:00",
+      "buggy_commit": "3e3a5ab092aa2b1a772e7b5e069f851c5d0d988f",
+      "candidate_id": "mindspeed-llm-3e61861d7ce3",
+      "changed_files": [
+        "mindspeed_llm/tasks/posttrain/lora/moe/experts.py"
+      ],
+      "fix_commit": "3e61861d7ce3676407fc29dfd230184cc18f7863",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 47,
+      "patch_deletions": 36,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]update lora moe in alltoall-overlap and gemm"
+    },
+    {
+      "affected_parameter_candidates": [
+        "group_query_attention",
+        "batch_size",
+        "num_layers"
+      ],
+      "authored_at": "2025-12-13T18:51:30+08:00",
+      "buggy_commit": "2d5a5ecde9ff249a8d38414c38460d420d63f2fb",
+      "candidate_id": "mindspeed-llm-aa6e25b35641",
+      "changed_files": [
+        "mindspeed_llm/training/training.py"
+      ],
+      "fix_commit": "aa6e25b35641a1f559b8bd1b95c0f32b5d74a57f",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 14,
+      "patch_deletions": 9,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix about cleancode"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage",
+        "pipeline_model_parallel_size",
+        "num_layers"
+      ],
+      "authored_at": "2025-12-20T17:57:06+08:00",
+      "buggy_commit": "52d8a80e83ce0cd7f80574a831275b24229bed19",
+      "candidate_id": "mindspeed-llm-44e6d3cf3ff7",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py"
+      ],
+      "fix_commit": "44e6d3cf3ff7dad8bc317b7b1f24a001dee63132",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 4,
+      "patch_deletions": 0,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix dualpipe in ckpt v2 hf-mg"
+    },
+    {
+      "affected_parameter_candidates": [
+        "hidden_size",
+        "num_experts",
+        "batch_size"
+      ],
+      "authored_at": "2026-01-15T09:38:45+08:00",
+      "buggy_commit": "d1e5807b7920a57ca3fa7e7d57192f968556dea5",
+      "candidate_id": "mindspeed-mm-982c7bb282e0",
+      "changed_files": [
+        "mindspeed_mm/models/transformers/qwen3vl/modeling_qwen3_vl_moe.py"
+      ],
+      "fix_commit": "982c7bb282e0d303e4ec449187cfaac68763dd2b",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 1,
+      "patch_deletions": 17,
+      "repository": "MindSpeed-MM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[Bugfix] fix qwen3vl ep_forward"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size"
+      ],
+      "authored_at": "2026-01-30T21:45:55+08:00",
+      "buggy_commit": "ea891625541175ade6539bacb3086a720ac0aa23",
+      "candidate_id": "mindspeed-llm-864790d1bd0e",
+      "changed_files": [
+        "docs/pytorch/features/kvallgather-context-parallel.md",
+        "mindspeed_llm/core/context_parallel/get_batch_utils.py",
+        "mindspeed_llm/features_manager/context_parallel/context_parallel_feature.py",
+        "mindspeed_llm/features_manager/transformer/multi_latent_attention/dsa_indexer_feature.py",
+        "mindspeed_llm/tasks/models/transformer/dsa_indexer.py",
+        "mindspeed_llm/tasks/models/transformer/multi_latent_attention.py"
+      ],
+      "fix_commit": "864790d1bd0e1d06dd0039754201ceb208591ae5",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 245,
+      "patch_deletions": 41,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "add kv_allgather_cp for sfa and fix li loss tp"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads",
+        "sequence_parallel"
+      ],
+      "authored_at": "2026-02-02T11:26:30+08:00",
+      "buggy_commit": "f7bc0994865ca1f3994dfa24a685e97724f8fac7",
+      "candidate_id": "mindspeed-llm-2b3b64eb1501",
+      "changed_files": [
+        "docs/pytorch/features/multi-latent-attention.md",
+        "mindspeed_llm/features_manager/transformer/multi_latent_attention/mla_feature.py",
+        "mindspeed_llm/tasks/models/transformer/mla_dot_product_attention.py"
+      ],
+      "fix_commit": "2b3b64eb150119343c7152c51476aeaa8eeacf0a",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 29,
+      "patch_deletions": 1,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[pytorch][sh] fix mla"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2026-02-28T17:22:17+08:00",
+      "buggy_commit": "2c32b6c23a999b253e5940bf37315e2b2d9555da",
+      "candidate_id": "mindspeed-llm-2dae04acdba5",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json",
+        "mindspeed_llm/core/transformer/moe/router.py",
+        "mindspeed_llm/core/transformer/transformer_config.py",
+        "mindspeed_llm/features_manager/moe/moe_router.py",
+        "mindspeed_llm/tasks/checkpoint/convert_ckpt_longcat.py"
+      ],
+      "fix_commit": "2dae04acdba59bddf5e172dc1b89e4004cf51fff",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 21,
+      "patch_deletions": 12,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "[pytorch][model]longcat model fix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "distribute_saved_activations"
+      ],
+      "authored_at": "2026-03-17T17:15:58+08:00",
+      "buggy_commit": "57b6573a59a65c6105324e81a60b83b3421c3182",
+      "candidate_id": "mindspeed-llm-307ca07c7949",
+      "changed_files": [
+        "mindspeed_llm/core/tensor_parallel/layers.py"
+      ],
+      "fix_commit": "307ca07c794919b319a9a5abc05bba5749966ba2",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 38,
+      "patch_deletions": 1,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "fix(torch): fix checkpoint compatibility issue"
+    },
+    {
+      "affected_parameter_candidates": [
+        "swiglu"
+      ],
+      "authored_at": "2026-04-03T10:44:33+08:00",
+      "buggy_commit": "61bc68d40544d16cb0e8e0d98ac4ea07366aeddb",
+      "candidate_id": "mindspeed-llm-251f267c20b3",
+      "changed_files": [
+        "examples/mcore/glm45-moe/generate_glm45_moe_106b_ptd.sh",
+        "examples/mcore/glm45-moe/pretrain_glm45_moe_106b_4k_A3_ptd.sh",
+        "examples/mcore/glm45-moe/tune_glm45_air_4k_full_ptd.sh",
+        "examples/mcore/phi35/evaluate_phi35_moe_ptd.sh",
+        "examples/mcore/phi35/generate_phi35_moe_ptd.sh",
+        "examples/mcore/phi35/pretrain_phi35_moe_ptd.sh",
+        "examples/mcore/qwen3_moe/dpo_qwen3_30b_a3b_16K_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/evaluate_qwen3_235b_a22b_ptd.sh",
+        "examples/mcore/qwen3_moe/evaluate_qwen3_30b_a3b_ptd.sh",
+        "examples/mcore/qwen3_moe/generate_qwen3_235b_a22b_ptd.sh",
+        "examples/mcore/qwen3_moe/generate_qwen3_30b_a3b_ptd.sh",
+        "examples/mcore/qwen3_moe/pretrain_qwen3_235b_a22b_4k_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/pretrain_qwen3_30b_a3b_4K_ptd.sh",
+        "examples/mcore/qwen3_moe/pretrain_qwen3_480b_4k_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_128K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_256K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_4K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_64K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_30b_a3b_256K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_30b_a3b_32K_full_pack_A+X_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_30b_a3b_32K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_30b_a3b_4K_full_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_30b_a3b_4K_lora_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_480b_4k_A3_ptd.sh",
+        "examples/mindspore/glm45-moe/pretrain_glm45_moe_106b_4k_A3_ms.sh",
+        "examples/mindspore/qwen3_moe/pretrain_qwen3_235b_a22b_4k_A3_ms.sh",
+        "examples/mindspore/qwen3_moe/pretrain_qwen3_30b_a3b_4K_ms.sh",
+        "examples/mindspore/qwen3_moe/tune_qwen3_235b_a22b_256K_full_pack_A3_ms.sh",
+        "examples/mindspore/qwen3_moe/tune_qwen3_235b_a22b_4K_full_pack_A3_ms.sh",
+        "examples/mindspore/qwen3_moe/tune_qwen3_235b_a22b_64K_full_pack_A3_ms.sh",
+        "tests/pipeline/st/deepseek/deepseek2_tp1_pp1_mcore_moe.sh",
+        "tests/pipeline/st/gpt4/gpt4_mcore_tp4_cp2_32k_moe_drop.sh",
+        "tests/pipeline/st/phi35-moe/phi35_moe_tp1_pp8_mcore.sh",
+        "tests/pipeline/st/qwen25/qwen2_moe_tp1_pp2_ep2_cp2_32k.sh",
+        "tests/poc/glm45-moe/pretrain_glm45_moe_106b_4k_A3_ptd.sh",
+        "tests/poc/gpt_moe_2t/pretrain_gpt_moe_2t_128die_A2.sh",
+        "tests/poc/gpt_moe_2t/pretrain_gpt_moe_2t_128k_256die_A2.sh",
+        "tests/poc/gpt_moe_2t/pretrain_gpt_moe_2t_128k_256die_A3.sh",
+        "tests/poc/gpt_moe_2t/pretrain_gpt_moe_2t_128k_GQA_256die_A2.sh",
+        "tests/poc/gpt_moe_2t/pretrain_gpt_moe_2t_128k_GQA_256die_A3.sh",
+        "tests/poc/gpt_moe_2t/pretrain_gpt_moe_2t_8k_256die_A2.sh",
+        "tests/poc/gpt_moe_2t/pretrain_gpt_moe_2t_8k_256die_A3.sh",
+        "tests/poc/gpt_moe_2t/pretrain_gpt_moe_2t_8k_GQA_256die_A2.sh",
+        "tests/poc/gpt_moe_2t/pretrain_gpt_moe_2t_8k_GQA_256die_A3.sh",
+        "tests/poc/llama2_moe_500b/pretrain_llama2_moe_500b_128k_A3_ptd.sh",
+        "tests/poc/llama2_moe_500b/pretrain_llama2_moe_500b_32k_A3_ptd.sh",
+        "tests/poc/llama2_moe_500b/pretrain_llama2_moe_500b_8k_A3_ptd.sh",
+        "tests/poc/qwen2_moe/pretrain_qwen2_57b_a14b_4k_64die_A3.sh",
+        "tests/poc/qwen3-moe/pretrain_qwen3_235b_a22b_4k_A2_ptd.sh",
+        "tests/poc/qwen3-moe/pretrain_qwen3_235b_a22b_4k_A3_ptd.sh",
+        "tests/poc/qwen3-moe/pretrain_qwen3_235b_a22b_8K_A2_ptd.sh",
+        "tests/poc/qwen3-moe/pretrain_qwen3_30b_a3b_32K_A2_ptd.sh",
+        "tests/poc/qwen3-moe/pretrain_qwen3_30b_a3b_4K_A2_ptd.sh",
+        "tests/poc/qwen3-moe/pretrain_qwen3_30b_a3b_4K_A3_ptd.sh",
+        "tests/poc/qwen3-moe/tune_qwen3_30b_a3b_256K_full_pack_A3_ptd.sh",
+        "tests/poc/qwen3-moe/tune_qwen3_30b_a3b_32K_full_pack_A+X_ptd.sh",
+        "tests/poc/qwen3-moe/tune_qwen3_30b_a3b_32K_full_pack_A3_ptd.sh"
+      ],
+      "fix_commit": "251f267c20b315f6e639c8112e3aaeb5fad9cef3",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 97,
+      "patch_deletions": 40,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "fix(pytorch):add ckpt-format argument to scripts"
+    },
+    {
+      "affected_parameter_candidates": [
+        "attention_dropout",
+        "seq_length",
+        "batch_size"
+      ],
+      "authored_at": "2026-06-22T10:29:38+08:00",
+      "buggy_commit": "046427ff24fd220e9c920cf17fe193d40264db7f",
+      "candidate_id": "mindspeed-llm-0988c0393c18",
+      "changed_files": [
+        "mindspeed_llm/core/transformer/custom_dot_product_attention.py"
+      ],
+      "fix_commit": "0988c0393c1888c20d3f2357b0ab5d2bbfd2c379",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 66,
+      "patch_deletions": 46,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "fix(pytorch):  autotest generate error"
+    },
+    {
+      "affected_parameter_candidates": [
+        "batch_size"
+      ],
+      "authored_at": "2026-06-30T21:17:32+08:00",
+      "buggy_commit": "8085a12df0746d119d5f705e44d1562efbbaaa30",
+      "candidate_id": "mindspeed-mm-008e75c60fcd",
+      "changed_files": [
+        "checkpoint/vlm_model/converters/qwen3_5.py",
+        "mindspeed_mm/fsdp/checkpoint/hf_load_utils.py",
+        "mindspeed_mm/fsdp/distributed/expert_parallel/ep_balance/greedy_dup_experts_executor.py",
+        "mindspeed_mm/fsdp/distributed/expert_parallel/ep_balance/greedy_dup_experts_planner.py",
+        "mindspeed_mm/fsdp/distributed/expert_parallel/ep_dispatcher.py",
+        "mindspeed_mm/fsdp/models/internvlu/diffusion/internvlu_transformer.py",
+        "mindspeed_mm/fsdp/models/qwen3_5_moe/modeling_qwen3_5_moe.py",
+        "mindspeed_mm/fsdp/models/qwen3_asr/configuration_qwen3_asr.py",
+        "mindspeed_mm/mcore/process_group_configs.py",
+        "mindspeed_mm/models/predictor/dits/hunyuanvideo15/ssta_attention.py",
+        "mindspeed_mm/patchs/layerwise_disaggregated_training/schedules_patch.py",
+        "tests/ut/models/transformers/hunyuanvideo1_5/test_ssta.py",
+        "tests/ut_fsdp/checkpoint/test_checkpoint_utils_extended.py",
+        "tests/ut_fsdp/checkpoint/test_hf_load_utils.py",
+        "tests/ut_fsdp/distributed/expert_parallel/ep_balance/test_greedy_dup_experts_planner.py"
+      ],
+      "fix_commit": "008e75c60fcdab4413c640be4450b8f836c7eae3",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 70,
+      "patch_deletions": 53,
+      "repository": "MindSpeed-MM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "bugfix：版本级代码检查"
+    },
+    {
+      "affected_parameter_candidates": [
+        "hidden_size"
+      ],
+      "authored_at": "2026-07-01T10:31:34+08:00",
+      "buggy_commit": "f5e4212de52e2a2d979870cffe78735c799ddde4",
+      "candidate_id": "mindspeed-llm-cd2eefc435f4",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py",
+        "tests/pipeline/st/layerwise_disaggregated_training/tune_qwen25_7b_tp1pp4_layerwise_disaggregated.sh",
+        "tests/pipeline/st/layerwise_disaggregated_training/tune_qwen25_7b_vdp_tp2vdp2pp2_layerwise_disaggregated.sh",
+        "tests/pipeline/st/layerwise_disaggregated_training/tune_qwen25_7b_vtp_tp2pp4_layerwise_disaggregated.sh",
+        "tests/pipeline/st/layerwise_disaggregated_training/tune_qwen25_7b_vtp_vdp_vtp2vdp2pp2_layerwise_disaggregated.sh"
+      ],
+      "fix_commit": "cd2eefc435f498af1fed6b1931b40bf86f0f50f5",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 26,
+      "patch_deletions": 12,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "fix: fix mg2hf bug, support qkv_split per_group layout for seed-oss mcore2hf conversion"
+    },
+    {
+      "affected_parameter_candidates": [
+        "swiglu"
+      ],
+      "authored_at": "2026-07-01T17:08:34+08:00",
+      "buggy_commit": "1c69ed1b2a80b20cf64c44eb9b0512cbc75b994f",
+      "candidate_id": "mindspeed-llm-8f21b544adc9",
+      "changed_files": [
+        "docs/zh/pytorch/features/README.md",
+        "docs/zh/pytorch/features/mcore/cc_lora.md",
+        "docs/zh/pytorch/features/mcore/kvallgather-context-parallel.md",
+        "docs/zh/pytorch/features/mcore/layerwise_disaggregated_training.md",
+        "docs/zh/pytorch/features/mcore/mamba_context_parallel.md",
+        "docs/zh/pytorch/features/mcore/multi-latent-attention.md",
+        "docs/zh/pytorch/features/mcore/ring-attention-context-parallel.md",
+        "docs/zh/pytorch/features/mcore/virtual_pipeline_parallel.md",
+        "docs/zh/pytorch/features/mcore/yarn.md",
+        "docs/zh/pytorch/tools/checkpoint_convert_hf_mcore.md",
+        "docs/zh/pytorch/training/evaluation/evaluation_datasets/cmmlu_evaluation.md",
+        "docs/zh/pytorch/training/evaluation/evaluation_datasets/hellaswag_evaluation.md",
+        "docs/zh/pytorch/training/evaluation/evaluation_datasets/mmlu_evaluation.md",
+        "docs/zh/pytorch/training/evaluation/evaluation_guide.md",
+        "docs/zh/pytorch/training/evaluation/models_evaluation.md",
+        "docs/zh/pytorch/training/finetune/fsdp2/finetune_fsdp2.md",
+        "docs/zh/pytorch/training/finetune/mcore/instruction_finetune.md",
+        "docs/zh/pytorch/training/finetune/mcore/layerwise_disaggregated_training.md",
+        "docs/zh/pytorch/training/finetune/mcore/lora_finetune.md",
+        "docs/zh/pytorch/training/finetune/mcore/lu_lora_finetune.md",
+        "docs/zh/pytorch/training/finetune/mcore/multi_sample_pack_finetune.md",
+        "docs/zh/pytorch/training/finetune/mcore/multi_turn_conversation.md",
+        "docs/zh/pytorch/training/inference/chat.md",
+        "docs/zh/pytorch/training/pretrain/mcore/pretrain.md"
+      ],
+      "fix_commit": "8f21b544adc956537aef2f5d566f33867bd8e7a0",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 67,
+      "patch_deletions": 67,
+      "repository": "MindSpeed-LLM",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "docs: fix typos, format errors and naming inconsistencies"
+    },
+    {
+      "affected_parameter_candidates": [
+        "batch_size"
+      ],
+      "authored_at": "2026-07-02T09:20:57+08:00",
+      "buggy_commit": "5f1f4abf20ec0f0987afd00c60741b257f2801da",
+      "candidate_id": "mindspeed-db6131a7945c",
+      "changed_files": [
+        "docs/zh/features/Automatic_Parallelism.md",
+        "docs/zh/features/balanced_moe.md",
+        "docs/zh/features/compress-tensor.md",
+        "docs/zh/features/context_parallelism_kv_cache.md",
+        "docs/zh/features/conv3d_sequence_paralle.md",
+        "docs/zh/features/kvallgather-context-parallel.md",
+        "docs/zh/features/low-precision-optimizer.md",
+        "docs/zh/features/mc2.md",
+        "docs/zh/features/mxfp8/Zero_Redundancy_Weight.md",
+        "docs/zh/features/npu_datadump.md",
+        "docs/zh/features/npu_deterministic.md"
+      ],
+      "fix_commit": "db6131a7945c014598e7a0a89e9946d28ddc1007",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 32,
+      "patch_deletions": 32,
+      "repository": "MindSpeed",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "docs: fix terminology and parameter descriptions across feature docs"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2026-07-23T19:20:21+08:00",
+      "buggy_commit": "b39fbbecf9e7657a70d4899d81bfa99755051330",
+      "candidate_id": "mindspeed-6a260e4c4ff2",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/modules/token_dispatcher.py"
+      ],
+      "fix_commit": "6a260e4c4ff29beaac18a4843c4eaf3f0da1769f",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 127,
+      "patch_deletions": 75,
+      "repository": "MindSpeed",
+      "score": 7.5,
+      "status": "untriaged",
+      "subject": "fix(moe-fb-overlap): token_dispatcher中to(\"cpu\")操作漏赋值"
+    },
+    {
+      "affected_parameter_candidates": [
+        "activation_func"
+      ],
+      "authored_at": "2025-08-16T15:24:01+00:00",
+      "buggy_commit": "03ae87dadf2d9136fb0ce300c85d172c781c8d98",
+      "candidate_id": "mindspeed-llm-c48cd97812bd",
+      "changed_files": [
+        "mindspeed_llm/core/transformer/mlp.py",
+        "mindspeed_llm/features_manager/megatron_basic/megatron_basic.py",
+        "mindspeed_llm/features_manager/transformer/transformer_block.py",
+        "mindspeed_llm/training/arguments.py"
+      ],
+      "fix_commit": "c48cd97812bda8db168e491eac64a8a5a9384b2a",
+      "merge_request_number": 3152,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3152",
+      "patch_additions": 23,
+      "patch_deletions": 5,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "!3152 [pytorch][bigfix] fix pipeline cases in v2 Merge pull request !3152 from yanzhixiao/fix-v2-0816"
+    },
+    {
+      "affected_parameter_candidates": [
+        "distribute_saved_activations"
+      ],
+      "authored_at": "2025-08-18T13:11:31+00:00",
+      "buggy_commit": "ee885024a8b373e6d145e7c3e16a0d9820c06584",
+      "candidate_id": "mindspeed-llm-3b37ba059db7",
+      "changed_files": [
+        "mindspeed_llm/core/transformer/multi_token_prediction.py",
+        "mindspeed_llm/features_manager/transformer/mtp.py",
+        "mindspeed_llm/tasks/models/transformer/mla_up_proj_overlap_tp_comm.py",
+        "mindspeed_llm/training/arguments.py"
+      ],
+      "fix_commit": "3b37ba059db759f4c7e0ebba2f85da7dcbe9e972",
+      "merge_request_number": 3156,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3156",
+      "patch_additions": 26,
+      "patch_deletions": 75,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "!3156 [pytorch][bugfix]Fix MLA up proj overlap and remove deprecated funcs Merge pull request !3156 from shengjy/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size",
+        "micro_batch_size"
+      ],
+      "authored_at": "2025-09-02T02:56:07+00:00",
+      "buggy_commit": "47e8b8afb9dee55201cecf7d0449b5ab1241902c",
+      "candidate_id": "mindspeed-mm-3d4c17880ccd",
+      "changed_files": [
+        "mindspeed_mm/models/vision/vision_encoders/vision_transformer_block.py",
+        "mindspeed_mm/utils/transformer_model_config.py"
+      ],
+      "fix_commit": "3d4c17880ccd9dbbad07d1ee1a35f4b1b2afbd35",
+      "merge_request_number": 1468,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-MM/pulls/1468",
+      "patch_additions": 9,
+      "patch_deletions": 2,
+      "repository": "MindSpeed-MM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "!1468 [Bugfix] bugfix for 128k and CP Merge pull request !1468 from 王泽/bugfix_128k"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size"
+      ],
+      "authored_at": "2025-09-12T01:57:35+00:00",
+      "buggy_commit": "dcba784c4b7a61f8a2a41b306fcb9caddb77ce30",
+      "candidate_id": "mindspeed-983fedc79aa6",
+      "changed_files": [
+        "mindspeed/features_manager/context_parallel/context_parallel_feature.py",
+        "mindspeed/features_manager/tensor_parallel/tp_2d.py",
+        "mindspeed/features_manager/transformer/flash_attention/fusion_attention_v1_feature.py",
+        "mindspeed/features_manager/transformer/flash_attention/generate_mask_feature.py"
+      ],
+      "fix_commit": "983fedc79aa62ad6d3eb59add6ab0529c8d553c3",
+      "merge_request_number": 2721,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2721",
+      "patch_additions": 15,
+      "patch_deletions": 4,
+      "repository": "MindSpeed",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "!2721 fix: 修复tp2d不开cp时走ring attn Merge pull request !2721 from glhyy/tp2dcp"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers"
+      ],
+      "authored_at": "2025-09-24T01:19:08+00:00",
+      "buggy_commit": "5a3e63624652dad7cea29a20930e8bb41c4b1883",
+      "candidate_id": "mindspeed-llm-3f62c714b70c",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json",
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py",
+        "mindspeed_llm/tasks/checkpoint/model_builder.py"
+      ],
+      "fix_commit": "3f62c714b70ccc43e75ae57d693749d3a54d7f83",
+      "merge_request_number": 3367,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3367",
+      "patch_additions": 15,
+      "patch_deletions": 17,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "!3367 [pytorch][bugfix]fix bug of ckpt Merge pull request !3367 from jwhk/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "micro_batch_size"
+      ],
+      "authored_at": "2025-09-25T03:52:12+00:00",
+      "buggy_commit": "bdea1d5de3bfba0084b01407efe63a917fe055eb",
+      "candidate_id": "mindspeed-llm-3196f2b50752",
+      "changed_files": [
+        "examples/mcore/qwen3_moe/generate_qwen3_235b_a22b_ptd.sh",
+        "mindspeed_llm/core/transformer/dot_product_attention.py",
+        "mindspeed_llm/core/transformer/moe/router.py",
+        "mindspeed_llm/training/utils.py"
+      ],
+      "fix_commit": "3196f2b507522d3c6334c0da9bc95760dd0a6190",
+      "merge_request_number": 3376,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3376",
+      "patch_additions": 10,
+      "patch_deletions": 9,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "!3376 [pytorch][model] fix recompute_valid_actual_seq_len Merge pull request !3376 from jzh/master_recomactualseqlen"
+    },
+    {
+      "affected_parameter_candidates": [
+        "pipeline_model_parallel_size"
+      ],
+      "authored_at": "2025-11-28T10:25:55+08:00",
+      "buggy_commit": "5ae34b032ae672556bf94174014e68664d3fa26a",
+      "candidate_id": "mindspeed-llm-edfa994e1f53",
+      "changed_files": [
+        "mindspeed_llm/features_manager/pipeline_parallel/num_layer_list.py",
+        "mindspeed_llm/tasks/checkpoint/loader_mg.py",
+        "mindspeed_llm/tasks/checkpoint/models.py",
+        "tests/coverage/checkpoint/test_checkpoint.json"
+      ],
+      "fix_commit": "edfa994e1f53fcf1c5e3354df60f4a984ed96d6b",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 9,
+      "patch_deletions": 4,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix num-layer-list of ckpt mg2hf"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads",
+        "hidden_size"
+      ],
+      "authored_at": "2025-12-06T18:32:40+08:00",
+      "buggy_commit": "761802f4662b567a79a94ca62508744a25298136",
+      "candidate_id": "mindspeed-llm-c1c2932908f1",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py"
+      ],
+      "fix_commit": "c1c2932908f187cf4d900dcbbb44d1af38dbe9d4",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 54,
+      "patch_deletions": 6,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "[pytorch][feature]fix glm45air ckpt mg2hf"
+    },
+    {
+      "affected_parameter_candidates": [
+        "tensor_model_parallel_size"
+      ],
+      "authored_at": "2025-12-10T17:43:14+08:00",
+      "buggy_commit": "df6ded49527a9191387750b8a6a725b1b125402f",
+      "candidate_id": "mindspeed-llm-d1f608208ea0",
+      "changed_files": [
+        "mindspeed_llm/features_manager/convert_checkpoint/convert_checkpoint.py",
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py",
+        "mindspeed_llm/tasks/checkpoint/model_builder.py"
+      ],
+      "fix_commit": "d1f608208ea074d83701c3cfa804891c4115c468",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 11,
+      "patch_deletions": 14,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix etp and dsa-indexer in mtp of ckpt"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size"
+      ],
+      "authored_at": "2026-01-07T14:25:07+08:00",
+      "buggy_commit": "38bf73054cc5e0d08d00ae968f29d4e9a835cfb5",
+      "candidate_id": "mindspeed-llm-1bbc95fca235",
+      "changed_files": [
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_128K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_256K_full_pack_A3_ptd.sh",
+        "examples/mcore/qwen3_moe/tune_qwen3_235b_a22b_64K_full_pack_A3_ptd.sh",
+        "mindspeed_llm/features_manager/transformer/flash_attention/reset_attention_mask_feature.py"
+      ],
+      "fix_commit": "1bbc95fca235604f44bfff827568e8feb003c09e",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 10,
+      "patch_deletions": 3,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] update qwen3-235b tune"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads"
+      ],
+      "authored_at": "2026-01-16T20:41:27+08:00",
+      "buggy_commit": "c736600104c469d0023af491bcfb5f8bd66f23dd",
+      "candidate_id": "mindspeed-llm-2e8ce6f989d5",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json",
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py",
+        "mindspeed_llm/tasks/checkpoint/model_builder.py",
+        "mindspeed_llm/tasks/models/transformer/multi_latent_attention.py"
+      ],
+      "fix_commit": "2e8ce6f989d5b7ca385b8a3f6f5a9e1dbcd86890",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 23,
+      "patch_deletions": 11,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] fix parameter mismatch and weight key missing when enable mm_split in dsv32 weight converting"
+    },
+    {
+      "affected_parameter_candidates": [
+        "seq_length",
+        "seq_len"
+      ],
+      "authored_at": "2026-01-20T10:26:57+08:00",
+      "buggy_commit": "d5ce746788c106f6f01f2b8f6e174771211b3674",
+      "candidate_id": "mindspeed-3589088c710a",
+      "changed_files": [
+        "mindspeed/core/transformer/flash_attention/reset_attention_mask/utils.py",
+        "mindspeed/features_manager/transformer/flash_attention/reset_attention_mask_feature.py"
+      ],
+      "fix_commit": "3589088c710a1168531d9efce2942a4f1498122c",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 33,
+      "patch_deletions": 10,
+      "repository": "MindSpeed",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "feat: fixed sub-sequence length"
+    },
+    {
+      "affected_parameter_candidates": [
+        "micro_batch_size"
+      ],
+      "authored_at": "2026-03-12T16:10:23+08:00",
+      "buggy_commit": "32fc5e3555de62199a9c7dc0a50fa6f58952beb9",
+      "candidate_id": "mindspeed-llm-f724d99a81de",
+      "changed_files": [
+        "mindspeed_llm/core/context_parallel/dot_product_attention.py",
+        "mindspeed_llm/core/transformer/custom_dot_product_attention.py",
+        "mindspeed_llm/mindspore/core/pipeline_parallel/seq1f1b/seq1f1b_batch.py",
+        "mindspeed_llm/training/utils.py"
+      ],
+      "fix_commit": "f724d99a81de90a73aca1e3eb6b6a7f947f83d91",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 4,
+      "patch_deletions": 4,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "fix(torch): add recomputation of actual_seq_len for TND"
+    },
+    {
+      "affected_parameter_candidates": [
+        "batch_size",
+        "seq_len"
+      ],
+      "authored_at": "2026-07-04T10:53:36+08:00",
+      "buggy_commit": "bdf000a4217ed50ca91c482d820f50cdd2c1860c",
+      "candidate_id": "mindspeed-llm-6c1f8ca5e0c6",
+      "changed_files": [
+        "mindspeed_llm/tasks/models/transformer/deepseek4/mhc/mhc.py",
+        "mindspeed_llm/tasks/models/transformer/deepseek4/mhc/sinkhorn_triton_kernel.py"
+      ],
+      "fix_commit": "6c1f8ca5e0c6b596fafb7afcdc1bcd440f38c82d",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 638,
+      "patch_deletions": 506,
+      "repository": "MindSpeed-LLM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "fix: update sinkhorn triton implementation"
+    },
+    {
+      "affected_parameter_candidates": [
+        "world_size"
+      ],
+      "authored_at": "2026-07-28T16:24:06+08:00",
+      "buggy_commit": "b2587b1a443113c603497ba6d8e16e4d234ef6a8",
+      "candidate_id": "mindspeed-mm-6d5b623505de",
+      "changed_files": [
+        "mindspeed_mm/fsdp/distributed/parallel_state.py",
+        "mindspeed_mm/fsdp/distributed/torch_parallelize.py",
+        "tests/ut_fsdp/distributed/test_parallel_state_multi_rank.py",
+        "tests/ut_fsdp/optimizer/test_clip_grad_norm_distributed.py"
+      ],
+      "fix_commit": "6d5b623505de1a9a6e7e5a95350580c652adbd44",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 18,
+      "patch_deletions": 14,
+      "repository": "MindSpeed-MM",
+      "score": 7.0,
+      "status": "untriaged",
+      "subject": "bugfix: fix reduce_groups that grad_norm used"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size"
+      ],
+      "authored_at": "2025-08-01T03:26:24+00:00",
+      "buggy_commit": "ab5cdeda901b13b3675cc40a6176e854b0a0348a",
+      "candidate_id": "mindspeed-mm-0a077e886fd7",
+      "changed_files": [
+        "docs/features/unaligned_sequence_parallel.md",
+        "mindspeed_mm/models/vision/vlm_attentionmask_for_llm.py",
+        "mindspeed_mm/utils/transformer_model_config.py"
+      ],
+      "fix_commit": "0a077e886fd7169cd0942cd32be8f305b9b1af67",
+      "merge_request_number": 1344,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-MM/pulls/1344",
+      "patch_additions": 11,
+      "patch_deletions": 3,
+      "repository": "MindSpeed-MM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "!1344 [Bugfix] remove attention mask building when enable ring CP Merge pull request !1344 from chenhaihui/qwenvl_cp_bugfix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "multi_head_latent_attention"
+      ],
+      "authored_at": "2025-08-05T15:23:32+00:00",
+      "buggy_commit": "c06c15094bef1abd6326dcf9067624dc0c9a406a",
+      "candidate_id": "mindspeed-llm-8fcb46439539",
+      "changed_files": [
+        "mindspeed_llm/features_manager/__init__.py",
+        "mindspeed_llm/tasks/checkpoint/optim.py",
+        "tests/pipeline/baseline/deepseek2_tp1_pp1_mcore_moe.json"
+      ],
+      "fix_commit": "8fcb464395392c52b097a494a72fffad58043f75",
+      "merge_request_number": 3098,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3098",
+      "patch_additions": 85,
+      "patch_deletions": 64,
+      "repository": "MindSpeed-LLM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "!3098 [pytorch][bugfix] fix pipeline cases Merge pull request !3098 from yanzhixiao/pipeline-bugfix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2025-09-05T01:52:59+00:00",
+      "buggy_commit": "64580e2100ec882d34143a3dbc4f1cab3de3ec8e",
+      "candidate_id": "mindspeed-488390fa0d01",
+      "changed_files": [
+        "mindspeed/core/tensor_parallel/coc_feature/coc_row_parallel_linear.py",
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/modules/shared_experts.py",
+        "mindspeed/features_manager/tensor_parallel/locl_coc.py"
+      ],
+      "fix_commit": "488390fa0d01bf680f0dccc175ef327248ddfe5d",
+      "merge_request_number": 2803,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2803",
+      "patch_additions": 5,
+      "patch_deletions": 14,
+      "repository": "MindSpeed",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "!2803 [bugfix!!!]coc update Merge pull request !2803 from yangjie/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "activation_func"
+      ],
+      "authored_at": "2025-09-30T09:12:42+08:00",
+      "buggy_commit": "ec7332be44898d4f63fb2503786f4fecaec51dd2",
+      "candidate_id": "mindspeed-8ec31c1956b2",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/moe_feature/overlap/grouped_mlp_with_comp_and_comm_overlap_all2allseq.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/moe_layer_overlap_all2allseq.py",
+        "mindspeed/core/transformer/moe/moe_feature/overlap/token_dispatcher.py"
+      ],
+      "fix_commit": "8ec31c1956b2c803e2a9166c345395f247a709f3",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 18,
+      "patch_deletions": 13,
+      "repository": "MindSpeed",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "【bugfix!!!】seqov memfix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "pipeline_model_parallel_size",
+        "tensor_model_parallel_size"
+      ],
+      "authored_at": "2025-10-20T16:41:53+08:00",
+      "buggy_commit": "306871eabb1e72f5a5de41be8933d8d21f3049d8",
+      "candidate_id": "mindspeed-llm-42be6a4922ad",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py"
+      ],
+      "fix_commit": "42be6a4922add68d9d65e71d5cc7097aeeb9b806",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 9,
+      "patch_deletions": 3,
+      "repository": "MindSpeed-LLM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "[pytorch][ckpt]fix about some model not have mtp_embedding"
+    },
+    {
+      "affected_parameter_candidates": [
+        "micro_batch_size"
+      ],
+      "authored_at": "2025-11-13T15:18:02+08:00",
+      "buggy_commit": "c4431c4b470b96a29f9ff449ab717d4c2491f6c2",
+      "candidate_id": "mindspeed-llm-683039dcc168",
+      "changed_files": [
+        "docs/mindspore/features/seq1f1b.md",
+        "mindspeed_llm/mindspore/core/pipeline_parallel/seq1f1b/seq1f1b_batch.py",
+        "mindspeed_llm/mindspore/core/pipeline_parallel/seq1f1b/sft_trainer.py"
+      ],
+      "fix_commit": "683039dcc168f905f05cb93907a5757c38cf5909",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 86,
+      "patch_deletions": 30,
+      "repository": "MindSpeed-LLM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "[mindspore][bugfix]bugfix seq1f1b"
+    },
+    {
+      "affected_parameter_candidates": [
+        "tensor_model_parallel_size",
+        "sequence_parallel"
+      ],
+      "authored_at": "2025-12-15T20:11:04+08:00",
+      "buggy_commit": "2364a0577678765ca148a5255e9a3061e21a93e9",
+      "candidate_id": "mindspeed-llm-537a19831402",
+      "changed_files": [
+        "mindspeed_llm/mindspore/core/transformer/moe/moe_feature/tp_extend_ep/moe_layer.py"
+      ],
+      "fix_commit": "537a19831402f6968f16e27b85d6a886da919233",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 46,
+      "patch_deletions": 0,
+      "repository": "MindSpeed-LLM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "[mindspore][bugfix][master] fix shared expert by removing stream"
+    },
+    {
+      "affected_parameter_candidates": [
+        "untie_embeddings_and_output_weights",
+        "tensor_model_parallel_size"
+      ],
+      "authored_at": "2026-01-26T14:42:39+08:00",
+      "buggy_commit": "5a5df981e2302ca0692707cd683c6eadad1d6cbf",
+      "candidate_id": "mindspeed-llm-754851e5d7fd",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py"
+      ],
+      "fix_commit": "754851e5d7fd9c6280715c6b98384a1cc1bbf125",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 10,
+      "patch_deletions": 4,
+      "repository": "MindSpeed-LLM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix tie-embedding and output in hf2mg"
+    },
+    {
+      "affected_parameter_candidates": [
+        "untie_embeddings_and_output_weights",
+        "pipeline_model_parallel_size"
+      ],
+      "authored_at": "2026-01-27T14:19:22+08:00",
+      "buggy_commit": "e129a104edbc5eb9940f13cd58982021cd1ef932",
+      "candidate_id": "mindspeed-llm-b121f80f73ff",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py"
+      ],
+      "fix_commit": "b121f80f73ff1e663b5921c3c2408d9b13f8e713",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 2,
+      "patch_deletions": 1,
+      "repository": "MindSpeed-LLM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix untie_embeddings_and_output_weights"
+    },
+    {
+      "affected_parameter_candidates": [
+        "world_size"
+      ],
+      "authored_at": "2026-02-04T10:37:31+08:00",
+      "buggy_commit": "dfe2e3b0040acc4beb81d7cf48553ff14a8a7390",
+      "candidate_id": "mindspeed-llm-a55e97e0caf2",
+      "changed_files": [
+        "mindspeed_llm/core/context_parallel/kvallgather_context_parallel.py",
+        "mindspeed_llm/core/transformer/custom_dot_product_attention.py",
+        "mindspeed_llm/tasks/models/transformer/dsa_indexer.py"
+      ],
+      "fix_commit": "a55e97e0caf239f8a8e10b294250f27190b4b993",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 104,
+      "patch_deletions": 408,
+      "repository": "MindSpeed-LLM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] dsa-cp high reserved memory bugfix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads"
+      ],
+      "authored_at": "2026-02-04T10:41:37+08:00",
+      "buggy_commit": "9ba25aec5e37c9f06394dacdf2bea59163f46f95",
+      "candidate_id": "mindspeed-llm-3841230eb71e",
+      "changed_files": [
+        "mindspeed_llm/fsdp2/distributed/context_parallel/ulysses_cp_function.py",
+        "mindspeed_llm/fsdp2/distributed/context_parallel/ulysses_cp_parallel.py",
+        "mindspeed_llm/fsdp2/distributed/mindspeed_parallel_engine.py"
+      ],
+      "fix_commit": "3841230eb71ed5017c0e991e35386f63c7b53fb5",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 4,
+      "patch_deletions": 2,
+      "repository": "MindSpeed-LLM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] fix some bugs in gpt oss ."
+    },
+    {
+      "affected_parameter_candidates": [
+        "tensor_model_parallel_size"
+      ],
+      "authored_at": "2026-02-10T09:22:38+08:00",
+      "buggy_commit": "61e885783db4d15db49cfdcb90e3bfd5f27d3e7d",
+      "candidate_id": "mindspeed-llm-79b26051fedc",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py",
+        "mindspeed_llm/training/utils.py"
+      ],
+      "fix_commit": "79b26051fedcc1d2a85b91b24e7f2f580d168a5c",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 15,
+      "patch_deletions": 5,
+      "repository": "MindSpeed-LLM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix train from hf"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads",
+        "batch_size"
+      ],
+      "authored_at": "2026-04-20T19:01:31+08:00",
+      "buggy_commit": "8b44b89914b0acbf3bc3eaaa72b3d3602717b8f0",
+      "candidate_id": "mindspeed-llm-1bbdcc41c0e6",
+      "changed_files": [
+        "mindspeed_llm/te/pytorch/attention/dot_product_attention/te_cp_dot_product_attention.py"
+      ],
+      "fix_commit": "1bbdcc41c0e6823759cf35c493d6fdcdc2a4d1f9",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 75,
+      "patch_deletions": 75,
+      "repository": "MindSpeed-LLM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "fix(pytorch)：fix kvallgather for pipeline."
+    },
+    {
+      "affected_parameter_candidates": [
+        "batch_size"
+      ],
+      "authored_at": "2026-06-05T10:57:17+08:00",
+      "buggy_commit": "e984cb2f8be5ed556d3d8273dfa27bea28ebff85",
+      "candidate_id": "mindspeed-mm-27c55c5a1c40",
+      "changed_files": [
+        "examples/diffusers/hidream/bf16_accelerate_config.yaml",
+        "examples/diffusers/hidream/transformer_patches.py",
+        "examples/diffusers/sana/bf16_accelerate_config.yaml"
+      ],
+      "fix_commit": "27c55c5a1c405aac0576904d254ce071fb178304",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 0,
+      "patch_deletions": 401,
+      "repository": "MindSpeed-MM",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "[fix] remove old models"
+    },
+    {
+      "affected_parameter_candidates": [
+        "vocab_size",
+        "seq_length"
+      ],
+      "authored_at": "2026-07-02T10:46:15+08:00",
+      "buggy_commit": "db6131a7945c014598e7a0a89e9946d28ddc1007",
+      "candidate_id": "mindspeed-92d2df9e3508",
+      "changed_files": [
+        "mindspeed/core/transformer/flash_attention/reset_attention_mask/utils.py"
+      ],
+      "fix_commit": "92d2df9e350868644635b6b4a45cc37bf107859c",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 17,
+      "patch_deletions": 26,
+      "repository": "MindSpeed",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "fix: tnd actual_seq_len adapt  when mbs > 1"
+    },
+    {
+      "affected_parameter_candidates": [
+        "world_size"
+      ],
+      "authored_at": "2026-07-22T10:47:45+08:00",
+      "buggy_commit": "028de58ca629d035185b00ff7d1eb7eff4f7fd48",
+      "candidate_id": "mindspeed-b39fbbecf9e7",
+      "changed_files": [
+        "mindspeed/features_manager/qos/qos_feature.py",
+        "tests_extend/unit_tests/features/qos/test_domain_info.py",
+        "tests_extend/unit_tests/features/qos/test_qos.py"
+      ],
+      "fix_commit": "b39fbbecf9e7657a70d4899d81bfa99755051330",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 359,
+      "patch_deletions": 225,
+      "repository": "MindSpeed",
+      "score": 6.5,
+      "status": "untriaged",
+      "subject": "fix(qos): support A5 checks and QoS injection"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size"
+      ],
+      "authored_at": "2025-08-04T08:52:14+00:00",
+      "buggy_commit": "ab90bbce894603b502a09025bcdf306f16b7a89f",
+      "candidate_id": "mindspeed-6ab791d2869f",
+      "changed_files": [
+        "docs/features/async-log-allreduce.md",
+        "mindspeed/core/data_parallel/async_log_allreduce.py"
+      ],
+      "fix_commit": "6ab791d2869ff8926d9fc36e0dca97a120a708c6",
+      "merge_request_number": 2716,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2716",
+      "patch_additions": 50,
+      "patch_deletions": 25,
+      "repository": "MindSpeed",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "!2716 fix: async_log_allreduce Merge pull request !2716 from 邓佳/core_r0.12.1_fix_v3"
+    },
+    {
+      "affected_parameter_candidates": [
+        "world_size"
+      ],
+      "authored_at": "2025-08-21T06:56:49+00:00",
+      "buggy_commit": "f5ba5aca61c9f59442764d35988f82b88901ba7a",
+      "candidate_id": "mindspeed-mm-8ee32592cfe2",
+      "changed_files": [
+        "checkpoint/vlm_model/converters/internvl.py",
+        "checkpoint/vlm_model/operator.py"
+      ],
+      "fix_commit": "8ee32592cfe2de491a3631b2f72eaf2b13e84b60",
+      "merge_request_number": 1419,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-MM/pulls/1419",
+      "patch_additions": 21,
+      "patch_deletions": 3,
+      "repository": "MindSpeed-MM",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "!1419 [Bugfix] fix internvl3 unaligned embedding weight split Merge pull request !1419 from chenhaihui/internvl_weight_bugfix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage"
+      ],
+      "authored_at": "2025-08-21T10:58:29+00:00",
+      "buggy_commit": "97f7ef9a0e891d52cbae71ab60c3f9687af2c632",
+      "candidate_id": "mindspeed-47bf2a6b3bc0",
+      "changed_files": [
+        "mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/fwdbwd.py",
+        "mindspeed/features_manager/moe/fb_overlap.py"
+      ],
+      "fix_commit": "47bf2a6b3bc0c908899e252e7b488367ab9eecfb",
+      "merge_request_number": 2772,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2772",
+      "patch_additions": 7,
+      "patch_deletions": 1,
+      "repository": "MindSpeed",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "!2772 [bugfix!!!] fbov vpp recompute fixed Merge pull request !2772 from yangjie/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "sequence_parallel"
+      ],
+      "authored_at": "2025-09-10T08:43:38+00:00",
+      "buggy_commit": "6aff65eba929b4f39848a5153ac455467d0b0f9e",
+      "candidate_id": "mindspeed-7849266e390c",
+      "changed_files": [
+        "docs/features/transformer_engine.md",
+        "mindspeed/te/pytorch/module/layernorm_column_parallel_linear.py"
+      ],
+      "fix_commit": "7849266e390c0c7c1ad0071aea68a3f7be081c25",
+      "merge_request_number": 2824,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2824",
+      "patch_additions": 27,
+      "patch_deletions": 2,
+      "repository": "MindSpeed",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "!2824 【bugfix!!!】TEreadme更新&bugfix Merge pull request !2824 from yangjie/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "moe_router_num_groups"
+      ],
+      "authored_at": "2025-09-23T01:10:13+00:00",
+      "buggy_commit": "909ceaab02d4e859de617b869f06f690547464c1",
+      "candidate_id": "mindspeed-llm-466379cf39a2",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json",
+        "mindspeed_llm/features_manager/arguments/deprecated_args.py"
+      ],
+      "fix_commit": "466379cf39a2443730dc777bb92801b1f4e4bf7e",
+      "merge_request_number": 3354,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3354",
+      "patch_additions": 16,
+      "patch_deletions": 16,
+      "repository": "MindSpeed-LLM",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "!3354 [pytorch][bugfix] bugfix for master Merge pull request !3354 from yanzhixiao/bugfix-master-0922"
+    },
+    {
+      "affected_parameter_candidates": [
+        "swiglu"
+      ],
+      "authored_at": "2025-09-29T15:27:42+08:00",
+      "buggy_commit": "a23caf6ed7fa065c67e602afae6763c65be47f91",
+      "candidate_id": "mindspeed-llm-a61ab0a1dd7a",
+      "changed_files": [
+        "docs/mindspore/models/moe_model.md",
+        "examples/mindspore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_ms.sh"
+      ],
+      "fix_commit": "a61ab0a1dd7adca8f667591ab0aa0dd571383e51",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 195,
+      "patch_deletions": 48,
+      "repository": "MindSpeed-LLM",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "[mindspore][docs] bugfix for docs"
+    },
+    {
+      "affected_parameter_candidates": [
+        "deallocate_pipeline_outputs"
+      ],
+      "authored_at": "2025-11-13T10:55:15+08:00",
+      "buggy_commit": "b48beb00cfba76fd04c37cab0f1fb83da30fa9a7",
+      "candidate_id": "mindspeed-a42e3122168a",
+      "changed_files": [
+        "mindspeed/mindspore/core/optimizer/optimizer.py",
+        "mindspeed/mindspore/core/pipeline_parallel/schedules.py"
+      ],
+      "fix_commit": "a42e3122168a991484878e7e9db8f505192291de",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 1,
+      "patch_deletions": 37,
+      "repository": "MindSpeed",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "[mindspore][bugfix] bugfix for chatglm3-6b pretrain"
+    },
+    {
+      "affected_parameter_candidates": [
+        "seq_len"
+      ],
+      "authored_at": "2025-12-02T21:15:19+08:00",
+      "buggy_commit": "869d5eaa24212e241db444b05443ac1c4e9037ae",
+      "candidate_id": "mindspeed-mm-471f1641676e",
+      "changed_files": [
+        "mindspeed_mm/models/transformers/qwen3vl/modeling_qwen3_vl.py",
+        "mindspeed_mm/models/transformers/qwen3vl/utils.py"
+      ],
+      "fix_commit": "471f1641676ecd5a1418f9e19cdeea4bf22d45e1",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 142,
+      "patch_deletions": 3,
+      "repository": "MindSpeed-MM",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "[Feature]Add split&gather function for ViT RingAttention, bugfix for qwen3vl"
+    },
+    {
+      "affected_parameter_candidates": [
+        "hidden_size"
+      ],
+      "authored_at": "2025-12-17T09:23:31+08:00",
+      "buggy_commit": "95fa6e57644427edab2ca3dae906f7e1e1a5f9be",
+      "candidate_id": "mindspeed-llm-8f703bf8bc53",
+      "changed_files": [
+        "docs/pytorch/models/moe_model.md",
+        "mindspeed_llm/features_manager/transformer/mtp.py"
+      ],
+      "fix_commit": "8f703bf8bc53f0727b438b486dbb9f800f5d923f",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 9,
+      "patch_deletions": 3,
+      "repository": "MindSpeed-LLM",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] update ling-mini rm mtp"
+    },
+    {
+      "affected_parameter_candidates": [
+        "seq_length"
+      ],
+      "authored_at": "2026-01-20T09:23:16+08:00",
+      "buggy_commit": "4a4818d6ac8c9f47ead395d601c9638f6680b5db",
+      "candidate_id": "mindspeed-llm-dcee434d02c3",
+      "changed_files": [
+        "mindspeed_llm/core/context_parallel/dot_product_attention.py",
+        "mindspeed_llm/core/transformer/custom_dot_product_attention.py"
+      ],
+      "fix_commit": "dcee434d02c37814f0e5209fe418dc820188e945",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 4,
+      "patch_deletions": 4,
+      "repository": "MindSpeed-LLM",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] fixes the accuracy bug for the TND."
+    },
+    {
+      "affected_parameter_candidates": [
+        "seq_length"
+      ],
+      "authored_at": "2026-01-28T10:14:47+08:00",
+      "buggy_commit": "204ee5083325d2e380a725270ea1c37f396ec998",
+      "candidate_id": "mindspeed-d746c27350ca",
+      "changed_files": [
+        "mindspeed/core/transformer/flash_attention/reset_attention_mask/utils.py",
+        "mindspeed/features_manager/transformer/flash_attention/reset_attention_mask_feature.py"
+      ],
+      "fix_commit": "d746c27350ca230caf262cbc19fa23daf6161347",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 3,
+      "patch_deletions": 3,
+      "repository": "MindSpeed",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "refactor: rename --sub-seq-length to --fix-sub-seq-length for clarity"
+    },
+    {
+      "affected_parameter_candidates": [
+        "sequence_parallel"
+      ],
+      "authored_at": "2026-01-30T15:46:49+08:00",
+      "buggy_commit": "0f94b57ce7cd5e78d4d85dab5d1789eda74bc6dc",
+      "candidate_id": "mindspeed-llm-87801c39e1e9",
+      "changed_files": [
+        "mindspeed_llm/core/tensor_parallel/layers.py",
+        "mindspeed_llm/tasks/models/transformer/dsa_indexer.py"
+      ],
+      "fix_commit": "87801c39e1e9fe1a06192adfa2b844b06d117939",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 9,
+      "patch_deletions": 2,
+      "repository": "MindSpeed-LLM",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]LiLoss cal allreduce in dp"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_attention_heads"
+      ],
+      "authored_at": "2026-02-03T11:10:34+08:00",
+      "buggy_commit": "3d97b42477fb9435769002a45f34f9f07a1bfbcd",
+      "candidate_id": "mindspeed-llm-5f1f7f0b5ef3",
+      "changed_files": [
+        "configs/checkpoint/model_cfg.json",
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py"
+      ],
+      "fix_commit": "5f1f7f0b5ef39b57dad3464d9672d03b0f56f742",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 8,
+      "patch_deletions": 7,
+      "repository": "MindSpeed-LLM",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix -mla-mm-split in ckpt"
+    },
+    {
+      "affected_parameter_candidates": [
+        "hidden_size"
+      ],
+      "authored_at": "2026-05-16T15:48:28+08:00",
+      "buggy_commit": "eff818c8d7d7ec7a50a4bf162b8dd95c65431a57",
+      "candidate_id": "mindspeed-llm-b83dcdb44be2",
+      "changed_files": [
+        "mindspeed_llm/tasks/models/transformer/deepseek4/deepseek_utils.py",
+        "mindspeed_llm/tasks/models/transformer/deepseek4/g2_attention.py"
+      ],
+      "fix_commit": "b83dcdb44be2571194158a84c0ef6724aee09aca",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 14,
+      "patch_deletions": 9,
+      "repository": "MindSpeed-LLM",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "fix:  remove aten_to operation for dsk_v4"
+    },
+    {
+      "affected_parameter_candidates": [
+        "seq_length"
+      ],
+      "authored_at": "2026-05-18T10:27:41+08:00",
+      "buggy_commit": "b83dcdb44be2571194158a84c0ef6724aee09aca",
+      "candidate_id": "mindspeed-llm-4afbe41e2349",
+      "changed_files": [
+        "docs/zh/pytorch/training/install_guide.md",
+        "docs/zh/pytorch/training/quick_start.md"
+      ],
+      "fix_commit": "4afbe41e234940a67d3699c608be791925a12ce1",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 35,
+      "patch_deletions": 28,
+      "repository": "MindSpeed-LLM",
+      "score": 6.0,
+      "status": "untriaged",
+      "subject": "docs(pytorch):  fix quick_start error"
+    },
+    {
+      "affected_parameter_candidates": [
+        "batch_size"
+      ],
+      "authored_at": "2025-08-01T06:38:11+00:00",
+      "buggy_commit": "0a077e886fd7169cd0942cd32be8f305b9b1af67",
+      "candidate_id": "mindspeed-mm-6e25f979b8e6",
+      "changed_files": [
+        "mindspeed_mm/training.py"
+      ],
+      "fix_commit": "6e25f979b8e6371df2ae8d90e8cd20850b6695f6",
+      "merge_request_number": 1354,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-MM/pulls/1354",
+      "patch_additions": 0,
+      "patch_deletions": 14,
+      "repository": "MindSpeed-MM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "!1354 [Bugfix] Bugfix for tensorboard Merge pull request !1354 from J石页/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "activation_func"
+      ],
+      "authored_at": "2025-09-01T01:46:39+00:00",
+      "buggy_commit": "25b15f0e6d2d397158d3a37adac7fb99d61602f4",
+      "candidate_id": "mindspeed-llm-65d60d8e726a",
+      "changed_files": [
+        "mindspeed_llm/core/transformer/mlp.py"
+      ],
+      "fix_commit": "65d60d8e726a5e0954a27029e7d6635eb8b282db",
+      "merge_request_number": 3229,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3229",
+      "patch_additions": 5,
+      "patch_deletions": 0,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "!3229 [pytorch][bugfix] gemma bugfix Merge pull request !3229 from Peihan Liu/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size"
+      ],
+      "authored_at": "2025-09-01T10:41:51+00:00",
+      "buggy_commit": "c23ca42304912a5ba4797dab29c3abb3b88a3ed0",
+      "candidate_id": "mindspeed-mm-47e8b8afb9de",
+      "changed_files": [
+        "docs/features/unaligned_ulysses_cp.md"
+      ],
+      "fix_commit": "47e8b8afb9dee55201cecf7d0449b5ab1241902c",
+      "merge_request_number": 1464,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-MM/pulls/1464",
+      "patch_additions": 1,
+      "patch_deletions": 1,
+      "repository": "MindSpeed-MM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "!1464 [Docs] Add suporting 128k in readme & fix UCP docs Merge pull request !1464 from 王泽/128k"
+    },
+    {
+      "affected_parameter_candidates": [
+        "world_size"
+      ],
+      "authored_at": "2025-09-03T06:28:23+00:00",
+      "buggy_commit": "a7c198b62d3e47376f11cf28919f9011119530b6",
+      "candidate_id": "mindspeed-3bef1166b6f2",
+      "changed_files": [
+        "mindspeed/mindspore/core/tensor_parallel/mappings.py"
+      ],
+      "fix_commit": "3bef1166b6f2e5eb0f7120f6ac3701786cecab44",
+      "merge_request_number": 2804,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed/pulls/2804",
+      "patch_additions": 1,
+      "patch_deletions": 1,
+      "repository": "MindSpeed",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "!2804 [bugfix][mindspore][master]alltoallvc verification Merge pull request !2804 from yashi99/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage"
+      ],
+      "authored_at": "2025-09-06T10:41:36+00:00",
+      "buggy_commit": "c5ac615ea7340f9df073424eb6e0503273f6223e",
+      "candidate_id": "mindspeed-llm-5ced9eceb30a",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/models.py"
+      ],
+      "fix_commit": "5ced9eceb30a4c9300f4b7b92921cd6232f91bca",
+      "merge_request_number": 3278,
+      "merge_request_url": "https://gitee.com/ascend/MindSpeed-LLM/pulls/3278",
+      "patch_additions": 1,
+      "patch_deletions": 1,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "!3278 [pytorch][bugfix]fix ETP parameter synchronization in ckpt Merge pull request !3278 from jwhk/master"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers"
+      ],
+      "authored_at": "2025-11-11T14:53:01+08:00",
+      "buggy_commit": "cd0539f84d25ec82fb317f026b7f420f323060e6",
+      "candidate_id": "mindspeed-llm-20730279d57d",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/models.py"
+      ],
+      "fix_commit": "20730279d57dfa7d70a13bdbda13bcb9a2204d13",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 13,
+      "patch_deletions": 6,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix bug of ckpt mg-hf with noop-layer"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2025-11-12T14:30:48+08:00",
+      "buggy_commit": "92dbb02b7537b67ce8441f3379256886777b9059",
+      "candidate_id": "mindspeed-llm-50d9d869b59e",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_mg2hf.py"
+      ],
+      "fix_commit": "50d9d869b59ef24fb093fa619d6cef412a445ec0",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 10,
+      "patch_deletions": 3,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix convert_ckpt v2 mg2hf first_k_dense_replace"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers"
+      ],
+      "authored_at": "2025-11-29T14:38:32+08:00",
+      "buggy_commit": "e327b4c2cc487c0ff921972e9e692cc9308cb507",
+      "candidate_id": "mindspeed-llm-f88d3028db5c",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert.py"
+      ],
+      "fix_commit": "f88d3028db5ce8a165fdf358a4cc8d294adfdb74",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 3,
+      "patch_deletions": 0,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix noop-layer in merge ckpt and train"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers_per_virtual_pipeline_stage"
+      ],
+      "authored_at": "2025-12-04T20:56:24+08:00",
+      "buggy_commit": "65c0d87df99b42340700e3b6a915fa25802d66e1",
+      "candidate_id": "mindspeed-llm-9728301920b1",
+      "changed_files": [
+        "mindspeed_llm/features_manager/megatron_basic/training_basic.py"
+      ],
+      "fix_commit": "9728301920b15da172a69306b3f3f02f984b73de",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 4,
+      "patch_deletions": 0,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] vpp and layer-list is conflict"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2025-12-09T18:51:17+08:00",
+      "buggy_commit": "432926dea60a805a0436b68c599cada7df7f8a8d",
+      "candidate_id": "mindspeed-mm-86d3bfd1738c",
+      "changed_files": [
+        "checkpoint/vlm_model/mm_to_hf.py"
+      ],
+      "fix_commit": "86d3bfd1738cd68835289687639aa999335605ed",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 4,
+      "patch_deletions": 1,
+      "repository": "MindSpeed-MM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[bugfix]fix get num_experts error in mm_2_hf权重转换"
+    },
+    {
+      "affected_parameter_candidates": [
+        "micro_batch_size"
+      ],
+      "authored_at": "2025-12-10T17:23:16+08:00",
+      "buggy_commit": "551a26ea71858a2b71e422369820426b94a2e15f",
+      "candidate_id": "mindspeed-mm-353bb4fd465c",
+      "changed_files": [
+        "pretrain_transformers.py"
+      ],
+      "fix_commit": "353bb4fd465c9a2df6e8d798ff83f404e163ad78",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 2,
+      "patch_deletions": 2,
+      "repository": "MindSpeed-MM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[bugfix]correct tps calculation with cp enabled in pretrain_transformers.py"
+    },
+    {
+      "affected_parameter_candidates": [
+        "seq_len"
+      ],
+      "authored_at": "2025-12-13T17:05:03+08:00",
+      "buggy_commit": "0056e579ed49aea943209a3f7096126036f7f4f3",
+      "candidate_id": "mindspeed-8214f2f6b6ed",
+      "changed_files": [
+        "mindspeed/core/transformer/flash_attention/reset_attention_mask/utils.py"
+      ],
+      "fix_commit": "8214f2f6b6edf81306f0badac1460b820dc89483",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 14,
+      "patch_deletions": 12,
+      "repository": "MindSpeed",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "actual_seq_len_bugfix"
+    },
+    {
+      "affected_parameter_candidates": [
+        "context_parallel_size"
+      ],
+      "authored_at": "2025-12-18T19:33:30+08:00",
+      "buggy_commit": "a0baca3354238f5893055a81221b02984d9de975",
+      "candidate_id": "mindspeed-llm-7e3870f2c393",
+      "changed_files": [
+        "mindspeed_llm/features_manager/transformer/mtp.py"
+      ],
+      "fix_commit": "7e3870f2c393f69e88f5687077bea3ad41f5d5f8",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 14,
+      "patch_deletions": 1,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix CP with MTP"
+    },
+    {
+      "affected_parameter_candidates": [
+        "kv_lora_rank"
+      ],
+      "authored_at": "2025-12-20T10:56:10+08:00",
+      "buggy_commit": "2a6ecd7416f2e90f505e0b63c77454ff14efde63",
+      "candidate_id": "mindspeed-llm-52d8a80e83ce",
+      "changed_files": [
+        "mindspeed_llm/tasks/models/transformer/multi_latent_attention.py"
+      ],
+      "fix_commit": "52d8a80e83ce0cd7f80574a831275b24229bed19",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 1,
+      "patch_deletions": 3,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix] fix lightning indexer grad miss bug in enable mla absorb mode"
+    },
+    {
+      "affected_parameter_candidates": [
+        "recompute_method"
+      ],
+      "authored_at": "2025-12-22T17:42:45+08:00",
+      "buggy_commit": "f4f41e24e002e4976355f211bbbc7035ca77cb88",
+      "candidate_id": "mindspeed-876968d84a5c",
+      "changed_files": [
+        "mindspeed/features_manager/megatron_basic/transformer_engine_basic.py"
+      ],
+      "fix_commit": "876968d84a5c82ede15100b10ea829bf3182bb62",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 14,
+      "patch_deletions": 11,
+      "repository": "MindSpeed",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "fix(fp8): megatron lm TransformerBlock.forward missing parameter"
+    },
+    {
+      "affected_parameter_candidates": [
+        "tensor_model_parallel_size"
+      ],
+      "authored_at": "2025-12-27T15:47:47+08:00",
+      "buggy_commit": "f0f6f8ba1f9079af0e21b9c80176c75658eaf45b",
+      "candidate_id": "mindspeed-llm-552bd265b739",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_hf2mg.py"
+      ],
+      "fix_commit": "552bd265b739ea5eb125f3a6ece67f02c8aaaa86",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 0,
+      "patch_deletions": 4,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix dualpipe"
+    },
+    {
+      "affected_parameter_candidates": [
+        "expert_model_parallel_size"
+      ],
+      "authored_at": "2026-01-12T11:24:16+08:00",
+      "buggy_commit": "288e7c406a8e84b77276f8c1c5cdc8cbd1b0393c",
+      "candidate_id": "mindspeed-7476d4f0698c",
+      "changed_files": [
+        "mindspeed/features_manager/moe/moe_fix_router.py"
+      ],
+      "fix_commit": "7476d4f0698c59d80fc9724e5afe708b7ebbfff4",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 1,
+      "patch_deletions": 1,
+      "repository": "MindSpeed",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "modify validate of fix router"
+    },
+    {
+      "affected_parameter_candidates": [
+        "micro_batch_size"
+      ],
+      "authored_at": "2026-01-30T16:18:35+08:00",
+      "buggy_commit": "87801c39e1e9fe1a06192adfa2b844b06d117939",
+      "candidate_id": "mindspeed-llm-dd7eb2de1209",
+      "changed_files": [
+        "mindspeed_llm/training/utils.py"
+      ],
+      "fix_commit": "dd7eb2de12093bec3a9702271bc256618164711c",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 1,
+      "patch_deletions": 1,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[pytorch][bugfix]fix Inconsistent return values of the recompute_valid_actual_seq_len function"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2026-02-07T16:29:14+08:00",
+      "buggy_commit": "9ea0c80ec40ccefbe77a7ac5ed45c352ff12ee6b",
+      "candidate_id": "mindspeed-mm-0b37025a499d",
+      "changed_files": [
+        "mindspeed_mm/models/transformers/moe_utils.py"
+      ],
+      "fix_commit": "0b37025a499ddfb87619d05e8f34cba02a20d117",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 23,
+      "patch_deletions": 3,
+      "repository": "MindSpeed-MM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "[bugfix] fix weight loading bug for EP when experts.ndim == 2"
+    },
+    {
+      "affected_parameter_candidates": [
+        "hidden_size"
+      ],
+      "authored_at": "2026-03-24T15:14:48+08:00",
+      "buggy_commit": "c75d49f98366c4279a103ceff3b3d55f408f8d8d",
+      "candidate_id": "mindspeed-llm-bf5a200c80f7",
+      "changed_files": [
+        "mindspeed_llm/features_manager/transformer/mtp.py"
+      ],
+      "fix_commit": "bf5a200c80f76c49a6ad718a273b55e7a3b29f46",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 0,
+      "patch_deletions": 6,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "fix(python):  fix ling-mini bug when enabling mtp"
+    },
+    {
+      "affected_parameter_candidates": [
+        "sequence_parallel"
+      ],
+      "authored_at": "2026-05-18T19:34:43+08:00",
+      "buggy_commit": "66f0b0ec951a3b793eff1fe2d7d7615d094d933c",
+      "candidate_id": "mindspeed-acb0f14d6863",
+      "changed_files": [
+        "mindspeed/te/pytorch/module/layernorm_column_parallel_linear.py"
+      ],
+      "fix_commit": "acb0f14d6863dfe9212ba95a4c2bf8dfffbbbbc1",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 50,
+      "patch_deletions": 71,
+      "repository": "MindSpeed",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "fix:layer norm bias init zero"
+    },
+    {
+      "affected_parameter_candidates": [
+        "distribute_saved_activations"
+      ],
+      "authored_at": "2026-05-25T09:24:13+08:00",
+      "buggy_commit": "ad40a494b0688e7264081bf73d080ef7c04cfcd3",
+      "candidate_id": "mindspeed-362072eaeccf",
+      "changed_files": [
+        "mindspeed/te/pytorch/fp8/checkpoint.py"
+      ],
+      "fix_commit": "362072eaeccf71b9ec7eaaa6389f4e90760e1d5e",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 29,
+      "patch_deletions": 39,
+      "repository": "MindSpeed",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "fix: FP8 recompute error in verl"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_experts"
+      ],
+      "authored_at": "2026-07-04T15:08:58+08:00",
+      "buggy_commit": "6c1f8ca5e0c6b596fafb7afcdc1bcd440f38c82d",
+      "candidate_id": "mindspeed-llm-98ebb0deb5f3",
+      "changed_files": [
+        "mindspeed_llm/core/transformer/moe/moe_utils.py"
+      ],
+      "fix_commit": "98ebb0deb5f3bbb999354a21e16f79d41795297f",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 22,
+      "patch_deletions": 26,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "fix(pytorch):  add copyright of  nvidia"
+    },
+    {
+      "affected_parameter_candidates": [
+        "num_layers"
+      ],
+      "authored_at": "2026-07-15T17:12:43+08:00",
+      "buggy_commit": "a028a886bb91d7608f35cfc98018c8f24e294938",
+      "candidate_id": "mindspeed-llm-5b24f68bf8e9",
+      "changed_files": [
+        "mindspeed_llm/tasks/checkpoint/convert_ckpt_deepseek4.py"
+      ],
+      "fix_commit": "5b24f68bf8e97facc6f07bffda6efb3b99aa4ab7",
+      "merge_request_number": null,
+      "merge_request_url": null,
+      "patch_additions": 6,
+      "patch_deletions": 4,
+      "repository": "MindSpeed-LLM",
+      "score": 5.5,
+      "status": "untriaged",
+      "subject": "fix(pytorch):  fix ds4-flash model hf to mg conversion with VPP enabled error"
+    }
+  ],
+  "name": "mindspeed-historical-configuration-fix-candidates",
+  "policy": {
+    "selection": "non-merge fix-like commits touching configuration-relevant files and audited parameter names",
+    "status": "candidate_only",
+    "warning": "Each candidate still requires a workload, failure oracle, buggy/fixed differential execution, repeatability, and root-cause confirmation."
+  },
+  "repositories": {
+    "MindSpeed": {
+      "branch": "master",
+      "commit": "8659565fc2dc7de3caba13acd97d4e8814f1df7e"
+    },
+    "MindSpeed-LLM": {
+      "branch": "master",
+      "commit": "79afbee24168aae3c30dedbec9ca04504a3204e4"
+    },
+    "MindSpeed-MM": {
+      "branch": "master",
+      "commit": "35ac8869540c17e85e9df73acf3fc844eacecaf2"
+    }
+  },
+  "schema_version": 1
+}

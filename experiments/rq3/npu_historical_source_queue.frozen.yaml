@@ -1,0 +1,789 @@
+schema_version: 1
+name: rq3-npu-historical-source-admission-queue
+status: frozen_source_admission_queue
+window:
+  start: '2025-08-01'
+  end: '2026-07-31'
+  basis: fix date
+selection_policy:
+  repositories:
+  - Ascend/MindSpeed
+  - Ascend/MindSpeed-LLM
+  - Ascend/MindSpeed-MM
+  enumeration: all non-merge fix-like commits in the frozen window
+  requires_configuration_relevant_implementation_path: true
+  requires_audited_parameter_name_in_patch: true
+  docs_and_tests_only_excluded: true
+  max_patch_lines: 2000
+  no_balancing_or_per_parameter_cap: true
+candidate_count: 42
+repository_counts:
+  MindSpeed: 15
+  MindSpeed-LLM: 19
+  MindSpeed-MM: 8
+membership_sha256: 47a5690ede009547038ffc5799304a3a9947ae6cae39c24850548146fb28d041
+admission_policy:
+  attempt_every_frozen_candidate: true
+  buggy_commit_repetitions: 3
+  fixed_revision_must_pass: true
+  failure_must_be_functional_not_pure_performance: true
+  ordinary_oom_resource_and_infrastructure_failures_do_not_admit: true
+  observed_failure_must_match_fix_root_cause: true
+  deduplicate_final_benchmark_by_independent_root_cause: true
+  membership_may_not_change_after_execution_starts: true
+  configuration_trigger_must_be_expressible_without_changing_model_code_or_test_input: true
+candidates:
+- candidate_id: mindspeed-f1d60765de99
+  repository: MindSpeed
+  fix_date: '2025-08-05'
+  subject: '!2720 [mindspore][bugfix][master] fix pp schedule shape error Merge pull request !2720 from 孔德硕/master'
+  buggy_commit: 6ab791d2869ff8926d9fc36e0dca97a120a708c6
+  fix_commit: f1d60765de993209103e61b913339555ec2bd11e
+  merge_request_number: 2720
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2720
+  primary_parameter: deallocate_pipeline_outputs
+  affected_parameter_candidates:
+  - deallocate_pipeline_outputs
+  changed_files:
+  - mindspeed/mindspore/core/pipeline_parallel/schedules.py
+  admission_status: pending
+- candidate_id: mindspeed-55859a22c6a1
+  repository: MindSpeed
+  fix_date: '2025-08-09'
+  subject: '!2729 [bugfix!!!]shared_expert_gate remove&amp; logits adjust &amp; overlap readme append Merge pull request !2729
+    from yangjie/master'
+  buggy_commit: e92252f4f1b7cbd78868922e6fe5659f8b762bf8
+  fix_commit: 55859a22c6a107f4f79fa1f62c391cd121c90f95
+  merge_request_number: 2729
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2729
+  primary_parameter: num_layers
+  affected_parameter_candidates:
+  - num_layers
+  changed_files:
+  - docs/features/megatron_moe/megatron-moe-allgather-overlap-comm.md
+  - docs/features/megatron_moe/megatron-moe-alltoall-overlap-comm.md
+  - docs/features/megatron_moe/megatron-moe-zero-memory.md
+  - docs/features/moe-token-permute-and-unpermute.md
+  - mindspeed/core/tensor_parallel/cross_entropy.py
+  - mindspeed/core/transformer/moe/moe_feature/adaptor.py
+  - mindspeed/core/transformer/moe/moe_feature/overlap/moe_layer_overlap_all2allseq.py
+  - mindspeed/core/transformer/moe/moe_feature/overlap/token_dispatcher.py
+  admission_status: pending
+- candidate_id: mindspeed-4042a51365f7
+  repository: MindSpeed
+  fix_date: '2025-08-18'
+  subject: '!2752 【bugfix!!!】fb recompute fix&amp;mtp recompute supported Merge pull request !2752 from yangjie/master'
+  buggy_commit: 7ff818c4c77ddb290f61261a6f12d7cfa1bf62e2
+  fix_commit: 4042a51365f7b1a25cdc3fe35286b154b70c1b32
+  merge_request_number: 2752
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2752
+  primary_parameter: recompute_method
+  affected_parameter_candidates:
+  - recompute_granularity
+  - recompute_num_layers
+  - recompute_method
+  changed_files:
+  - mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/bwd.py
+  - mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/fwd.py
+  - mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/fwdbwd.py
+  - mindspeed/core/transformer/moe/moe_feature/fb_overlap/transformer_layer.py
+  admission_status: pending
+- candidate_id: mindspeed-97f7ef9a0e89
+  repository: MindSpeed
+  fix_date: '2025-08-21'
+  subject: '!2771 fix: adjust inappropriate config Merge pull request !2771 from YE ZHENYUAN/master0821'
+  buggy_commit: 031352653fe749202b6b1d7363632c9da3a85898
+  fix_commit: 97f7ef9a0e891d52cbae71ab60c3f9687af2c632
+  merge_request_number: 2771
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2771
+  primary_parameter: pipeline_model_parallel_size
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  changed_files:
+  - mindspeed/core/transformer/moe/moe_feature/overlap/moe_common.py
+  - mindspeed/core/transformer/moe/moe_utils.py
+  - mindspeed/model/transformer.py
+  - tests_extend/unit_tests/features/recomputing/test_activation_recompute.py
+  - tests_extend/unit_tests/features/recomputing/test_norm_recompute.py
+  admission_status: pending
+- candidate_id: mindspeed-47bf2a6b3bc0
+  repository: MindSpeed
+  fix_date: '2025-08-21'
+  subject: '!2772 [bugfix!!!] fbov vpp recompute fixed Merge pull request !2772 from yangjie/master'
+  buggy_commit: 97f7ef9a0e891d52cbae71ab60c3f9687af2c632
+  fix_commit: 47bf2a6b3bc0c908899e252e7b488367ab9eecfb
+  merge_request_number: 2772
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2772
+  primary_parameter: num_layers_per_virtual_pipeline_stage
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  changed_files:
+  - mindspeed/core/transformer/moe/moe_feature/fb_overlap/overlap_funcs/fwdbwd.py
+  - mindspeed/features_manager/moe/fb_overlap.py
+  admission_status: pending
+- candidate_id: mindspeed-a7c198b62d3e
+  repository: MindSpeed
+  fix_date: '2025-09-02'
+  subject: '!2801 fix: transformer config validate bug Merge pull request !2801 from YE ZHENYUAN/master0902'
+  buggy_commit: 7fef2a5234865c1ee50c2a00ac00454dc040f3bd
+  fix_commit: a7c198b62d3e47376f11cf28919f9011119530b6
+  merge_request_number: 2801
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2801
+  primary_parameter: ffn_hidden_size
+  affected_parameter_candidates:
+  - ffn_hidden_size
+  changed_files:
+  - mindspeed/features_manager/moe/shared_expert.py
+  - mindspeed/features_manager/pipeline_parallel/variable_seq_length.py
+  admission_status: pending
+- candidate_id: mindspeed-03bb94e94855
+  repository: MindSpeed
+  fix_date: '2025-09-04'
+  subject: '!2811 fix: transformer config validate bug Merge pull request !2811 from YE ZHENYUAN/master0904'
+  buggy_commit: 708af43cf9d42ec729a5cbb65bf20e0106bb67bd
+  fix_commit: 03bb94e948552071b5abe66a0ec6f04f91404ed9
+  merge_request_number: 2811
+  merge_request_url: https://gitee.com/ascend/MindSpeed/pulls/2811
+  primary_parameter: pipeline_model_parallel_size
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  - pipeline_model_parallel_size
+  - recompute_granularity
+  - recompute_num_layers
+  - recompute_method
+  - num_layers
+  changed_files:
+  - mindspeed/features_manager/pipeline_parallel/ripipe_schedules_feature.py
+  admission_status: pending
+- candidate_id: mindspeed-96bc0a3bf339
+  repository: MindSpeed
+  fix_date: '2025-12-06'
+  subject: '[Bugfix] Fix Megatron checkpoint saving&loading compatibility for torch_dcp format'
+  buggy_commit: e62e99fd287c1a0d51141e894113c5875e91956e
+  fix_commit: 96bc0a3bf3398bf45ac26e0bded95ee174ac449b
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: pipeline_model_parallel_size
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  changed_files:
+  - mindspeed/checkpointing.py
+  - mindspeed/core/distributed/torch_fully_sharded_data_parallel/checkpointing.py
+  - mindspeed/features_manager/distributed/torch_fully_sharded_data_parallel.py
+  admission_status: pending
+- candidate_id: mindspeed-255be5014077
+  repository: MindSpeed
+  fix_date: '2026-01-08'
+  subject: add moe fix router v6
+  buggy_commit: da699862bb3828eb826eb3ee5fe608cded25ce2c
+  fix_commit: 255be5014077de0c80659833798074b9f6df7daa
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: expert_model_parallel_size
+  affected_parameter_candidates:
+  - expert_model_parallel_size
+  - num_experts
+  changed_files:
+  - mindspeed/core/transformer/moe/moe_utils.py
+  - mindspeed/features_manager/__init__.py
+  - mindspeed/features_manager/moe/moe_fix_router.py
+  admission_status: pending
+- candidate_id: mindspeed-3589088c710a
+  repository: MindSpeed
+  fix_date: '2026-01-20'
+  subject: 'feat: fixed sub-sequence length'
+  buggy_commit: d5ce746788c106f6f01f2b8f6e174771211b3674
+  fix_commit: 3589088c710a1168531d9efce2942a4f1498122c
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: seq_length
+  affected_parameter_candidates:
+  - seq_length
+  - seq_len
+  changed_files:
+  - mindspeed/core/transformer/flash_attention/reset_attention_mask/utils.py
+  - mindspeed/features_manager/transformer/flash_attention/reset_attention_mask_feature.py
+  admission_status: pending
+- candidate_id: mindspeed-1b9c563b2c86
+  repository: MindSpeed
+  fix_date: '2026-03-28'
+  subject: fix:balanced moe supported for dualpipev
+  buggy_commit: e05ed6f5cf48e0c8cee3131486de68408ac44019
+  fix_commit: 1b9c563b2c86d3f4019fdfd4940adb6f00700592
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: moe_router_topk
+  affected_parameter_candidates:
+  - bias_dropout_fusion
+  - moe_router_topk
+  - hidden_dropout
+  changed_files:
+  - mindspeed/core/transformer/moe/moe_feature/balanced_moe/overlap_funcs/fwdbwd.py
+  - mindspeed/core/transformer/moe/moe_feature/fb_overlap/transformer_layer.py
+  admission_status: pending
+- candidate_id: mindspeed-362072eaeccf
+  repository: MindSpeed
+  fix_date: '2026-05-25'
+  subject: 'fix: FP8 recompute error in verl'
+  buggy_commit: ad40a494b0688e7264081bf73d080ef7c04cfcd3
+  fix_commit: 362072eaeccf71b9ec7eaaa6389f4e90760e1d5e
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: distribute_saved_activations
+  affected_parameter_candidates:
+  - distribute_saved_activations
+  changed_files:
+  - mindspeed/te/pytorch/fp8/checkpoint.py
+  admission_status: pending
+- candidate_id: mindspeed-5f1f4abf20ec
+  repository: MindSpeed
+  fix_date: '2026-07-01'
+  subject: 'fix: adapt cpu-initialization and moe-tp-extend-ep'
+  buggy_commit: 6c3c4bf2dfa91e0456d8bf6aea3a55d13f499670
+  fix_commit: 5f1f4abf20ec0f0987afd00c60741b257f2801da
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: moe_router_topk
+  affected_parameter_candidates:
+  - activation_func
+  - moe_router_topk
+  changed_files:
+  - mindspeed/core/transformer/moe/experts.py
+  - mindspeed/core/transformer/moe/moe_feature/overlap/experts.py
+  - mindspeed/core/transformer/moe/moe_feature/tp_extend_ep/experts.py
+  admission_status: pending
+- candidate_id: mindspeed-25568bbf2423
+  repository: MindSpeed
+  fix_date: '2026-07-10'
+  subject: 'fix: MindSpeedTEDotProductAttention reads context_parallel_algo from global args instead of stale config'
+  buggy_commit: 53c3dc787ba392890c0b1ef500e678169fc1922a
+  fix_commit: 25568bbf2423d67e129ff42470ef7ddf47f2e37a
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: num_attention_heads
+  affected_parameter_candidates:
+  - num_attention_heads
+  - attention_dropout
+  changed_files:
+  - mindspeed/te/pytorch/attention/dot_product_attention/dot_product_attention.py
+  admission_status: pending
+- candidate_id: mindspeed-6a260e4c4ff2
+  repository: MindSpeed
+  fix_date: '2026-07-23'
+  subject: 'fix(moe-fb-overlap): token_dispatcher中to("cpu")操作漏赋值'
+  buggy_commit: b39fbbecf9e7657a70d4899d81bfa99755051330
+  fix_commit: 6a260e4c4ff29beaac18a4843c4eaf3f0da1769f
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: num_experts
+  affected_parameter_candidates:
+  - num_experts
+  changed_files:
+  - mindspeed/core/transformer/moe/moe_feature/fb_overlap/modules/token_dispatcher.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-c06c15094bef
+  repository: MindSpeed-LLM
+  fix_date: '2025-08-05'
+  subject: '!3085 [pytorch][refactor]fix moe and fusions features in the refactor Merge pull request !3085 from guozhihua/fix_moe'
+  buggy_commit: a3fab77bc085ab6a856898a5fdba9e87aff3e353
+  fix_commit: c06c15094bef1abd6326dcf9067624dc0c9a406a
+  merge_request_number: 3085
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3085
+  primary_parameter: pipeline_model_parallel_size
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - multi_head_latent_attention
+  - ffn_hidden_size
+  - num_layers
+  changed_files:
+  - mindspeed_llm/features_manager/__init__.py
+  - mindspeed_llm/features_manager/common/embedding.py
+  - mindspeed_llm/features_manager/common/rotary.py
+  - mindspeed_llm/features_manager/megatron_basic/model_basic.py
+  - mindspeed_llm/features_manager/moe/moe_allgather_overlap.py
+  - mindspeed_llm/features_manager/moe/moe_alltoallseq_overlap.py
+  - mindspeed_llm/features_manager/moe/moe_router.py
+  - mindspeed_llm/features_manager/moe/shared_expert.py
+  - mindspeed_llm/features_manager/transformer/multi_latent_attention/mla_feature.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-8fcb46439539
+  repository: MindSpeed-LLM
+  fix_date: '2025-08-05'
+  subject: '!3098 [pytorch][bugfix] fix pipeline cases Merge pull request !3098 from yanzhixiao/pipeline-bugfix'
+  buggy_commit: c06c15094bef1abd6326dcf9067624dc0c9a406a
+  fix_commit: 8fcb464395392c52b097a494a72fffad58043f75
+  merge_request_number: 3098
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3098
+  primary_parameter: multi_head_latent_attention
+  affected_parameter_candidates:
+  - multi_head_latent_attention
+  changed_files:
+  - mindspeed_llm/features_manager/__init__.py
+  - mindspeed_llm/tasks/checkpoint/optim.py
+  - tests/pipeline/baseline/deepseek2_tp1_pp1_mcore_moe.json
+  admission_status: pending
+- candidate_id: mindspeed-llm-50b1b1c437c5
+  repository: MindSpeed-LLM
+  fix_date: '2025-08-14'
+  subject: '!3142 [pytorch][bugfix] fix pipeline cases in v2 Merge pull request !3142 from yanzhixiao/fix-v2-0814'
+  buggy_commit: cffbab1a8229fc2b3c5025e03d3a984b41c8dfe3
+  fix_commit: 50b1b1c437c57012dc08656ee423a4ce9e5bf99e
+  merge_request_number: 3142
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3142
+  primary_parameter: context_parallel_size
+  affected_parameter_candidates:
+  - position_embedding_type
+  - context_parallel_size
+  - num_attention_heads
+  - hidden_size
+  - world_size
+  - seq_length
+  - num_layers
+  - seq_len
+  changed_files:
+  - mindspeed_llm/core/context_parallel/dot_product_attention.py
+  - mindspeed_llm/features_manager/tokenizer/build_tokenizer.py
+  - mindspeed_llm/training/arguments.py
+  - tests/pipeline/context_parallel/test_adaptive_context_parallel.py
+  - tests/pipeline/context_parallel/test_hybrid_context_parallel.py
+  - tests/pipeline/context_parallel/test_ringattn_context_parallel.py
+  - tests/pipeline/context_parallel/test_ulysses_context_parallel.py
+  - tests/pipeline/model_module/test_attention.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-eb9a13d762ef
+  repository: MindSpeed-LLM
+  fix_date: '2025-08-15'
+  subject: '!3148 [pytorch][bigfix]fix pipeline cases in v2 Merge pull request !3148 from yanzhixiao/fix-v2-0815'
+  buggy_commit: 50b1b1c437c57012dc08656ee423a4ce9e5bf99e
+  fix_commit: eb9a13d762effd9214bd5b18199a6a4d16c58adb
+  merge_request_number: 3148
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3148
+  primary_parameter: world_size
+  affected_parameter_candidates:
+  - world_size
+  - seq_len
+  changed_files:
+  - mindspeed_llm/features_manager/models/module.py
+  - mindspeed_llm/features_manager/transformer/transformer_block.py
+  - mindspeed_llm/training/arguments.py
+  - tests/pipeline/context_parallel/test_ringattn_context_parallel.py
+  - tests/pipeline/model_module/test_attention.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-c48cd97812bd
+  repository: MindSpeed-LLM
+  fix_date: '2025-08-16'
+  subject: '!3152 [pytorch][bigfix] fix pipeline cases in v2 Merge pull request !3152 from yanzhixiao/fix-v2-0816'
+  buggy_commit: 03ae87dadf2d9136fb0ce300c85d172c781c8d98
+  fix_commit: c48cd97812bda8db168e491eac64a8a5a9384b2a
+  merge_request_number: 3152
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3152
+  primary_parameter: activation_func
+  affected_parameter_candidates:
+  - activation_func
+  changed_files:
+  - mindspeed_llm/core/transformer/mlp.py
+  - mindspeed_llm/features_manager/megatron_basic/megatron_basic.py
+  - mindspeed_llm/features_manager/transformer/transformer_block.py
+  - mindspeed_llm/training/arguments.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-8ff43a117958
+  repository: MindSpeed-LLM
+  fix_date: '2025-08-18'
+  subject: '!3125 [pytorch][bugfix]fix qwen2_moe spec Merge pull request !3125 from guozhihua/fix_transformer_block_build_layer'
+  buggy_commit: ea1200a1d82293181b8a7451761c4976528fb4a7
+  fix_commit: 8ff43a117958cad4374e8bf2bc89a17ffdc6194a
+  merge_request_number: 3125
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3125
+  primary_parameter: pipeline_model_parallel_size
+  affected_parameter_candidates:
+  - num_layers_per_virtual_pipeline_stage
+  - pipeline_model_parallel_size
+  - multi_head_latent_attention
+  - num_experts
+  - num_layers
+  changed_files:
+  - examples/mcore/qwen2_moe/evaluate_qwen2_57b_a14b_ptd.sh
+  - examples/mcore/qwen2_moe/generate_qwen2_57b_a14b_ptd.sh
+  - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_32k_ptd.sh
+  - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_A3_ptd.sh
+  - examples/mcore/qwen2_moe/pretrain_qwen2_57b_a14b_4k_ptd.sh
+  - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_full.sh
+  - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_full_pack.sh
+  - examples/mcore/qwen2_moe/tune_qwen2_57b_a14b_4k_lora.sh
+  - mindspeed_llm/core/transformer/transformer_block.py
+  - mindspeed_llm/features_manager/pipeline_parallel/noop_layers.py
+  - mindspeed_llm/features_manager/tokenizer/build_tokenizer.py
+  - mindspeed_llm/features_manager/transformer/flash_attention/fusion_attention_feature.py
+  - mindspeed_llm/features_manager/transformer/mtp.py
+  - mindspeed_llm/features_manager/transformer/multi_latent_attention/mla_feature.py
+  - mindspeed_llm/features_manager/transformer/transformer_block.py
+  - mindspeed_llm/training/arguments.py
+  - tests/st/shell_scripts/qwen2_moe_tp1_pp2_ep2_cp2_32k.sh
+  admission_status: pending
+- candidate_id: mindspeed-llm-6f8618b622c7
+  repository: MindSpeed-LLM
+  fix_date: '2025-08-25'
+  subject: '!3192 [pytorch][bugfix]change moe layer forward Merge pull request !3192 from guozhihua/fix-group-limited-greedy-bug'
+  buggy_commit: cf6e25cf7959c02fa44bf4d504aac555dda74377
+  fix_commit: 6f8618b622c71bf543c312465f17370f7e06f895
+  merge_request_number: 3192
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3192
+  primary_parameter: tensor_model_parallel_size
+  affected_parameter_candidates:
+  - moe_router_load_balancing_type
+  - tensor_model_parallel_size
+  - sequence_parallel
+  - num_layers
+  changed_files:
+  - mindspeed_llm/core/transformer/moe/moe_layer.py
+  - mindspeed_llm/features_manager/moe/moe_router.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-5c72f5c5415e
+  repository: MindSpeed-LLM
+  fix_date: '2025-09-09'
+  subject: '!3282 [mindspore][master]fix ringattentionupdate Merge pull request !3282 from 杨承翰/ring_master'
+  buggy_commit: ca6c3a39cbb2ee18632a51f9c08bd85970fc5036
+  fix_commit: 5c72f5c5415eb4f8b2da65d1ccd0f125f94a80e0
+  merge_request_number: 3282
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3282
+  primary_parameter: context_parallel_size
+  affected_parameter_candidates:
+  - distribute_saved_activations
+  - tensor_model_parallel_size
+  - max_position_embeddings
+  - position_embedding_type
+  - context_parallel_size
+  - max_sequence_length
+  - sequence_parallel
+  - attention_dropout
+  - ffn_hidden_size
+  - add_bias_linear
+  - parallel_output
+  - hidden_dropout
+  - hidden_size
+  - vocab_size
+  - seq_length
+  - batch_size
+  changed_files:
+  - mindspeed_llm/mindspore/core/transformer/dot_product_attention.py
+  - mindspeed_llm/mindspore/core/transformer/moba_attention.py
+  - mindspeed_llm/mindspore/core/transformer/module.py
+  - mindspeed_llm/mindspore/tasks/checkpoint/__init__.py
+  - mindspeed_llm/mindspore/tasks/models/transformer/multi_token_predication.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-3196f2b50752
+  repository: MindSpeed-LLM
+  fix_date: '2025-09-25'
+  subject: '!3376 [pytorch][model] fix recompute_valid_actual_seq_len Merge pull request !3376 from jzh/master_recomactualseqlen'
+  buggy_commit: bdea1d5de3bfba0084b01407efe63a917fe055eb
+  fix_commit: 3196f2b507522d3c6334c0da9bc95760dd0a6190
+  merge_request_number: 3376
+  merge_request_url: https://gitee.com/ascend/MindSpeed-LLM/pulls/3376
+  primary_parameter: micro_batch_size
+  affected_parameter_candidates:
+  - micro_batch_size
+  changed_files:
+  - examples/mcore/qwen3_moe/generate_qwen3_235b_a22b_ptd.sh
+  - mindspeed_llm/core/transformer/dot_product_attention.py
+  - mindspeed_llm/core/transformer/moe/router.py
+  - mindspeed_llm/training/utils.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-ecfa623147fc
+  repository: MindSpeed-LLM
+  fix_date: '2025-09-28'
+  subject: '[pytorch][bugfix] glm45-moe ckpt bugfix'
+  buggy_commit: 09c3aeaf315b6a6f1cdd10f71edb742152c28680
+  fix_commit: ecfa623147fc8be1f071fabd1865a83cdb540503
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: num_experts
+  affected_parameter_candidates:
+  - num_experts
+  changed_files:
+  - configs/checkpoint/model_cfg.json
+  admission_status: pending
+- candidate_id: mindspeed-llm-4c3e129ddc9b
+  repository: MindSpeed-LLM
+  fix_date: '2025-10-22'
+  subject: '[pytorch][bugfix]fix checkpoint convert v2 bug'
+  buggy_commit: d2d50890376bec209c98887b23af1c7401d6b993
+  fix_commit: 4c3e129ddc9b4ae0fe19a7658b760130fc83f56b
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: num_experts
+  affected_parameter_candidates:
+  - hidden_size
+  - num_experts
+  changed_files:
+  - mindspeed_llm/tasks/checkpoint/convert_mg2hf.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-885cb967359a
+  repository: MindSpeed-LLM
+  fix_date: '2025-10-22'
+  subject: '[pytorch][bugfix]fix lora bug in moe'
+  buggy_commit: cb248046ffad2cad7bda4d72a03060ea20dfd3a3
+  fix_commit: 885cb967359a492ead664fadf2bab6bb5100361c
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: num_experts
+  affected_parameter_candidates:
+  - num_experts
+  changed_files:
+  - mindspeed_llm/core/transformer/moe/moe_layer.py
+  - mindspeed_llm/features_manager/finetune/lora.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-af422e60c7a8
+  repository: MindSpeed-LLM
+  fix_date: '2025-12-01'
+  subject: '[pytorch][bugfix]fix ckpt of args_check about moe with lora'
+  buggy_commit: 65dda82fc41cf027da360fd3df0b384c201ccdee
+  fix_commit: af422e60c7a8284c078da43f59609a0094b522d6
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: num_experts
+  affected_parameter_candidates:
+  - num_experts
+  changed_files:
+  - mindspeed_llm/tasks/checkpoint/models.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-3e61861d7ce3
+  repository: MindSpeed-LLM
+  fix_date: '2025-12-12'
+  subject: '[pytorch][bugfix]update lora moe in alltoall-overlap and gemm'
+  buggy_commit: 3e3a5ab092aa2b1a772e7b5e069f851c5d0d988f
+  fix_commit: 3e61861d7ce3676407fc29dfd230184cc18f7863
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: activation_func
+  affected_parameter_candidates:
+  - activation_func
+  changed_files:
+  - mindspeed_llm/tasks/posttrain/lora/moe/experts.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-537a19831402
+  repository: MindSpeed-LLM
+  fix_date: '2025-12-15'
+  subject: '[mindspore][bugfix][master] fix shared expert by removing stream'
+  buggy_commit: 2364a0577678765ca148a5255e9a3061e21a93e9
+  fix_commit: 537a19831402f6968f16e27b85d6a886da919233
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: tensor_model_parallel_size
+  affected_parameter_candidates:
+  - tensor_model_parallel_size
+  - sequence_parallel
+  changed_files:
+  - mindspeed_llm/mindspore/core/transformer/moe/moe_feature/tp_extend_ep/moe_layer.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-dd7eb2de1209
+  repository: MindSpeed-LLM
+  fix_date: '2026-01-30'
+  subject: '[pytorch][bugfix]fix Inconsistent return values of the recompute_valid_actual_seq_len function'
+  buggy_commit: 87801c39e1e9fe1a06192adfa2b844b06d117939
+  fix_commit: dd7eb2de12093bec3a9702271bc256618164711c
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: micro_batch_size
+  affected_parameter_candidates:
+  - micro_batch_size
+  changed_files:
+  - mindspeed_llm/training/utils.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-307ca07c7949
+  repository: MindSpeed-LLM
+  fix_date: '2026-03-17'
+  subject: 'fix(torch): fix checkpoint compatibility issue'
+  buggy_commit: 57b6573a59a65c6105324e81a60b83b3421c3182
+  fix_commit: 307ca07c794919b319a9a5abc05bba5749966ba2
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: distribute_saved_activations
+  affected_parameter_candidates:
+  - distribute_saved_activations
+  changed_files:
+  - mindspeed_llm/core/tensor_parallel/layers.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-1bbdcc41c0e6
+  repository: MindSpeed-LLM
+  fix_date: '2026-04-20'
+  subject: fix(pytorch)：fix kvallgather for pipeline.
+  buggy_commit: 8b44b89914b0acbf3bc3eaaa72b3d3602717b8f0
+  fix_commit: 1bbdcc41c0e6823759cf35c493d6fdcdc2a4d1f9
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: num_attention_heads
+  affected_parameter_candidates:
+  - num_attention_heads
+  - batch_size
+  changed_files:
+  - mindspeed_llm/te/pytorch/attention/dot_product_attention/te_cp_dot_product_attention.py
+  admission_status: pending
+- candidate_id: mindspeed-llm-118f67aae8c6
+  repository: MindSpeed-LLM
+  fix_date: '2026-07-30'
+  subject: 'refactor: make post_norm config-driven, fix fc_type ref, clean qkv_split'
+  buggy_commit: 6b9c3f1e104cc425a95ceb7fd2b83f44d32c3e48
+  fix_commit: 118f67aae8c6a314c8e57d6cb36c3af2c2e05875
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: expert_model_parallel_size
+  affected_parameter_candidates:
+  - expert_model_parallel_size
+  - tensor_model_parallel_size
+  - group_query_attention
+  - num_attention_heads
+  - hidden_size
+  changed_files:
+  - configs/checkpoint/model_cfg.json
+  - mindspeed_llm/tasks/checkpoint/convert_hf2mg.py
+  - mindspeed_llm/tasks/checkpoint/convert_mg2hf.py
+  - tests/pipeline/ut/checkpoint/test_checkpoint.json
+  admission_status: pending
+- candidate_id: mindspeed-mm-0a077e886fd7
+  repository: MindSpeed-MM
+  fix_date: '2025-08-01'
+  subject: '!1344 [Bugfix] remove attention mask building when enable ring CP Merge pull request !1344 from chenhaihui/qwenvl_cp_bugfix'
+  buggy_commit: ab5cdeda901b13b3675cc40a6176e854b0a0348a
+  fix_commit: 0a077e886fd7169cd0942cd32be8f305b9b1af67
+  merge_request_number: 1344
+  merge_request_url: https://gitee.com/ascend/MindSpeed-MM/pulls/1344
+  primary_parameter: context_parallel_size
+  affected_parameter_candidates:
+  - context_parallel_size
+  changed_files:
+  - docs/features/unaligned_sequence_parallel.md
+  - mindspeed_mm/models/vision/vlm_attentionmask_for_llm.py
+  - mindspeed_mm/utils/transformer_model_config.py
+  admission_status: pending
+- candidate_id: mindspeed-mm-01bf398a5957
+  repository: MindSpeed-MM
+  fix_date: '2025-08-27'
+  subject: '!1445 [Bugfix]Modify the file permission control in the weight conversion scenario Merge pull request !1445 from
+    zhangxubin/master'
+  buggy_commit: 7efad41df636190e414f6a2faca9b8eda3201804
+  fix_commit: 01bf398a5957414cdb7904d49e889b5760e1b9ab
+  merge_request_number: 1445
+  merge_request_url: https://gitee.com/ascend/MindSpeed-MM/pulls/1445
+  primary_parameter: num_experts
+  affected_parameter_candidates:
+  - num_experts
+  changed_files:
+  - checkpoint/common/constant.py
+  - checkpoint/common/merge_base_lora_weight.py
+  - checkpoint/common/permissions.py
+  - checkpoint/sora_model/convert_utils/save_load_utils.py
+  - checkpoint/vlm_model/converters/deepseekvl2.py
+  - checkpoint/vlm_model/converters/deepseekvl_hf_to_mm.py
+  - checkpoint/vlm_model/converters/glm.py
+  - checkpoint/vlm_model/converters/internvl.py
+  - checkpoint/vlm_model/converters/qwen2_5omni.py
+  - checkpoint/vlm_model/converters/qwen2_5vl.py
+  - checkpoint/vlm_model/converters/qwen2vl.py
+  - checkpoint/vlm_model/converters/qwen3vl.py
+  - checkpoint/vlm_model/converters/videoalign.py
+  admission_status: pending
+- candidate_id: mindspeed-mm-7a7cc1d3e213
+  repository: MindSpeed-MM
+  fix_date: '2025-11-11'
+  subject: '[Bugfix] Fallback to older Hetero-Parallel Data Comm'
+  buggy_commit: 57cb6427b32ac49d0f0ac1c1ba9ce8107b09fa1d
+  fix_commit: 7a7cc1d3e213c8f18ccb1eab02549b29e70e571e
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: context_parallel_size
+  affected_parameter_candidates:
+  - pipeline_model_parallel_size
+  - tensor_model_parallel_size
+  - context_parallel_size
+  - world_size
+  changed_files:
+  - mindspeed_mm/utils/hetero_parallel.py
+  admission_status: pending
+- candidate_id: mindspeed-mm-471f1641676e
+  repository: MindSpeed-MM
+  fix_date: '2025-12-02'
+  subject: '[Feature]Add split&gather function for ViT RingAttention, bugfix for qwen3vl'
+  buggy_commit: 869d5eaa24212e241db444b05443ac1c4e9037ae
+  fix_commit: 471f1641676ecd5a1418f9e19cdeea4bf22d45e1
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: seq_len
+  affected_parameter_candidates:
+  - seq_len
+  changed_files:
+  - mindspeed_mm/models/transformers/qwen3vl/modeling_qwen3_vl.py
+  - mindspeed_mm/models/transformers/qwen3vl/utils.py
+  admission_status: pending
+- candidate_id: mindspeed-mm-86d3bfd1738c
+  repository: MindSpeed-MM
+  fix_date: '2025-12-09'
+  subject: '[bugfix]fix get num_experts error in mm_2_hf权重转换'
+  buggy_commit: 432926dea60a805a0436b68c599cada7df7f8a8d
+  fix_commit: 86d3bfd1738cd68835289687639aa999335605ed
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: num_experts
+  affected_parameter_candidates:
+  - num_experts
+  changed_files:
+  - checkpoint/vlm_model/mm_to_hf.py
+  admission_status: pending
+- candidate_id: mindspeed-mm-289bdb4f22cb
+  repository: MindSpeed-MM
+  fix_date: '2025-12-24'
+  subject: '[Bugfix] Bug in Bagel folder changes and validation'
+  buggy_commit: 1e0c57f27ac039746a4fbd3a69e3c970b7f3b42c
+  fix_commit: 289bdb4f22cb2654093aec397362d2a34dd06f84
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: hidden_size
+  affected_parameter_candidates:
+  - num_attention_heads
+  - hidden_size
+  - vocab_size
+  changed_files:
+  - examples/bagel/fsdp2_config.yaml
+  - mindspeed_mm/models/transformer/mllms/__init__.py
+  - mindspeed_mm/models/transformer/mllms/bagel_qwen2_mot.py
+  - mindspeed_mm/models/transformer/transformer_model.py
+  admission_status: pending
+- candidate_id: mindspeed-mm-ae96c223fbb5
+  repository: MindSpeed-MM
+  fix_date: '2026-02-05'
+  subject: '[Test] add qwen3vl attention ut, and bugfix for qwen3vl attention, qwen3vl freeze modules'
+  buggy_commit: cb57c5ba85356db81372e8f9fa672fdfa94d4a55
+  fix_commit: ae96c223fbb5e66b51ba7c1ed7f7ef82aff56773
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: num_experts
+  affected_parameter_candidates:
+  - max_position_embeddings
+  - moe_intermediate_size
+  - num_attention_heads
+  - intermediate_size
+  - attention_dropout
+  - hidden_size
+  - num_experts
+  - patch_size
+  - vocab_size
+  - hidden_act
+  changed_files:
+  - mindspeed_mm/models/transformers/qwen3vl/attention_utils.py
+  - mindspeed_mm/models/transformers/qwen3vl/qwen3vl.py
+  - tests/ut/models/transformers/qwen3vl/test_attention_utils.py
+  admission_status: pending
+- candidate_id: mindspeed-mm-0b37025a499d
+  repository: MindSpeed-MM
+  fix_date: '2026-02-07'
+  subject: '[bugfix] fix weight loading bug for EP when experts.ndim == 2'
+  buggy_commit: 9ea0c80ec40ccefbe77a7ac5ed45c352ff12ee6b
+  fix_commit: 0b37025a499ddfb87619d05e8f34cba02a20d117
+  merge_request_number: null
+  merge_request_url: null
+  primary_parameter: num_experts
+  affected_parameter_candidates:
+  - num_experts
+  changed_files:
+  - mindspeed_mm/models/transformers/moe_utils.py
+  admission_status: pending

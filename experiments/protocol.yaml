@@ -135,6 +135,19 @@ rq3:
   question: Can ConfigFuzz replay and discover more real configuration-related framework bugs at lower cost than existing
     configuration-testing methods?
   historical_bug_dataset: rq3/historical_bugs.yaml
+  historical_selection_policy: rq3/historical_selection_policy.frozen.yaml
+  historical_source_queues:
+    gpu: rq3/gpu_historical_source_queue.frozen.yaml
+    npu: rq3/npu_historical_source_queue.frozen.yaml
+  historical_window:
+    start: '2025-08-01'
+    end: '2026-07-31'
+    basis: fix_date
+  historical_source_membership:
+    frozen_before_execution: true
+    framework_balancing: false
+    reproducibility_used_for_selection: false
+    every_frozen_candidate_attempted_for_admission: true
   replay_oracle:
   - same generated configuration fails on buggy commit
   - same generated configuration passes on fixed commit

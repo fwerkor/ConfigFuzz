@@ -1,0 +1,20 @@
+schema_version: 1
+name: rq3-historical-selection-policy
+status: frozen
+window:
+  start: '2025-08-01'
+  end: '2026-07-31'
+  basis: fix date
+principle: enumerate all source candidates satisfying predeclared mechanical criteria; do not choose cases by expected reproducibility
+queues:
+- gpu_historical_source_queue.frozen.yaml
+- npu_historical_source_queue.frozen.yaml
+total_source_candidate_count: 109
+post_freeze_rule: execution may change only admission status/evidence; source membership is immutable
+current_version_discovery:
+  separate_from_historical: true
+  historical_window_excludes_current_campaign: true
+  known_gpu_discoveries_at_freeze: 5
+  known_discoveries_are_results_not_historical_targets: true
+gpu_source_candidate_count: 67
+npu_source_candidate_count: 42
