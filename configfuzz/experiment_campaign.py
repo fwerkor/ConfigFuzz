@@ -35,6 +35,7 @@ class CampaignWorkload:
     static_dependency_graph: Path | None = None
     semantic_anchors: tuple[str, ...] = ()
     native_validator_manifest: Path | None = None
+    runtime_context: Mapping[str, Any] | None = None
 
     @classmethod
     def from_dict(
@@ -60,6 +61,9 @@ class CampaignWorkload:
             static_graph_path = _resolve_existing_path(
                 static_graph, base_dir, workload_id, "static_dependency_graph"
             )
+        runtime_context = data.get("runtime_context")
+        if runtime_context is not None and not isinstance(runtime_context, Mapping):
+            raise ValueError(f"{workload_id}: runtime_context must be an object")
         return cls(
             workload_id=workload_id,
             baseline_id=baseline_id,
@@ -70,6 +74,7 @@ class CampaignWorkload:
                 str(item) for item in data.get("semantic_anchors", ())
             ),
             native_validator_manifest=validator_path,
+            runtime_context=(dict(runtime_context) if runtime_context is not None else None),
         )
 
 
@@ -209,7 +214,8 @@ def plan_campaign(
                 ),
             )
         baseline, graph, static_graph = cache[workload.workload_id]
-        planning_baseline = _merge_runtime_context(baseline, runtime_context)
+        planning_baseline = _merge_runtime_context(baseline, workload.runtime_context)
+        planning_baseline = _merge_runtime_context(planning_baseline, runtime_context)
         for method in methods:
             method_graph = (
                 static_graph

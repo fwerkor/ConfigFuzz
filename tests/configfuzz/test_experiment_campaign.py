@@ -460,6 +460,17 @@ def test_campaign_runtime_context_is_available_to_solver(tmp_path: Path) -> None
     assert payload["runtime_context"] == {"world_size": 2}
     assert payload["cases"][0]["status"] == "unsat"
 
+    workload_payload = yaml.safe_load(workloads.read_text(encoding="utf-8"))
+    workload_payload["workloads"][0]["runtime_context"] = {"world_size": 2}
+    workloads.write_text(yaml.safe_dump(workload_payload), encoding="utf-8")
+    workload_context_payload = plan_campaign(
+        load_campaign_workloads(workloads),
+        [intent],
+        methods=[ExperimentMethod.CONFIGFUZZ],
+    )
+    assert workload_context_payload["runtime_context"] == {}
+    assert workload_context_payload["cases"][0]["status"] == "unsat"
+
 
 def test_frozen_intent_hash_is_verified(tmp_path: Path) -> None:
     source = tmp_path / "intents.yaml"

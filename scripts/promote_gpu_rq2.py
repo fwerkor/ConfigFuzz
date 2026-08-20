@@ -75,7 +75,8 @@ SUBJECTS = {
             "sequence_parallel": "parallel.sequence_parallel",
             "recompute_granularity": "training.recompute_granularity",
         },
-        "uses_hf_model_graph": False,
+        "uses_hf_model_graph": True,
+        "runtime_context": {"kv_channels": None},
     },
 }
 
@@ -341,6 +342,8 @@ def main() -> int:
                     "command_manifest": _rel(repo / str(spec["launcher"]), subject_root),
                 }
             )
+            if spec.get("runtime_context") is not None:
+                template["runtime_context"] = dict(spec["runtime_context"])
             workload_rows.append(template)
             graph_summaries.append(
                 {
