@@ -318,6 +318,37 @@ Task1 manifest executes only satisfying and repaired cases. A hardware-free
 configuration-preparation smoke test is available through
 `experiments/manifests/lmsv_task1_prepare_only.json`.
 
+Run ConfigFuzz as a continuous multi-target fuzzer by first generating the full
+qualified single-target value pool, then asking each round to select several
+distinct target parameters and solve them jointly:
+
+```bash
+python scripts/generate_rq2_intents.py \
+  --workloads experiments/rq2/canonical_workloads.prequalified.yaml \
+  --output /tmp/configfuzz-qualified-intents.yaml
+
+python scripts/run_multi_target_campaign.py \
+  --framework deepspeed \
+  --workloads experiments/rq2/promoted/gpu/deepspeed/workloads.yaml \
+  --candidates /tmp/configfuzz-qualified-intents.yaml \
+  --launcher experiments/gpu/launch_rq2_deepspeed.sh \
+  --output-root formal-results/multi-target/deepspeed \
+  --output formal-results/multi-target/deepspeed/results.jsonl \
+  -r 1000 --mutnm 3 --seed 2026 \
+  --gpus 4,5 --device-count 2
+```
+
+`--rounds` (`-r`) is the number of continuous mutation/test rounds, `--mutnm`
+is the number of distinct target parameters changed together in each round,
+and `--seed` fixes the complete mutation sequence. All selected target values
+are hard-preserved in one solver invocation; ConfigFuzz may coordinate other
+parameters in the union of their affected hypergraph regions. Parameters absent
+from the recovered graph remain valid mutation targets and are applied unchanged.
+Each round starts from the qualified canonical baseline, so failures do not
+contaminate later configurations. Results are appended and fsynced as JSONL
+after every round; restarting the same command resumes deterministically and
+skips completed run IDs.
+
 Run a versioned scan against an external framework checkout:
 
 ```bash
@@ -387,6 +418,7 @@ from intended framework semantics.
 ```text
 configfuzz/                 constraint inference and experiment infrastructure
   active_validation.py     multi-round select/execute/feedback loop
+  multi_target_campaign.py continuous joint multi-target fuzzing campaign
   bug_benchmark.py         historical-fix shortlist construction
   dependencies.py          dependency hypergraph and joint-mutation planner
   experiment.py            RQ schemas, records, summaries, and fingerprints

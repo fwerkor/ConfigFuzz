@@ -20,7 +20,6 @@ from configfuzz.experiment import (
 )
 from configfuzz.experiment_campaign import CampaignWorkload, load_campaign_workloads
 
-
 _MILESTONE_NAMES = {
     "argument_parsing": ExecutionMilestone.ARGUMENT_PARSING,
     "configuration_validation": ExecutionMilestone.CONFIG_VALIDATION,
@@ -56,7 +55,9 @@ _VALIDATION_PATTERNS = (
     "must be",
     "should be",
 )
-_ERROR_LINE = re.compile(r"(?:ValueError|AssertionError|RuntimeError|ZeroDivisionError|TypeError):.*")
+_ERROR_LINE = re.compile(
+    r"(?:ValueError|AssertionError|RuntimeError|ZeroDivisionError|TypeError):.*"
+)
 _RUNTIME_EVENT_PREFIX = "CONFIGFUZZ_RUNTIME_EVENT:"
 _RUNTIME_EVENT_KINDS = {"branch", "backend", "topology", "feature"}
 RUNTIME_INSTRUMENTATION_VERSION = "runtime-events-v1"
@@ -150,8 +151,10 @@ def execute_primary_campaign(
             workload_id = str(case["workload_id"])
             workload = workloads.get(workload_id)
             if workload is None:
-                raise KeyError(f"plan references workload not supported by {framework_id}: {workload_id}")
-            record, used_accelerator = _execute_case(
+                raise KeyError(
+                    f"plan references workload not supported by {framework_id}: {workload_id}"
+                )
+            record, used_accelerator = execute_campaign_case(
                 framework_id=framework_id,
                 case=case,
                 workload=workload,
@@ -187,7 +190,7 @@ def execute_primary_campaign(
     }
 
 
-def _execute_case(
+def execute_campaign_case(
     *,
     framework_id: str,
     case: Mapping[str, Any],
@@ -204,12 +207,21 @@ def _execute_case(
     campaign_started: float,
     cumulative_accelerator_seconds: float,
     provenance: Mapping[str, str],
+    rq: str = "rq2",
 ) -> tuple[ExperimentRunRecord, bool]:
     method = ExperimentMethod(str(case["method"]))
     status = str(case.get("status", "unknown"))
+    target_assignments = case.get("target_assignments")
+    if isinstance(target_assignments, Mapping):
+        boundaries = tuple(
+            f"{name}={value!r}" for name, value in sorted(target_assignments.items())
+        )
+    else:
+        boundaries = (f"{case.get('target_parameter')}={case.get('target_value')!r}",)
+
     common = {
         "run_id": run_id,
-        "rq": "rq2",
+        "rq": rq,
         "method": method,
         "workload_id": str(case["workload_id"]),
         "baseline_id": str(case["baseline_id"]),
@@ -217,27 +229,50 @@ def _execute_case(
         "intent_pool": str(case.get("intent_pool", "method_independent")),
         "seed": seed,
         "target_value_preserved": bool(case.get("target_value_preserved", False)),
-        "coordinated_parameters": tuple(str(x) for x in case.get("coordinated_parameters", ())),
+        "coordinated_parameters": tuple(
+            str(x) for x in case.get("coordinated_parameters", ())
+        ),
         "modification_distance": _modification_distance(case),
         "solver_seconds": float(case.get("solver_seconds", 0.0)),
         "peak_memory_mib": None,
         "campaign_test_index": campaign_test_index,
-        "constraints_exercised": tuple(str(x) for x in case.get("violated_constraints", ())),
-        "boundaries_exercised": (f"{case.get('target_parameter')}={case.get('target_value')!r}",),
-        "affected_region": tuple(str(x) for x in case.get("coordinated_parameters", ())),
-        "solver_modifications": dict(case.get("assignments", {})) if isinstance(case.get("assignments"), Mapping) else {},
+        "constraints_exercised": tuple(
+            str(x) for x in case.get("violated_constraints", ())
+        ),
+        "boundaries_exercised": boundaries,
+        "affected_region": tuple(
+            str(x) for x in case.get("coordinated_parameters", ())
+        ),
+        "solver_modifications": (
+            dict(case.get("assignments", {}))
+            if isinstance(case.get("assignments"), Mapping)
+            else {}
+        ),
         "metadata": {
             "framework_id": framework_id,
             "planner_status": status,
             "preflight": case.get("preflight"),
             "target_parameter": case.get("target_parameter"),
             "target_value": case.get("target_value"),
-            "case_metadata": dict(case.get("metadata", {})) if isinstance(case.get("metadata"), Mapping) else {},
+            "target_assignments": (
+                dict(target_assignments)
+                if isinstance(target_assignments, Mapping)
+                else None
+            ),
+            "case_metadata": (
+                dict(case.get("metadata", {}))
+                if isinstance(case.get("metadata"), Mapping)
+                else {}
+            ),
             **dict(provenance),
         },
     }
     if status != "ready":
-        outcome = ExperimentOutcome.EXPECTED_REJECTION if status in {"filtered", "unsat"} else ExperimentOutcome.UNKNOWN
+        outcome = (
+            ExperimentOutcome.EXPECTED_REJECTION
+            if status in {"filtered", "unsat"}
+            else ExperimentOutcome.UNKNOWN
+        )
         return (
             ExperimentRunRecord(
                 **common,
@@ -277,7 +312,9 @@ def _execute_case(
             ),
             False,
         )
-    config_path.write_text(json.dumps(profile, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    config_path.write_text(
+        json.dumps(profile, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
     env = os.environ.copy()
     env.update(
@@ -372,8 +409,13 @@ def classify_outcome(
         return ExperimentOutcome.RESOURCE_FAILURE
     if any(pattern in lowered for pattern in _INFRA_PATTERNS):
         return ExperimentOutcome.INFRASTRUCTURE_FAILURE
-    reached_forward = MILESTONE_ORDER.get(milestone, -1) >= MILESTONE_ORDER[ExecutionMilestone.FORWARD]
-    if not reached_forward and any(pattern in lowered for pattern in _VALIDATION_PATTERNS):
+    reached_forward = (
+        MILESTONE_ORDER.get(milestone, -1)
+        >= MILESTONE_ORDER[ExecutionMilestone.FORWARD]
+    )
+    if not reached_forward and any(
+        pattern in lowered for pattern in _VALIDATION_PATTERNS
+    ):
         return ExperimentOutcome.EXPECTED_REJECTION
     return ExperimentOutcome.UNEXPLAINED_FAILURE
 
@@ -452,7 +494,9 @@ def _assign(profile: dict[str, Any], parameter: str, value: Any) -> None:
 
     visit(profile)
     if len(matches) != 1:
-        raise KeyError(f"cannot uniquely bind assignment {parameter!r}; matches={len(matches)}")
+        raise KeyError(
+            f"cannot uniquely bind assignment {parameter!r}; matches={len(matches)}"
+        )
     matches[0][0][matches[0][1]] = value
 
 
@@ -462,11 +506,18 @@ def _modification_distance(case: Mapping[str, Any]) -> float | None:
     if not isinstance(metadata, Mapping) or not isinstance(assignments, Mapping):
         return None
     baseline = metadata.get("baseline_value")
-    target = str(metadata.get("resolved_target_parameter", case.get("target_parameter", "")))
+    target = str(
+        metadata.get("resolved_target_parameter", case.get("target_parameter", ""))
+    )
     if baseline is None or target not in assignments:
         return None
     value = assignments[target]
-    if isinstance(value, (int, float)) and not isinstance(value, bool) and isinstance(baseline, (int, float)) and not isinstance(baseline, bool):
+    if (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and isinstance(baseline, (int, float))
+        and not isinstance(baseline, bool)
+    ):
         return abs(float(value) - float(baseline))
     return 0.0 if value == baseline else 1.0
 

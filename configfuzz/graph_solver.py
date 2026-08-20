@@ -5,7 +5,7 @@ import hashlib
 import json
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Mapping, Sequence
 
 import z3
 
@@ -54,6 +54,58 @@ class SolverMutationPlan:
             "status": self.status.value,
             "target_parameter": self.target_parameter,
             "requested_value": self.requested_value,
+            "proposed_changes": self.changes,
+            "mutable_parameters": list(self.mutable_parameters),
+            "compiled_edges": list(self.compiled_edges),
+            "hard_edges": list(self.hard_edges),
+            "soft_edges": list(self.soft_edges),
+            "high_confidence_soft_edges": list(self.high_confidence_soft_edges),
+            "low_confidence_preference_edges": list(
+                self.low_confidence_preference_edges
+            ),
+            "violated_soft_edges": list(self.violated_soft_edges),
+            "semantic_anchors": list(self.semantic_anchors),
+            "unsupported_edges": list(self.unsupported_edges),
+            "excluded_edges": list(self.excluded_edges),
+            "out_of_scope_edges": list(self.out_of_scope_edges),
+            "missing_context": list(self.missing_context),
+        }
+        if self.reason is not None:
+            payload["reason"] = self.reason
+        return payload
+
+
+@dataclass(frozen=True, slots=True)
+class MultiSolverMutationPlan:
+    status: SolveStatus
+    target_assignments: tuple[tuple[str, Any], ...]
+    proposed_changes: tuple[tuple[str, Any], ...] = ()
+    mutable_parameters: tuple[str, ...] = ()
+    compiled_edges: tuple[str, ...] = ()
+    hard_edges: tuple[str, ...] = ()
+    soft_edges: tuple[str, ...] = ()
+    high_confidence_soft_edges: tuple[str, ...] = ()
+    low_confidence_preference_edges: tuple[str, ...] = ()
+    violated_soft_edges: tuple[str, ...] = ()
+    semantic_anchors: tuple[str, ...] = ()
+    unsupported_edges: tuple[str, ...] = ()
+    excluded_edges: tuple[str, ...] = ()
+    out_of_scope_edges: tuple[str, ...] = ()
+    missing_context: tuple[str, ...] = ()
+    reason: str | None = None
+
+    @property
+    def targets(self) -> dict[str, Any]:
+        return dict(self.target_assignments)
+
+    @property
+    def changes(self) -> dict[str, Any]:
+        return dict(self.proposed_changes)
+
+    def to_dict(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "status": self.status.value,
+            "target_assignments": self.targets,
             "proposed_changes": self.changes,
             "mutable_parameters": list(self.mutable_parameters),
             "compiled_edges": list(self.compiled_edges),
@@ -230,7 +282,9 @@ def solve_graph_mutation(
             parameter,
             *(
                 name
-                for name in graph.affected_hypergraph_region(parameter, transitive=False)
+                for name in graph.affected_hypergraph_region(
+                    parameter, transitive=False
+                )
                 if name in variables
                 and name in context
                 and graph.nodes.get(name) is not None
@@ -311,7 +365,9 @@ def solve_graph_mutation(
     excluded: list[str] = []
     out_of_scope: list[str] = []
     for edge in sorted(graph.edges.values(), key=lambda item: item.id):
-        if not mutable.intersection(edge.participants) or not edge_scope_matches(edge, context):
+        if not mutable.intersection(edge.participants) or not edge_scope_matches(
+            edge, context
+        ):
             out_of_scope.append(edge.id)
             continue
         if edge.status is DependencyStatus.CONTRADICTED:
@@ -460,6 +516,119 @@ def solve_graph_mutation(
         excluded_edges=tuple(excluded),
         out_of_scope_edges=tuple(out_of_scope),
         missing_context=tuple(sorted(missing)),
+    )
+
+
+def solve_graph_mutations(
+    graph: DependencyGraph,
+    baseline: Mapping[str, Any],
+    assignments: Mapping[str, Any] | Sequence[tuple[str, Any]],
+    *,
+    static_as_hard: bool = False,
+    semantic_anchors: Iterable[str] = (),
+    high_confidence_threshold: float = 0.8,
+    mutable_parameters: Iterable[str] | None = None,
+    timeout_ms: int = 1000,
+) -> MultiSolverMutationPlan:
+    """Jointly solve a mutation that fixes two or more requested targets.
+
+    All requested target values are hard-preserved in one solver invocation.
+    This is intentionally different from applying single-target repairs in
+    sequence, where a later repair could silently undo an earlier target.
+    """
+    raw_items = (
+        list(assignments.items())
+        if isinstance(assignments, Mapping)
+        else list(assignments)
+    )
+    if not raw_items:
+        raise ValueError(
+            "multi-target mutation requires at least one target assignment"
+        )
+
+    target_items: list[tuple[str, Any]] = []
+    seen: set[str] = set()
+    for raw_name, value in raw_items:
+        name = str(raw_name)
+        if not name:
+            raise ValueError("target parameter must not be empty")
+        if name in seen:
+            raise ValueError(f"duplicate target parameter: {name}")
+        if name not in graph.nodes:
+            raise KeyError(f"unknown dependency node: {name}")
+        seen.add(name)
+        target_items.append((name, value))
+    target_items.sort(key=lambda item: item[0])
+
+    target_names = {name for name, _ in target_items}
+    primary_name, primary_value = target_items[0]
+    context = normalize_context(graph, baseline)
+    joint_baseline = dict(context)
+    joint_baseline.update(target_items)
+
+    if mutable_parameters is None:
+        mutable: set[str] = set(target_names)
+        for name in target_names:
+            mutable.update(graph.affected_hypergraph_region(name, transitive=False))
+    else:
+        mutable = {str(name) for name in mutable_parameters}
+        mutable.update(target_names)
+
+    anchors = tuple(
+        dict.fromkeys(
+            [
+                *(
+                    str(name)
+                    for name in semantic_anchors
+                    if str(name) and str(name) not in target_names
+                ),
+                *(name for name, _ in target_items[1:]),
+            ]
+        )
+    )
+    inner = solve_graph_mutation(
+        graph,
+        joint_baseline,
+        primary_name,
+        primary_value,
+        static_as_hard=static_as_hard,
+        semantic_anchors=anchors,
+        high_confidence_threshold=high_confidence_threshold,
+        mutable_parameters=mutable,
+        timeout_ms=timeout_ms,
+    )
+
+    changes: list[tuple[str, Any]] = []
+    if inner.status is SolveStatus.SAT:
+        changes.extend(target_items)
+        for name, value in inner.proposed_changes:
+            if name not in target_names:
+                changes.append((name, value))
+
+    caller_anchors = tuple(
+        dict.fromkeys(
+            str(name)
+            for name in semantic_anchors
+            if str(name) and str(name) not in target_names
+        )
+    )
+    return MultiSolverMutationPlan(
+        status=inner.status,
+        target_assignments=tuple(target_items),
+        proposed_changes=tuple(changes),
+        mutable_parameters=inner.mutable_parameters,
+        compiled_edges=inner.compiled_edges,
+        hard_edges=inner.hard_edges,
+        soft_edges=inner.soft_edges,
+        high_confidence_soft_edges=inner.high_confidence_soft_edges,
+        low_confidence_preference_edges=inner.low_confidence_preference_edges,
+        violated_soft_edges=inner.violated_soft_edges,
+        semantic_anchors=caller_anchors,
+        unsupported_edges=inner.unsupported_edges,
+        excluded_edges=inner.excluded_edges,
+        out_of_scope_edges=inner.out_of_scope_edges,
+        missing_context=inner.missing_context,
+        reason=inner.reason,
     )
 
 
@@ -891,10 +1060,7 @@ def normalize_context(
 ) -> dict[str, Any]:
     flattened = _flatten_mapping(baseline)
     for path, value in tuple(flattened.items()):
-        if (
-            path.rsplit(".", 1)[-1] in _ZERO_IS_DISABLED_PARAMETERS
-            and value == 0
-        ):
+        if path.rsplit(".", 1)[-1] in _ZERO_IS_DISABLED_PARAMETERS and value == 0:
             flattened[path] = None
     result: dict[str, Any] = dict(flattened)
     suffixes: dict[str, list[str]] = {}

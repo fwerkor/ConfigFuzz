@@ -392,3 +392,52 @@ def test_mutation_solver_timeout_must_be_positive() -> None:
 
     with pytest.raises(ValueError, match="timeout"):
         solve_graph_mutation(graph, {"x": 1}, "x", 2, timeout_ms=0)
+
+
+def test_multi_target_solver_preserves_all_targets_and_repairs_neighbors() -> None:
+    from configfuzz.graph_solver import solve_graph_mutations
+
+    graph = make_graph(
+        constraint("hidden_size: integer", ConstraintKind.TYPE, ("hidden_size",)),
+        constraint("tp: integer", ConstraintKind.TYPE, ("tp",)),
+        constraint("heads: integer", ConstraintKind.TYPE, ("heads",)),
+        constraint(
+            "hidden_size % tp == 0",
+            ConstraintKind.RELATION,
+            ("hidden_size", "tp"),
+        ),
+        constraint("heads % tp == 0", ConstraintKind.RELATION, ("heads", "tp")),
+    )
+
+    plan = solve_graph_mutations(
+        graph,
+        {"hidden_size": 12, "tp": 3, "heads": 6},
+        {"tp": 5, "heads": 10},
+        static_as_hard=True,
+    )
+
+    assert plan.status is SolveStatus.SAT
+    assert plan.targets == {"heads": 10, "tp": 5}
+    assert plan.changes["heads"] == 10
+    assert plan.changes["tp"] == 5
+    assert plan.changes["hidden_size"] == 10
+
+
+def test_multi_target_solver_reports_conflicting_fixed_targets() -> None:
+    from configfuzz.graph_solver import solve_graph_mutations
+
+    graph = make_graph(
+        constraint("x: integer", ConstraintKind.TYPE, ("x",)),
+        constraint("y: integer", ConstraintKind.TYPE, ("y",)),
+        constraint("x < y", ConstraintKind.RELATION, ("x", "y")),
+    )
+
+    plan = solve_graph_mutations(
+        graph,
+        {"x": 1, "y": 2},
+        {"x": 5, "y": 4},
+        static_as_hard=True,
+    )
+
+    assert plan.status is SolveStatus.UNSAT
+    assert plan.changes == {}
