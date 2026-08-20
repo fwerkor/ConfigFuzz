@@ -20,8 +20,8 @@ cross-framework aggregates are reported only after per-framework results.
 - Primary source adjudication covers all 93 RQ1 records. For the 39 framework-legality constraints, it currently labels 13 full-explicit, 11 partial, eight implicit/delayed, and seven uncovered. This remains a primary review and requires independent confirmation before paper use.
 - RQ2 now has canonical reduced profiles for Qwen2, Llama2, ChatGLM3, Mixtral, DeepSeek-V3, InternVL3, and CogVideoX. All seven pass accelerator-free architecture construction and CPU forward/backward smoke checks at the NPU-aligned 4-layer/hidden-512 scale.
 - The primary prequalified RQ2 set contains exactly 1,050 method-independent intents (150 per workload). The framework--workload matrix contains 38 formal pairs; unsupported Megatron native model families are excluded rather than replaced by surrogates.
-- Full Git history mining found 263 configuration-related fix candidates. Source review retained 23 of the balanced 40-entry shortlist for buggy/fixed execution, deferred eight, and excluded nine.
-- The 23 source-reviewed RQ3 commits have been checked against full Git history. Two multi-fix commits are split into independent root causes, yielding 25 blind-search logical cases; all 25 have available buggy/fixed revisions and the required confirmation-stage harness blobs. No candidate is counted as a verified historical bug until accelerator replay succeeds.
+- RQ3 historical selection is frozen to fixes dated from 2025-08-01 through 2026-07-31. The source-admission queues contain 109 candidates without framework balancing or per-parameter caps: 67 GPU issues with an explicit fix link and 42 NPU fix commits mined from MindSpeed, MindSpeed-LLM, and MindSpeed-MM.
+- Every frozen source candidate is attempted for buggy/fixed admission. A case enters the final historical benchmark only when its trigger can be expressed through configuration changes without changing model code or test input, the buggy revision fails three times, the fixed revision passes, and the observed failure matches the fix root cause. The previous 40-entry diversified shortlist is retained only as a legacy construction artifact and is not the formal RQ3 selection set.
 
 ## Completed accelerator results
 
@@ -127,39 +127,30 @@ The current prepared schedule contains 58,560 records across the six framework s
 ## RQ3: historical bug benchmark construction
 
 ```bash
-# Mine fix-like commits that touch audited parameters and relevant framework files.
+# Mine the complete NPU fix-like set inside the frozen historical window.
 python scripts/mine_rq3_fix_candidates.py \
   --corpus corpus/lmsv/manual_constraints.yaml \
   --repository MindSpeed-LLM=/path/to/MindSpeed-LLM \
   --repository MindSpeed=/path/to/MindSpeed \
-  --output artifacts/rq3_historical_fix_candidates.json
+  --repository MindSpeed-MM=/path/to/MindSpeed-MM \
+  --since 2025-08-01 \
+  --until 2026-07-31 \
+  --output artifacts/rq3_historical_fix_candidates_2025-08_2026-07.json
 
-# Filter and diversify the manual source-review queue.
-python scripts/build_rq3_triage_shortlist.py \
-  artifacts/rq3_historical_fix_candidates.json \
-  experiments/rq3/triage_shortlist.yaml \
-  --limit 40 \
-  --max-per-primary-parameter 5 \
-  --max-patch-lines 2000
+# The formal source membership is frozen in:
+#   rq3/npu_historical_source_queue.frozen.yaml  (42 candidates)
+#   rq3/gpu_historical_source_queue.frozen.yaml  (67 candidates)
+# and governed by rq3/historical_selection_policy.frozen.yaml.
+# The old triage_shortlist/source_review files are legacy artifacts and do not
+# determine benchmark membership.
 
-# Validate the 40-entry source review and its 23-entry execution queue.
-python scripts/validate_rq3_source_review.py \
-  experiments/rq3/source_review.yaml \
-  --execution-queue experiments/rq3/execution_queue.yaml
-
-# Verify historical commits and harness blobs, then build unexecuted replay specifications.
-python scripts/build_rq3_replay_specs.py \
-  --execution-queue experiments/rq3/execution_queue.yaml \
-  --source-plan experiments/rq3/replay_plan.source.yaml \
-  --repository-root MindSpeed-LLM=/path/to/MindSpeed-LLM \
-  --repository-root MindSpeed=/path/to/MindSpeed \
-  --output experiments/rq3/replay_specs.yaml
-
-# Validate only after verified entries are copied into the benchmark registry.
+# Attempt buggy/fixed admission for every frozen source candidate. Only verified
+# cases are copied into the benchmark registry; the older replay_specs and
+# execution_queue files describe the superseded capped-shortlist workflow.
 configfuzz-experiment validate-bugs experiments/rq3/historical_bugs.yaml
 ```
 
-A shortlist entry is not a benchmark bug. Admission requires a concrete configuration trigger, executable workload, non-performance failure oracle, at least three failures on the parent commit, passage on the fix commit, root-cause agreement, and a minimized configuration. Exact historical reproducers are reserved for final confirmation and are not supplied to the search methods.
+A frozen source-queue entry is not yet a benchmark bug. Admission requires a concrete configuration trigger expressible without changing model code or test input, an executable workload, a non-performance failure oracle, at least three failures on the buggy revision, passage on the fixed revision, and root-cause agreement. Ordinary OOM, resource, and infrastructure failures do not admit a case. Exact historical reproducers are reserved for final confirmation and are not supplied to the search methods.
 
 ## Campaign records and summaries
 
