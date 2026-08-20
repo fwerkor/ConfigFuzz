@@ -1,12 +1,19 @@
 {
-  "assembly_revision": "c4cf82271b0fe55f3bcf65e62ddefd57a57546df",
-  "date": "2026-08-19",
+  "assembly_revision": "0f7512b58679ea36da100db50899a58d5416d694",
+  "correction": {
+    "framework": "megatron-core",
+    "infrastructure_failure_records": 0,
+    "reason": "Megatron-Core promotion now includes workload/model-stack relations and the framework-default kv_channels=None planning context.",
+    "rerun_unique_runtime_configurations": 578,
+    "runtime_instrumentation": "runtime-events-v1"
+  },
+  "date": "2026-08-20",
   "final_checks": {
     "infrastructure_failure_records": 0,
     "raw_vs_configfuzz_paired": {
       "both_deep": 2440,
-      "configfuzz_only": 158,
-      "neither": 1002,
+      "configfuzz_only": 184,
+      "neither": 976,
       "raw_only": 0
     }
   },
@@ -19,10 +26,10 @@
       "records": 6300
     },
     "megatron-core": {
-      "gzip_bytes": 388540,
-      "gzip_sha256": "87130a03f55b861e57095775169b00dbff4d811916a3a7dbdf9803a97fb699cb",
-      "jsonl_bytes": 12737521,
-      "jsonl_sha256": "1736e5c75ce765c2530168249499b5d459b88b8da3b24705b2162ad04a1a60f4",
+      "gzip_bytes": 566033,
+      "gzip_sha256": "5e1932e19dd4933fa08eef70c78d52ff3c17a9355389a892e2d9a3ef46b0ef10",
+      "jsonl_bytes": 14302023,
+      "jsonl_sha256": "edbd80227ba172e7d69f7abdee0c3d51247ae08dd04422c1b8a55571397bbcce",
       "records": 2700
     },
     "pytorch-cuda": {
@@ -43,16 +50,19 @@
   "measurement_note": "behavior_signature in these GPU records hashes milestone/outcome/error-tail and is not used as evidence for the runtime branch/backend/topology diversity metric.",
   "name": "ConfigFuzz RQ2 GPU primary-seed final results",
   "promotion_path": "experiments/rq2/promoted/gpu",
-  "promotion_sha256": "c5a56673f2d5f793b0f726d191c27fc5871022fcce6cb655f7ab71c7f76e745a",
-  "published_assembly_revision": "044d5f97c11d31e1828459181b3a5c0c66435741",
+  "promotion_sha256": "af52a0bd0b04908807c43e6840c25aac1917ba92d5088ac6d79d4f259a7cd074",
+  "published_assembly_revision": "41b062f955d962dbce86de1e2c72b02e134d003d",
   "revision_map": "revision-map.json",
-  "schema_version": 2,
+  "schema_version": 3,
   "seed": 2026,
   "selective_execution": {
+    "correction_rerun_unique_configurations": 578,
+    "correction_transient_infrastructure_reruns": 0,
+    "historical_transient_infrastructure_reruns_other_frameworks": 8,
     "infrastructure_failures_reusable": false,
-    "new_unique_configurations": 595,
-    "reuse_rule": "same framework, workload, seed, launcher, unchanged launched runtime harness, and byte-equivalent canonical materialized configuration",
-    "transient_infrastructure_reruns": 8
+    "prior_primary_runtime_evidence_reused_for_corrected_megatron": false,
+    "prior_reuse_rejection_reason": "launched Megatron runner changed to runtime-events-v1 instrumentation before the correction rerun",
+    "reuse_rule": "same framework, workload, seed, launcher, unchanged launched runtime harness, and byte-equivalent canonical materialized configuration"
   },
   "target_milestone": "optimizer_step",
   "total_records": 21600

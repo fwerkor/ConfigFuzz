@@ -1,5 +1,6 @@
 {
   "experimental_to_published": {
+    "0f7512b58679ea36da100db50899a58d5416d694": "41b062f",
     "44fc744e8e573d5c5409ac5f29b069949ccfb739": "44fc744",
     "65fb4b5d2b2fb07bda28f4fa7b5bff8639e11ae6": "36ef582",
     "bbba08587a436cfe0be0de5dbce60e2df1c8da78": "25c955a",
@@ -8,6 +9,6 @@
     "c4cf82271b0fe55f3bcf65e62ddefd57a57546df": "044d5f9",
     "ee250f7c2fe2f900747a67b9c0a1a0e1abef9e0f": "0ac1d64"
   },
-  "note": "Runs were executed in the experiment-machine clone. Equivalent patches were applied to the GitHub-authenticated publication branch; this map preserves the original recorded revisions while providing GitHub-visible equivalents.",
+  "note": "Runs were executed in experiment-machine clones. Equivalent patches were applied to the GitHub-authenticated publication branch; this map preserves original recorded revisions while providing GitHub-visible equivalents.",
   "schema_version": 1
 }
