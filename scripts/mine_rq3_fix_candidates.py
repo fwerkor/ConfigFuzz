@@ -36,6 +36,8 @@ def main() -> int:
         help="Git repository to mine; repeatable",
     )
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--since", help="inclusive Git author-date lower bound")
+    parser.add_argument("--until", help="inclusive Git author-date upper bound")
     args = parser.parse_args()
 
     repositories = [_parse_repository(item) for item in args.repository]
@@ -51,7 +53,15 @@ def main() -> int:
     )
     records: list[dict[str, Any]] = []
     for label, path in repositories:
-        records.extend(_mine_repository(label, path, leaves))
+        records.extend(
+            _mine_repository(
+                label,
+                path,
+                leaves,
+                since=args.since,
+                until=args.until,
+            )
+        )
     records.sort(
         key=lambda item: (
             -float(item["score"]),
@@ -104,16 +114,24 @@ def _mine_repository(
     label: str,
     repository: Path,
     parameter_leaves: list[str],
+    *,
+    since: str | None = None,
+    until: str | None = None,
 ) -> list[dict[str, Any]]:
+    log_command = [
+        "git",
+        "-C",
+        str(repository),
+        "log",
+        "--no-merges",
+        "--format=%H%x1f%P%x1f%aI%x1f%s%x1e",
+    ]
+    if since:
+        log_command.append(f"--since={since}")
+    if until:
+        log_command.append(f"--until={until}")
     raw_log = subprocess.check_output(
-        [
-            "git",
-            "-C",
-            str(repository),
-            "log",
-            "--no-merges",
-            "--format=%H%x1f%P%x1f%aI%x1f%s%x1e",
-        ],
+        log_command,
         text=True,
         errors="replace",
     )
@@ -215,6 +233,7 @@ def _merge_request_url(label: str, number: int | None) -> str | None:
     repository = {
         "MindSpeed-LLM": "MindSpeed-LLM",
         "MindSpeed": "MindSpeed",
+        "MindSpeed-MM": "MindSpeed-MM",
     }.get(label)
     if repository is None:
         return None
