@@ -231,7 +231,7 @@ def test_selective_reuse_writes_complete_plan_after_fresh_source_is_added(tmp_pa
     assert len(rows) == 4
     assert all(row["generated"] for row in rows)
     assert [row["campaign_test_index"] for row in rows] == [1, 2, 3, 4]
-    assert rows[-1]["campaign_accelerator_seconds"] == 16.0
+    assert rows[-1]["campaign_accelerator_seconds"] == 8.0
     assert rows[1]["metadata"]["runtime_reuse"]["source_run_id"] == "old"
     assert rows[3]["metadata"]["runtime_reuse"]["source_run_id"] == "fresh"
 
@@ -302,3 +302,39 @@ def test_selective_reuse_rejects_infrastructure_failure_source(tmp_path: Path) -
     assert summary["complete"] is False
     assert summary["runtime_reused_cases"] == 0
     assert summary["unique_missing_runtime_configurations"] == 1
+
+
+def test_selective_reuse_rejects_missing_harness_path(tmp_path: Path) -> None:
+    workloads = _write_workload_files(tmp_path)
+    plan = tmp_path / "plan.json"
+    plan.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "intent_count": 1,
+                "case_count": 1,
+                "method_counts": {},
+                "status_counts": {},
+                "cases": [_case("raw", "raw_mutation", 2)],
+            }
+        ),
+        encoding="utf-8",
+    )
+    launcher = tmp_path / "launcher.sh"
+    launcher.write_text("#!/bin/sh\n", encoding="utf-8")
+
+    import pytest
+
+    with pytest.raises(FileNotFoundError, match="runtime harness path does not exist"):
+        assemble(
+            framework="toy",
+            plan_path=plan,
+            workload_registry=workloads,
+            launcher=launcher,
+            source_paths=[],
+            output=tmp_path / "final.jsonl",
+            missing_plan=tmp_path / "missing.json",
+            manifest=tmp_path / "manifest.json",
+            seed=2026,
+            harness_paths=[tmp_path / "missing-runner.py"],
+        )

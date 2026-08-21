@@ -48,12 +48,17 @@ def main() -> int:
         methods=tuple(ExperimentMethod(item) for item in args.method),
     )
     dump_records(records, args.output)
+    reused_count = sum(
+        isinstance(item.metadata.get("runtime_reuse"), dict) for item in records
+    )
     print(
         json.dumps(
             {
                 "output": str(args.output),
                 "record_count": len(records),
                 "generated_count": sum(item.generated for item in records),
+                "runtime_reused_count": reused_count,
+                "physical_runtime_count": sum(item.generated for item in records) - reused_count,
                 "deep_count": sum(item.deepest_milestone.value == "optimizer_step" for item in records),
                 "outcomes": {
                     value: sum(item.outcome.value == value for item in records)

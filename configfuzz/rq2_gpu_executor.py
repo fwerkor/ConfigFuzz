@@ -95,6 +95,8 @@ def execute_primary_campaign(
     output_jsonl: str | Path,
     gpu_devices: str = "4,5",
     device_count: int = 2,
+    accelerator_kind: str = "gpu",
+    harness_paths: Sequence[str | Path] = (),
     seed: int = 2026,
     master_port: int = 30001,
     timeout_seconds: float = 120.0,
@@ -116,6 +118,12 @@ def execute_primary_campaign(
         "workload_registry_sha256": _file_sha256(Path(workload_registry_path)),
         "launcher_sha256": _file_sha256(launcher_path),
         "runtime_instrumentation": RUNTIME_INSTRUMENTATION_VERSION,
+        "accelerator_kind": accelerator_kind,
+        "runtime_harness_sha256": {
+            str(Path(path)): _file_sha256(Path(path))
+            for path in harness_paths
+            if Path(path).is_file()
+        },
     }
 
     completed_ids = _existing_run_ids(output)
@@ -162,6 +170,7 @@ def execute_primary_campaign(
                 output_root=root,
                 gpu_devices=gpu_devices,
                 device_count=device_count,
+                accelerator_kind=accelerator_kind,
                 seed=seed,
                 master_port=_available_master_port(master_port + (index % 200)),
                 timeout_seconds=timeout_seconds,
@@ -199,6 +208,7 @@ def execute_campaign_case(
     output_root: Path,
     gpu_devices: str,
     device_count: int,
+    accelerator_kind: str,
     seed: int,
     master_port: int,
     timeout_seconds: float,
@@ -319,6 +329,8 @@ def execute_campaign_case(
     env = os.environ.copy()
     env.update(
         {
+            "CONFIGFUZZ_ACCELERATOR_KIND": accelerator_kind,
+            "CONFIGFUZZ_ACCELERATOR_DEVICES": gpu_devices,
             "CONFIGFUZZ_GPU_DEVICES": gpu_devices,
             "CONFIGFUZZ_NPROC_PER_NODE": str(device_count),
             "CONFIGFUZZ_MASTER_PORT": str(master_port),
@@ -355,7 +367,9 @@ def execute_campaign_case(
             "returncode": returncode,
             "config_path": str(config_path),
             "log_path": str(log_path),
-            "gpu_devices": gpu_devices,
+            "accelerator_kind": accelerator_kind,
+            "accelerator_devices": gpu_devices,
+            "gpu_devices": gpu_devices if accelerator_kind == "gpu" else None,
             "device_count": device_count,
         }
     )

@@ -86,7 +86,7 @@ def execute_qwen2_pilot_cases(
 ) -> list[ExperimentRunRecord]:
     selected_intents = set(intent_ids)
     selected_methods = set(methods)
-    cases = []
+    cases: list[Mapping[str, Any]] = []
     for raw in plan.get("cases", ()):
         if not isinstance(raw, Mapping):
             continue
@@ -100,23 +100,111 @@ def execute_qwen2_pilot_cases(
         cases.append(raw)
 
     records: list[ExperimentRunRecord] = []
+    runtime_cache: dict[tuple[str, str, tuple[str, ...]], ExperimentRunRecord] = {}
     campaign_started = time.monotonic()
-    cumulative_gpu_seconds = 0.0
+    cumulative_accelerator_seconds = 0.0
     for index, case in enumerate(cases, 1):
+        runtime_key = _pilot_runtime_key(case)
+        cached = runtime_cache.get(runtime_key) if runtime_key is not None else None
+        if cached is not None:
+            records.append(
+                _reuse_pilot_runtime_record(
+                    cached,
+                    case,
+                    campaign_test_index=index,
+                    campaign_elapsed_seconds=time.monotonic() - campaign_started,
+                    campaign_accelerator_seconds=cumulative_accelerator_seconds,
+                )
+            )
+            continue
+
         record = execute_qwen2_pilot_case(
             case,
             runtime,
             campaign_test_index=index,
             campaign_started=campaign_started,
-            cumulative_gpu_seconds=cumulative_gpu_seconds,
+            cumulative_gpu_seconds=cumulative_accelerator_seconds,
         )
-        cumulative_gpu_seconds += record.gpu_seconds
-        # Rebuild with cumulative cost including the current test.
+        cumulative_accelerator_seconds += record.accelerator_seconds
         payload = record.to_dict()
-        payload["campaign_gpu_seconds"] = cumulative_gpu_seconds
+        payload["campaign_gpu_seconds"] = cumulative_accelerator_seconds
+        payload["campaign_accelerator_seconds"] = cumulative_accelerator_seconds
         record = ExperimentRunRecord.from_dict(payload)
         records.append(record)
+        if (
+            runtime_key is not None
+            and record.generated
+            and record.outcome is not ExperimentOutcome.INFRASTRUCTURE_FAILURE
+        ):
+            runtime_cache[runtime_key] = record
     return records
+
+
+def _pilot_runtime_key(
+    case: Mapping[str, Any],
+) -> tuple[str, str, tuple[str, ...]] | None:
+    if str(case.get("status", "unknown")) != "ready":
+        return None
+    assignments = case.get("assignments")
+    if not isinstance(assignments, Mapping):
+        return None
+    try:
+        cli_args = assignments_to_qwen2_cli(assignments)
+    except (KeyError, ValueError, TypeError):
+        return None
+    return (
+        str(case.get("workload_id", "")),
+        str(case.get("baseline_id", "")),
+        tuple(cli_args),
+    )
+
+
+def _reuse_pilot_runtime_record(
+    source: ExperimentRunRecord,
+    case: Mapping[str, Any],
+    *,
+    campaign_test_index: int,
+    campaign_elapsed_seconds: float,
+    campaign_accelerator_seconds: float,
+) -> ExperimentRunRecord:
+    payload = source.to_dict()
+    assignments = case.get("assignments")
+    source_metadata = dict(source.metadata)
+    payload.update(
+        {
+            "run_id": f"rq2-pilot-{case['case_id']}",
+            "method": str(case["method"]),
+            "workload_id": str(case["workload_id"]),
+            "baseline_id": str(case["baseline_id"]),
+            "intent_id": str(case["intent_id"]),
+            "target_value_preserved": bool(case.get("target_value_preserved", False)),
+            "coordinated_parameters": list(case.get("coordinated_parameters", ())),
+            "modification_distance": _modification_distance(case),
+            "solver_seconds": float(case.get("solver_seconds", 0.0)),
+            "campaign_test_index": campaign_test_index,
+            "campaign_elapsed_seconds": campaign_elapsed_seconds,
+            "campaign_gpu_seconds": campaign_accelerator_seconds,
+            "campaign_accelerator_seconds": campaign_accelerator_seconds,
+            "constraints_exercised": list(case.get("violated_constraints", ())),
+            "boundaries_exercised": [_boundary_label(case)],
+            "solver_modifications": dict(assignments) if isinstance(assignments, Mapping) else {},
+            "metadata": {
+                **source_metadata,
+                "planner_status": str(case.get("status", "unknown")),
+                "preflight": case.get("preflight"),
+                "runtime_reuse": {
+                    "source_run_id": source.run_id,
+                    "source_method": source.method.value,
+                    "source_intent_id": source.intent_id,
+                    "rationale": (
+                        "same workload and baseline with byte-equivalent effective "
+                        "Ascend launcher CLI under the same pilot runtime"
+                    ),
+                },
+            },
+        }
+    )
+    return ExperimentRunRecord.from_dict(payload)
 
 
 def execute_qwen2_pilot_case(
@@ -149,6 +237,11 @@ def execute_qwen2_pilot_case(
         "topologies": ("single_npu_pilot",),
         "feature_interactions": (),
         "backend_paths": ("qwen2", "mindspeed_llm_26.1"),
+        "solver_modifications": (
+            dict(case.get("assignments", {}))
+            if isinstance(case.get("assignments"), Mapping)
+            else {}
+        ),
     }
 
     if status != "ready":

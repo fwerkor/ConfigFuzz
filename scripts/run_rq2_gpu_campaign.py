@@ -19,6 +19,8 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--gpus", default="4,5")
     parser.add_argument("--device-count", type=int, default=2)
+    parser.add_argument("--accelerator-kind", default="gpu")
+    parser.add_argument("--harness-path", action="append", default=[])
     parser.add_argument("--seed", type=int, default=2026)
     parser.add_argument("--master-port", type=int, default=30001)
     parser.add_argument("--timeout-seconds", type=float, default=120.0)
@@ -38,6 +40,8 @@ def main() -> int:
         output_jsonl=args.output,
         gpu_devices=args.gpus,
         device_count=args.device_count,
+        accelerator_kind=args.accelerator_kind,
+        harness_paths=tuple(args.harness_path),
         seed=args.seed,
         master_port=args.master_port,
         timeout_seconds=args.timeout_seconds,

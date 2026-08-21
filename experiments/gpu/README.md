@@ -43,6 +43,27 @@ does not download pretrained weights. CogVideoX support is pinned in
 native GPT/MoE execution path and is intentionally limited to the Qwen2,
 Llama2, and Mixtral workload families listed in the compatibility matrix.
 
+## Formal RQ2 execution protocol
+
+The formal RQ2 campaign uses the complete frozen qualified-intent pool in
+`experiments/rq2/intents.qualified.all.frozen.yaml` (2,175 intents). Each
+framework first expands these intents into the six comparison methods. Before
+launching an accelerator, ConfigFuzz materializes every ready case and groups
+cases that are byte-identical under the same framework and workload. One
+representative configuration is executed for each group, and the observed
+runtime result is then expanded back to every logical method/intent record in
+the group. Planner-only filtered, unsatisfiable, and unknown records remain
+separate logical records and require no accelerator execution.
+
+Runtime reuse is accepted only under the same framework, workload, seed,
+launcher, and exact runtime-harness hashes. Infrastructure failures are never
+reused: the missing unique configuration is executed again. Cumulative
+accelerator cost therefore counts physical executions once, while the final
+RQ2 dataset preserves every planned method/intent record and the original
+paired-comparison statistics. The authoritative GPU entry point is
+`scripts/run_rq2_gpu_primary.sh`; Megatron-Core remains restricted to the
+Qwen2, Llama2, and Mixtral families supported by its promoted runtime.
+
 Megatron-Core uses `baselines/megatron-core.json` with a Llama-like RMSNorm
 configuration and TP=2. The qualification path keeps Megatron's local attention
 and tensor-parallel linear modules, while selecting Transformer Engine only for

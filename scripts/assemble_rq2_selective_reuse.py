@@ -9,7 +9,7 @@ import json
 import subprocess
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Mapping, Sequence
 
 from configfuzz.experiment import (
     ExecutionMilestone,
@@ -30,7 +30,7 @@ from configfuzz.rq2_gpu_executor import (
 # accelerator.  The outer campaign executor is intentionally excluded: full
 # materialized configs are compared byte-for-byte before reuse, and executor
 # changes such as master-port allocation do not alter workload behavior.
-HARNESS_PATHS = (
+DEFAULT_HARNESS_PATHS = (
     "experiments/gpu/rq2_family_runner.py",
     "experiments/gpu/rq2_megatron_runner.py",
     "experiments/gpu/rq2_family_factory.py",
@@ -108,7 +108,11 @@ def _git_revision() -> str:
     return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
 
 
-def _harness_unchanged(revision: str, cache: dict[str, bool]) -> bool:
+def _harness_unchanged(
+    revision: str,
+    harness_paths: Sequence[str],
+    cache: dict[str, bool],
+) -> bool:
     if revision in cache:
         return cache[revision]
     try:
@@ -118,15 +122,32 @@ def _harness_unchanged(revision: str, cache: dict[str, bool]) -> bool:
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-        completed = subprocess.run(
-            ["git", "diff", "--quiet", f"{revision}..HEAD", "--", *HARNESS_PATHS],
+        committed = subprocess.run(
+            ["git", "diff", "--quiet", f"{revision}..HEAD", "--", *harness_paths],
             check=False,
         )
-        value = completed.returncode == 0
+        unstaged = subprocess.run(
+            ["git", "diff", "--quiet", "--", *harness_paths],
+            check=False,
+        )
+        staged = subprocess.run(
+            ["git", "diff", "--cached", "--quiet", "--", *harness_paths],
+            check=False,
+        )
+        value = committed.returncode == unstaged.returncode == staged.returncode == 0
     except OSError:
         value = False
     cache[revision] = value
     return value
+
+
+def _harness_hashes(harness_paths: Sequence[str]) -> dict[str, str]:
+    hashes: dict[str, str] = {}
+    for raw_path in harness_paths:
+        path = Path(raw_path)
+        if path.is_file():
+            hashes[str(path)] = _sha256(path)
+    return hashes
 
 
 def _provenance(
@@ -135,6 +156,8 @@ def _provenance(
     plan: Path,
     workloads: Path,
     launcher: Path,
+    harness_paths: Sequence[str],
+    accelerator_kind: str | None,
 ) -> dict[str, Any]:
     return {
         "framework_id": framework,
@@ -143,6 +166,8 @@ def _provenance(
         "workload_registry_sha256": _sha256(workloads),
         "launcher_sha256": _sha256(launcher),
         "runtime_instrumentation": RUNTIME_INSTRUMENTATION_VERSION,
+        "runtime_harness_sha256": _harness_hashes(harness_paths),
+        **({"accelerator_kind": accelerator_kind} if accelerator_kind else {}),
     }
 
 
@@ -152,6 +177,8 @@ def _eligible_source(
     framework: str,
     seed: int,
     launcher_sha256: str,
+    harness_paths: Sequence[str],
+    current_harness_hashes: Mapping[str, str],
     harness_cache: dict[str, bool],
 ) -> bool:
     if not bool(record.get("generated")):
@@ -169,8 +196,11 @@ def _eligible_source(
         return False
     if str(metadata.get("runtime_instrumentation", "")) != RUNTIME_INSTRUMENTATION_VERSION:
         return False
+    source_harness_hashes = metadata.get("runtime_harness_sha256")
+    if isinstance(source_harness_hashes, Mapping):
+        return dict(source_harness_hashes) == dict(current_harness_hashes)
     revision = str(metadata.get("runner_revision", ""))
-    return bool(revision) and _harness_unchanged(revision, harness_cache)
+    return bool(revision) and _harness_unchanged(revision, harness_paths, harness_cache)
 
 
 def _planner_only_record(
@@ -301,18 +331,37 @@ def _reuse_record(
     return payload
 
 
+def _runtime_source_key(row: Mapping[str, Any]) -> tuple[str, str]:
+    metadata = row.get("metadata")
+    if isinstance(metadata, Mapping):
+        reuse = metadata.get("runtime_reuse")
+        if isinstance(reuse, Mapping):
+            source_sha = str(reuse.get("source_result_sha256", ""))
+            source_run = str(reuse.get("source_run_id", ""))
+            if source_sha and source_run:
+                return source_sha, source_run
+    return "direct", str(row.get("run_id", ""))
+
+
 def _refresh_campaign_fields(rows: list[dict[str, Any]]) -> None:
-    cumulative_gpu = 0.0
+    # Expanded logical records keep the observed per-config runtime, while
+    # cumulative campaign cost counts each physical runtime execution once.
+    cumulative_accelerator = 0.0
     cumulative_elapsed = 0.0
+    seen_runtime_sources: set[tuple[str, str]] = set()
     for index, row in enumerate(rows, 1):
-        duration = float(row.get("duration_seconds", 0.0))
-        gpu = float(row.get("accelerator_seconds", row.get("gpu_seconds", 0.0)))
-        cumulative_elapsed += duration
-        cumulative_gpu += gpu
+        if bool(row.get("generated")):
+            source_key = _runtime_source_key(row)
+            if source_key not in seen_runtime_sources:
+                seen_runtime_sources.add(source_key)
+                cumulative_elapsed += float(row.get("duration_seconds", 0.0))
+                cumulative_accelerator += float(
+                    row.get("accelerator_seconds", row.get("gpu_seconds", 0.0))
+                )
         row["campaign_test_index"] = index
         row["campaign_elapsed_seconds"] = cumulative_elapsed
-        row["campaign_gpu_seconds"] = cumulative_gpu
-        row["campaign_accelerator_seconds"] = cumulative_gpu
+        row["campaign_gpu_seconds"] = cumulative_accelerator
+        row["campaign_accelerator_seconds"] = cumulative_accelerator
 
 
 def assemble(
@@ -326,8 +375,18 @@ def assemble(
     missing_plan: Path,
     manifest: Path,
     seed: int,
+    harness_paths: Sequence[str | Path] = DEFAULT_HARNESS_PATHS,
+    accelerator_kind: str | None = None,
 ) -> dict[str, Any]:
     plan = _read_json(plan_path)
+    normalized_harness_paths = tuple(str(Path(path)) for path in harness_paths)
+    missing_harness_paths = [
+        path for path in normalized_harness_paths if not Path(path).is_file()
+    ]
+    if missing_harness_paths:
+        raise FileNotFoundError(
+            "runtime harness path does not exist: " + ", ".join(missing_harness_paths)
+        )
     cases = [case for case in plan.get("cases", ()) if isinstance(case, Mapping)]
     workloads = load_campaign_workloads(workload_registry)
     provenance = _provenance(
@@ -335,8 +394,11 @@ def assemble(
         plan=plan_path,
         workloads=workload_registry,
         launcher=launcher,
+        harness_paths=normalized_harness_paths,
+        accelerator_kind=accelerator_kind,
     )
     launcher_sha256 = str(provenance["launcher_sha256"])
+    current_harness_hashes = dict(provenance["runtime_harness_sha256"])
     harness_cache: dict[str, bool] = {}
     indexed: dict[tuple[str, str], list[tuple[dict[str, Any], Path]]] = defaultdict(list)
     source_counts: Counter[str] = Counter()
@@ -351,6 +413,8 @@ def assemble(
                 framework=framework,
                 seed=seed,
                 launcher_sha256=launcher_sha256,
+                harness_paths=normalized_harness_paths,
+                current_harness_hashes=current_harness_hashes,
                 harness_cache=harness_cache,
             ):
                 rejected_sources[str(source_path)] += 1
@@ -442,6 +506,8 @@ def assemble(
         "source_record_counts": dict(sorted(source_counts.items())),
         "rejected_source_records": dict(sorted(rejected_sources.items())),
         "harness_equivalence": dict(sorted(harness_cache.items())),
+        "harness_paths": list(normalized_harness_paths),
+        "campaign_cost_accounting": "unique_physical_runtime_execution",
         "provenance": provenance,
         "plan": str(plan_path),
         "plan_sha256": _sha256(plan_path),
@@ -474,10 +540,17 @@ def main() -> int:
     parser.add_argument("--workloads", type=Path, required=True)
     parser.add_argument("--launcher", type=Path, required=True)
     parser.add_argument("--source-result", action="append", type=Path, default=[])
+    parser.add_argument(
+        "--harness-path",
+        action="append",
+        default=[],
+        help="runtime harness path used to validate cross-revision equivalence; repeatable",
+    )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--missing-plan", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=2026)
+    parser.add_argument("--accelerator-kind")
     args = parser.parse_args()
     payload = assemble(
         framework=args.framework,
@@ -489,6 +562,8 @@ def main() -> int:
         missing_plan=args.missing_plan,
         manifest=args.manifest,
         seed=args.seed,
+        harness_paths=tuple(args.harness_path) or DEFAULT_HARNESS_PATHS,
+        accelerator_kind=args.accelerator_kind,
     )
     print(json.dumps(payload, ensure_ascii=False, sort_keys=True))
     return 0
