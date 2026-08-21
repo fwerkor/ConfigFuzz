@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "subject": "deepspeed",
-  "frozen_targets_sha256": "675d0cee8d33a98e324193ce00de9e7099c45425d61ccae6e20224e26bebea53",
+  "frozen_targets_sha256": "1fe03f22b7d0574fad083f27fb92f4d1eb1724c96faa81c609152d33b622845f",
   "summary": {
     "targets": 6,
     "samples": 18,

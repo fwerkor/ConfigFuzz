@@ -1,44 +1,45 @@
 {
   "schema_version": 1,
   "subject": "transformers-accelerate",
-  "frozen_targets_sha256": "675d0cee8d33a98e324193ce00de9e7099c45425d61ccae6e20224e26bebea53",
+  "frozen_targets_sha256": "1fe03f22b7d0574fad083f27fb92f4d1eb1724c96faa81c609152d33b622845f",
   "summary": {
     "targets": 3,
     "samples": 9,
     "outcomes": {
-      "invalid": 2,
-      "unknown": 1,
+      "invalid": 3,
       "valid": 6
     },
     "edge_statuses": {
-      "dynamically_supported": 5,
+      "confirmed": 3,
+      "dynamically_supported": 2,
       "static_candidate": 26
     },
-    "paired_interventions": 0
+    "paired_interventions": 3
   },
   "aggregate_feedback": {
-    "batch_id": "1ae40910ee841fa64ec1",
+    "batch_id": "030d542582c8d94f8a20",
     "duplicate_batch": false,
     "samples": 9,
-    "evaluated_samples": 8,
-    "ignored_samples": 1,
+    "evaluated_samples": 9,
+    "ignored_samples": 0,
     "supported_edges": [
-      "dep-39fd2282ed77229c",
       "dep-4021dcf1fc2548c7",
-      "dep-5d2bdf54140b8f5a",
-      "dep-bb93e90843aba2d0",
       "dep-f4b3da09d598a8fb"
     ],
-    "confirmed_edges": [],
+    "confirmed_edges": [
+      "dep-39fd2282ed77229c",
+      "dep-5d2bdf54140b8f5a",
+      "dep-bb93e90843aba2d0"
+    ],
     "scope_disputed_edges": [],
     "contradicted_edges": [],
     "ambiguous_invalid_samples": 2,
-    "paired_interventions": 0,
+    "paired_interventions": 3,
     "status_changes": [
       {
         "edge_id": "dep-39fd2282ed77229c",
         "from": "static_candidate",
-        "to": "dynamically_supported"
+        "to": "confirmed"
       },
       {
         "edge_id": "dep-4021dcf1fc2548c7",
@@ -48,12 +49,12 @@
       {
         "edge_id": "dep-5d2bdf54140b8f5a",
         "from": "static_candidate",
-        "to": "dynamically_supported"
+        "to": "confirmed"
       },
       {
         "edge_id": "dep-bb93e90843aba2d0",
         "from": "static_candidate",
-        "to": "dynamically_supported"
+        "to": "confirmed"
       },
       {
         "edge_id": "dep-f4b3da09d598a8fb",
@@ -76,12 +77,12 @@
             "argv": [
               "bash",
               "experiments/cpu/launch_transformers_accelerate.sh",
-              "/tmp/configfuzz-intervention-5_faflo6/satisfying.json"
+              "/tmp/configfuzz-intervention-lmlqc_73/satisfying.json"
             ],
             "returncode": 0,
-            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.735698\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.100719\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.724793\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.113552\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
             "stderr": "",
-            "duration_seconds": 19.6066675351467,
+            "duration_seconds": 3.740044462028891,
             "timed_out": false
           },
           "outcome": {
@@ -101,23 +102,24 @@
             "argv": [
               "bash",
               "experiments/cpu/launch_transformers_accelerate.sh",
-              "/tmp/configfuzz-intervention-5_faflo6/violating.json"
+              "/tmp/configfuzz-intervention-lmlqc_73/violating.json"
             ],
             "returncode": 1,
             "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\n",
-            "stderr": "Traceback (most recent call last):\n  File \"/workspace/ConfigFuzz/experiments/cpu/qualification/transformers_accelerate.py\", line 74, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/workspace/ConfigFuzz/experiments/cpu/qualification/transformers_accelerate.py\", line 21, in main\n    accelerator = Accelerator(\n                  ^^^^^^^^^^^^\n  File \"/workspace/ConfigFuzz/.cpu-site/accelerate/accelerator.py\", line 314, in __init__\n    raise ValueError(\nValueError: Unknown mixed_precision mode: . Choose between ['no', 'fp8', 'fp16', 'bf16']\n",
-            "duration_seconds": 11.63130237092264,
+            "stderr": "Traceback (most recent call last):\n  File \"/home/yanzhou/cyh/configfuzz-cpu-push/experiments/cpu/qualification/transformers_accelerate.py\", line 132, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/home/yanzhou/cyh/configfuzz-cpu-push/experiments/cpu/qualification/transformers_accelerate.py\", line 77, in main\n    validate_recovered_mixed_precision(cfg)\n  File \"/home/yanzhou/cyh/configfuzz-cpu-push/experiments/cpu/qualification/transformers_accelerate.py\", line 38, in validate_recovered_mixed_precision\n    write_basic_config(\n  File \"/home/yanzhou/cyh/configfuzz-gpu/accelerate/src/accelerate/commands/config/default.py\", line 59, in write_basic_config\n    raise ValueError(\nValueError: `mixed_precision` should be one of 'no', 'fp16', 'bf16', or 'fp8'. Received \n",
+            "duration_seconds": 3.047792211989872,
             "timed_out": false
           },
           "outcome": {
             "label": "invalid",
             "reason": "matched an explicit configuration-rejection pattern",
-            "matched_pattern": "Unknown mixed_precision mode",
+            "matched_pattern": "mixed_precision.*should be one of",
             "reached_milestone": false
           },
           "intervention_id": "intervention-89e520fb49aa3f9ad417",
           "intervention_edge_id": "dep-39fd2282ed77229c",
-          "intervention_role": "violating"
+          "intervention_role": "violating",
+          "provenance_matched": true
         },
         {
           "parameter": "mixed_precision",
@@ -126,12 +128,12 @@
             "argv": [
               "bash",
               "experiments/cpu/launch_transformers_accelerate.sh",
-              "/tmp/configfuzz-intervention-5_faflo6/repaired.json"
+              "/tmp/configfuzz-intervention-lmlqc_73/repaired.json"
             ],
             "returncode": 0,
-            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.770969\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.167148\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.757224\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.152244\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
             "stderr": "",
-            "duration_seconds": 18.014798869146034,
+            "duration_seconds": 3.96381501306314,
             "timed_out": false
           },
           "outcome": {
@@ -146,28 +148,29 @@
         }
       ],
       "feedback": {
-        "batch_id": "9981446df42bebe029f5",
+        "batch_id": "81e219a6e858caed8e00",
         "duplicate_batch": false,
         "samples": 3,
         "evaluated_samples": 3,
         "ignored_samples": 0,
         "supported_edges": [
-          "dep-39fd2282ed77229c",
           "dep-4021dcf1fc2548c7",
           "dep-5d2bdf54140b8f5a",
           "dep-bb93e90843aba2d0",
           "dep-f4b3da09d598a8fb"
         ],
-        "confirmed_edges": [],
+        "confirmed_edges": [
+          "dep-39fd2282ed77229c"
+        ],
         "scope_disputed_edges": [],
         "contradicted_edges": [],
         "ambiguous_invalid_samples": 1,
-        "paired_interventions": 0,
+        "paired_interventions": 1,
         "status_changes": [
           {
             "edge_id": "dep-39fd2282ed77229c",
             "from": "static_candidate",
-            "to": "dynamically_supported"
+            "to": "confirmed"
           },
           {
             "edge_id": "dep-4021dcf1fc2548c7",
@@ -205,12 +208,12 @@
             "argv": [
               "bash",
               "experiments/cpu/launch_transformers_accelerate.sh",
-              "/tmp/configfuzz-intervention-ubbhg8md/satisfying.json"
+              "/tmp/configfuzz-intervention-ki2y8_ji/satisfying.json"
             ],
             "returncode": 0,
-            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.739491\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.109683\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.763914\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.093667\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
             "stderr": "",
-            "duration_seconds": 18.065760049968958,
+            "duration_seconds": 3.9491860029520467,
             "timed_out": false
           },
           "outcome": {
@@ -230,22 +233,24 @@
             "argv": [
               "bash",
               "experiments/cpu/launch_transformers_accelerate.sh",
-              "/tmp/configfuzz-intervention-ubbhg8md/violating.json"
+              "/tmp/configfuzz-intervention-ki2y8_ji/violating.json"
             ],
-            "returncode": 1,
+            "returncode": 2,
             "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\n",
-            "stderr": "Traceback (most recent call last):\n  File \"/workspace/ConfigFuzz/experiments/cpu/qualification/transformers_accelerate.py\", line 74, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/workspace/ConfigFuzz/experiments/cpu/qualification/transformers_accelerate.py\", line 21, in main\n    accelerator = Accelerator(\n                  ^^^^^^^^^^^^\n  File \"/workspace/ConfigFuzz/.cpu-site/accelerate/accelerator.py\", line 462, in __init__\n    self.state = AcceleratorState(\n                 ^^^^^^^^^^^^^^^^^\n  File \"/workspace/ConfigFuzz/.cpu-site/accelerate/state.py\", line 932, in __init__\n    raise ValueError(\nValueError: Using `fp8` precision requires `transformer_engine` or `MS-AMP` to be installed.\n",
-            "duration_seconds": 7.2162312851287425,
+            "stderr": "usage: Accelerate config command default [-h] [--config_file SAVE_LOCATION]\n                                         [--mixed_precision {no,fp16,bf16}]\nAccelerate config command default: error: argument --mixed_precision: invalid choice: 'fp8' (choose from 'no', 'fp16', 'bf16')\nCONFIGFUZZ_PROVENANCE:src/accelerate/commands/config/default.py\n",
+            "duration_seconds": 3.0281439600512385,
             "timed_out": false
           },
           "outcome": {
-            "label": "unknown",
-            "reason": "non-zero exit was not attributable to configuration validation or a bug oracle",
+            "label": "invalid",
+            "reason": "matched an explicit configuration-rejection pattern",
+            "matched_pattern": "invalid choice",
             "reached_milestone": false
           },
           "intervention_id": "intervention-3aff5e4a44ed359770da",
           "intervention_edge_id": "dep-5d2bdf54140b8f5a",
-          "intervention_role": "violating"
+          "intervention_role": "violating",
+          "provenance_matched": true
         },
         {
           "parameter": "mixed_precision",
@@ -254,12 +259,12 @@
             "argv": [
               "bash",
               "experiments/cpu/launch_transformers_accelerate.sh",
-              "/tmp/configfuzz-intervention-ubbhg8md/repaired.json"
+              "/tmp/configfuzz-intervention-ki2y8_ji/repaired.json"
             ],
             "returncode": 0,
-            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.724358\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.073012\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.675583\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.118105\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
             "stderr": "",
-            "duration_seconds": 16.508060728898272,
+            "duration_seconds": 4.604059678968042,
             "timed_out": false
           },
           "outcome": {
@@ -274,23 +279,24 @@
         }
       ],
       "feedback": {
-        "batch_id": "2aefb8dc8243a7df6885",
+        "batch_id": "dc54c10c884e9248186a",
         "duplicate_batch": false,
         "samples": 3,
-        "evaluated_samples": 2,
-        "ignored_samples": 1,
+        "evaluated_samples": 3,
+        "ignored_samples": 0,
         "supported_edges": [
           "dep-39fd2282ed77229c",
           "dep-4021dcf1fc2548c7",
-          "dep-5d2bdf54140b8f5a",
           "dep-bb93e90843aba2d0",
           "dep-f4b3da09d598a8fb"
         ],
-        "confirmed_edges": [],
+        "confirmed_edges": [
+          "dep-5d2bdf54140b8f5a"
+        ],
         "scope_disputed_edges": [],
         "contradicted_edges": [],
         "ambiguous_invalid_samples": 0,
-        "paired_interventions": 0,
+        "paired_interventions": 1,
         "status_changes": [
           {
             "edge_id": "dep-39fd2282ed77229c",
@@ -305,7 +311,7 @@
           {
             "edge_id": "dep-5d2bdf54140b8f5a",
             "from": "static_candidate",
-            "to": "dynamically_supported"
+            "to": "confirmed"
           },
           {
             "edge_id": "dep-bb93e90843aba2d0",
@@ -333,12 +339,12 @@
             "argv": [
               "bash",
               "experiments/cpu/launch_transformers_accelerate.sh",
-              "/tmp/configfuzz-intervention-n_2uxcb1/satisfying.json"
+              "/tmp/configfuzz-intervention-lpna9gd1/satisfying.json"
             ],
             "returncode": 0,
-            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.751135\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.164869\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.734604\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.137778\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
             "stderr": "",
-            "duration_seconds": 16.413278077030554,
+            "duration_seconds": 3.899205363006331,
             "timed_out": false
           },
           "outcome": {
@@ -358,23 +364,24 @@
             "argv": [
               "bash",
               "experiments/cpu/launch_transformers_accelerate.sh",
-              "/tmp/configfuzz-intervention-n_2uxcb1/violating.json"
+              "/tmp/configfuzz-intervention-lpna9gd1/violating.json"
             ],
-            "returncode": 1,
+            "returncode": 2,
             "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\n",
-            "stderr": "Traceback (most recent call last):\n  File \"/workspace/ConfigFuzz/experiments/cpu/qualification/transformers_accelerate.py\", line 74, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/workspace/ConfigFuzz/experiments/cpu/qualification/transformers_accelerate.py\", line 21, in main\n    accelerator = Accelerator(\n                  ^^^^^^^^^^^^\n  File \"/workspace/ConfigFuzz/.cpu-site/accelerate/accelerator.py\", line 314, in __init__\n    raise ValueError(\nValueError: Unknown mixed_precision mode: . Choose between ['no', 'fp8', 'fp16', 'bf16']\n",
-            "duration_seconds": 7.577714829938486,
+            "stderr": "usage: Accelerate launch command [-h] [--config_file CONFIG_FILE] [--quiet]\n                                 [--cpu] [--multi_gpu] [--tpu]\n                                 [--mixed_precision {no,fp16,bf16,fp8}]\n                                 [--num_processes NUM_PROCESSES]\n                                 [--num_machines NUM_MACHINES]\n                                 [--num_cpu_threads_per_process NUM_CPU_THREADS_PER_PROCESS]\n                                 [--enable_cpu_affinity]\n                                 [--dynamo_backend {no,eager,aot_eager,inductor,aot_ts_nvfuser,nvprims_nvfuser,cudagraphs,ofi,fx2trt,onnxrt,tensorrt,aot_torchxla_trace_once,torhchxla_trace_once,tvm}]\n                                 [--dynamo_mode {default,reduce-overhead,max-autotune}]\n                                 [--dynamo_use_fullgraph]\n                                 [--dynamo_use_dynamic]\n                                 [--dynamo_use_regional_compilation]\n                                 [--use_deepspeed] [--use_fsdp]\n                                 [--use_parallelism_config]\n                                 [--use_megatron_lm] [--gpu_ids GPU_IDS]\n                                 [--same_network]\n                                 [--machine_rank MACHINE_RANK]\n                                 [--main_process_ip MAIN_PROCESS_IP]\n                                 [--main_process_port MAIN_PROCESS_PORT]\n                                 [-t TEE] [--log_dir LOG_DIR] [--role ROLE]\n                                 [--rdzv_backend RDZV_BACKEND]\n                                 [--rdzv_conf RDZV_CONF]\n                                 [--max_restarts MAX_RESTARTS]\n                                 [--monitor_interval MONITOR_INTERVAL] [-m]\n                                 [--no_python] [--tpu_cluster]\n                                 [--no_tpu_cluster] [--tpu_use_sudo] [--vm VM]\n                                 [--env ENV]\n                                 [--main_training_function MAIN_TRAINING_FUNCTION]\n                                 [--downcast_bf16]\n                                 [--deepspeed_config_file DEEPSPEED_CONFIG_FILE]\n                                 [--zero_stage ZERO_STAGE]\n                                 [--offload_optimizer_device OFFLOAD_OPTIMIZER_DEVICE]\n                                 [--offload_param_device OFFLOAD_PARAM_DEVICE]\n                                 [--offload_optimizer_nvme_path OFFLOAD_OPTIMIZER_NVME_PATH]\n                                 [--offload_param_nvme_path OFFLOAD_PARAM_NVME_PATH]\n                                 [--gradient_accumulation_steps GRADIENT_ACCUMULATION_STEPS]\n                                 [--gradient_clipping GRADIENT_CLIPPING]\n                                 [--zero3_init_flag ZERO3_INIT_FLAG]\n                                 [--zero3_save_16bit_model ZERO3_SAVE_16BIT_MODEL]\n                                 [--deepspeed_hostfile DEEPSPEED_HOSTFILE]\n                                 [--deepspeed_exclusion_filter DEEPSPEED_EXCLUSION_FILTER]\n                                 [--deepspeed_inclusion_filter DEEPSPEED_INCLUSION_FILTER]\n                                 [--deepspeed_multinode_launcher DEEPSPEED_MULTINODE_LAUNCHER]\n                                 [--deepspeed_moe_layer_cls_names DEEPSPEED_MOE_LAYER_CLS_NAMES]\n                                 [--fsdp_version {1,2}]\n                                 [--fsdp_offload_params FSDP_OFFLOAD_PARAMS]\n                                 [--fsdp_min_num_params FSDP_MIN_NUM_PARAMS]\n                                 [--fsdp_sharding_strategy FSDP_SHARDING_STRATEGY]\n                                 [--fsdp_reshard_after_forward FSDP_RESHARD_AFTER_FORWARD]\n                                 [--fsdp_auto_wrap_policy FSDP_AUTO_WRAP_POLICY]\n                                 [--fsdp_transformer_layer_cls_to_wrap FSDP_TRANSFORMER_LAYER_CLS_TO_WRAP]\n                                 [--fsdp_backward_prefetch FSDP_BACKWARD_PREFETCH]\n                                 [--fsdp_state_dict_type FSDP_STATE_DICT_TYPE]\n                                 [--fsdp_forward_prefetch FSDP_FORWARD_PREFETCH]\n                                 [--fsdp_use_orig_params FSDP_USE_ORIG_PARAMS]\n                                 [--fsdp_cpu_ram_efficient_loading FSDP_CPU_RAM_EFFICIENT_LOADING]\n                                 [--fsdp_sync_module_states FSDP_SYNC_MODULE_STATES]\n                                 [--fsdp_activation_checkpointing FSDP_ACTIVATION_CHECKPOINTING]\n                                 [--megatron_lm_tp_degree MEGATRON_LM_TP_DEGREE]\n                                 [--megatron_lm_use_custom_fsdp MEGATRON_LM_USE_CUSTOM_FSDP]\n                                 [--megatron_lm_no_load_optim MEGATRON_LM_NO_LOAD_OPTIM]\n                                 [--megatron_lm_eod_mask_loss MEGATRON_LM_EOD_MASK_LOSS]\n                                 [--megatron_lm_overlap_cpu_optimizer_d2h_h2d MEGATRON_LM_OVERLAP_CPU_OPTIMIZER_D2H_H2D]\n                                 [--megatron_lm_no_save_optim MEGATRON_LM_NO_SAVE_OPTIM]\n                                 [--megatron_lm_optimizer_cpu_offload MEGATRON_LM_OPTIMIZER_CPU_OFFLOAD]\n                                 [--megatron_lm_use_precision_aware_optimizer MEGATRON_LM_USE_PRECISION_AWARE_OPTIMIZER]\n                                 [--megatron_lm_decoder_last_pipeline_num_layers MEGATRON_LM_DECODER_LAST_PIPELINE_NUM_LAYERS]\n                                 [--megatron_lm_pp_degree MEGATRON_LM_PP_DEGREE]\n                                 [--megatron_lm_num_micro_batches MEGATRON_LM_NUM_MICRO_BATCHES]\n                                 [--megatron_lm_sequence_parallelism MEGATRON_LM_SEQUENCE_PARALLELISM]\n                                 [--megatron_lm_recompute_activations MEGATRON_LM_RECOMPUTE_ACTIVATIONS]\n                                 [--megatron_lm_use_distributed_optimizer MEGATRON_LM_USE_DISTRIBUTED_OPTIMIZER]\n                                 [--megatron_lm_gradient_clipping MEGATRON_LM_GRADIENT_CLIPPING]\n                                 [--megatron_lm_recompute_granularity MEGATRON_LM_RECOMPUTE_GRANULARITY]\n                                 [--megatron_lm_recompute_method MEGATRON_LM_RECOMPUTE_METHOD]\n                                 [--megatron_lm_recompute_num_layers MEGATRON_LM_RECOMPUTE_NUM_LAYERS]\n                                 [--megatron_lm_attention_backend MEGATRON_LM_ATTENTION_BACKEND]\n                                 [--megatron_lm_expert_model_parallel_size MEGATRON_LM_EXPERT_MODEL_PARALLEL_SIZE]\n                                 [--megatron_lm_context_parallel_size MEGATRON_LM_CONTEXT_PARALLEL_SIZE]\n                                 [--megatron_lm_attention_dropout MEGATRON_LM_ATTENTION_DROPOUT]\n                                 [--megatron_lm_hidden_dropout MEGATRON_LM_HIDDEN_DROPOUT]\n                                 [--megatron_lm_attention_softmax_in_fp32 MEGATRON_LM_ATTENTION_SOFTMAX_IN_FP32]\n                                 [--megatron_lm_expert_tensor_parallel_size MEGATRON_LM_EXPERT_TENSOR_PARALLEL_SIZE]\n                                 [--megatron_lm_calculate_per_token_loss MEGATRON_LM_CALCULATE_PER_TOKEN_LOSS]\n                                 [--megatron_lm_use_rotary_position_embeddings MEGATRON_LM_USE_ROTARY_POSITION_EMBEDDINGS]\n                                 [--fp8_backend {ao,te,msamp}]\n                                 [--fp8_use_autocast_during_eval]\n                                 [--fp8_margin FP8_MARGIN]\n                                 [--fp8_interval FP8_INTERVAL]\n                                 [--fp8_format {HYBRID,E4M3,E5M2}]\n                                 [--fp8_amax_history_len FP8_AMAX_HISTORY_LEN]\n                                 [--fp8_amax_compute_algo {max,most_recent}]\n                                 [--fp8_override_linear_precision FP8_OVERRIDE_LINEAR_PRECISION]\n                                 [--fp8_opt_level {O1,O2}]\n                                 [--fp8_enable_fsdp_float8_all_gather FP8_ENABLE_FSDP_FLOAT8_ALL_GATHER]\n                                 [--fp8_pad_inner_dim FP8_PAD_INNER_DIM]\n                                 [--aws_access_key_id AWS_ACCESS_KEY_ID]\n                                 [--aws_secret_access_key AWS_SECRET_ACCESS_KEY]\n                                 [--debug] [--mpirun_hostfile MPIRUN_HOSTFILE]\n                                 [--parallelism_config_dp_replicate_size PARALLELISM_CONFIG_DP_REPLICATE_SIZE]\n                                 [--parallelism_config_dp_shard_size PARALLELISM_CONFIG_DP_SHARD_SIZE]\n                                 [--parallelism_config_tp_size PARALLELISM_CONFIG_TP_SIZE]\n                                 [--parallelism_config_cp_size PARALLELISM_CONFIG_CP_SIZE]\n                                 [--parallelism_config_cp_backend {torch}]\n                                 [--parallelism_config_cp_comm_strategy PARALLELISM_CONFIG_CP_COMM_STRATEGY]\n                                 [--parallelism_config_sp_size PARALLELISM_CONFIG_SP_SIZE]\n                                 [--parallelism_config_sp_backend {deepspeed}]\n                                 [--parallelism_config_sp_seq_length PARALLELISM_CONFIG_SP_SEQ_LENGTH]\n                                 [--parallelism_config_sp_seq_length_is_variable PARALLELISM_CONFIG_SP_SEQ_LENGTH_IS_VARIABLE]\n                                 [--parallelism_config_sp_attn_implementation PARALLELISM_CONFIG_SP_ATTN_IMPLEMENTATION]\n                                 training_script ...\nAccelerate launch command: error: argument --mixed_precision/--mixed-precision: invalid choice: '' (choose from 'no', 'fp16', 'bf16', 'fp8')\nCONFIGFUZZ_PROVENANCE:src/accelerate/commands/launch.py\n",
+            "duration_seconds": 3.9705323349917307,
             "timed_out": false
           },
           "outcome": {
             "label": "invalid",
             "reason": "matched an explicit configuration-rejection pattern",
-            "matched_pattern": "Unknown mixed_precision mode",
+            "matched_pattern": "invalid choice",
             "reached_milestone": false
           },
           "intervention_id": "intervention-b7c97fbc97a3813066e8",
           "intervention_edge_id": "dep-bb93e90843aba2d0",
-          "intervention_role": "violating"
+          "intervention_role": "violating",
+          "provenance_matched": true
         },
         {
           "parameter": "mixed_precision",
@@ -383,12 +390,12 @@
             "argv": [
               "bash",
               "experiments/cpu/launch_transformers_accelerate.sh",
-              "/tmp/configfuzz-intervention-n_2uxcb1/repaired.json"
+              "/tmp/configfuzz-intervention-lpna9gd1/repaired.json"
             ],
             "returncode": 0,
-            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.748880\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.131782\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:model_construction\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.703833\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=7.201123\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
             "stderr": "",
-            "duration_seconds": 18.343793562147766,
+            "duration_seconds": 3.798432173905894,
             "timed_out": false
           },
           "outcome": {
@@ -403,7 +410,7 @@
         }
       ],
       "feedback": {
-        "batch_id": "4335d5e4fe68d113442f",
+        "batch_id": "440a52c17dfa7ad5ef10",
         "duplicate_batch": false,
         "samples": 3,
         "evaluated_samples": 3,
@@ -412,14 +419,15 @@
           "dep-39fd2282ed77229c",
           "dep-4021dcf1fc2548c7",
           "dep-5d2bdf54140b8f5a",
-          "dep-bb93e90843aba2d0",
           "dep-f4b3da09d598a8fb"
         ],
-        "confirmed_edges": [],
+        "confirmed_edges": [
+          "dep-bb93e90843aba2d0"
+        ],
         "scope_disputed_edges": [],
         "contradicted_edges": [],
         "ambiguous_invalid_samples": 1,
-        "paired_interventions": 0,
+        "paired_interventions": 1,
         "status_changes": [
           {
             "edge_id": "dep-39fd2282ed77229c",
@@ -439,7 +447,7 @@
           {
             "edge_id": "dep-bb93e90843aba2d0",
             "from": "static_candidate",
-            "to": "dynamically_supported"
+            "to": "confirmed"
           },
           {
             "edge_id": "dep-f4b3da09d598a8fb",
@@ -465,19 +473,19 @@
         "edges": {
           "dep-39fd2282ed77229c": {
             "base_confidence": 0.98,
-            "evaluated": 8,
+            "evaluated": 9,
             "consistent_valid": 6,
             "valid_counterexample": 0,
             "isolated_violation": 0,
-            "paired_intervention": 0,
-            "provenance_matched_rejection": 0,
+            "paired_intervention": 1,
+            "provenance_matched_rejection": 1,
             "ambiguous_invalid": 2,
             "unexplained_preserving": 0,
             "bug_preserving": 0
           },
           "dep-4021dcf1fc2548c7": {
             "base_confidence": 1.0,
-            "evaluated": 8,
+            "evaluated": 9,
             "consistent_valid": 6,
             "valid_counterexample": 0,
             "isolated_violation": 0,
@@ -489,31 +497,31 @@
           },
           "dep-5d2bdf54140b8f5a": {
             "base_confidence": 1.0,
-            "evaluated": 8,
+            "evaluated": 9,
             "consistent_valid": 6,
             "valid_counterexample": 0,
-            "isolated_violation": 0,
-            "paired_intervention": 0,
-            "provenance_matched_rejection": 0,
+            "isolated_violation": 1,
+            "paired_intervention": 1,
+            "provenance_matched_rejection": 1,
             "ambiguous_invalid": 2,
             "unexplained_preserving": 0,
             "bug_preserving": 0
           },
           "dep-bb93e90843aba2d0": {
             "base_confidence": 1.0,
-            "evaluated": 8,
+            "evaluated": 9,
             "consistent_valid": 6,
             "valid_counterexample": 0,
             "isolated_violation": 0,
-            "paired_intervention": 0,
-            "provenance_matched_rejection": 0,
+            "paired_intervention": 1,
+            "provenance_matched_rejection": 1,
             "ambiguous_invalid": 2,
             "unexplained_preserving": 0,
             "bug_preserving": 0
           },
           "dep-f4b3da09d598a8fb": {
             "base_confidence": 1.0,
-            "evaluated": 8,
+            "evaluated": 9,
             "consistent_valid": 6,
             "valid_counterexample": 0,
             "isolated_violation": 0,
@@ -525,13 +533,12 @@
           }
         },
         "applied_batches": [
-          "1ae40910ee841fa64ec1"
+          "030d542582c8d94f8a20"
         ],
         "runs": 1,
         "samples": 9,
         "outcomes": {
-          "invalid": 2,
-          "unknown": 1,
+          "invalid": 3,
           "valid": 6
         }
       }
@@ -554,7 +561,8 @@
         "type": 15
       },
       "statuses": {
-        "dynamically_supported": 5,
+        "confirmed": 3,
+        "dynamically_supported": 2,
         "static_candidate": 26
       }
     },
@@ -856,7 +864,7 @@
         "dependents": [
           "mixed_precision"
         ],
-        "status": "dynamically_supported",
+        "status": "confirmed",
         "confidence": 0.99,
         "scope": {
           "accelerator": "NVIDIA GPU",
@@ -879,7 +887,7 @@
           {
             "kind": "dynamic",
             "source": "runtime-feedback",
-            "detail": "consistent_valid=6; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0"
+            "detail": "consistent_valid=6; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0"
           }
         ]
       },
@@ -1244,7 +1252,7 @@
         "dependents": [
           "mixed_precision"
         ],
-        "status": "dynamically_supported",
+        "status": "confirmed",
         "confidence": 0.99,
         "scope": {
           "accelerator": "NVIDIA GPU",
@@ -1267,7 +1275,7 @@
           {
             "kind": "dynamic",
             "source": "runtime-feedback",
-            "detail": "consistent_valid=6; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0"
+            "detail": "consistent_valid=6; isolated_violation=1; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0"
           }
         ]
       },
@@ -1478,7 +1486,7 @@
         "dependents": [
           "mixed_precision"
         ],
-        "status": "dynamically_supported",
+        "status": "confirmed",
         "confidence": 0.99,
         "scope": {
           "accelerator": "NVIDIA GPU",
@@ -1501,7 +1509,7 @@
           {
             "kind": "dynamic",
             "source": "runtime-feedback",
-            "detail": "consistent_valid=6; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0"
+            "detail": "consistent_valid=6; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0"
           }
         ]
       },

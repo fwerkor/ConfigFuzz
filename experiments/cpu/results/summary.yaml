@@ -1,8 +1,8 @@
 schema_version: 2
 name: cpu-cross-framework-frozen-validation-summary
-campaign_date: '2026-08-20'
-runner_revision: 3761e10632f19e4790e598b3272b117fce451e31
-frozen_targets_sha256: 675d0cee8d33a98e324193ce00de9e7099c45425d61ccae6e20224e26bebea53
+campaign_date: '2026-08-21'
+runner_revision: eb416e25d7967730233a464f283f7cc7f84bcaae
+frozen_targets_sha256: 1fe03f22b7d0574fad083f27fb92f4d1eb1724c96faa81c609152d33b622845f
 frozen_target_count: 13
 protocol:
   selection_basis: versioned static graph plus qualified effective baseline; no runtime outcomes used for target selection
@@ -23,12 +23,11 @@ hardware:
 aggregate:
   targets: 13
   samples: 39
-  paired_confirmed: 9
+  paired_confirmed: 12
   scope_disputed: 1
-  unresolved: 3
+  unresolved: 0
   outcomes:
-    invalid: 11
-    unknown: 1
+    invalid: 12
     valid: 27
 subjects:
 - subject: pytorch-native
@@ -75,7 +74,7 @@ subjects:
     - valid
     - invalid
     - valid
-  result_sha256: 6b3e819c62e898ebfc757bec6c84779213a140a57f0dea765031fc77de4cf8a8
+  result_sha256: 63b886b98ac4b72a396c5e78e33e6408f8563cd4331577c00736f0f568af58f6
 - subject: deepspeed
   targets: 6
   samples: 18
@@ -136,39 +135,41 @@ subjects:
     - valid
     - invalid
     - valid
-  result_sha256: b41f5118e7fdae7ecbe6976a64a8bd525c1879855d446c263dce6343f0dc66ed
+  result_sha256: 9b0b9dd2c9290367e84434ead9adc27b7ecbe3e40eec98d2dfee0ec39bb4dceb
 - subject: transformers-accelerate
   targets: 3
   samples: 9
-  paired_confirmed: 0
+  paired_confirmed: 3
   scope_disputed: 0
-  unresolved: 3
+  unresolved: 0
   outcomes:
-    invalid: 2
-    unknown: 1
+    invalid: 3
     valid: 6
-  confirmed_edge_ids: []
+  confirmed_edge_ids:
+  - dep-39fd2282ed77229c
+  - dep-5d2bdf54140b8f5a
+  - dep-bb93e90843aba2d0
   scope_disputed_edge_ids: []
   targets_detail:
   - edge_id: dep-39fd2282ed77229c
     expression: mixed_precision in ['no', 'fp16', 'bf16', 'fp8']
-    status: unresolved
+    status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
   - edge_id: dep-5d2bdf54140b8f5a
     expression: mixed_precision in {"bf16", "fp16", "no"}
-    status: unresolved
-    outcomes:
-    - valid
-    - unknown
-    - valid
-  - edge_id: dep-bb93e90843aba2d0
-    expression: mixed_precision in {"bf16", "fp16", "fp8", "no"}
-    status: unresolved
+    status: paired_confirmed
     outcomes:
     - valid
     - invalid
     - valid
-  result_sha256: c1d48a089fa5051dc5e15ed002a140a327ada86d6a609479db2586013a38bf57
+  - edge_id: dep-bb93e90843aba2d0
+    expression: mixed_precision in {"bf16", "fp16", "fp8", "no"}
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  result_sha256: f7259adedf63830c35ef92ed9a5b18f6f7bc0af113c971f4da5ee59ad9d1c0f7
