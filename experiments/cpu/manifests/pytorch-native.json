@@ -1,0 +1,15 @@
+{
+  "baseline_config": "../baselines/pytorch-native.json",
+  "command": ["bash", "experiments/cpu/launch_pytorch_native.sh", "{config}"],
+  "cwd": "../../..",
+  "timeout_seconds": 60,
+  "environment": {"OMP_NUM_THREADS": "8", "CONFIGFUZZ_CPU_NPROC": "2"},
+  "classification": {
+    "invalid_patterns": ["Unknown backend type", "must be divisible by 'group_size='", "must not exceed the world size", "must be positive"],
+    "resource_patterns": ["Cannot allocate memory", "std::bad_alloc"],
+    "infrastructure_patterns": ["Address already in use", "Gloo.*connection", "Connection closed by peer"],
+    "milestone_patterns": ["CONFIGFUZZ_MILESTONE:completed"],
+    "unexpected_failure_after_milestone_is_bug": false
+  },
+  "roles": ["satisfying", "violating", "repaired"]
+}

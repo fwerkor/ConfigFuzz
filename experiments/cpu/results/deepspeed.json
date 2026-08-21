@@ -1,0 +1,1821 @@
+{
+  "schema_version": 1,
+  "subject": "deepspeed",
+  "frozen_targets_sha256": "675d0cee8d33a98e324193ce00de9e7099c45425d61ccae6e20224e26bebea53",
+  "summary": {
+    "targets": 6,
+    "samples": 18,
+    "outcomes": {
+      "invalid": 6,
+      "valid": 12
+    },
+    "edge_statuses": {
+      "confirmed": 6,
+      "dynamically_supported": 2,
+      "environment_specific": 3,
+      "static_candidate": 9
+    },
+    "paired_interventions": 6
+  },
+  "aggregate_feedback": {
+    "batch_id": "7e1d948225e8828760dc",
+    "duplicate_batch": false,
+    "samples": 18,
+    "evaluated_samples": 18,
+    "ignored_samples": 0,
+    "supported_edges": [
+      "dep-4a415b051195ecec",
+      "dep-fe8b5c42fd4f1357"
+    ],
+    "confirmed_edges": [
+      "dep-0887015961d7c9ca",
+      "dep-660c94ed03780170",
+      "dep-70da5e10318e54f5",
+      "dep-a37e7d3959ee0b8c",
+      "dep-b957353a0fcb0fdc",
+      "dep-dc97b1a59ef46820"
+    ],
+    "scope_disputed_edges": [],
+    "contradicted_edges": [],
+    "ambiguous_invalid_samples": 3,
+    "paired_interventions": 6,
+    "status_changes": [
+      {
+        "edge_id": "dep-0887015961d7c9ca",
+        "from": "static_candidate",
+        "to": "confirmed"
+      },
+      {
+        "edge_id": "dep-4a415b051195ecec",
+        "from": "static_candidate",
+        "to": "dynamically_supported"
+      },
+      {
+        "edge_id": "dep-660c94ed03780170",
+        "from": "static_candidate",
+        "to": "confirmed"
+      },
+      {
+        "edge_id": "dep-70da5e10318e54f5",
+        "from": "environment_specific",
+        "to": "confirmed"
+      },
+      {
+        "edge_id": "dep-a37e7d3959ee0b8c",
+        "from": "static_candidate",
+        "to": "confirmed"
+      },
+      {
+        "edge_id": "dep-b957353a0fcb0fdc",
+        "from": "static_candidate",
+        "to": "confirmed"
+      },
+      {
+        "edge_id": "dep-dc97b1a59ef46820",
+        "from": "static_candidate",
+        "to": "confirmed"
+      },
+      {
+        "edge_id": "dep-fe8b5c42fd4f1357",
+        "from": "static_candidate",
+        "to": "dynamically_supported"
+      }
+    ]
+  },
+  "rounds": [
+    {
+      "index": 1,
+      "edge_id": "dep-70da5e10318e54f5",
+      "expression": "train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size",
+      "selection_rank": 1,
+      "samples": [
+        {
+          "parameter": "train_batch_size",
+          "value": 4,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-80ky3nz9/satisfying.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.813555\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.493092\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 14.520826386054978,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "assignments": {
+            "gradient_accumulation_steps": 1,
+            "train_micro_batch_size_per_gpu": 2
+          },
+          "intervention_id": "intervention-d7ec2e50065abb7912ba",
+          "intervention_edge_id": "dep-70da5e10318e54f5",
+          "intervention_role": "satisfying"
+        },
+        {
+          "parameter": "train_batch_size",
+          "value": 4,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-80ky3nz9/violating.json"
+            ],
+            "returncode": 1,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n[rank1]: Traceback (most recent call last):\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank1]:     raise SystemExit(main())\n[rank1]:                      ^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank1]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank1]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank1]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank1]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 752, in __init__\n[rank1]:     self._configure_train_batch_size()\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 940, in _configure_train_batch_size\n[rank1]:     self._batch_assertion()\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 886, in _batch_assertion\n[rank1]:     assert train_batch == micro_batch * grad_acc * self.world_size, (\n[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]: AssertionError: Check batch related parameters. train_batch_size is not equal to micro_batch_per_gpu * gradient_acc_step * world_size 4 != 3 * 1 * 2\n[rank0]: Traceback (most recent call last):\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank0]:     raise SystemExit(main())\n[rank0]:                      ^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank0]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank0]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank0]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 752, in __init__\n[rank0]:     self._configure_train_batch_size()\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 940, in _configure_train_batch_size\n[rank0]:     self._batch_assertion()\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 886, in _batch_assertion\n[rank0]:     assert train_batch == micro_batch * grad_acc * self.world_size, (\n[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]: AssertionError: Check batch related parameters. train_batch_size is not equal to micro_batch_per_gpu * gradient_acc_step * world_size 4 != 3 * 1 * 2\nW0820 16:37:47.075000 19515 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 19584 closing signal SIGTERM\nE0820 16:37:47.192000 19515 torch/distributed/elastic/multiprocessing/api.py:1002] failed (exitcode: 1) local_rank: 1 (pid: 19585) of binary: /opt/local-shell-mcp-venv/bin/python\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1032, in <module>\n    main()\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py\", line 367, in wrapper\n    return f(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1028, in main\n    run(args)\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1019, in run\n    elastic_launch(\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 194, in __call__\n    return launch_agent(\n           ^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 383, in launch_agent\n    raise ChildFailedError(\ntorch.distributed.elastic.multiprocessing.errors.ChildFailedError: \n============================================================\n/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py FAILED\n------------------------------------------------------------\nFailures:\n[1]:\n  time      : 2026-08-20_16:37:47\n  host      : 17c133134162\n  rank      : 0 (local_rank: 0)\n  exitcode  : -15 (pid: 19584)  (SIGTERM)\n  error_file: <N/A>\n  traceback : Signal 15 (SIGTERM) received by PID 19584\n------------------------------------------------------------\nRoot Cause (first observed failure):\n[0]:\n  time      : 2026-08-20_16:37:47\n  host      : 17c133134162\n  rank      : 1 (local_rank: 1)\n  exitcode  : 1 (pid: 19585) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n============================================================\n",
+            "duration_seconds": 15.878941683098674,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "invalid",
+            "reason": "matched an explicit configuration-rejection pattern",
+            "matched_pattern": "Check batch related parameters",
+            "reached_milestone": false
+          },
+          "assignments": {
+            "gradient_accumulation_steps": 1,
+            "train_micro_batch_size_per_gpu": 3
+          },
+          "intervention_id": "intervention-d7ec2e50065abb7912ba",
+          "intervention_edge_id": "dep-70da5e10318e54f5",
+          "intervention_role": "violating",
+          "provenance_matched": true
+        },
+        {
+          "parameter": "train_batch_size",
+          "value": 4,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-80ky3nz9/repaired.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.843526\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.503262\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 18.106644202023745,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "assignments": {
+            "gradient_accumulation_steps": 1,
+            "train_micro_batch_size_per_gpu": 2
+          },
+          "intervention_id": "intervention-d7ec2e50065abb7912ba",
+          "intervention_edge_id": "dep-70da5e10318e54f5",
+          "intervention_role": "repaired"
+        }
+      ],
+      "feedback": {
+        "batch_id": "ad5763f43d6d50fb1b5b",
+        "duplicate_batch": false,
+        "samples": 3,
+        "evaluated_samples": 3,
+        "ignored_samples": 0,
+        "supported_edges": [
+          "dep-0887015961d7c9ca",
+          "dep-b957353a0fcb0fdc",
+          "dep-dc97b1a59ef46820"
+        ],
+        "confirmed_edges": [
+          "dep-70da5e10318e54f5"
+        ],
+        "scope_disputed_edges": [],
+        "contradicted_edges": [],
+        "ambiguous_invalid_samples": 0,
+        "paired_interventions": 1,
+        "status_changes": [
+          {
+            "edge_id": "dep-0887015961d7c9ca",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          },
+          {
+            "edge_id": "dep-70da5e10318e54f5",
+            "from": "environment_specific",
+            "to": "confirmed"
+          },
+          {
+            "edge_id": "dep-b957353a0fcb0fdc",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          },
+          {
+            "edge_id": "dep-dc97b1a59ef46820",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "edge_id": "dep-0887015961d7c9ca",
+      "expression": "train_micro_batch_size_per_gpu > 0",
+      "selection_rank": 2,
+      "samples": [
+        {
+          "parameter": "train_micro_batch_size_per_gpu",
+          "value": 2,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-wmf5vgju/satisfying.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.822034\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.466737\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 16.97073942096904,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "assignments": {
+            "gradient_accumulation_steps": 1,
+            "train_batch_size": 4
+          },
+          "intervention_id": "intervention-9c0d77e8f73c17240c4e",
+          "intervention_edge_id": "dep-0887015961d7c9ca",
+          "intervention_role": "satisfying"
+        },
+        {
+          "parameter": "train_micro_batch_size_per_gpu",
+          "value": 0,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-wmf5vgju/violating.json"
+            ],
+            "returncode": 1,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n[rank0]: Traceback (most recent call last):\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank0]:     raise SystemExit(main())\n[rank0]:                      ^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank0]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank0]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank0]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 752, in __init__\n[rank0]:     self._configure_train_batch_size()\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 940, in _configure_train_batch_size\n[rank0]:     self._batch_assertion()\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 880, in _batch_assertion\n[rank0]:     assert (train_batch > 0), f\"Train batch size: {train_batch} has to be greater than 0\"\n[rank0]:             ^^^^^^^^^^^^^^^\n[rank0]: AssertionError: Train batch size: 0 has to be greater than 0\n[rank1]: Traceback (most recent call last):\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank1]:     raise SystemExit(main())\n[rank1]:                      ^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank1]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank1]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank1]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank1]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 752, in __init__\n[rank1]:     self._configure_train_batch_size()\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 940, in _configure_train_batch_size\n[rank1]:     self._batch_assertion()\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 880, in _batch_assertion\n[rank1]:     assert (train_batch > 0), f\"Train batch size: {train_batch} has to be greater than 0\"\n[rank1]:             ^^^^^^^^^^^^^^^\n[rank1]: AssertionError: Train batch size: 0 has to be greater than 0\nE0820 16:38:37.586000 20498 torch/distributed/elastic/multiprocessing/api.py:1002] failed (exitcode: 1) local_rank: 0 (pid: 20536) of binary: /opt/local-shell-mcp-venv/bin/python\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1032, in <module>\n    main()\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py\", line 367, in wrapper\n    return f(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1028, in main\n    run(args)\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1019, in run\n    elastic_launch(\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 194, in __call__\n    return launch_agent(\n           ^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 383, in launch_agent\n    raise ChildFailedError(\ntorch.distributed.elastic.multiprocessing.errors.ChildFailedError: \n============================================================\n/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py FAILED\n------------------------------------------------------------\nFailures:\n[1]:\n  time      : 2026-08-20_16:38:37\n  host      : 17c133134162\n  rank      : 1 (local_rank: 1)\n  exitcode  : 1 (pid: 20537) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n------------------------------------------------------------\nRoot Cause (first observed failure):\n[0]:\n  time      : 2026-08-20_16:38:37\n  host      : 17c133134162\n  rank      : 0 (local_rank: 0)\n  exitcode  : 1 (pid: 20536) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n============================================================\n",
+            "duration_seconds": 15.325115278130397,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "invalid",
+            "reason": "matched an explicit configuration-rejection pattern",
+            "matched_pattern": "Train batch size: .* has to be greater than 0",
+            "reached_milestone": false
+          },
+          "assignments": {
+            "gradient_accumulation_steps": 1,
+            "train_batch_size": 0
+          },
+          "intervention_id": "intervention-9c0d77e8f73c17240c4e",
+          "intervention_edge_id": "dep-0887015961d7c9ca",
+          "intervention_role": "violating",
+          "provenance_matched": true
+        },
+        {
+          "parameter": "train_micro_batch_size_per_gpu",
+          "value": 1,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-wmf5vgju/repaired.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.771787\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.441313\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 16.49822027888149,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "assignments": {
+            "gradient_accumulation_steps": 1,
+            "train_batch_size": 2
+          },
+          "intervention_id": "intervention-9c0d77e8f73c17240c4e",
+          "intervention_edge_id": "dep-0887015961d7c9ca",
+          "intervention_role": "repaired"
+        }
+      ],
+      "feedback": {
+        "batch_id": "2885fab7f27af7c396f6",
+        "duplicate_batch": false,
+        "samples": 3,
+        "evaluated_samples": 3,
+        "ignored_samples": 0,
+        "supported_edges": [
+          "dep-b957353a0fcb0fdc",
+          "dep-dc97b1a59ef46820"
+        ],
+        "confirmed_edges": [
+          "dep-0887015961d7c9ca"
+        ],
+        "scope_disputed_edges": [],
+        "contradicted_edges": [],
+        "ambiguous_invalid_samples": 1,
+        "paired_interventions": 1,
+        "status_changes": [
+          {
+            "edge_id": "dep-0887015961d7c9ca",
+            "from": "static_candidate",
+            "to": "confirmed"
+          },
+          {
+            "edge_id": "dep-b957353a0fcb0fdc",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          },
+          {
+            "edge_id": "dep-dc97b1a59ef46820",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "edge_id": "dep-b957353a0fcb0fdc",
+      "expression": "train_batch_size > 0",
+      "selection_rank": 3,
+      "samples": [
+        {
+          "parameter": "train_batch_size",
+          "value": 4,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-d_b0fdi3/satisfying.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.786906\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.448220\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 15.71555584599264,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "assignments": {
+            "gradient_accumulation_steps": 1,
+            "train_micro_batch_size_per_gpu": 2
+          },
+          "intervention_id": "intervention-476616c7d786b63178b9",
+          "intervention_edge_id": "dep-b957353a0fcb0fdc",
+          "intervention_role": "satisfying"
+        },
+        {
+          "parameter": "train_batch_size",
+          "value": 0,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-d_b0fdi3/violating.json"
+            ],
+            "returncode": 1,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n[rank1]: Traceback (most recent call last):\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank1]:     raise SystemExit(main())\n[rank1]:                      ^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank1]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank1]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank1]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank1]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 752, in __init__\n[rank1]:     self._configure_train_batch_size()\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 940, in _configure_train_batch_size\n[rank1]:     self._batch_assertion()\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 880, in _batch_assertion\n[rank1]:     assert (train_batch > 0), f\"Train batch size: {train_batch} has to be greater than 0\"\n[rank1]:             ^^^^^^^^^^^^^^^\n[rank1]: AssertionError: Train batch size: 0 has to be greater than 0\n[rank0]: Traceback (most recent call last):\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank0]:     raise SystemExit(main())\n[rank0]:                      ^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank0]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank0]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank0]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 752, in __init__\n[rank0]:     self._configure_train_batch_size()\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 940, in _configure_train_batch_size\n[rank0]:     self._batch_assertion()\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 880, in _batch_assertion\n[rank0]:     assert (train_batch > 0), f\"Train batch size: {train_batch} has to be greater than 0\"\n[rank0]:             ^^^^^^^^^^^^^^^\n[rank0]: AssertionError: Train batch size: 0 has to be greater than 0\nW0820 16:39:22.784000 21004 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 21073 closing signal SIGTERM\nE0820 16:39:22.818000 21004 torch/distributed/elastic/multiprocessing/api.py:1002] failed (exitcode: 1) local_rank: 1 (pid: 21074) of binary: /opt/local-shell-mcp-venv/bin/python\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1032, in <module>\n    main()\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py\", line 367, in wrapper\n    return f(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1028, in main\n    run(args)\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1019, in run\n    elastic_launch(\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 194, in __call__\n    return launch_agent(\n           ^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 383, in launch_agent\n    raise ChildFailedError(\ntorch.distributed.elastic.multiprocessing.errors.ChildFailedError: \n============================================================\n/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py FAILED\n------------------------------------------------------------\nFailures:\n[1]:\n  time      : 2026-08-20_16:39:22\n  host      : 17c133134162\n  rank      : 0 (local_rank: 0)\n  exitcode  : 1 (pid: 21073) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n------------------------------------------------------------\nRoot Cause (first observed failure):\n[0]:\n  time      : 2026-08-20_16:39:22\n  host      : 17c133134162\n  rank      : 1 (local_rank: 1)\n  exitcode  : 1 (pid: 21074) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n============================================================\n",
+            "duration_seconds": 13.192578183021396,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "invalid",
+            "reason": "matched an explicit configuration-rejection pattern",
+            "matched_pattern": "Train batch size: .* has to be greater than 0",
+            "reached_milestone": false
+          },
+          "assignments": {
+            "gradient_accumulation_steps": 0,
+            "train_micro_batch_size_per_gpu": 2
+          },
+          "intervention_id": "intervention-476616c7d786b63178b9",
+          "intervention_edge_id": "dep-b957353a0fcb0fdc",
+          "intervention_role": "violating",
+          "provenance_matched": true
+        },
+        {
+          "parameter": "train_batch_size",
+          "value": 4,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-d_b0fdi3/repaired.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.744100\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.411112\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 17.431776539888233,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "assignments": {
+            "gradient_accumulation_steps": 1,
+            "train_micro_batch_size_per_gpu": 2
+          },
+          "intervention_id": "intervention-476616c7d786b63178b9",
+          "intervention_edge_id": "dep-b957353a0fcb0fdc",
+          "intervention_role": "repaired"
+        }
+      ],
+      "feedback": {
+        "batch_id": "541251c135543707984b",
+        "duplicate_batch": false,
+        "samples": 3,
+        "evaluated_samples": 3,
+        "ignored_samples": 0,
+        "supported_edges": [
+          "dep-0887015961d7c9ca",
+          "dep-dc97b1a59ef46820"
+        ],
+        "confirmed_edges": [
+          "dep-b957353a0fcb0fdc"
+        ],
+        "scope_disputed_edges": [],
+        "contradicted_edges": [],
+        "ambiguous_invalid_samples": 1,
+        "paired_interventions": 1,
+        "status_changes": [
+          {
+            "edge_id": "dep-0887015961d7c9ca",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          },
+          {
+            "edge_id": "dep-b957353a0fcb0fdc",
+            "from": "static_candidate",
+            "to": "confirmed"
+          },
+          {
+            "edge_id": "dep-dc97b1a59ef46820",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "edge_id": "dep-dc97b1a59ef46820",
+      "expression": "gradient_accumulation_steps > 0",
+      "selection_rank": 4,
+      "samples": [
+        {
+          "parameter": "gradient_accumulation_steps",
+          "value": 1,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-d2647ax4/satisfying.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.759347\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.438868\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 13.653679199982435,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "assignments": {
+            "train_batch_size": 4,
+            "train_micro_batch_size_per_gpu": 2
+          },
+          "intervention_id": "intervention-a8a1a7a8e78c7aa63235",
+          "intervention_edge_id": "dep-dc97b1a59ef46820",
+          "intervention_role": "satisfying"
+        },
+        {
+          "parameter": "gradient_accumulation_steps",
+          "value": 0,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-d2647ax4/violating.json"
+            ],
+            "returncode": 1,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n[rank1]: Traceback (most recent call last):\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank1]:     raise SystemExit(main())\n[rank1]:                      ^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank1]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank1]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank1]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank1]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 752, in __init__\n[rank1]:     self._configure_train_batch_size()\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 940, in _configure_train_batch_size\n[rank1]:     self._batch_assertion()\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 880, in _batch_assertion\n[rank1]:     assert (train_batch > 0), f\"Train batch size: {train_batch} has to be greater than 0\"\n[rank1]:             ^^^^^^^^^^^^^^^\n[rank1]: AssertionError: Train batch size: 0 has to be greater than 0\n[rank0]: Traceback (most recent call last):\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank0]:     raise SystemExit(main())\n[rank0]:                      ^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank0]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank0]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank0]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 752, in __init__\n[rank0]:     self._configure_train_batch_size()\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 940, in _configure_train_batch_size\n[rank0]:     self._batch_assertion()\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 880, in _batch_assertion\n[rank0]:     assert (train_batch > 0), f\"Train batch size: {train_batch} has to be greater than 0\"\n[rank0]:             ^^^^^^^^^^^^^^^\n[rank0]: AssertionError: Train batch size: 0 has to be greater than 0\nE0820 16:40:06.297000 21402 torch/distributed/elastic/multiprocessing/api.py:1002] failed (exitcode: 1) local_rank: 0 (pid: 21439) of binary: /opt/local-shell-mcp-venv/bin/python\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1032, in <module>\n    main()\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py\", line 367, in wrapper\n    return f(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1028, in main\n    run(args)\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1019, in run\n    elastic_launch(\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 194, in __call__\n    return launch_agent(\n           ^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 383, in launch_agent\n    raise ChildFailedError(\ntorch.distributed.elastic.multiprocessing.errors.ChildFailedError: \n============================================================\n/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py FAILED\n------------------------------------------------------------\nFailures:\n[1]:\n  time      : 2026-08-20_16:40:06\n  host      : 17c133134162\n  rank      : 1 (local_rank: 1)\n  exitcode  : 1 (pid: 21440) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n------------------------------------------------------------\nRoot Cause (first observed failure):\n[0]:\n  time      : 2026-08-20_16:40:06\n  host      : 17c133134162\n  rank      : 0 (local_rank: 0)\n  exitcode  : 1 (pid: 21439) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n============================================================\n",
+            "duration_seconds": 12.132497657090425,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "invalid",
+            "reason": "matched an explicit configuration-rejection pattern",
+            "matched_pattern": "Train batch size: .* has to be greater than 0",
+            "reached_milestone": false
+          },
+          "assignments": {
+            "train_batch_size": 0,
+            "train_micro_batch_size_per_gpu": 2
+          },
+          "intervention_id": "intervention-a8a1a7a8e78c7aa63235",
+          "intervention_edge_id": "dep-dc97b1a59ef46820",
+          "intervention_role": "violating",
+          "provenance_matched": true
+        },
+        {
+          "parameter": "gradient_accumulation_steps",
+          "value": 1,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-d2647ax4/repaired.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.777839\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.439298\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 13.234047702979296,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "assignments": {
+            "train_batch_size": 4,
+            "train_micro_batch_size_per_gpu": 2
+          },
+          "intervention_id": "intervention-a8a1a7a8e78c7aa63235",
+          "intervention_edge_id": "dep-dc97b1a59ef46820",
+          "intervention_role": "repaired"
+        }
+      ],
+      "feedback": {
+        "batch_id": "a481aae86df9d450be42",
+        "duplicate_batch": false,
+        "samples": 3,
+        "evaluated_samples": 3,
+        "ignored_samples": 0,
+        "supported_edges": [
+          "dep-0887015961d7c9ca",
+          "dep-b957353a0fcb0fdc"
+        ],
+        "confirmed_edges": [
+          "dep-dc97b1a59ef46820"
+        ],
+        "scope_disputed_edges": [],
+        "contradicted_edges": [],
+        "ambiguous_invalid_samples": 1,
+        "paired_interventions": 1,
+        "status_changes": [
+          {
+            "edge_id": "dep-0887015961d7c9ca",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          },
+          {
+            "edge_id": "dep-b957353a0fcb0fdc",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          },
+          {
+            "edge_id": "dep-dc97b1a59ef46820",
+            "from": "static_candidate",
+            "to": "confirmed"
+          }
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "edge_id": "dep-660c94ed03780170",
+      "expression": "reduce_bucket_size >= 0",
+      "selection_rank": 5,
+      "samples": [
+        {
+          "parameter": "reduce_bucket_size",
+          "value": 5000000,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-soxzb15c/satisfying.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.783144\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.451454\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 13.056166071910411,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "intervention_id": "intervention-2c83699278451be7f01e",
+          "intervention_edge_id": "dep-660c94ed03780170",
+          "intervention_role": "satisfying"
+        },
+        {
+          "parameter": "reduce_bucket_size",
+          "value": -1,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-soxzb15c/violating.json"
+            ],
+            "returncode": 1,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n[rank1]: Traceback (most recent call last):\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank1]:     raise SystemExit(main())\n[rank1]:                      ^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank1]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank1]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank1]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank1]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 751, in __init__\n[rank1]:     self._initialize_params(copy.copy(self._param_dict))\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 770, in _initialize_params\n[rank1]:     self.zero_config = get_zero_config(param_dict)\n[rank1]:                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/zero/config.py\", line 78, in get_zero_config\n[rank1]:     return DeepSpeedZeroConfig(**zero_config_dict)\n[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config_utils.py\", line 57, in __init__\n[rank1]:     super().__init__(**data)\n[rank1]:   File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/pydantic/main.py\", line 263, in __init__\n[rank1]:     validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)\n[rank1]:                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]: pydantic_core._pydantic_core.ValidationError: 1 validation error for DeepSpeedZeroConfig\n[rank1]: reduce_bucket_size\n[rank1]:   Input should be greater than or equal to 0 [type=greater_than_equal, input_value=-1, input_type=int]\n[rank1]:     For further information visit https://errors.pydantic.dev/2.13/v/greater_than_equal\n[rank0]: Traceback (most recent call last):\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank0]:     raise SystemExit(main())\n[rank0]:                      ^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank0]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank0]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank0]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 751, in __init__\n[rank0]:     self._initialize_params(copy.copy(self._param_dict))\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 770, in _initialize_params\n[rank0]:     self.zero_config = get_zero_config(param_dict)\n[rank0]:                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/zero/config.py\", line 78, in get_zero_config\n[rank0]:     return DeepSpeedZeroConfig(**zero_config_dict)\n[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config_utils.py\", line 57, in __init__\n[rank0]:     super().__init__(**data)\n[rank0]:   File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/pydantic/main.py\", line 263, in __init__\n[rank0]:     validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)\n[rank0]:                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]: pydantic_core._pydantic_core.ValidationError: 1 validation error for DeepSpeedZeroConfig\n[rank0]: reduce_bucket_size\n[rank0]:   Input should be greater than or equal to 0 [type=greater_than_equal, input_value=-1, input_type=int]\n[rank0]:     For further information visit https://errors.pydantic.dev/2.13/v/greater_than_equal\nW0820 16:40:45.639000 21635 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 21670 closing signal SIGTERM\nE0820 16:40:45.756000 21635 torch/distributed/elastic/multiprocessing/api.py:1002] failed (exitcode: 1) local_rank: 1 (pid: 21671) of binary: /opt/local-shell-mcp-venv/bin/python\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1032, in <module>\n    main()\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py\", line 367, in wrapper\n    return f(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1028, in main\n    run(args)\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1019, in run\n    elastic_launch(\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 194, in __call__\n    return launch_agent(\n           ^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 383, in launch_agent\n    raise ChildFailedError(\ntorch.distributed.elastic.multiprocessing.errors.ChildFailedError: \n============================================================\n/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py FAILED\n------------------------------------------------------------\nFailures:\n[1]:\n  time      : 2026-08-20_16:40:45\n  host      : 17c133134162\n  rank      : 0 (local_rank: 0)\n  exitcode  : 1 (pid: 21670) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n------------------------------------------------------------\nRoot Cause (first observed failure):\n[0]:\n  time      : 2026-08-20_16:40:45\n  host      : 17c133134162\n  rank      : 1 (local_rank: 1)\n  exitcode  : 1 (pid: 21671) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n============================================================\n",
+            "duration_seconds": 13.15782367112115,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "invalid",
+            "reason": "matched an explicit configuration-rejection pattern",
+            "matched_pattern": "Input should be greater than or equal to 0",
+            "reached_milestone": false
+          },
+          "intervention_id": "intervention-2c83699278451be7f01e",
+          "intervention_edge_id": "dep-660c94ed03780170",
+          "intervention_role": "violating",
+          "provenance_matched": true
+        },
+        {
+          "parameter": "reduce_bucket_size",
+          "value": 0,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-soxzb15c/repaired.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.807681\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.469962\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 13.362204116070643,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "intervention_id": "intervention-2c83699278451be7f01e",
+          "intervention_edge_id": "dep-660c94ed03780170",
+          "intervention_role": "repaired"
+        }
+      ],
+      "feedback": {
+        "batch_id": "3a3f73635c4a28a37c61",
+        "duplicate_batch": false,
+        "samples": 3,
+        "evaluated_samples": 3,
+        "ignored_samples": 0,
+        "supported_edges": [
+          "dep-4a415b051195ecec"
+        ],
+        "confirmed_edges": [
+          "dep-660c94ed03780170"
+        ],
+        "scope_disputed_edges": [],
+        "contradicted_edges": [],
+        "ambiguous_invalid_samples": 0,
+        "paired_interventions": 1,
+        "status_changes": [
+          {
+            "edge_id": "dep-4a415b051195ecec",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          },
+          {
+            "edge_id": "dep-660c94ed03780170",
+            "from": "static_candidate",
+            "to": "confirmed"
+          }
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "edge_id": "dep-a37e7d3959ee0b8c",
+      "expression": "allgather_bucket_size >= 0",
+      "selection_rank": 6,
+      "samples": [
+        {
+          "parameter": "allgather_bucket_size",
+          "value": 5000000,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-qn_hthg0/satisfying.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.774362\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.438957\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 13.62485409900546,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "intervention_id": "intervention-e50649b5b78866e7b913",
+          "intervention_edge_id": "dep-a37e7d3959ee0b8c",
+          "intervention_role": "satisfying"
+        },
+        {
+          "parameter": "allgather_bucket_size",
+          "value": -1,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-qn_hthg0/violating.json"
+            ],
+            "returncode": 1,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n[rank1]: Traceback (most recent call last):\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank1]:     raise SystemExit(main())\n[rank1]:                      ^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank1]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank1]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank1]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank1]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 751, in __init__\n[rank1]:     self._initialize_params(copy.copy(self._param_dict))\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 770, in _initialize_params\n[rank1]:     self.zero_config = get_zero_config(param_dict)\n[rank1]:                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/zero/config.py\", line 78, in get_zero_config\n[rank1]:     return DeepSpeedZeroConfig(**zero_config_dict)\n[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config_utils.py\", line 57, in __init__\n[rank1]:     super().__init__(**data)\n[rank1]:   File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/pydantic/main.py\", line 263, in __init__\n[rank1]:     validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)\n[rank1]:                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank1]: pydantic_core._pydantic_core.ValidationError: 1 validation error for DeepSpeedZeroConfig\n[rank1]: allgather_bucket_size\n[rank1]:   Input should be greater than or equal to 0 [type=greater_than_equal, input_value=-1, input_type=int]\n[rank1]:     For further information visit https://errors.pydantic.dev/2.13/v/greater_than_equal\n[rank0]: Traceback (most recent call last):\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 98, in <module>\n[rank0]:     raise SystemExit(main())\n[rank0]:                      ^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py\", line 52, in main\n[rank0]:     engine, optimizer, _, _ = deepspeed.initialize(\n[rank0]:                               ^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/__init__.py\", line 199, in initialize\n[rank0]:     config_class = DeepSpeedConfig(config, mpu, mesh_device=mesh_device)\n[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 751, in __init__\n[rank0]:     self._initialize_params(copy.copy(self._param_dict))\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config.py\", line 770, in _initialize_params\n[rank0]:     self.zero_config = get_zero_config(param_dict)\n[rank0]:                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/zero/config.py\", line 78, in get_zero_config\n[rank0]:     return DeepSpeedZeroConfig(**zero_config_dict)\n[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]:   File \"/workspace/ConfigFuzz/.cpu-site/deepspeed/runtime/config_utils.py\", line 57, in __init__\n[rank0]:     super().__init__(**data)\n[rank0]:   File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/pydantic/main.py\", line 263, in __init__\n[rank0]:     validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)\n[rank0]:                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n[rank0]: pydantic_core._pydantic_core.ValidationError: 1 validation error for DeepSpeedZeroConfig\n[rank0]: allgather_bucket_size\n[rank0]:   Input should be greater than or equal to 0 [type=greater_than_equal, input_value=-1, input_type=int]\n[rank0]:     For further information visit https://errors.pydantic.dev/2.13/v/greater_than_equal\nW0820 16:41:24.491000 21955 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 21990 closing signal SIGTERM\nE0820 16:41:24.500000 21955 torch/distributed/elastic/multiprocessing/api.py:1002] failed (exitcode: 1) local_rank: 1 (pid: 21991) of binary: /opt/local-shell-mcp-venv/bin/python\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1032, in <module>\n    main()\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py\", line 367, in wrapper\n    return f(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1028, in main\n    run(args)\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/run.py\", line 1019, in run\n    elastic_launch(\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 194, in __call__\n    return launch_agent(\n           ^^^^^^^^^^^^^\n  File \"/opt/local-shell-mcp-venv/lib/python3.12/site-packages/torch/distributed/launcher/api.py\", line 383, in launch_agent\n    raise ChildFailedError(\ntorch.distributed.elastic.multiprocessing.errors.ChildFailedError: \n============================================================\n/workspace/ConfigFuzz/experiments/cpu/qualification/deepspeed_runner.py FAILED\n------------------------------------------------------------\nFailures:\n[1]:\n  time      : 2026-08-20_16:41:24\n  host      : 17c133134162\n  rank      : 0 (local_rank: 0)\n  exitcode  : 1 (pid: 21990) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n------------------------------------------------------------\nRoot Cause (first observed failure):\n[0]:\n  time      : 2026-08-20_16:41:24\n  host      : 17c133134162\n  rank      : 1 (local_rank: 1)\n  exitcode  : 1 (pid: 21991) \n  error_file: <N/A>\n  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html\n============================================================\n",
+            "duration_seconds": 11.749427703907713,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "invalid",
+            "reason": "matched an explicit configuration-rejection pattern",
+            "matched_pattern": "Input should be greater than or equal to 0",
+            "reached_milestone": false
+          },
+          "intervention_id": "intervention-e50649b5b78866e7b913",
+          "intervention_edge_id": "dep-a37e7d3959ee0b8c",
+          "intervention_role": "violating",
+          "provenance_matched": true
+        },
+        {
+          "parameter": "allgather_bucket_size",
+          "value": 0,
+          "observation": {
+            "argv": [
+              "bash",
+              "experiments/cpu/launch_deepspeed.sh",
+              "/tmp/configfuzz-intervention-qn_hthg0/repaired.json"
+            ],
+            "returncode": 0,
+            "stdout": "CONFIGFUZZ_MILESTONE:argument_parsing\nCONFIGFUZZ_MILESTONE:model_construction\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:argument_parsing\nDeepSpeed deepspeed.ops.comm.deepspeed_shm_comm_op built successfully\nCONFIGFUZZ_MILESTONE:distributed_initialization\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=0 loss=7.687239\nCONFIGFUZZ_MILESTONE:forward\nCONFIGFUZZ_MILESTONE:backward\nCONFIGFUZZ_MILESTONE:optimizer_step\nstep=1 loss=6.371546\nCONFIGFUZZ_MILESTONE:repeated_training\nCONFIGFUZZ_MILESTONE:checkpoint_save_load\nCONFIGFUZZ_MILESTONE:completed\n",
+            "stderr": "\n*****************************************\nSetting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. \n*****************************************\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n/workspace/ConfigFuzz/experiments/cpu/qualification/common.py:58: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True\n  self.layers = nn.TransformerEncoder(encoder_layer, num_layers=layers)\n",
+            "duration_seconds": 14.501421679975465,
+            "timed_out": false
+          },
+          "outcome": {
+            "label": "valid",
+            "reason": "process completed and reached the configured milestone",
+            "matched_pattern": "CONFIGFUZZ_MILESTONE:completed",
+            "reached_milestone": true
+          },
+          "intervention_id": "intervention-e50649b5b78866e7b913",
+          "intervention_edge_id": "dep-a37e7d3959ee0b8c",
+          "intervention_role": "repaired"
+        }
+      ],
+      "feedback": {
+        "batch_id": "a76cbaddd6cf40da6eee",
+        "duplicate_batch": false,
+        "samples": 3,
+        "evaluated_samples": 3,
+        "ignored_samples": 0,
+        "supported_edges": [
+          "dep-fe8b5c42fd4f1357"
+        ],
+        "confirmed_edges": [
+          "dep-a37e7d3959ee0b8c"
+        ],
+        "scope_disputed_edges": [],
+        "contradicted_edges": [],
+        "ambiguous_invalid_samples": 0,
+        "paired_interventions": 1,
+        "status_changes": [
+          {
+            "edge_id": "dep-a37e7d3959ee0b8c",
+            "from": "static_candidate",
+            "to": "confirmed"
+          },
+          {
+            "edge_id": "dep-fe8b5c42fd4f1357",
+            "from": "static_candidate",
+            "to": "dynamically_supported"
+          }
+        ]
+      }
+    }
+  ],
+  "dependency_graph": {
+    "schema_version": 1,
+    "metadata": {
+      "scope": {
+        "framework": "DeepSpeed",
+        "source_subdir": "deepspeed",
+        "framework_profile": "deepspeed",
+        "backend": "CUDA/NCCL",
+        "accelerator": "NVIDIA GPU",
+        "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+      },
+      "runtime_feedback": {
+        "edges": {
+          "dep-70da5e10318e54f5": {
+            "base_confidence": 1.0,
+            "evaluated": 12,
+            "consistent_valid": 8,
+            "valid_counterexample": 0,
+            "isolated_violation": 1,
+            "paired_intervention": 1,
+            "provenance_matched_rejection": 1,
+            "ambiguous_invalid": 0,
+            "unexplained_preserving": 0,
+            "bug_preserving": 0
+          },
+          "dep-dc97b1a59ef46820": {
+            "base_confidence": 1.0,
+            "evaluated": 12,
+            "consistent_valid": 8,
+            "valid_counterexample": 0,
+            "isolated_violation": 0,
+            "paired_intervention": 1,
+            "provenance_matched_rejection": 1,
+            "ambiguous_invalid": 2,
+            "unexplained_preserving": 0,
+            "bug_preserving": 0
+          },
+          "dep-0887015961d7c9ca": {
+            "base_confidence": 1.0,
+            "evaluated": 12,
+            "consistent_valid": 8,
+            "valid_counterexample": 0,
+            "isolated_violation": 0,
+            "paired_intervention": 1,
+            "provenance_matched_rejection": 1,
+            "ambiguous_invalid": 1,
+            "unexplained_preserving": 0,
+            "bug_preserving": 0
+          },
+          "dep-b957353a0fcb0fdc": {
+            "base_confidence": 1.0,
+            "evaluated": 12,
+            "consistent_valid": 8,
+            "valid_counterexample": 0,
+            "isolated_violation": 0,
+            "paired_intervention": 1,
+            "provenance_matched_rejection": 1,
+            "ambiguous_invalid": 3,
+            "unexplained_preserving": 0,
+            "bug_preserving": 0
+          },
+          "dep-4a415b051195ecec": {
+            "base_confidence": 1.0,
+            "evaluated": 3,
+            "consistent_valid": 2,
+            "valid_counterexample": 0,
+            "isolated_violation": 0,
+            "paired_intervention": 0,
+            "provenance_matched_rejection": 0,
+            "ambiguous_invalid": 0,
+            "unexplained_preserving": 0,
+            "bug_preserving": 0
+          },
+          "dep-660c94ed03780170": {
+            "base_confidence": 1.0,
+            "evaluated": 3,
+            "consistent_valid": 2,
+            "valid_counterexample": 0,
+            "isolated_violation": 1,
+            "paired_intervention": 1,
+            "provenance_matched_rejection": 1,
+            "ambiguous_invalid": 0,
+            "unexplained_preserving": 0,
+            "bug_preserving": 0
+          },
+          "dep-a37e7d3959ee0b8c": {
+            "base_confidence": 1.0,
+            "evaluated": 3,
+            "consistent_valid": 2,
+            "valid_counterexample": 0,
+            "isolated_violation": 1,
+            "paired_intervention": 1,
+            "provenance_matched_rejection": 1,
+            "ambiguous_invalid": 0,
+            "unexplained_preserving": 0,
+            "bug_preserving": 0
+          },
+          "dep-fe8b5c42fd4f1357": {
+            "base_confidence": 1.0,
+            "evaluated": 3,
+            "consistent_valid": 2,
+            "valid_counterexample": 0,
+            "isolated_violation": 0,
+            "paired_intervention": 0,
+            "provenance_matched_rejection": 0,
+            "ambiguous_invalid": 0,
+            "unexplained_preserving": 0,
+            "bug_preserving": 0
+          }
+        },
+        "applied_batches": [
+          "7e1d948225e8828760dc"
+        ],
+        "runs": 1,
+        "samples": 18,
+        "outcomes": {
+          "invalid": 6,
+          "valid": 12
+        }
+      }
+    },
+    "summary": {
+      "nodes": 20,
+      "edges": 20,
+      "connected_components": 9,
+      "node_kinds": {
+        "derived": 6,
+        "environment": 2,
+        "feature": 3,
+        "parameter": 9
+      },
+      "relations": {
+        "divisibility": 1,
+        "environment": 4,
+        "equality": 3,
+        "range": 7,
+        "type": 5
+      },
+      "statuses": {
+        "confirmed": 6,
+        "dynamically_supported": 2,
+        "environment_specific": 3,
+        "static_candidate": 9
+      }
+    },
+    "nodes": [
+      {
+        "name": "OffloadDeviceEnum.nvme",
+        "kind": "derived"
+      },
+      {
+        "name": "ZeroStageEnum.weights",
+        "kind": "derived"
+      },
+      {
+        "name": "allgather_bucket_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "device",
+        "kind": "derived"
+      },
+      {
+        "name": "dist",
+        "kind": "derived"
+      },
+      {
+        "name": "ds_config",
+        "kind": "derived"
+      },
+      {
+        "name": "gradient_accumulation_steps",
+        "kind": "parameter"
+      },
+      {
+        "name": "offload_optimizer",
+        "kind": "feature"
+      },
+      {
+        "name": "offload_optimizer.ratio",
+        "kind": "derived"
+      },
+      {
+        "name": "offload_param",
+        "kind": "parameter"
+      },
+      {
+        "name": "overlap_comm",
+        "kind": "feature"
+      },
+      {
+        "name": "reduce_bucket_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "reduce_scatter",
+        "kind": "feature"
+      },
+      {
+        "name": "self.world_size",
+        "kind": "environment"
+      },
+      {
+        "name": "sequence_parallel_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "stage",
+        "kind": "parameter"
+      },
+      {
+        "name": "sub_group_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "train_batch_size",
+        "kind": "parameter"
+      },
+      {
+        "name": "train_micro_batch_size_per_gpu",
+        "kind": "parameter"
+      },
+      {
+        "name": "world_size",
+        "kind": "environment"
+      }
+    ],
+    "edges": [
+      {
+        "id": "dep-0887015961d7c9ca",
+        "expression": "train_micro_batch_size_per_gpu > 0",
+        "predicate": "train_micro_batch_size_per_gpu > 0",
+        "relation": "range",
+        "participants": [
+          "train_micro_batch_size_per_gpu"
+        ],
+        "drivers": [],
+        "dependents": [
+          "train_micro_batch_size_per_gpu"
+        ],
+        "status": "confirmed",
+        "confidence": 0.99,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/config.py",
+            "line": 882,
+            "detail": "assertion"
+          },
+          {
+            "kind": "dynamic",
+            "source": "runtime-feedback",
+            "detail": "consistent_valid=8; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=1; unexplained_preserving=0; bug_preserving=0"
+          }
+        ]
+      },
+      {
+        "id": "dep-0c306f6445b44886",
+        "expression": "ds_config is not None and device == OffloadDeviceEnum.nvme => offload_param is not None",
+        "predicate": "offload_param is not None",
+        "relation": "equality",
+        "participants": [
+          "offload_param",
+          "ds_config",
+          "device",
+          "OffloadDeviceEnum.nvme"
+        ],
+        "drivers": [
+          "OffloadDeviceEnum.nvme",
+          "device",
+          "ds_config"
+        ],
+        "dependents": [
+          "offload_param"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/partition_parameters.py",
+            "line": 1146,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "ds_config is not None and device == OffloadDeviceEnum.nvme"
+      },
+      {
+        "id": "dep-36cad266ae33f1b0",
+        "expression": "dist.get_world_size() % sequence_parallel_size == 0",
+        "predicate": "dist.get_world_size() % sequence_parallel_size == 0",
+        "relation": "environment",
+        "participants": [
+          "sequence_parallel_size",
+          "dist"
+        ],
+        "drivers": [
+          "sequence_parallel_size"
+        ],
+        "dependents": [],
+        "status": "environment_specific",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/compile/custom_ops"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/compile/custom_ops/sp_dp_registry.py",
+            "line": 32,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-379bb8a6daee0faa",
+        "expression": "reduce_scatter: boolean",
+        "predicate": "reduce_scatter: boolean",
+        "relation": "type",
+        "participants": [
+          "reduce_scatter"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 108,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-3a78a14f86fa29d3",
+        "expression": "self.all2all_process_group is not None => reduce_scatter == True",
+        "predicate": "reduce_scatter == True",
+        "relation": "equality",
+        "participants": [
+          "reduce_scatter"
+        ],
+        "drivers": [],
+        "dependents": [
+          "reduce_scatter"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/stage3.py",
+            "line": 368,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "self.all2all_process_group is not None"
+      },
+      {
+        "id": "dep-4a415b051195ecec",
+        "expression": "reduce_bucket_size: integer",
+        "predicate": "reduce_bucket_size: integer",
+        "relation": "type",
+        "participants": [
+          "reduce_bucket_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "dynamically_supported",
+        "confidence": 0.99,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 113,
+            "detail": "schema annotation"
+          },
+          {
+            "kind": "dynamic",
+            "source": "runtime-feedback",
+            "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0"
+          }
+        ]
+      },
+      {
+        "id": "dep-65b7074717e4cab9",
+        "expression": "sequence_parallel_size > 1",
+        "predicate": "sequence_parallel_size > 1",
+        "relation": "range",
+        "participants": [
+          "sequence_parallel_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "sequence_parallel_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.98,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/sequence_parallel"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+            "line": 26,
+            "detail": "rejecting guard"
+          },
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+            "line": 26,
+            "detail": "interprocedural summary instantiated at line 442"
+          }
+        ]
+      },
+      {
+        "id": "dep-660c94ed03780170",
+        "expression": "reduce_bucket_size >= 0",
+        "predicate": "reduce_bucket_size >= 0",
+        "relation": "range",
+        "participants": [
+          "reduce_bucket_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "reduce_bucket_size"
+        ],
+        "status": "confirmed",
+        "confidence": 0.99,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 113,
+            "detail": "Field declaration"
+          },
+          {
+            "kind": "dynamic",
+            "source": "runtime-feedback",
+            "detail": "consistent_valid=2; isolated_violation=1; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0"
+          }
+        ]
+      },
+      {
+        "id": "dep-67b3c0f8347837c7",
+        "expression": "sub_group_size: integer",
+        "predicate": "sub_group_size: integer",
+        "relation": "type",
+        "participants": [
+          "sub_group_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 175,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-70da5e10318e54f5",
+        "expression": "train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size",
+        "predicate": "train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size",
+        "relation": "environment",
+        "participants": [
+          "train_batch_size",
+          "train_micro_batch_size_per_gpu",
+          "gradient_accumulation_steps",
+          "self.world_size"
+        ],
+        "drivers": [
+          "gradient_accumulation_steps",
+          "self.world_size",
+          "train_micro_batch_size_per_gpu"
+        ],
+        "dependents": [
+          "train_batch_size"
+        ],
+        "status": "confirmed",
+        "confidence": 0.99,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/config.py",
+            "line": 886,
+            "detail": "assertion"
+          },
+          {
+            "kind": "dynamic",
+            "source": "runtime-feedback",
+            "detail": "consistent_valid=8; isolated_violation=1; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0"
+          }
+        ]
+      },
+      {
+        "id": "dep-77a66b9286ec9a89",
+        "expression": "overlap_comm: boolean",
+        "predicate": "overlap_comm: boolean",
+        "relation": "type",
+        "participants": [
+          "overlap_comm"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 138,
+            "detail": "schema annotation"
+          }
+        ]
+      },
+      {
+        "id": "dep-7a5dbc6e4def1be0",
+        "expression": "world_size >= sequence_parallel_size",
+        "predicate": "world_size >= sequence_parallel_size",
+        "relation": "environment",
+        "participants": [
+          "sequence_parallel_size",
+          "world_size"
+        ],
+        "drivers": [
+          "sequence_parallel_size"
+        ],
+        "dependents": [
+          "world_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 0.98,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/sequence_parallel"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+            "line": 23,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-8cb802d9b2ecccb3",
+        "expression": "offload_optimizer and offload_optimizer.ratio < 1.0 => stage == ZeroStageEnum.weights",
+        "predicate": "stage == ZeroStageEnum.weights",
+        "relation": "equality",
+        "participants": [
+          "stage",
+          "offload_optimizer",
+          "ZeroStageEnum.weights",
+          "offload_optimizer.ratio"
+        ],
+        "drivers": [
+          "ZeroStageEnum.weights",
+          "offload_optimizer",
+          "offload_optimizer.ratio"
+        ],
+        "dependents": [
+          "stage"
+        ],
+        "status": "static_candidate",
+        "confidence": 0.97,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 392,
+            "detail": "assertion"
+          }
+        ],
+        "guard": "offload_optimizer and offload_optimizer.ratio < 1.0"
+      },
+      {
+        "id": "dep-9d6943a3da487629",
+        "expression": "world_size % sequence_parallel_size == 0",
+        "predicate": "world_size % sequence_parallel_size == 0",
+        "relation": "environment",
+        "participants": [
+          "sequence_parallel_size",
+          "world_size"
+        ],
+        "drivers": [
+          "sequence_parallel_size"
+        ],
+        "dependents": [
+          "world_size"
+        ],
+        "status": "environment_specific",
+        "confidence": 0.98,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/sequence_parallel"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/sequence_parallel/parallel_state_sp.py",
+            "line": 29,
+            "detail": "rejecting guard"
+          }
+        ]
+      },
+      {
+        "id": "dep-a37e7d3959ee0b8c",
+        "expression": "allgather_bucket_size >= 0",
+        "predicate": "allgather_bucket_size >= 0",
+        "relation": "range",
+        "participants": [
+          "allgather_bucket_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "allgather_bucket_size"
+        ],
+        "status": "confirmed",
+        "confidence": 0.99,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 132,
+            "detail": "Field declaration"
+          },
+          {
+            "kind": "dynamic",
+            "source": "runtime-feedback",
+            "detail": "consistent_valid=2; isolated_violation=1; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0"
+          }
+        ]
+      },
+      {
+        "id": "dep-b957353a0fcb0fdc",
+        "expression": "train_batch_size > 0",
+        "predicate": "train_batch_size > 0",
+        "relation": "range",
+        "participants": [
+          "train_batch_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "train_batch_size"
+        ],
+        "status": "confirmed",
+        "confidence": 0.99,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/config.py",
+            "line": 880,
+            "detail": "assertion"
+          },
+          {
+            "kind": "dynamic",
+            "source": "runtime-feedback",
+            "detail": "consistent_valid=8; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=3; unexplained_preserving=0; bug_preserving=0"
+          }
+        ]
+      },
+      {
+        "id": "dep-d05041904531c361",
+        "expression": "allgather_bucket_size % self.nccl_start_alignment_factor == 0",
+        "predicate": "allgather_bucket_size % self.nccl_start_alignment_factor == 0",
+        "relation": "divisibility",
+        "participants": [
+          "allgather_bucket_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "allgather_bucket_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/stage_1_and_2.py",
+            "line": 331,
+            "detail": "assertion"
+          }
+        ]
+      },
+      {
+        "id": "dep-dc97b1a59ef46820",
+        "expression": "gradient_accumulation_steps > 0",
+        "predicate": "gradient_accumulation_steps > 0",
+        "relation": "range",
+        "participants": [
+          "gradient_accumulation_steps"
+        ],
+        "drivers": [],
+        "dependents": [
+          "gradient_accumulation_steps"
+        ],
+        "status": "confirmed",
+        "confidence": 0.99,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/config.py",
+            "line": 884,
+            "detail": "assertion"
+          },
+          {
+            "kind": "dynamic",
+            "source": "runtime-feedback",
+            "detail": "consistent_valid=8; isolated_violation=0; paired_intervention=1; provenance_matched_rejection=1; valid_counterexample=0; ambiguous_invalid=2; unexplained_preserving=0; bug_preserving=0"
+          }
+        ]
+      },
+      {
+        "id": "dep-ec6ed3a086bd7146",
+        "expression": "sub_group_size >= 0",
+        "predicate": "sub_group_size >= 0",
+        "relation": "range",
+        "participants": [
+          "sub_group_size"
+        ],
+        "drivers": [],
+        "dependents": [
+          "sub_group_size"
+        ],
+        "status": "static_candidate",
+        "confidence": 1.0,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 175,
+            "detail": "Field declaration"
+          }
+        ]
+      },
+      {
+        "id": "dep-fe8b5c42fd4f1357",
+        "expression": "allgather_bucket_size: integer",
+        "predicate": "allgather_bucket_size: integer",
+        "relation": "type",
+        "participants": [
+          "allgather_bucket_size"
+        ],
+        "drivers": [],
+        "dependents": [],
+        "status": "dynamically_supported",
+        "confidence": 0.99,
+        "scope": {
+          "accelerator": "NVIDIA GPU",
+          "backend": "CUDA/NCCL",
+          "framework": "DeepSpeed",
+          "framework_profile": "deepspeed",
+          "source_subdir": "deepspeed",
+          "version": "510ebe58e4e4148bbf49350ad18fe291a0afb381"
+        },
+        "components": [
+          "deepspeed/runtime/zero"
+        ],
+        "evidence": [
+          {
+            "kind": "static",
+            "source": "deepspeed/runtime/zero/config.py",
+            "line": 132,
+            "detail": "schema annotation"
+          },
+          {
+            "kind": "dynamic",
+            "source": "runtime-feedback",
+            "detail": "consistent_valid=2; isolated_violation=0; paired_intervention=0; provenance_matched_rejection=0; valid_counterexample=0; ambiguous_invalid=0; unexplained_preserving=0; bug_preserving=0"
+          }
+        ]
+      }
+    ]
+  },
+  "platform": "cpu"
+}

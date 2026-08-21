@@ -1,0 +1,23 @@
+{
+  "model_family": "llama-like",
+  "vocab_size": 2048,
+  "hidden_size": 512,
+  "ffn_hidden_size": 1024,
+  "num_layers": 4,
+  "num_attention_heads": 8,
+  "num_query_groups": 2,
+  "max_position_embeddings": 128,
+  "sequence_length": 128,
+  "micro_batch_size": 2,
+  "gradient_accumulation_steps": 1,
+  "learning_rate": 0.001,
+  "dtype": "fp32",
+  "mixed_precision": "no",
+  "distributed_backend": "gloo",
+  "torch_compile": false,
+  "qualification_steps": 2,
+  "seed": 2026,
+  "world_size": 1,
+  "model_scale_profile": "cpu-reduced-26.1",
+  "execution_stage": "training"
+}

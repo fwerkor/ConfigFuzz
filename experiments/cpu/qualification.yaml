@@ -1,0 +1,20 @@
+schema_version: 1
+status: qualified
+hardware:
+  accelerator: cpu
+  device_count: 1
+  distributed_backend: gloo
+  model: "Intel(R) Xeon(R) Gold 6138 CPU @ 2.00GHz"
+  sockets: 2
+  cores_per_socket: 20
+  logical_cpus: 32
+software:
+  python: "3.12.3"
+  pytorch: "2.13.0+cpu"
+  transformers: "5.9.0"
+  accelerate: "1.14.0"
+  deepspeed: "0.19.1"
+notes:
+  - PyTorch and DeepSpeed RQ1 use two local Gloo processes.
+  - Transformers/Accelerate uses the real CPU model-training path with Accelerator(cpu=True).
+  - Megatron-Core is out of the CPU RQ1 scope because the evaluated version lacks an equivalent CPU training runtime.

@@ -1,0 +1,83 @@
+from __future__ import annotations
+
+import argparse
+import os
+from pathlib import Path
+
+import torch
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+from common import TinyCausalLM, batch, load_config, loss_from_logits, milestone
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", required=True)
+    args = parser.parse_args()
+    cfg = load_config(args.config)
+    milestone("argument_parsing")
+
+    rank = int(os.environ.get("RANK", "0"))
+    world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    backend = str(cfg.get("backend", cfg.get("distributed_backend", "gloo")))
+    if world_size > 1:
+        dist.init_process_group(backend=backend)
+    device = torch.device("cpu")
+    milestone("distributed_initialization", rank=rank)
+
+    subgroups = []
+    if world_size > 1 and cfg.get("group_size") is not None:
+        _, subgroups = dist.new_subgroups(
+            group_size=int(cfg["group_size"]), backend=backend
+        )
+
+    model = TinyCausalLM(cfg).to(device=device, dtype=torch.float32)
+    milestone("model_construction", rank=rank)
+    if world_size > 1:
+        model = DDP(model)
+    optimizer = torch.optim.AdamW(
+        model.parameters(), lr=float(cfg.get("learning_rate", 1e-3))
+    )
+
+    for step in range(int(cfg.get("qualification_steps", 2))):
+        input_ids, labels = batch(cfg, device)
+        optimizer.zero_grad(set_to_none=True)
+        loss = loss_from_logits(model(input_ids).float(), labels)
+        milestone("forward", rank=rank)
+        loss.backward()
+        milestone("backward", rank=rank)
+        optimizer.step()
+        milestone("optimizer_step", rank=rank)
+        if rank == 0:
+            print(f"step={step} loss={loss.item():.6f}", flush=True)
+    milestone("repeated_training", rank=rank)
+
+    checkpoint_dir = Path(
+        cfg.get("checkpoint_dir") or "artifacts/cpu/qualification/pytorch-native"
+    )
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    checkpoint = checkpoint_dir / "qualification.pt"
+    if rank == 0:
+        module = model.module if isinstance(model, DDP) else model
+        torch.save(
+            {"model": module.state_dict(), "optimizer": optimizer.state_dict()}, checkpoint
+        )
+    if world_size > 1:
+        dist.barrier()
+    state = torch.load(checkpoint, map_location=device, weights_only=False)
+    module = model.module if isinstance(model, DDP) else model
+    module.load_state_dict(state["model"])
+    optimizer.load_state_dict(state["optimizer"])
+    milestone("checkpoint_save_load", rank=rank)
+    milestone("completed", rank=rank)
+
+    if world_size > 1:
+        for subgroup in subgroups:
+            dist.destroy_process_group(subgroup)
+        dist.destroy_process_group()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

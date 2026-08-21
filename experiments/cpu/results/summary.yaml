@@ -1,0 +1,174 @@
+schema_version: 2
+name: cpu-cross-framework-frozen-validation-summary
+campaign_date: '2026-08-20'
+runner_revision: 3761e10632f19e4790e598b3272b117fce451e31
+frozen_targets_sha256: 675d0cee8d33a98e324193ce00de9e7099c45425d61ccae6e20224e26bebea53
+frozen_target_count: 13
+protocol:
+  selection_basis: versioned static graph plus qualified effective baseline; no runtime outcomes used for target selection
+  scope_filtering: execution-stage scope is matched before intervention selection and feedback
+  feedback_application: independent per target plus order-independent aggregate feedback
+  harness_integrity: artifact, baseline, manifest, launch script, qualification runner, and shared runner source are SHA-256
+    pinned; ConfigFuzz runner revision is recorded
+  roles:
+  - satisfying
+  - violating
+  - repaired
+  runtime_scope: real CPU training paths for PyTorch native, DeepSpeed, and Transformers/Accelerate
+  megatron_core_scope: 'excluded: no equivalent CPU training runtime in the evaluated version'
+hardware:
+  accelerator: cpu
+  device_count: 1
+  distributed_backend: gloo
+aggregate:
+  targets: 13
+  samples: 39
+  paired_confirmed: 9
+  scope_disputed: 1
+  unresolved: 3
+  outcomes:
+    invalid: 11
+    unknown: 1
+    valid: 27
+subjects:
+- subject: pytorch-native
+  targets: 4
+  samples: 12
+  paired_confirmed: 3
+  scope_disputed: 1
+  unresolved: 0
+  outcomes:
+    invalid: 3
+    valid: 9
+  confirmed_edge_ids:
+  - dep-26ecbd36c763dd03
+  - dep-658ed6a87e1309c2
+  - dep-b3845deb278dfa2c
+  scope_disputed_edge_ids:
+  - dep-54cbd80200ce84df
+  targets_detail:
+  - edge_id: dep-26ecbd36c763dd03
+    expression: backend in ['nccl', 'gloo', 'mpi', 'hccl', 'xccl']
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-54cbd80200ce84df
+    expression: group_size > 1
+    status: scope_disputed
+    outcomes:
+    - valid
+    - valid
+    - valid
+  - edge_id: dep-658ed6a87e1309c2
+    expression: group_size > 0
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-b3845deb278dfa2c
+    expression: world_size % group_size == 0
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  result_sha256: 6b3e819c62e898ebfc757bec6c84779213a140a57f0dea765031fc77de4cf8a8
+- subject: deepspeed
+  targets: 6
+  samples: 18
+  paired_confirmed: 6
+  scope_disputed: 0
+  unresolved: 0
+  outcomes:
+    invalid: 6
+    valid: 12
+  confirmed_edge_ids:
+  - dep-70da5e10318e54f5
+  - dep-0887015961d7c9ca
+  - dep-b957353a0fcb0fdc
+  - dep-dc97b1a59ef46820
+  - dep-660c94ed03780170
+  - dep-a37e7d3959ee0b8c
+  scope_disputed_edge_ids: []
+  targets_detail:
+  - edge_id: dep-70da5e10318e54f5
+    expression: train_batch_size == train_micro_batch_size_per_gpu * gradient_accumulation_steps * self.world_size
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-0887015961d7c9ca
+    expression: train_micro_batch_size_per_gpu > 0
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-b957353a0fcb0fdc
+    expression: train_batch_size > 0
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-dc97b1a59ef46820
+    expression: gradient_accumulation_steps > 0
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-660c94ed03780170
+    expression: reduce_bucket_size >= 0
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-a37e7d3959ee0b8c
+    expression: allgather_bucket_size >= 0
+    status: paired_confirmed
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  result_sha256: b41f5118e7fdae7ecbe6976a64a8bd525c1879855d446c263dce6343f0dc66ed
+- subject: transformers-accelerate
+  targets: 3
+  samples: 9
+  paired_confirmed: 0
+  scope_disputed: 0
+  unresolved: 3
+  outcomes:
+    invalid: 2
+    unknown: 1
+    valid: 6
+  confirmed_edge_ids: []
+  scope_disputed_edge_ids: []
+  targets_detail:
+  - edge_id: dep-39fd2282ed77229c
+    expression: mixed_precision in ['no', 'fp16', 'bf16', 'fp8']
+    status: unresolved
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  - edge_id: dep-5d2bdf54140b8f5a
+    expression: mixed_precision in {"bf16", "fp16", "no"}
+    status: unresolved
+    outcomes:
+    - valid
+    - unknown
+    - valid
+  - edge_id: dep-bb93e90843aba2d0
+    expression: mixed_precision in {"bf16", "fp16", "fp8", "no"}
+    status: unresolved
+    outcomes:
+    - valid
+    - invalid
+    - valid
+  result_sha256: c1d48a089fa5051dc5e15ed002a140a327ada86d6a609479db2586013a38bf57
