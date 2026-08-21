@@ -7,11 +7,11 @@ NNAL_ENV=${NNAL_ENV:-/model/cyh/configfuzz-cann85/nnal/atb/set_env.sh}
 MSLLM_ROOT=${MSLLM_ROOT:-/model/cyh/configfuzz-stack/MindSpeed-LLM}
 MINDSPEED_ROOT=${MINDSPEED_ROOT:-/model/cyh/configfuzz-stack/MindSpeed}
 MEGATRON_ROOT=${MEGATRON_ROOT:-/model/cyh/configfuzz-stack/Megatron-LM}
-OUT_ROOT=${OUT_ROOT:-/model/cyh/configfuzz-runs/qwen2-baseline-26.1}
+OUT_ROOT=${OUT_ROOT:-/model/cyh/configfuzz-runs/qwen2-dual-npu-26.1}
 MASTER_PORT=${MASTER_PORT:-6011}
-NPROC=${NPROC:-8}
-TP=${TP:-2}
-PP=${PP:-2}
+NPROC=${NPROC:-2}
+TP=${TP:-1}
+PP=${PP:-1}
 INITIAL_TRAIN_ITERS=${INITIAL_TRAIN_ITERS:-2}
 CONTINUE_TRAIN_ITERS=${CONTINUE_TRAIN_ITERS:-3}
 SKIP_RELOAD=${SKIP_RELOAD:-0}
@@ -39,7 +39,7 @@ export PATH="$PY_ENV/bin:$PATH"
 export PYTHONPATH="$MINDSPEED_ROOT:$MEGATRON_ROOT:$MSLLM_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 export HCCL_CONNECT_TIMEOUT=600
-export ASCEND_RT_VISIBLE_DEVICES=${ASCEND_RT_VISIBLE_DEVICES:-0,1,2,3,4,5,6,7}
+export ASCEND_RT_VISIBLE_DEVICES=${ASCEND_RT_VISIBLE_DEVICES:-0,1}
 
 mkdir -p "$OUT_ROOT/checkpoints" "$OUT_ROOT/logs"
 cd "$MSLLM_ROOT"

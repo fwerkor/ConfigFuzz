@@ -15,7 +15,7 @@ from typing import Sequence
 ROOT = Path(__file__).resolve().parents[2]
 QWEN_LAUNCHER = ROOT / "experiments/runtime/qwen2_26_1_baseline.sh"
 TEXT_LAUNCHER = ROOT / "experiments/runtime/text_26_1_baseline.sh"
-DEFAULT_RUN_ROOT = Path("/model/cyh/configfuzz-runs/rq1-pairs-26.1")
+DEFAULT_RUN_ROOT = Path("/model/cyh/configfuzz-runs/rq1-pairs-26.1-dual-npu")
 
 
 @dataclass(frozen=True)
@@ -211,7 +211,7 @@ def run_member(
     case: PairCase,
     role: str,
     *,
-    device: int,
+    devices: tuple[int, int],
     port: int,
     run_root: Path,
     timeout_seconds: float,
@@ -224,8 +224,8 @@ def run_member(
     env = os.environ.copy()
     env.update(
         {
-            "ASCEND_RT_VISIBLE_DEVICES": str(device),
-            "NPROC": "1",
+            "ASCEND_RT_VISIBLE_DEVICES": ",".join(str(device) for device in devices),
+            "NPROC": "2",
             "TP": "1",
             "PP": "1",
             "MASTER_PORT": str(port),
@@ -279,7 +279,7 @@ def run_member(
         "rq": "rq1",
         "method": "raw_mutation",
         "workload_id": case.workload_id,
-        "baseline_id": f"{case.workload_id}-26.1-single-npu",
+        "baseline_id": f"{case.workload_id}-26.1-dual-npu",
         "intent_id": None,
         "seed": 42,
         "generated": True,
@@ -290,7 +290,7 @@ def run_member(
         "deepest_milestone": deepest,
         "outcome": outcome,
         "duration_seconds": duration,
-        "gpu_seconds": duration,
+        "gpu_seconds": duration * len(devices),
         "peak_memory_mib": peak_memory_mib(output),
         "timed_out": timed_out,
         "constraint_id": case.constraint_id,
@@ -301,12 +301,13 @@ def run_member(
         "constraints_exercised": [case.constraint_id],
         "boundaries_exercised": [],
         "guard_transitions": [],
-        "topologies": ["single_npu"],
+        "topologies": ["world=2,tp=1,pp=1,cp=1,ep=1"],
         "feature_interactions": [],
         "backend_paths": [case.profile],
         "metadata": {
             "framework_line": "MindSpeed-LLM v26.1.0 / MindSpeed 26.1.0_core_r0.12.1 / MCore v0.12.1",
-            "device": device,
+            "devices": list(devices),
+            "device_count": len(devices),
             "command": command,
             "participant_overrides": list(args),
             "returncode": returncode,
@@ -319,14 +320,18 @@ def run_member(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run controlled single-NPU RQ1 constraint pairs on the stable 26.1 stack.")
-    parser.add_argument("--output", type=Path, default=ROOT / "experiments/results/rq1.26.1.single-npu.jsonl")
+    parser = argparse.ArgumentParser(description="Run controlled two-NPU RQ1 constraint pairs on the stable 26.1 stack.")
+    parser.add_argument("--output", type=Path, default=ROOT / "experiments/results/rq1.26.1.dual-npu.jsonl")
     parser.add_argument("--run-root", type=Path, default=DEFAULT_RUN_ROOT)
-    parser.add_argument("--device", type=int, default=0)
+    parser.add_argument("--devices", default="0,1", help="exactly two comma-separated NPU device IDs")
     parser.add_argument("--base-port", type=int, default=6100)
     parser.add_argument("--timeout-seconds", type=float, default=180.0)
     parser.add_argument("--constraint", action="append", dest="constraints")
     args = parser.parse_args()
+
+    devices = tuple(int(item.strip()) for item in args.devices.split(",") if item.strip())
+    if len(devices) != 2 or len(set(devices)) != 2:
+        parser.error("--devices must name exactly two distinct NPU device IDs")
 
     selected = [c for c in CASES if not args.constraints or c.constraint_id in set(args.constraints)]
     if not selected:
@@ -340,7 +345,7 @@ def main() -> int:
             record = run_member(
                 case,
                 role,
-                device=args.device,
+                devices=devices,
                 port=port,
                 run_root=args.run_root,
                 timeout_seconds=args.timeout_seconds,

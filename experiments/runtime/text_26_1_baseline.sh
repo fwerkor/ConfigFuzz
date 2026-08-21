@@ -8,9 +8,9 @@ PY_ENV=${PY_ENV:-/model/cyh/configfuzz-llm261-venv}
 MSLLM_ROOT=${MSLLM_ROOT:-/model/cyh/configfuzz-stack/MindSpeed-LLM}
 MINDSPEED_ROOT=${MINDSPEED_ROOT:-/model/cyh/configfuzz-stack/MindSpeed}
 MEGATRON_ROOT=${MEGATRON_ROOT:-/model/cyh/configfuzz-stack/Megatron-LM}
-OUT_ROOT=${OUT_ROOT:-/model/cyh/configfuzz-runs/${PROFILE}-baseline-26.1}
+OUT_ROOT=${OUT_ROOT:-/model/cyh/configfuzz-runs/${PROFILE}-dual-npu-26.1}
 MASTER_PORT=${MASTER_PORT:-6020}
-NPROC=${NPROC:-1}
+NPROC=${NPROC:-2}
 TP=${TP:-1}
 PP=${PP:-1}
 INITIAL_TRAIN_ITERS=${INITIAL_TRAIN_ITERS:-2}
@@ -37,7 +37,7 @@ export PYTHONPATH="$MINDSPEED_ROOT:$MEGATRON_ROOT:$MSLLM_ROOT${PYTHONPATH:+:$PYT
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 export HCCL_CONNECT_TIMEOUT=600
 export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
-export ASCEND_RT_VISIBLE_DEVICES=${ASCEND_RT_VISIBLE_DEVICES:-0}
+export ASCEND_RT_VISIBLE_DEVICES=${ASCEND_RT_VISIBLE_DEVICES:-0,1}
 
 mkdir -p "$OUT_ROOT/checkpoints" "$OUT_ROOT/logs"
 cd "$MSLLM_ROOT"
