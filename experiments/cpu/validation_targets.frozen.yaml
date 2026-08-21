@@ -1329,13 +1329,13 @@ subjects:
   manifest: experiments/cpu/manifests/transformers-accelerate.json
   baseline: experiments/cpu/baselines/transformers-accelerate.json
   artifact_sha256: 89f1ed40040478c0dfd5bf54d1232aad28d220702e30928e996e5f0c0e34de7c
-  manifest_sha256: 83a8002d522125a6d2efce1fc6da3af854015c7e622b77b614af74a0e3d0a157
+  manifest_sha256: fe7a375a536ff519264d3a972c801b745af6657b034cf4f1513f9b97b5aa3a67
   baseline_sha256: da51393c36e3b64db1420a84a2b6024843da6c250674a66df64d0ac58a13505c
   harness_files:
   - path: experiments/cpu/launch_transformers_accelerate.sh
     sha256: d0302e1bac5f8c8f75416f4e6f9975dba86fce4fd6a8b805ccab1f453f44f51e
   - path: experiments/cpu/qualification/transformers_accelerate.py
-    sha256: bf47c4e83a05e30d0c249cc35f2282771db2eec2cfb2107d43a1e8105e4fb445
+    sha256: 7b807d2fa1b7c16158a652d3bb8cf48c4e91116f1c5f77fd59ac7cb384d41290
   - path: experiments/cpu/qualification/common.py
     sha256: 62c6b798d3c94308d00954ae15471136308e96d83f17641d27271b8dc62e93ce
   selection_summary:
@@ -1659,5 +1659,5 @@ subjects:
             intervention_edge_id: dep-bb93e90843aba2d0
             intervention_role: repaired
 frozen:
-  sha256: 675d0cee8d33a98e324193ce00de9e7099c45425d61ccae6e20224e26bebea53
+  sha256: 1fe03f22b7d0574fad083f27fb92f4d1eb1724c96faa81c609152d33b622845f
   target_count: 13

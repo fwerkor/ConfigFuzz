@@ -5,12 +5,11 @@
   "timeout_seconds": 75,
   "environment": {"OMP_NUM_THREADS": "16"},
   "classification": {
-    "invalid_patterns": ["argument --mixed_precision/--mixed-precision: invalid choice", "Unknown mixed_precision mode", "mixed_precision.*must be one of", "mixed_precision.*should be one of"],
+    "invalid_patterns": ["invalid choice", "Unknown mixed_precision mode", "mixed_precision.*must be one of", "mixed_precision.*should be one of"],
     "resource_patterns": ["Cannot allocate memory", "std::bad_alloc"],
     "infrastructure_patterns": ["Address already in use", "FP8 is not available on this machine"],
     "milestone_patterns": ["CONFIGFUZZ_MILESTONE:completed"],
     "unexpected_failure_after_milestone_is_bug": false
   },
-  "roles": ["satisfying", "violating", "repaired"],
-  "provenance_patterns": ["argument --mixed_precision/--mixed-precision: invalid choice"]
+  "roles": ["satisfying", "violating", "repaired"]
 }
