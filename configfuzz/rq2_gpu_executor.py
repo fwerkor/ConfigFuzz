@@ -218,6 +218,7 @@ def execute_campaign_case(
     cumulative_accelerator_seconds: float,
     provenance: Mapping[str, str],
     rq: str = "rq2",
+    skip_checkpoint: bool = True,
 ) -> tuple[ExperimentRunRecord, bool]:
     method = ExperimentMethod(str(case["method"]))
     status = str(case.get("status", "unknown"))
@@ -335,10 +336,14 @@ def execute_campaign_case(
             "CONFIGFUZZ_NPROC_PER_NODE": str(device_count),
             "CONFIGFUZZ_MASTER_PORT": str(master_port),
             "CONFIGFUZZ_SEED": str(seed),
-            "CONFIGFUZZ_RQ2_SKIP_CHECKPOINT": "1",
             "CONFIGFUZZ_CHECKPOINT_ROOT": str(case_root / "checkpoints"),
         }
     )
+    if skip_checkpoint:
+        env["CONFIGFUZZ_RQ2_SKIP_CHECKPOINT"] = "1"
+    else:
+        env.pop("CONFIGFUZZ_RQ2_SKIP_CHECKPOINT", None)
+
     started = time.monotonic()
     timed_out = False
     try:

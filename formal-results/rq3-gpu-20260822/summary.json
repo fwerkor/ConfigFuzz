@@ -1,0 +1,54 @@
+{
+  "campaign": "rq3-current-version-gpu45-20260820",
+  "deduplicated_unexplained_candidates": 754,
+  "frameworks": [
+    "deepspeed",
+    "transformers-accelerate",
+    "megatron-core",
+    "pytorch-cuda"
+  ],
+  "methods": [
+    "raw_mutation",
+    "native_validator_guided",
+    "constraint_filter_only",
+    "static_hard_configfuzz",
+    "configfuzz",
+    "global_repair"
+  ],
+  "normalized_failure_signature_clusters": 87,
+  "notes": [
+    "unexplained_failure is an executor triage bucket, not a bug count",
+    "deduplicated candidates group rows by framework/workload/target parameter/target value across methods",
+    "normalized failure clusters are diagnostic groupings and are not independent root-cause counts"
+  ],
+  "outcomes": {
+    "expected_rejection": 3387,
+    "unexplained_failure": 3210,
+    "unknown": 125,
+    "valid": 14878
+  },
+  "schema_version": 1,
+  "source_files": {
+    "deepspeed.jsonl": {
+      "bytes": 23840148,
+      "records": 6300,
+      "sha256": "610298c5c94ca5bd7da157a549bc0425d7a1a418df2948f023df2321c8638b4c"
+    },
+    "megatron-core.jsonl": {
+      "bytes": 13700819,
+      "records": 2700,
+      "sha256": "99637f7d487d1c5a56b9a9cee14123251992dc52ac14f49b56c2d0bee6907d72"
+    },
+    "pytorch-cuda.jsonl": {
+      "bytes": 24579876,
+      "records": 6300,
+      "sha256": "3a2c804c8a6ac6a13eaf186975d593a1a67316fd1b6d5e1e8feb3c84a7d736bc"
+    },
+    "transformers-accelerate.jsonl": {
+      "bytes": 25903521,
+      "records": 6300,
+      "sha256": "47a923a4762f7fa26119950822d15c343af7d0c55b579d3088421ce885d2101e"
+    }
+  },
+  "tests": 21600
+}

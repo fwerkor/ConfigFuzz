@@ -1,0 +1,5 @@
+framework,tests,valid,expected_rejection,unexplained_failure,unknown,resource_failure,infrastructure_failure,deduplicated_unexplained_candidates
+deepspeed,6300,4399,914,930,57,0,0,219
+transformers-accelerate,6300,4576,651,1062,11,0,0,242
+megatron-core,2700,1388,1058,208,46,0,0,60
+pytorch-cuda,6300,4515,764,1010,11,0,0,233

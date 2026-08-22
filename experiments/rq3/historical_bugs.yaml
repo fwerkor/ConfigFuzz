@@ -1,18 +1,65 @@
-schema_version: 1
-name: configfuzz-configuration-bug-benchmark
-selection_criteria:
-  - identifiable buggy commit
-  - identifiable fixed commit
-  - triggered by one or more configuration parameters
-  - executable workload available
-  - observable failure oracle
-  - not a pure performance issue or ordinary out-of-memory failure
-policy:
-  historical_selection_policy: historical_selection_policy.frozen.yaml
-  gpu_source_queue: gpu_historical_source_queue.frozen.yaml
-  npu_source_queue: npu_historical_source_queue.frozen.yaml
-  exact_reproducer_is_tool_input: false
-  minimum_repetitions: 3
-  deduplication_unit: independent_root_cause
-  only_dynamically_admitted_cases_are_copied_here: true
-bugs: []
+schema_version: 2
+name: configfuzz-rq3-historical-benchmark
+selection_policy:
+  source_queues:
+    gpu: experiments/rq3/gpu_issue_candidates.yaml
+    npu: experiments/rq3/npu_issue_candidates.yaml
+  cutoff_date: '2026-08-03'
+  admissible_requirements:
+    - issue predates cutoff_date
+    - a configuration value or combination is required to trigger the failure
+    - the blamed framework revision reproduces the attributed failure
+    - the fixed revision does not reproduce the attributed failure
+    - the trigger can be expressed by the ConfigFuzz configuration schema
+  repetitions_per_revision: 3
+  note: Historical admission is differential confirmation; six-method comparisons are performed in the current-version campaign.
+deduplication_policy:
+  rule: one underlying fix/root cause is one bug
+bugs:
+  - id: deepspeed-7653
+    repo: deepspeedai/DeepSpeed
+    issue: 7653
+    fix_pr: 7660
+    buggy_revision: d56e847bac2853d5b8819ce176eeafff65a3798e
+    fixed_revision: 3e64f495f2f38414e06740f98b90103d664630d2
+    oracle: bucket_dtype_overrun
+    evidence: formal-results/rq3-gpu-20260822/historical/deepspeed-7653
+  - id: deepspeed-7752
+    repo: deepspeedai/DeepSpeed
+    issue: 7752
+    fix_pr: 7763
+    buggy_revision: d7bb6f3443cb3ca44412db9f255592e19c879ddb
+    fixed_revision: b35d9eb01bc04e774cc05dc43713f2a41423da5c
+    oracle: destroy_index_error
+    evidence: formal-results/rq3-gpu-20260822/historical/deepspeed-7752
+  - id: megatron-2294
+    repo: NVIDIA/Megatron-LM
+    issue: 2294
+    fix_pr: 3562
+    buggy_revision: 8f7fbe78609de242630ca4808686bd309694dcab
+    fixed_revision: 9054192b9bf2b648525bd9188aaeaebe76ec97b7
+    oracle: index_oob
+    evidence: formal-results/rq3-gpu-20260822/historical/megatron-2294
+  - id: megatron-5974
+    repo: NVIDIA/Megatron-LM
+    issue: 5974
+    fix_pr: 5976
+    buggy_revision: 175b4ccdfe386ff2fe497c5496ca5e999f47d9fa
+    fixed_revision: ce8a8a736ffae0a0d254d03042eec57cd1b4fc3c
+    oracle: optimizer_under_update
+    evidence: formal-results/rq3-gpu-20260822/historical/megatron-5974
+  - id: transformers-46459
+    repo: huggingface/transformers
+    issue: 46459
+    fix_pr: 46514
+    buggy_revision: e524671628a524f0a330e2a7b448178219ad92e5
+    fixed_revision: e7f3c4f0e89fcdcb1ef235f77d5e652431af43be
+    oracle: requested_float32_loaded_bfloat16
+    evidence: formal-results/rq3-gpu-20260822/historical/transformers-46459
+rejected_candidates:
+  - id: deepspeed-7650
+    repo: deepspeedai/DeepSpeed
+    issue: 7650
+    fix_pr: 7659
+    reason: target failure did not reproduce on the buggy checkout in 3/3 admission runs
+    evidence: formal-results/rq3-gpu-20260822/historical/rejected-deepspeed-7650

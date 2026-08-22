@@ -339,6 +339,7 @@ def execute_multi_target_campaign(
                 output_root=root,
                 gpu_devices=gpu_devices,
                 device_count=device_count,
+                accelerator_kind="gpu",
                 seed=seed,
                 master_port=_available_master_port(master_port + (round_index % 200)),
                 timeout_seconds=timeout_seconds,

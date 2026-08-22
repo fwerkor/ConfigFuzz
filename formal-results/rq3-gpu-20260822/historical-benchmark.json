@@ -1,0 +1,88 @@
+{
+  "admitted": [
+    {
+      "buggy_reproductions": 3,
+      "buggy_revision": "d56e847bac2853d5b8819ce176eeafff65a3798e",
+      "evidence": "historical/deepspeed-7653/",
+      "fix_pr": 7660,
+      "fixed_completions": 3,
+      "fixed_reproductions": 0,
+      "fixed_revision": "3e64f495f2f38414e06740f98b90103d664630d2",
+      "id": "deepspeed-7653",
+      "issue": 7653,
+      "oracle": "bucket_dtype_overrun",
+      "repo": "deepspeedai/DeepSpeed"
+    },
+    {
+      "buggy_reproductions": 3,
+      "buggy_revision": "d7bb6f3443cb3ca44412db9f255592e19c879ddb",
+      "evidence": "historical/deepspeed-7752/",
+      "fix_pr": 7763,
+      "fixed_completions": 3,
+      "fixed_reproductions": 0,
+      "fixed_revision": "b35d9eb01bc04e774cc05dc43713f2a41423da5c",
+      "id": "deepspeed-7752",
+      "issue": 7752,
+      "oracle": "destroy_index_error",
+      "repo": "deepspeedai/DeepSpeed"
+    },
+    {
+      "buggy_reproductions": 3,
+      "buggy_revision": "8f7fbe78609de242630ca4808686bd309694dcab",
+      "evidence": "historical/megatron-2294/",
+      "fix_pr": 3562,
+      "fixed_completions": 3,
+      "fixed_reproductions": 0,
+      "fixed_revision": "9054192b9bf2b648525bd9188aaeaebe76ec97b7",
+      "id": "megatron-2294",
+      "issue": 2294,
+      "oracle": "index_oob",
+      "repo": "NVIDIA/Megatron-LM"
+    },
+    {
+      "buggy_reproductions": 3,
+      "buggy_revision": "175b4ccdfe386ff2fe497c5496ca5e999f47d9fa",
+      "evidence": "historical/megatron-5974/",
+      "fix_pr": 5976,
+      "fixed_completions": 3,
+      "fixed_reproductions": 0,
+      "fixed_revision": "ce8a8a736ffae0a0d254d03042eec57cd1b4fc3c",
+      "id": "megatron-5974",
+      "issue": 5974,
+      "oracle": "optimizer_under_update",
+      "repo": "NVIDIA/Megatron-LM"
+    },
+    {
+      "buggy_reproductions": 3,
+      "buggy_revision": "e524671628a524f0a330e2a7b448178219ad92e5",
+      "evidence": "historical/transformers-46459/",
+      "fix_pr": 46514,
+      "fixed_completions": 3,
+      "fixed_reproductions": 0,
+      "fixed_revision": "e7f3c4f0e89fcdcb1ef235f77d5e652431af43be",
+      "id": "transformers-46459",
+      "issue": 46459,
+      "oracle": "requested_float32_loaded_bfloat16",
+      "repo": "huggingface/transformers"
+    }
+  ],
+  "rejected": [
+    {
+      "buggy_revision": "76a40757f0bf87b0ca8fcb86ef7818aa6b87a18b",
+      "evidence": "historical/rejected-deepspeed-7650/",
+      "fix_pr": 7659,
+      "fixed_revision": "6fe3c7abe5570abd0b25db810bd114cb912c9ec5",
+      "id": "deepspeed-7650",
+      "issue": 7650,
+      "reason": "the attributed zero-dimensional-tensor failure did not reproduce on the buggy checkout in 3/3 admission runs",
+      "repo": "deepspeedai/DeepSpeed"
+    }
+  ],
+  "schema_version": 1,
+  "selection_policy": {
+    "admission": "configuration-triggered candidate must reproduce the attributed failure on the buggy revision and not on the fixed revision",
+    "cutoff_date": "2026-08-03",
+    "deduplication": "one underlying fix/root cause is one bug",
+    "repetitions_per_revision": 3
+  }
+}

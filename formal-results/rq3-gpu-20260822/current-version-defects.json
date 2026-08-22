@@ -1,0 +1,145 @@
+{
+  "counts": {
+    "primary": 3,
+    "primary_triggered_by_configfuzz": 3,
+    "published_root_causes": 5,
+    "validation_gap": 2
+  },
+  "definition": {
+    "note": "raw unexplained_failure rows and normalized signatures are triage buckets, not bug counts",
+    "primary": "semantic-implementation mismatch under a semantically admissible configuration",
+    "validation_gap": "framework accepts or reaches deep execution with a configuration that should have been rejected by a documented or architectural configuration relation"
+  },
+  "reports": [
+    {
+      "classification": "primary",
+      "fix_pr": 8277,
+      "fix_pr_url": "https://github.com/deepspeedai/DeepSpeed/pull/8277",
+      "id": "deepspeed-8276",
+      "issue": 8276,
+      "issue_url": "https://github.com/deepspeedai/DeepSpeed/issues/8276",
+      "methods_triggering": [
+        "raw_mutation",
+        "native_validator_guided",
+        "constraint_filter_only",
+        "static_hard_configfuzz",
+        "configfuzz",
+        "global_repair"
+      ],
+      "repo": "deepspeedai/DeepSpeed",
+      "representative_method": "configfuzz",
+      "representative_run_id": "rq3-current-deepspeed-9562d4b10a2103b7",
+      "root_cause": "ZeRO stage 1/2 can leave a trainable 1-D parameter at a non-16-byte-aligned address",
+      "status": "open",
+      "trigger": {
+        "parameter": "mla.kv_lora_rank",
+        "value": 68,
+        "workload": "deepseekv3-train"
+      }
+    },
+    {
+      "classification": "primary",
+      "fix_pr": 8280,
+      "fix_pr_url": "https://github.com/deepspeedai/DeepSpeed/pull/8280",
+      "id": "deepspeed-8279",
+      "issue": 8279,
+      "issue_url": "https://github.com/deepspeedai/DeepSpeed/issues/8279",
+      "maintainer_confirmed": true,
+      "methods_triggering": [
+        "raw_mutation",
+        "native_validator_guided",
+        "constraint_filter_only",
+        "static_hard_configfuzz",
+        "configfuzz",
+        "global_repair"
+      ],
+      "repo": "deepspeedai/DeepSpeed",
+      "representative_method": "configfuzz",
+      "representative_run_id": "rq3-current-deepspeed-bf788b78e42b0a96",
+      "root_cause": "ZeRO stage 1/2 assumes every trainable parameter contributes a non-empty partition and crashes on a zero-sized trainable parameter",
+      "status": "open",
+      "trigger": {
+        "parameter": "video.out_channels",
+        "value": 0,
+        "workload": "cogvideox-train"
+      }
+    },
+    {
+      "classification": "primary",
+      "fix_pr": 6657,
+      "fix_pr_url": "https://github.com/NVIDIA/Megatron-LM/pull/6657",
+      "id": "megatron-6656",
+      "issue": 6656,
+      "issue_url": "https://github.com/NVIDIA/Megatron-LM/issues/6656",
+      "methods_triggering": [
+        "raw_mutation",
+        "native_validator_guided",
+        "static_hard_configfuzz",
+        "configfuzz",
+        "global_repair"
+      ],
+      "repo": "NVIDIA/Megatron-LM",
+      "representative_method": "configfuzz",
+      "representative_run_id": "rq3-current-megatron-core-95ef256caeb03a0f",
+      "root_cause": "FP32 GPT training reaches backward and violates PyTorch custom-autograd view/in-place semantics",
+      "status": "open",
+      "trigger": {
+        "parameter": "precision.bf16",
+        "value": false,
+        "workload": "llama2-train"
+      }
+    },
+    {
+      "classification": "validation_gap",
+      "fix_pr": null,
+      "fix_pr_url": null,
+      "id": "transformers-48101",
+      "issue": 48101,
+      "issue_url": "https://github.com/huggingface/transformers/issues/48101",
+      "maintainer_responded": true,
+      "methods_triggering": [
+        "raw_mutation",
+        "native_validator_guided",
+        "constraint_filter_only",
+        "static_hard_configfuzz",
+        "configfuzz",
+        "global_repair"
+      ],
+      "repo": "huggingface/transformers",
+      "representative_method": "configfuzz",
+      "representative_run_id": "rq3-current-transformers-accelerate-fc6bb44592689339",
+      "root_cause": "Llama-family configuration accepts an odd RoPE head dimension and later fails on rotary tensor shapes",
+      "status": "open",
+      "trigger": {
+        "parameter": "model.hidden_size",
+        "value": 520,
+        "workload": "internvl3-train"
+      }
+    },
+    {
+      "classification": "validation_gap",
+      "fix_pr": null,
+      "fix_pr_url": null,
+      "id": "transformers-48169",
+      "issue": 48169,
+      "issue_url": "https://github.com/huggingface/transformers/issues/48169",
+      "maintainer_responded": true,
+      "methods_triggering": [
+        "raw_mutation",
+        "native_validator_guided"
+      ],
+      "repo": "huggingface/transformers",
+      "representative_method": "raw_mutation",
+      "representative_run_id": "rq3-current-transformers-accelerate-a594112890498edd",
+      "root_cause": "GlmConfig accepts incompatible GQA head counts and fails when KV heads are expanded",
+      "status": "open",
+      "trigger": {
+        "parameter": "model.num_attention_heads",
+        "value": 11,
+        "workload": "chatglm3-train"
+      }
+    }
+  ],
+  "schema_version": 1,
+  "triage_date": "2026-08-22"
+}

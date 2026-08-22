@@ -1,0 +1,7 @@
+method,tests,valid,expected_rejection,unexplained_failure,unknown,resource_failure,infrastructure_failure,deep_execution,deduplicated_unexplained_candidates
+raw_mutation,3600,2438,473,689,0,0,0,2442,689
+native_validator_guided,3600,2438,473,689,0,0,0,2442,689
+constraint_filter_only,3600,2185,1025,271,119,0,0,2186,271
+static_hard_configfuzz,3600,2564,606,430,0,0,0,2568,430
+configfuzz,3600,2622,418,560,0,0,0,2626,560
+global_repair,3600,2631,392,571,6,0,0,2635,571

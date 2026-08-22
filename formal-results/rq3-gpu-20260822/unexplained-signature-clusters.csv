@@ -1,0 +1,88 @@
+framework,candidate_count,normalized_signature,representative_run_id,representative_workload,representative_target_parameter,representative_target_value
+deepspeed,64,RuntimeError: The size of tensor a (<N>) must match the size of tensor b (<N>) at non-singleton dimension <N>,rq3-current-deepspeed-07db305226a3e2c4,internvl3-train,model.hidden_size,520
+pytorch-cuda,64,RuntimeError: The size of tensor a (<N>) must match the size of tensor b (<N>) at non-singleton dimension <N>,rq3-current-pytorch-cuda-424871c4d24de1ea,internvl3-train,model.hidden_size,520
+transformers-accelerate,64,RuntimeError: The size of tensor a (<N>) must match the size of tensor b (<N>) at non-singleton dimension <N>,rq3-current-transformers-accelerate-fc6bb44592689339,internvl3-train,model.hidden_size,520
+pytorch-cuda,46,"RuntimeError: Trying to create tensor with negative dimension -<N>: [-<N>, <N>]",rq3-current-pytorch-cuda-b89a59dab5cdd26c,chatglm3-train,model.ffn_hidden_size,-1
+transformers-accelerate,46,"RuntimeError: Trying to create tensor with negative dimension -<N>: [-<N>, <N>]",rq3-current-transformers-accelerate-5bf2aa37822d7524,chatglm3-train,model.ffn_hidden_size,-1
+deepspeed,35,RuntimeError: Number of heads in key and value must divide the number of heads in,rq3-current-deepspeed-0bd5bc4c1903fa7e,chatglm3-train,model.num_attention_heads,11
+pytorch-cuda,35,RuntimeError: Number of heads in key and value must divide the number of heads in,rq3-current-pytorch-cuda-afa6ef30998f0d48,chatglm3-train,model.num_attention_heads,11
+transformers-accelerate,35,RuntimeError: Number of heads in key and value must divide the number of heads in,rq3-current-transformers-accelerate-7ad6a83b422c87ae,chatglm3-train,model.num_attention_heads,11
+deepspeed,27,"RuntimeError: Trying to create tensor with negative dimension -<N>: [-<N>, <N>]",rq3-current-deepspeed-130a52665e56361d,chatglm3-train,model.ffn_hidden_size,-1
+pytorch-cuda,24,RuntimeError: selected index k out of range,rq3-current-pytorch-cuda-54154261a8fe41a6,deepseekv3-train,moe.moe_router_num_groups,6
+transformers-accelerate,24,RuntimeError: selected index k out of range,rq3-current-transformers-accelerate-cdb2b9e9bb84dde1,deepseekv3-train,moe.moe_router_num_groups,6
+deepspeed,23,RuntimeError: selected index k out of range,rq3-current-deepspeed-bb72d3313ec30ad5,deepseekv3-train,moe.moe_router_num_groups,6
+megatron-core,22,"RuntimeError: shape '[<N>, <N>, <N>, <N>]' is invalid for input of size <N>",rq3-current-megatron-core-0af9f13e5aac9408,llama2-train,model.num_attention_heads,1
+deepspeed,11,ZeroDivisionError: integer division or modulo by zero,rq3-current-deepspeed-62d50f2c928c5c7a,chatglm3-train,model.num_attention_heads,0
+pytorch-cuda,11,ZeroDivisionError: integer division or modulo by zero,rq3-current-pytorch-cuda-1c4ea803f9f065d3,chatglm3-train,model.num_attention_heads,0
+transformers-accelerate,11,ZeroDivisionError: integer division or modulo by zero,rq3-current-transformers-accelerate-1828fc457dc1c3a5,chatglm3-train,model.num_attention_heads,0
+deepspeed,10,RuntimeError: expected data_ptr to be aligned to <N> bytes,rq3-current-deepspeed-9562d4b10a2103b7,deepseekv3-train,mla.kv_lora_rank,68
+deepspeed,9,"RuntimeError: shape '[<N>, <N>, <N>, <N>]' is invalid for input of size <N>",rq3-current-deepspeed-edccd3509a605ed0,internvl3-train,multimodal.downsample_ratio,0.125
+megatron-core,9,RuntimeError: selected index k out of range,rq3-current-megatron-core-f0eee6db9298f18d,mixtral-train,moe.moe_router_topk,6
+pytorch-cuda,9,"RuntimeError: shape '[<N>, <N>, <N>, <N>]' is invalid for input of size <N>",rq3-current-pytorch-cuda-4ebdc7962c0b9fb5,internvl3-train,multimodal.downsample_ratio,0.125
+transformers-accelerate,9,"RuntimeError: shape '[<N>, <N>, <N>, <N>]' is invalid for input of size <N>",rq3-current-transformers-accelerate-a1ddd434ec9aa293,internvl3-train,multimodal.downsample_ratio,0.125
+deepspeed,8,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, -<N>]",rq3-current-deepspeed-aa281476c5f40881,chatglm3-train,model.hidden_size,-1
+pytorch-cuda,8,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, -<N>]",rq3-current-pytorch-cuda-6f6e8de26d842608,chatglm3-train,model.hidden_size,-1
+transformers-accelerate,8,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, -<N>]",rq3-current-transformers-accelerate-4a56958e652ca6ef,chatglm3-train,model.hidden_size,-1
+deepspeed,6,ZeroDivisionError: <N> cannot be raised to a negative power,rq3-current-deepspeed-f921b57e3a5d3f45,chatglm3-train,model.hidden_size,2
+megatron-core,6,"RuntimeError: invalid shape dimension -<N> at index <N> of shape [<N>, <N>, <N>, -<N>]",rq3-current-megatron-core-bb948b3ff6fa5043,llama2-train,model.num_query_groups,-1
+pytorch-cuda,6,ZeroDivisionError: <N> cannot be raised to a negative power,rq3-current-pytorch-cuda-a63b0749d734e034,chatglm3-train,model.hidden_size,2
+transformers-accelerate,6,ZeroDivisionError: <N> cannot be raised to a negative power,rq3-current-transformers-accelerate-4a7cce054c6ea39c,chatglm3-train,model.hidden_size,2
+deepspeed,4,RuntimeError: upper bound and lower bound inconsistent with step sign,rq3-current-deepspeed-2072fb3165536868,cogvideox-train,video.frames,-3
+pytorch-cuda,4,"RuntimeError: cannot reshape tensor of <N> elements into shape [<N>, <N>, -<N>, <N>] because the unspecified dimension size -<N> can be any value and is ambiguous",rq3-current-pytorch-cuda-cf9dbcf845737e4c,chatglm3-train,training.micro_batch_size,0
+pytorch-cuda,4,RuntimeError: upper bound and lower bound inconsistent with step sign,rq3-current-pytorch-cuda-30e6a6b1c9667b8f,cogvideox-train,video.frames,-3
+transformers-accelerate,4,"RuntimeError: Trying to create tensor with negative dimension -<N>: [-<N>, <N>, <N>, <N>, <N>]",rq3-current-transformers-accelerate-de6e4bf75b2afa88,cogvideox-train,training.micro_batch_size,-3
+transformers-accelerate,4,"RuntimeError: cannot reshape tensor of <N> elements into shape [<N>, <N>, -<N>, <N>] because the unspecified dimension size -<N> can be any value and is ambiguous",rq3-current-transformers-accelerate-720ee572300a6e91,chatglm3-train,training.micro_batch_size,0
+transformers-accelerate,4,RuntimeError: upper bound and lower bound inconsistent with step sign,rq3-current-transformers-accelerate-e186ac404c811da5,cogvideox-train,video.frames,-3
+deepspeed,3,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, -<N>, <N>, <N>]",rq3-current-deepspeed-1e770594b403da10,cogvideox-train,video.in_channels,-4
+deepspeed,3,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, <N>, -<N>, -<N>]",rq3-current-deepspeed-e9777f64db813a1c,cogvideox-train,video.patch_size,-2
+deepspeed,3,"RuntimeError: random_ expects 'from' to be less than 'to', but got from=<N> >= to=<N>",rq3-current-deepspeed-a6ada6c816c2f9ff,chatglm3-train,model.vocab_size,1
+megatron-core,3,"RuntimeError: Output <N> of _GatherFromModelParallelRegion is a view and its base or another view of its base has been modified inplace. This view was created inside a custom Function (or because an input was returned as-is) and the autograd logic to handle view+inplace would override the custom backward associated with the custom Function, leading to incorrect gradients. This behavior is forbidden. You can fix this by cloning the output of the custom Function.",rq3-current-megatron-core-95ef256caeb03a0f,llama2-train,precision.bf16,false
+megatron-core,3,"RuntimeError: Trying to create tensor with negative dimension -<N>: [-<N>, <N>]",rq3-current-megatron-core-613a47c42d4678cc,llama2-train,model.vocab_size,-1
+megatron-core,3,"RuntimeError: Trying to create tensor with negative dimension -<N>: [-<N>, <N>] when instantiating TransformerLayer",rq3-current-megatron-core-7e279acd35704944,llama2-train,model.ffn_hidden_size,-1
+megatron-core,3,RuntimeError: upper bound and lower bound inconsistent with step sign,rq3-current-megatron-core-ef19a65cd10a9a74,llama2-train,model.seq_length,-1
+megatron-core,3,ZeroDivisionError: float division by zero,rq3-current-megatron-core-6303853457e4a7ba,llama2-train,model.num_layers,0
+megatron-core,3,ZeroDivisionError: integer modulo by zero,rq3-current-megatron-core-04576b461889fc93,llama2-train,model.num_attention_heads,0
+megatron-core,3,ZeroDivisionError: integer modulo by zero when instantiating SelfAttention when instantiating TransformerLayer,rq3-current-megatron-core-358cde75506ac7b9,llama2-train,model.num_query_groups,0
+pytorch-cuda,3,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, -<N>, <N>, <N>]",rq3-current-pytorch-cuda-a57a9c37b13f9f83,cogvideox-train,video.in_channels,-4
+pytorch-cuda,3,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, <N>, -<N>, -<N>]",rq3-current-pytorch-cuda-f470e96c216720d6,cogvideox-train,video.patch_size,-2
+pytorch-cuda,3,"RuntimeError: random_ expects 'from' to be less than 'to', but got from=<N> >= to=<N>",rq3-current-pytorch-cuda-c060ea78356b6364,chatglm3-train,model.vocab_size,1
+transformers-accelerate,3,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, -<N>, <N>, <N>]",rq3-current-transformers-accelerate-45b3f181fd9a8fce,cogvideox-train,video.in_channels,-4
+transformers-accelerate,3,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, <N>, -<N>, -<N>]",rq3-current-transformers-accelerate-75c53129ce2d6c8e,cogvideox-train,video.patch_size,-2
+transformers-accelerate,3,"RuntimeError: random_ expects 'from' to be less than 'to', but got from=<N> >= to=<N>",rq3-current-transformers-accelerate-361cf4544003511a,chatglm3-train,model.vocab_size,1
+deepspeed,2,"RuntimeError: Expected p_dropout < <N>.f to be true, but got false. (Could this error message be improved? If so, please report an enhancement request to PyTorch.)",rq3-current-deepspeed-6131b4f2e67f60b0,chatglm3-train,model.attention_dropout,1.000001
+deepspeed,2,"RuntimeError: invalid shape dimension -<N> at index <N> of shape [<N>, <N>, -<N>, -<N>]",rq3-current-deepspeed-a882ea02f6ca78cb,internvl3-train,multimodal.downsample_ratio,-0.5
+deepspeed,2,"RuntimeError: shape '[<N>, <N>, <N>, <N>, <N>]' is invalid for input of size <N>",rq3-current-deepspeed-ab6c7d1c7b027086,deepseekv3-train,mla.qk_rope_head_dim,33
+pytorch-cuda,2,"RuntimeError: Expected p_dropout < <N>.f to be true, but got false. (Could this error message be improved? If so, please report an enhancement request to PyTorch.)",rq3-current-pytorch-cuda-7e804ed584787299,chatglm3-train,model.attention_dropout,1.000001
+pytorch-cuda,2,"RuntimeError: invalid shape dimension -<N> at index <N> of shape [<N>, <N>, -<N>, -<N>]",rq3-current-pytorch-cuda-d0c61c6a3fa2e5ff,internvl3-train,multimodal.downsample_ratio,-0.5
+pytorch-cuda,2,"RuntimeError: shape '[<N>, <N>, <N>, <N>, <N>]' is invalid for input of size <N>",rq3-current-pytorch-cuda-9a4cf4758915a63a,deepseekv3-train,mla.qk_rope_head_dim,33
+transformers-accelerate,2,"RuntimeError: Expected p_dropout < <N>.f to be true, but got false. (Could this error message be improved? If so, please report an enhancement request to PyTorch.)",rq3-current-transformers-accelerate-20006327aa53b229,chatglm3-train,model.attention_dropout,1.000001
+transformers-accelerate,2,"RuntimeError: invalid shape dimension -<N> at index <N> of shape [<N>, <N>, -<N>, -<N>]",rq3-current-transformers-accelerate-0ae972ee79ffdcc4,internvl3-train,multimodal.downsample_ratio,-0.5
+transformers-accelerate,2,"RuntimeError: shape '[<N>, <N>, <N>, <N>, <N>]' is invalid for input of size <N>",rq3-current-transformers-accelerate-973a6e3806925c7e,deepseekv3-train,mla.qk_rope_head_dim,33
+deepspeed,1,KeyError: <N>,rq3-current-deepspeed-bf788b78e42b0a96,cogvideox-train,video.out_channels,0
+deepspeed,1,"RuntimeError: Trying to create tensor with negative dimension -<N>: [-<N>, <N>, <N>]",rq3-current-deepspeed-7350a94b7b81eb1b,deepseekv3-train,moe.num_experts,-4
+deepspeed,1,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, -<N>, <N>]",rq3-current-deepspeed-405e2b85c4b9c07b,mixtral-train,model.ffn_hidden_size,-1
+deepspeed,1,"RuntimeError: invalid shape dimension -<N> at index <N> of shape [-<N>, -<N>, -<N>]",rq3-current-deepspeed-b80b80e7d9016247,deepseekv3-train,moe.moe_router_num_groups,-2
+deepspeed,1,RuntimeError: only one dimension can be inferred,rq3-current-deepspeed-526bce3495f47f97,deepseekv3-train,moe.moe_router_num_groups,-1
+deepspeed,1,"RuntimeError: shape '[-<N>, <N>, <N>]' is invalid for input of size <N>",rq3-current-deepspeed-242d815cec22a03b,deepseekv3-train,moe.num_experts,7
+deepspeed,1,ZeroDivisionError: float division by zero,rq3-current-deepspeed-d214095602dcdcf2,internvl3-train,multimodal.downsample_ratio,0.0
+megatron-core,1,"RuntimeError: Trying to create tensor with negative dimension -<N>: [-<N>, <N>] when instantiating SelfAttention when instantiating TransformerLayer",rq3-current-megatron-core-574d03f472727b9e,llama2-train,model.num_query_groups,-6
+megatron-core,1,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, -<N>]",rq3-current-megatron-core-38b74f93cf2eeb31,llama2-train,model.hidden_size,-1
+pytorch-cuda,1,RuntimeError: Sizes of tensors must match except in dimension <N>. Expected size <N> but got size <N> for tensor number <N> in the list.,rq3-current-pytorch-cuda-50aef29be0354483,internvl3-train,multimodal.num_channels,0
+pytorch-cuda,1,"RuntimeError: Trying to create tensor with negative dimension -<N>: [-<N>, <N>, <N>]",rq3-current-pytorch-cuda-5a1c76cc751a8112,deepseekv3-train,moe.num_experts,-4
+pytorch-cuda,1,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, -<N>, <N>]",rq3-current-pytorch-cuda-9f09b7268bdc18d4,mixtral-train,model.ffn_hidden_size,-1
+pytorch-cuda,1,"RuntimeError: invalid shape dimension -<N> at index <N> of shape [-<N>, -<N>, -<N>]",rq3-current-pytorch-cuda-889ae86ab73c3576,deepseekv3-train,moe.moe_router_num_groups,-2
+pytorch-cuda,1,RuntimeError: only one dimension can be inferred,rq3-current-pytorch-cuda-19bbf4aec50277d9,deepseekv3-train,moe.moe_router_num_groups,-1
+pytorch-cuda,1,"RuntimeError: shape '[-<N>, <N>, <N>]' is invalid for input of size <N>",rq3-current-pytorch-cuda-4467c5d2fb57001d,deepseekv3-train,moe.num_experts,7
+pytorch-cuda,1,ZeroDivisionError: float division by zero,rq3-current-pytorch-cuda-6f325e713a83bcbf,internvl3-train,multimodal.downsample_ratio,0.0
+transformers-accelerate,1,RuntimeError: Error(s) in loading state_dict for CogVideoXTransformer3DModel:,rq3-current-transformers-accelerate-eae18bfcf5536ac6,cogvideox-train,video.out_channels,0
+transformers-accelerate,1,RuntimeError: Error(s) in loading state_dict for DeepseekV3ForCausalLM:,rq3-current-transformers-accelerate-a98fc8d555737e03,deepseekv3-train,model.num_attention_heads,0
+transformers-accelerate,1,"RuntimeError: Given groups=<N>, expected weight to be at least <N> at dimension <N>, but got weight of size [<N>, <N>, <N>, <N>] instead",rq3-current-transformers-accelerate-2fdbf7a90613d55f,cogvideox-train,model.num_attention_heads,0
+transformers-accelerate,1,RuntimeError: Sizes of tensors must match except in dimension <N>. Expected size <N> but got size <N> for tensor number <N> in the list.,rq3-current-transformers-accelerate-6eb2ec3ffb527f73,internvl3-train,multimodal.num_channels,0
+transformers-accelerate,1,"RuntimeError: Trying to create tensor with negative dimension -<N>: [-<N>, <N>, <N>]",rq3-current-transformers-accelerate-3bdd434e9394aad1,deepseekv3-train,moe.num_experts,-4
+transformers-accelerate,1,"RuntimeError: Trying to create tensor with negative dimension -<N>: [<N>, -<N>, <N>]",rq3-current-transformers-accelerate-22f7aa846e83fc21,mixtral-train,model.ffn_hidden_size,-1
+transformers-accelerate,1,"RuntimeError: cannot reshape tensor of <N> elements into shape [-<N>, <N>, <N>, <N>] because the unspecified dimension size -<N> can be any value and is ambiguous",rq3-current-transformers-accelerate-e93ff33f8629288c,cogvideox-train,video.in_channels,0
+transformers-accelerate,1,"RuntimeError: cannot reshape tensor of <N> elements into shape [<N>, -<N>, <N>, <N>] because the unspecified dimension size -<N> can be any value and is ambiguous",rq3-current-transformers-accelerate-436cb87f2c93dc5e,cogvideox-train,training.micro_batch_size,0
+transformers-accelerate,1,"RuntimeError: invalid shape dimension -<N> at index <N> of shape [-<N>, -<N>, -<N>]",rq3-current-transformers-accelerate-aad467850274308b,deepseekv3-train,moe.moe_router_num_groups,-2
+transformers-accelerate,1,RuntimeError: only one dimension can be inferred,rq3-current-transformers-accelerate-64ca808be5488775,deepseekv3-train,moe.moe_router_num_groups,-1
+transformers-accelerate,1,"RuntimeError: shape '[-<N>, <N>, <N>]' is invalid for input of size <N>",rq3-current-transformers-accelerate-b643af1e1877a8c8,deepseekv3-train,moe.num_experts,7
+transformers-accelerate,1,ZeroDivisionError: float division by zero,rq3-current-transformers-accelerate-988c7399ff6c97bc,internvl3-train,multimodal.downsample_ratio,0.0
