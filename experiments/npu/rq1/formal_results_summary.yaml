@@ -1,18 +1,12 @@
-schema_version: 1
+schema_version: 2
 name: ascend-rq1-dual-npu-validation-summary
-campaign_date: '2026-08-21'
+campaign_dates:
+  pta: '2026-08-21'
+  msa: '2026-08-22'
 hardware:
   accelerator: Ascend 910B3
-  device_count: 2
-  devices:
-  - 4
-  - 5
+  device_count_per_run: 2
   distributed_backend: HCCL
-software:
-  framework: MindSpeed-LLM v26.1.0
-  mindspeed: 26.1.0_core_r0.12.1
-  megatron_core: v0.12.1
-  cann: 8.5.1
 protocol:
   roles:
   - satisfying
@@ -21,124 +15,267 @@ protocol:
   seed: 42
   interpretation: a valid violating arm scope-disputes the recovered relation; a provenance-matched rejection paired with
     a valid satisfying arm provides implementation-enforcement evidence
+  note: PTA and MSA observations are backend-specific executions of the same ten frozen relations and are not treated as independent
+    semantic ground truth.
 aggregate:
-  targets: 10
-  samples: 20
-  paired_confirmed: 7
-  scope_disputed: 3
+  backend_specific_targets: 20
+  samples: 40
+  paired_confirmed: 14
+  scope_disputed: 6
   unresolved: 0
   outcomes:
-    valid: 13
-    expected_rejection: 7
-  violating_failure_milestones:
-    config_validation: 2
-    model_construction: 4
-    none: 3
-    forward: 1
-  rejected_with_interpretable_message: 6
-  rejected_total: 7
-  wall_seconds: 1266.952063
-  accelerator_seconds: 2533.904126
-targets_detail:
-- constraint_id: lmsv.task1.cosine-decay-iters
-  status: paired_confirmed
-  workload_id: qwen2-text-train
-  participants:
-  - training.lr_decay_style
-  - training.lr_decay_iters
-  satisfying_outcome: valid
-  violating_outcome: expected_rejection
-  violating_first_failure_milestone: model_construction
-  violating_error_message_interpretable: true
-- constraint_id: lmsv.task1.ffn-hidden-size-cap
-  status: scope_disputed
-  workload_id: qwen2-text-train
-  participants:
-  - model.hidden_size
-  - model.ffn_hidden_size
-  satisfying_outcome: valid
-  violating_outcome: valid
-  violating_first_failure_milestone: null
-  violating_error_message_interpretable: null
-- constraint_id: lmsv.task1.micro-batch-positive
-  status: paired_confirmed
-  workload_id: qwen2-text-train
-  participants:
-  - training.micro_batch_size
-  satisfying_outcome: valid
-  violating_outcome: expected_rejection
-  violating_first_failure_milestone: config_validation
-  violating_error_message_interpretable: true
-- constraint_id: lmsv.task1.moe-topk-one-pre-softmax
-  status: scope_disputed
-  workload_id: mixtral-text-train
-  participants:
-  - moe.moe_router_topk
-  - moe.moe_router_pre_softmax
-  satisfying_outcome: valid
-  violating_outcome: valid
-  violating_first_failure_milestone: null
-  violating_error_message_interpretable: null
-- constraint_id: lmsv.task1.moe-topk-range
-  status: paired_confirmed
-  workload_id: mixtral-text-train
-  participants:
-  - moe.num_experts
-  - moe.moe_router_topk
-  satisfying_outcome: valid
-  violating_outcome: expected_rejection
-  violating_first_failure_milestone: forward
-  violating_error_message_interpretable: true
-- constraint_id: lmsv.task1.sequence-within-position
-  status: paired_confirmed
-  workload_id: qwen2-text-train
-  participants:
-  - model.seq_length
-  - model.max_position_embeddings
-  satisfying_outcome: valid
-  violating_outcome: expected_rejection
-  violating_first_failure_milestone: config_validation
-  violating_error_message_interpretable: true
-- constraint_id: lmsv.task1.swiglu-ffn-divisibility
-  status: paired_confirmed
-  workload_id: qwen2-text-train
-  participants:
-  - model.swiglu
-  - model.ffn_hidden_size
-  - parallel.tensor_model_parallel_size
-  satisfying_outcome: valid
-  violating_outcome: expected_rejection
-  violating_first_failure_milestone: model_construction
-  violating_error_message_interpretable: false
-- constraint_id: lmsv.task1.train-iters-after-warmup
-  status: paired_confirmed
-  workload_id: qwen2-text-train
-  participants:
-  - training.train_iters
-  - training.lr_warmup_iters
-  satisfying_outcome: valid
-  violating_outcome: expected_rejection
-  violating_first_failure_milestone: model_construction
-  violating_error_message_interpretable: true
-- constraint_id: lmsv.task1.vocab-divisibility
-  status: scope_disputed
-  workload_id: qwen2-text-train
-  participants:
-  - model.vocab_size
-  - model.make_vocab_size_divisible_by
-  satisfying_outcome: valid
-  violating_outcome: valid
-  violating_first_failure_milestone: null
-  violating_error_message_interpretable: null
-- constraint_id: lmsv.task1.warmup-before-decay
-  status: paired_confirmed
-  workload_id: qwen2-text-train
-  participants:
-  - training.lr_warmup_iters
-  - training.train_iters
-  - training.lr_decay_iters
-  satisfying_outcome: valid
-  violating_outcome: expected_rejection
-  violating_first_failure_milestone: model_construction
-  violating_error_message_interpretable: true
-raw_result_sha256: 132ebac5da5149b461970898a5a4d738f9ce597e0fdf5dffa14d41f7e65038a0
+    valid: 26
+    expected_rejection: 14
+backends:
+  pta:
+    software:
+      framework: MindSpeed-LLM v26.1.0
+      mindspeed: 26.1.0_core_r0.12.1
+      megatron_core: v0.12.1
+      cann: 8.5.1
+    aggregate:
+      targets: 10
+      samples: 20
+      paired_confirmed: 7
+      scope_disputed: 3
+      unresolved: 0
+      outcomes:
+        valid: 13
+        expected_rejection: 7
+    targets_detail:
+    - constraint_id: lmsv.task1.cosine-decay-iters
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - training.lr_decay_style
+      - training.lr_decay_iters
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: model_construction
+      violating_error_message_interpretable: true
+    - constraint_id: lmsv.task1.ffn-hidden-size-cap
+      status: scope_disputed
+      workload_id: qwen2-text-train
+      participants:
+      - model.hidden_size
+      - model.ffn_hidden_size
+      satisfying_outcome: valid
+      violating_outcome: valid
+      violating_first_failure_milestone: null
+      violating_error_message_interpretable: null
+    - constraint_id: lmsv.task1.micro-batch-positive
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - training.micro_batch_size
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: config_validation
+      violating_error_message_interpretable: true
+    - constraint_id: lmsv.task1.moe-topk-one-pre-softmax
+      status: scope_disputed
+      workload_id: mixtral-text-train
+      participants:
+      - moe.moe_router_topk
+      - moe.moe_router_pre_softmax
+      satisfying_outcome: valid
+      violating_outcome: valid
+      violating_first_failure_milestone: null
+      violating_error_message_interpretable: null
+    - constraint_id: lmsv.task1.moe-topk-range
+      status: paired_confirmed
+      workload_id: mixtral-text-train
+      participants:
+      - moe.num_experts
+      - moe.moe_router_topk
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: forward
+      violating_error_message_interpretable: true
+    - constraint_id: lmsv.task1.sequence-within-position
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - model.seq_length
+      - model.max_position_embeddings
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: config_validation
+      violating_error_message_interpretable: true
+    - constraint_id: lmsv.task1.swiglu-ffn-divisibility
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - model.swiglu
+      - model.ffn_hidden_size
+      - parallel.tensor_model_parallel_size
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: model_construction
+      violating_error_message_interpretable: false
+    - constraint_id: lmsv.task1.train-iters-after-warmup
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - training.train_iters
+      - training.lr_warmup_iters
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: model_construction
+      violating_error_message_interpretable: true
+    - constraint_id: lmsv.task1.vocab-divisibility
+      status: scope_disputed
+      workload_id: qwen2-text-train
+      participants:
+      - model.vocab_size
+      - model.make_vocab_size_divisible_by
+      satisfying_outcome: valid
+      violating_outcome: valid
+      violating_first_failure_milestone: null
+      violating_error_message_interpretable: null
+    - constraint_id: lmsv.task1.warmup-before-decay
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - training.lr_warmup_iters
+      - training.train_iters
+      - training.lr_decay_iters
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: model_construction
+      violating_error_message_interpretable: true
+    raw_result: rq1.26.1.dual-npu.jsonl
+    raw_result_sha256: 132ebac5da5149b461970898a5a4d738f9ce597e0fdf5dffa14d41f7e65038a0
+  msa:
+    software:
+      framework: MindSpeed-LLM v26.1.0 / MSA
+      mindspore: 2.10.0
+      msadapter: 0.7.0
+      cann: 9.1.0
+      mindspeed_llm_commit: 2b7130ca7bea7083a91ed66812eec95067d057a2
+      mindspeed_commit: 4e8f91841684e0b8fcff30f7af163534c09f82b8
+      megatron_core_commit: a845aa7e12b3a117e24c2352b9e3e60bad2e3a17
+      msadapter_commit: 79d4868844313341da6c4da6f22708eea0f34a84
+    source_provenance:
+      mindspeed_llm: https://gitcode.com/Ascend/MindSpeed-LLM.git
+      mindspeed: https://gitcode.com/Ascend/MindSpeed.git
+      msadapter: https://openi.pcl.ac.cn/OpenI/MSAdapter.git
+    compatibility_patches:
+    - msa-compat-patches/msadapter-ms210.patch
+    - msa-compat-patches/mindspeed-llm-ms210.patch
+    - msa-compat-patches/megatron-msadapter-rq1.patch
+    compatibility_note: The patches adapt MSAdapter/MindSpore 2.10 runtime integration, TP=1 algebraic identity paths, MoE
+      auxiliary-loss autograd, and HCCP run isolation; they do not change tested relation predicates or participant assignments.
+    aggregate:
+      targets: 10
+      samples: 20
+      paired_confirmed: 7
+      scope_disputed: 3
+      unresolved: 0
+      outcomes:
+        valid: 13
+        expected_rejection: 7
+    targets_detail:
+    - constraint_id: lmsv.task1.cosine-decay-iters
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - training.lr_decay_style
+      - training.lr_decay_iters
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: model_construction
+      violating_error_message_interpretable: false
+    - constraint_id: lmsv.task1.ffn-hidden-size-cap
+      status: scope_disputed
+      workload_id: qwen2-text-train
+      participants:
+      - model.hidden_size
+      - model.ffn_hidden_size
+      satisfying_outcome: valid
+      violating_outcome: valid
+      violating_first_failure_milestone: null
+      violating_error_message_interpretable: null
+    - constraint_id: lmsv.task1.micro-batch-positive
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - training.micro_batch_size
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: config_validation
+      violating_error_message_interpretable: true
+    - constraint_id: lmsv.task1.moe-topk-one-pre-softmax
+      status: scope_disputed
+      workload_id: mixtral-text-train
+      participants:
+      - moe.moe_router_topk
+      - moe.moe_router_pre_softmax
+      satisfying_outcome: valid
+      violating_outcome: valid
+      violating_first_failure_milestone: null
+      violating_error_message_interpretable: null
+    - constraint_id: lmsv.task1.moe-topk-range
+      status: paired_confirmed
+      workload_id: mixtral-text-train
+      participants:
+      - moe.num_experts
+      - moe.moe_router_topk
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: config_validation
+      violating_error_message_interpretable: false
+    - constraint_id: lmsv.task1.sequence-within-position
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - model.seq_length
+      - model.max_position_embeddings
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: config_validation
+      violating_error_message_interpretable: true
+    - constraint_id: lmsv.task1.swiglu-ffn-divisibility
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - model.swiglu
+      - model.ffn_hidden_size
+      - parallel.tensor_model_parallel_size
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: config_validation
+      violating_error_message_interpretable: false
+    - constraint_id: lmsv.task1.train-iters-after-warmup
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - training.train_iters
+      - training.lr_warmup_iters
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: model_construction
+      violating_error_message_interpretable: false
+    - constraint_id: lmsv.task1.vocab-divisibility
+      status: scope_disputed
+      workload_id: qwen2-text-train
+      participants:
+      - model.vocab_size
+      - model.make_vocab_size_divisible_by
+      satisfying_outcome: valid
+      violating_outcome: valid
+      violating_first_failure_milestone: null
+      violating_error_message_interpretable: null
+    - constraint_id: lmsv.task1.warmup-before-decay
+      status: paired_confirmed
+      workload_id: qwen2-text-train
+      participants:
+      - training.lr_warmup_iters
+      - training.train_iters
+      - training.lr_decay_iters
+      satisfying_outcome: valid
+      violating_outcome: expected_rejection
+      violating_first_failure_milestone: model_construction
+      violating_error_message_interpretable: false
+    raw_result: rq1.msa.26.1.dual-npu.final.jsonl
+    raw_result_sha256: bd101c9596432e6357a4b4724d556c977ea28c0793194900a2e6fbf70d5e2f5f

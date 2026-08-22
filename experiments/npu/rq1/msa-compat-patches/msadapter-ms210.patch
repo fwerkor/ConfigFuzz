@@ -1,0 +1,30 @@
+diff --git a/msadapter/autograd/function.py b/msadapter/autograd/function.py
+index 4fea6ab..9db1666 100644
+--- a/msadapter/autograd/function.py
++++ b/msadapter/autograd/function.py
+@@ -15,8 +15,15 @@ import msadapter
+ from msadapter import Tensor
+ try:
+     from mindspore import _Function
+-except:
+-    Function = None
++except ImportError:
++    _Function = None
++
++# MindSpore 2.10 changed _Function.apply to the setup_context-style calling
++# convention. MSAdapter 0.7 custom Functions still use PyTorch's ctx-first
++# forward signature, so use the existing Cell_ compatibility path on 2.10+.
++_ms_version = tuple(int(part) for part in mindspore.__version__.split(".")[:2])
++if _ms_version >= (2, 10):
++    _Function = None
+
+
+ class RecomputeFlag:
+@@ -117,7 +124,7 @@ else:
+         def __call__(self, *args, **kwargs):
+             with no_grad():
+                 output = self.construct(*args, **kwargs)
+-            if _pynative_executor.requires_grad():
++            if _pynative_executor.requires_grad() and any(self.needs_input_grad):
+                 _pynative_executor.call_custom_bprop(self, output, *args, **kwargs)
+             return output

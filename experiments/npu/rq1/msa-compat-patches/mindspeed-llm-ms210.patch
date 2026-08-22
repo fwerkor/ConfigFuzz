@@ -1,0 +1,13 @@
+diff --git a/mindspeed_llm/mindspore/mindspore_adaptor_v2.py b/mindspeed_llm/mindspore/mindspore_adaptor_v2.py
+index 6745e52a..37bcb7c2 100644
+--- a/mindspeed_llm/mindspore/mindspore_adaptor_v2.py
++++ b/mindspeed_llm/mindspore/mindspore_adaptor_v2.py
+@@ -166,7 +166,7 @@ def _patch_optimizer_and_training(args):
+         'mindspeed_llm.core.datasets.blended_megatron_dataset_builder.need_to_build_dataset', need_to_build_dataset)
+
+     # share memory
+-    if args.enable_share_memory:
++    if getattr(args, 'enable_share_memory', False):
+         from ..mindspore.tasks.dataset.shared_memory_manager import SharedMemoryManager
+         MindSporeAdaptation.register_patch(
+             'mindspeed_llm.tasks.dataset.shared_memory_manager.SharedMemoryManager', SharedMemoryManager)

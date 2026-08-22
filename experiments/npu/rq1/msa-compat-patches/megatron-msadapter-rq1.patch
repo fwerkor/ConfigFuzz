@@ -1,0 +1,217 @@
+diff --git a/megatron/core/fusions/fused_bias_swiglu.py b/megatron/core/fusions/fused_bias_swiglu.py
+index b52b0dec2..c762ce65e 100644
+--- a/megatron/core/fusions/fused_bias_swiglu.py
++++ b/megatron/core/fusions/fused_bias_swiglu.py
+@@ -136,6 +136,13 @@ def weighted_bias_swiglu_impl(input, bias, weights, fp8_input_store=False):
+     input = input.view(-1, ori_shape[-1])
+     if bias is not None:
+         raise NotImplementedError("Bias is not supported for weighted swiglu fusion")
++    elif hasattr(torch, "msadapter"):
++        if fp8_input_store:
++            raise RuntimeError("MSAdapter weighted SwiGLU compatibility path does not support FP8 input storage")
++        # MSAdapter 0.7 / MindSpore 2.10 cannot register the custom bprop used
++        # by WeightedSwiGLUFunction. The unfused expression is algebraically
++        # identical and lets MindSpore differentiate the primitive ops.
++        output = weighted_swiglu(input, weights)
+     else:
+         output = WeightedSwiGLUFunction.apply(input, weights, fp8_input_store)
+
+diff --git a/megatron/core/pipeline_parallel/schedules.py b/megatron/core/pipeline_parallel/schedules.py
+index df83ce88a..4dc5d9721 100644
+--- a/megatron/core/pipeline_parallel/schedules.py
++++ b/megatron/core/pipeline_parallel/schedules.py
+@@ -11,6 +11,7 @@ from megatron.core.enums import ModelType
+ from megatron.core.pipeline_parallel import p2p_communication
+ from megatron.core.transformer.cuda_graphs import create_cudagraphs
+ from megatron.core.transformer.moe.router import MoEAuxLossAutoScaler
++from megatron.core.transformer.moe.moe_utils import consume_msa_aux_losses
+ from megatron.core.transformer.multi_token_prediction import MTPLossAutoScaler
+ from megatron.core.utils import (
+     drain_embedding_wgrad_compute,
+@@ -301,6 +302,20 @@ def forward_step(
+             data = loss_func(output_tensor, non_loss_data=True)
+             forward_data_store.append(data)
+
++    if hasattr(torch, "msadapter"):
++        msa_aux_losses = consume_msa_aux_losses()
++        if msa_aux_losses:
++            if parallel_state.get_pipeline_model_parallel_world_size() != 1:
++                raise RuntimeError("MSAdapter MoE aux-loss compatibility path requires PP=1")
++            if collect_non_loss_data:
++                raise RuntimeError("MSAdapter MoE aux-loss buffer populated during non-loss forward")
++            aux_loss = msa_aux_losses[0]
++            for extra_aux_loss in msa_aux_losses[1:]:
++                aux_loss = aux_loss + extra_aux_loss
++            if not config.calculate_per_token_loss:
++                aux_loss = aux_loss / num_microbatches
++            output_tensor = output_tensor + aux_loss
++
+     if config.timers is not None:
+         config.timers('forward-compute').stop()
+
+diff --git a/megatron/core/tensor_parallel/cross_entropy.py b/megatron/core/tensor_parallel/cross_entropy.py
+index 27c8f0634..03c4935f1 100644
+--- a/megatron/core/tensor_parallel/cross_entropy.py
++++ b/megatron/core/tensor_parallel/cross_entropy.py
+@@ -3,6 +3,7 @@
+ from typing import Tuple
+
+ import torch
++import torch.nn.functional as F
+
+ from megatron.core.parallel_state import (
+     get_tensor_model_parallel_group,
+@@ -229,4 +230,13 @@ def vocab_parallel_cross_entropy(vocab_parallel_logits, target, label_smoothing=
+         label_smoothing: smoothing factor, must be in range [0.0, 1.0)
+                          default is no smoothing (=0.0)
+     """
++    if get_tensor_model_parallel_world_size() == 1:
++        vocab_size = vocab_parallel_logits.size(-1)
++        loss = F.cross_entropy(
++            vocab_parallel_logits.reshape(-1, vocab_size),
++            target.reshape(-1),
++            reduction='none',
++            label_smoothing=label_smoothing,
++        )
++        return loss.view_as(target)
+     return _VocabParallelCrossEntropy.apply(vocab_parallel_logits, target, label_smoothing)
+diff --git a/megatron/core/tensor_parallel/layers.py b/megatron/core/tensor_parallel/layers.py
+index 955504186..2760bbd77 100644
+--- a/megatron/core/tensor_parallel/layers.py
++++ b/megatron/core/tensor_parallel/layers.py
+@@ -630,6 +630,16 @@ def linear_with_grad_accumulation_and_async_allreduce(
+                                             Please use allreduce_dgrad instead.
+     """
+
++    if (
++        get_tensor_model_parallel_world_size() == 1
++        and not gradient_accumulation_fusion
++        and not allreduce_dgrad
++        and not sequence_parallel
++        and grad_output_buffer is None
++        and not wgrad_deferral_limit
++    ):
++        return F.linear(input, weight, bias)
++
+     if async_grad_allreduce is not None:
+         warnings.warn(
+             "async_grad_allreduce is deprecated, not in use anymore and will"
+diff --git a/megatron/core/tensor_parallel/mappings.py b/megatron/core/tensor_parallel/mappings.py
+index cdd720687..b24105b21 100644
+--- a/megatron/core/tensor_parallel/mappings.py
++++ b/megatron/core/tensor_parallel/mappings.py
+@@ -466,26 +466,36 @@ class _AllToAll(torch.autograd.Function):
+
+ def copy_to_tensor_model_parallel_region(input_):
+     """Wrapper for autograd function: forward: copy, backward allreduce"""
++    if get_tensor_model_parallel_world_size() == 1:
++        return input_
+     return _CopyToModelParallelRegion.apply(input_)
+
+
+ def reduce_from_tensor_model_parallel_region(input_):
+     """Wrapper for autograd function: forward: all reduce, backward copy"""
++    if get_tensor_model_parallel_world_size() == 1:
++        return input_
+     return _ReduceFromModelParallelRegion.apply(input_)
+
+
+ def scatter_to_tensor_model_parallel_region(input_):
+     """Wrapper for autograd function: forward: RS, backward: AG <last dim>"""
++    if get_tensor_model_parallel_world_size() == 1:
++        return input_
+     return _ScatterToModelParallelRegion.apply(input_)
+
+
+ def gather_from_tensor_model_parallel_region(input_):
+     """Wrapper for autograd function: forward: AG, backward: split <last dim>"""
++    if get_tensor_model_parallel_world_size() == 1:
++        return input_
+     return _GatherFromModelParallelRegion.apply(input_)
+
+
+ def scatter_to_sequence_parallel_region(input_):
+     """Wrapper for autograd function: forward: split, backward: AG <last dim>"""
++    if get_tensor_model_parallel_world_size() == 1:
++        return input_
+     return _ScatterToSequenceParallelRegion.apply(input_)
+
+
+@@ -497,6 +507,9 @@ def gather_from_sequence_parallel_region(
+     use_global_buffer=False,
+ ):
+     """Wrapper for autograd function: forward: AG, backward: RS <first dim>"""
++    effective_group = group if group is not None else get_tensor_model_parallel_group()
++    if torch.distributed.get_world_size(effective_group) == 1:
++        return input_
+     return _GatherFromSequenceParallelRegion.apply(
+         input_, tensor_parallel_output_grad, group, output_split_sizes, use_global_buffer
+     )
+@@ -506,6 +519,9 @@ def reduce_scatter_to_sequence_parallel_region(
+     input_, group=None, input_split_sizes=None, use_global_buffer=False
+ ):
+     """Wrapper for autograd function: forward: RS, backward AG <fisrt dim>"""
++    effective_group = group if group is not None else get_tensor_model_parallel_group()
++    if torch.distributed.get_world_size(effective_group) == 1:
++        return input_
+     return _ReduceScatterToSequenceParallelRegion.apply(
+         input_, group, input_split_sizes, use_global_buffer
+     )
+@@ -513,16 +529,22 @@ def reduce_scatter_to_sequence_parallel_region(
+
+ def all_gather_last_dim_from_tensor_parallel_region(input_):
+     """Wrapper for autograd function: forward: AG, backward RS <last dim>"""
++    if get_tensor_model_parallel_world_size() == 1:
++        return input_
+     return _AllGatherFromTensorParallelRegion.apply(input_)
+
+
+ def reduce_scatter_last_dim_to_tensor_parallel_region(input_):
+     """Wrapper for autograd function: forward: RS, backward AG: AG <last dim>"""
++    if get_tensor_model_parallel_world_size() == 1:
++        return input_
+     return _ReduceScatterToTensorParallelRegion.apply(input_)
+
+
+ def all_to_all(group, input_, output_split_sizes_=None, input_split_sizes=None):
+     """Wrapper for autograd function"""
++    if torch.distributed.get_world_size(group=group) == 1:
++        return input_
+     return _AllToAll.apply(group, input_, output_split_sizes_, input_split_sizes)
+
+
+diff --git a/megatron/core/transformer/moe/moe_utils.py b/megatron/core/transformer/moe/moe_utils.py
+index dafedfd17..3b01fbd13 100644
+--- a/megatron/core/transformer/moe/moe_utils.py
++++ b/megatron/core/transformer/moe/moe_utils.py
+@@ -227,6 +227,30 @@ class MoEAuxLossAutoScaler(torch.autograd.Function):
+             MoEAuxLossAutoScaler.main_loss_backward_scale.copy_(scale)
+
+
++# MSAdapter 0.7 on MindSpore 2.10 cannot register the custom bprop used by
++# MoEAuxLossAutoScaler (call_custom_bprop fails with a null top_cell_).  For
++# the PP=1 compatibility path, retain the differentiable auxiliary losses and
++# attach them to the scalar loss in the pipeline schedule.  This preserves the
++# native Megatron gradient: aux loss / num_microbatches, followed by the same
++# grad_scale_func as the main loss.
++_MSA_AUX_LOSS_BUFFER = []
++
++
++def consume_msa_aux_losses():
++    losses = list(_MSA_AUX_LOSS_BUFFER)
++    _MSA_AUX_LOSS_BUFFER.clear()
++    return losses
++
++
++if hasattr(torch, "msadapter"):
++    @classmethod
++    def _msa_moe_aux_loss_apply(cls, output: torch.Tensor, aux_loss: torch.Tensor):
++        _MSA_AUX_LOSS_BUFFER.append(aux_loss)
++        return output
++
++    MoEAuxLossAutoScaler.apply = _msa_moe_aux_loss_apply
++
++
+ def permute(
+     tokens,
+     routing_map,
